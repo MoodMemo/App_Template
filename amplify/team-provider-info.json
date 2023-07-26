@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-moodmemo-dev-211938-authRole",
+      "UnauthRoleArn": "arn:aws:iam::897922987323:role/amplify-moodmemo-dev-211938-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::897922987323:role/amplify-moodmemo-dev-211938-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-moodmemo-dev-211938-deployment",
+      "UnauthRoleName": "amplify-moodmemo-dev-211938-unauthRole",
+      "StackName": "amplify-moodmemo-dev-211938",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:897922987323:stack/amplify-moodmemo-dev-211938/b25f7bd0-2bae-11ee-af58-0a66bb38456a",
+      "AmplifyAppId": "d2rn32zlh14v0k"
+    }
+  }
+}

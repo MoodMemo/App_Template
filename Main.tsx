@@ -68,15 +68,18 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 
+import Amplify, {API, graphqlOperation} from 'aws-amplify';
+import * as queries from './src/graphql/queries'
+
+
 const Tab = createBottomTabNavigator();
 
 function HomeScreen() {
-  console.log('tlqkf');
   return <Text>Home</Text>;
 }
 
 function SearchScreen() {
-  console.log('tlqkf2');
+
   return <Text>Search</Text>;
 }
 
@@ -84,7 +87,13 @@ function NotificationScreen() {
   return <Text>Notification</Text>;
 }
 
+async function test() {
+  const allStamps = await API.graphql(graphqlOperation(queries.listStamps));
+  console.log(allStamps);
+}
+
 function Main() {
+  test();
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -105,7 +114,7 @@ function Main() {
         />
         <Tab.Screen
           name="Search"
-          
+
           component={SearchScreen}
           options={{
             tabBarIcon: ({color, size}) => (
