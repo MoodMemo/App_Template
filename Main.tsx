@@ -105,6 +105,7 @@ function Main() {
         />
         <Tab.Screen
           name="Search"
+          
           component={SearchScreen}
           options={{
             tabBarIcon: ({color, size}) => (
