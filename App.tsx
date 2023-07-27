@@ -58,15 +58,17 @@ function App(): JSX.Element {
   if(check==0)
   {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <AnimatedViewBirthday />
-      </View>
+      </SafeAreaView>
     );
   }
   else
   {
     return (
-      <Main/>
+      <SafeAreaView style={styles.container}>
+        <Main />
+      </SafeAreaView>
     );
   }
 }
@@ -75,6 +77,7 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
+    backgroundColor:"#FFFFFF",
   },
   sectionTitle: {
     fontSize: 24,
