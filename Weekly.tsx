@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 
-const Week = () => {
+const Weekly = () => {
     return (
         <View style={styles.view}>
             <Text style={styles.title}>위클리뷰 화면</Text>
@@ -48,4 +48,4 @@ const styles = StyleSheet.create({
     },
   });
 
-export default Week;
+export default Weekly;

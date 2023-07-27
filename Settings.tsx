@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 
+import SettingsComponent from './SettingsComponent';
+
 const Settings = () => {
+    const settingsOptions=[
+      {title:"채널톡 연동", onPress: () => {}},
+      {title:"개인정보 설정", onPress: () => {}},
+      {title:"알림 설정", onPress: () => {}},
+      {title:"개발자에게 문의하기", onPress: () => {}},
+      {title:"개발자에게 커피 사주기", onPress: () => {}},
+    ]
     return (
-        <View style={styles.view}>
-            <Text style={styles.title}>설정 화면</Text>
-        </View>
+      <SettingsComponent settingsOptions={settingsOptions}/>
     );
 }
 
