@@ -1,65 +1,3 @@
-/*
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
-// Screens
-import Home from './Home';
-import Week from './Week';
-import Statistics from './Statistics';
-import Settings from './Settings';
-
-//Screen names
-const homeName = "Home";
-const detailsName = "Details";
-const settingsName = "Settings";
-
-const Tab = createBottomTabNavigator();
-
-function Main() {
-  return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName={homeName}
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName='home';
-            let rn = route.name;
-
-            if (rn === homeName) {
-              iconName = focused ? 'home' : 'home-outline';
-
-            } else if (rn === detailsName) {
-              iconName = focused ? 'list' : 'list-outline';
-
-            } else if (rn === settingsName) {
-              iconName = focused ? 'settings' : 'settings-outline';
-            }
-
-            // You can return any component that you like here!
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-        })}
-        tabBarOptions={{
-          activeTintColor: 'tomato',
-          inactiveTintColor: 'grey',
-          labelStyle: { paddingBottom: 10, fontSize: 10 },
-          style: { padding: 10, height: 70}
-        }}>
-
-        <Tab.Screen name={homeName} component={HomeScreen} />
-        <Tab.Screen name={detailsName} component={DetailsScreen} />
-        <Tab.Screen name={settingsName} component={SettingsScreen} />
-
-      </Tab.Navigator>
-    </NavigationContainer>
-  );
-}
-
-export default Main;
-*/
-
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -68,6 +6,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 
+import Home from './Home';
+import Weekly from './Weekly';
+import Settings from './Settings';
+
 import Amplify, {API, graphqlOperation} from 'aws-amplify';
 import * as queries from './src/graphql/queries'
 
@@ -75,59 +17,76 @@ import * as queries from './src/graphql/queries'
 const Tab = createBottomTabNavigator();
 
 function HomeScreen() {
-  return <Text>Home</Text>;
+  return <Home/>; //Home.tsx
 }
 
-function SearchScreen() {
+function WeeklyScreen() {
 
-  return <Text>Search</Text>;
+  return <Weekly/>; //Home.tsx
 }
 
-function NotificationScreen() {
-  return <Text>Notification</Text>;
+function SettingsScreen() {
+  return <Settings/>; //Home.tsx
 }
 
+/**
+graphql 테스트용 함수
+**/
 async function test() {
   const allStamps = await API.graphql(graphqlOperation(queries.listStamps));
   console.log(allStamps);
+  console.log(allStamps.data.listStamps.items);
 }
 
+
 function Main() {
-  test();
+  //test(); //graphql 테스트를 위해 넣어뒀음
   return (
+    /*
+    하단 바와 함께 그에 맞는 탭이 렌더링됩니다.
+    각 탭은 컴포넌트로 관리하며,
+    Home -> HomeScreen
+    Weekly -> WeeklyScreen
+    Settings -> SettingsScreen입니다.
+    */
+    //TODO : css 분리 작업, 불필요한 반복 줄이기
     <NavigationContainer>
+      {/*
+        Navigator와 관련된 컴포넌트들은 NavigationContainer 안에 넣어줘야 했습니다.
+      */}
       <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Home" //기본은 홈 화면이도록
       screenOptions={{
-        tabBarShowLabel: false,
+        tabBarShowLabel: false, //이게 true면 하단 바 아이콘 밑에 label도 같이 렌더링됩니다.
+        headerShown: false, //이게 true면 각 탭의 상단에 해당 Tab의 label이 렌더링됩니다. 매우 보기 싫습니다.
         tabBarActiveTintColor:"#484C52",
         tabBarInactiveTintColor:"#484C524D"
         }}>
         <Tab.Screen
           name="Home"
-          component={HomeScreen}
+          component={HomeScreen} //홈 화면
           options={{
             tabBarIcon: ({color, size}) => (
-              <Octicons name="smiley" color={color} size={size} />
+              <Octicons name="smiley" color={color} size={size} /> //하단 바 아이콘
             ),
           }}
         />
         <Tab.Screen
           name="Search"
 
-          component={SearchScreen}
+          component={WeeklyScreen} //위클리 화면
           options={{
             tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons name="calendar" color={color} size={size} />
+              <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
             ),
           }}
         />
         <Tab.Screen
-          name="Notification"
-          component={NotificationScreen}
+          name="Settings"
+          component={SettingsScreen} //설정 화면
           options={{
             tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="settings" color={color} size={size} />
+              <MaterialIcons name="settings" color={color} size={size} /> //하단 바 아이콘
             ),
           }}
         />

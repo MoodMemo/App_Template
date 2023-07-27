@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 
-const Home = (navigation: any) => {
+const Home = () => {
     return (
         <View style={styles.view}>
-            <Text onPress={()=> navigation.navigate('Home')} style={styles.title}>홈 화면</Text>
+            <Text style={styles.title}>홈 화면</Text>
         </View>
     );
 }
