@@ -29,8 +29,14 @@ import SplashScreen from 'react-native-splash-screen';
 
 import AnimatedViewBirthday from './AnimatedViewBirthday';
 
-import Main from './Main'
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
+
+import Main from './Main'
+import { create } from 'react-test-renderer';
+
+const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
   
@@ -67,7 +73,7 @@ function App(): JSX.Element {
   {
     return (
       <SafeAreaView style={styles.container}>
-        <Main />
+        <Main/>
       </SafeAreaView>
     );
   }

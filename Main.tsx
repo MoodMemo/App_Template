@@ -38,7 +38,6 @@ async function test() {
   console.log(allStamps.data.listStamps.items);
 }
 
-
 function Main() {
   //test(); //graphql 테스트를 위해 넣어뒀음
   return (
