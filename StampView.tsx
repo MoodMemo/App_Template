@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, ScrollView, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput } from 'react-native';
 
 const StampView = () => {
   const buttonsData = [
@@ -30,15 +30,91 @@ const StampView = () => {
     // 추가 버튼들...
   ];
 
+  const [selectedEmotion, setSelectedEmotion] = useState(null);
+  const [selectedEmotionLabel, setSelectedEmotionLabel] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const [memo, setMemo] = useState('');
+  const [numberOfLines, setNumberOfLines] = useState(1);
+
+  const [images, setImages] = useState([]);
+
+  const handleMemoChange = (text) => {
+    setMemo(text);
+    setNumberOfLines(text.split('\n').length);
+  };
+
+  const handleButtonPress = (button) => {
+    setSelectedEmotion(button.emotion);
+    setSelectedEmotionLabel(button.label);
+    setModalVisible(true);
+  }
+
   return (
-    <ScrollView contentContainerStyle={styles.container} horizontal={false}>
-      {buttonsData.map((button) => (
-        <TouchableOpacity key={button.id} style={styles.button}>
-          <Text style={styles.buttonText}>{button.emotion}</Text>
-          <Text style={styles.buttonText}>{button.label}</Text>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container} horizontal={false}>
+        {buttonsData.map((button) => (
+          <TouchableOpacity key={button.id} style={styles.stampButton} onPress={() => {handleButtonPress(button)}}>
+            <Text style={styles.buttonText}>{button.emotion}</Text>
+            <Text style={styles.buttonText}>{button.label}</Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      <Modal visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          {/* 모달 내용 */}
+          <View style={styles.modalTitleContainer}>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Image source={require('./assets/close.png')} />
+            </TouchableOpacity>
+            <Text style={styles.modalTitle}>감정 기록</Text>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Image source={require('./assets/check.png')} />
+            </TouchableOpacity>
+          </View>
+          <ScrollView horizontal={false}>
+          <View style={styles.stampContainer}>
+            <Text style={styles.modalText}>찍은 스탬프</Text>
+            <View style={styles.stampContent}>
+              <Text style={styles.stampText}>{selectedEmotion}</Text>
+              <Text style={styles.stampText}>{selectedEmotionLabel}</Text>
+            </View>
+          </View>
+          <View style={styles.timeContainer}>
+            <Text style={styles.modalText}>기록 시간</Text>
+            <Text style={styles.timeText}>2021. 09. 10. 12:00</Text>
+          </View>
+          <View style={styles.horizontalLine} />
+          <View style={styles.memoContainer}>
+            <Text style={styles.modalText}>메모 남기기</Text>
+            <View style={styles.memoContent}>
+              <TextInput
+                style={styles.memoText}
+                placeholder="메모 작성하기 (추후 작성 가능)"
+                multiline={true}
+                maxLength={500}
+                onChangeText={handleMemoChange}
+                value={memo}
+                numberOfLines={numberOfLines}
+              />
+              <Text style={styles.maxLength}>{memo.length}/500</Text>
+            </View>
+          </View>
+          <View style={styles.imgContainer}>
+            <Text style={styles.modalText}>사진 추가</Text>
+            <TouchableOpacity style={styles.imgButton} onPress={() => {
+              // 이미지 추가 버튼 눌렀을 때 동작
+              // 이미지 추가 기능 구현
+            }}>
+              <Image source={require('./assets/add-circle.png')} />
+              <Text style={styles.imgText}>사진 추가{"\n"}{images.length}/3</Text>
+            </TouchableOpacity>
+          </View>
+          </ScrollView>
+        </View>
+      </Modal>
+    </View>
   );
 };
 
@@ -54,7 +130,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20, // 버튼들의 좌우 여백을 조절
     gap: 20, // 버튼들 사이의 간격을 조절
   },
-  button: {
+  stampButton: {
     width: 69, // 버튼 너비 설정 (한 줄에 4개씩 배치하므로 약 23%)
     height: 84, // 버튼 높이 설정
     aspectRatio: 1, // 가로 세로 비율을 1:1로 유지하여 버튼이 정사각형이 되도록 함
@@ -68,6 +144,160 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    width: 393,
+    height: 785,
+    flexShrink: 0,
+    borderRadius: 16,
+    marginTop: 67,
+  },
+  modalTitleContainer: {
+    flexDirection: 'row',
+    display: 'flex',
+    width: 393,
+    padding: 16,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    color: '#212429',
+    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'Pretendard',
+    fontWeight: '400',
+    fontStyle: 'normal',
+  },
+  modalText: {
+    fontFamily: 'Pretendard',
+    fontSize: 12,
+    fontStyle: 'normal',
+    fontWeight: '400',
+  },
+  closeButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  stampContainer: {
+    flexDirection: 'row',
+    width: 393,
+    height: 60,
+    paddingLeft: 16,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 20,
+  },
+  stampContent: {
+    flexDirection: 'row',
+    display: 'flex',
+    paddingTop: 8,
+    paddingBottom: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+  },
+  stampText: {
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 20,
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    width: 393,
+    height: 60,
+    paddingLeft: 16,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 30,
+  },
+  timeText: {
+    fontFamily: 'Pretendard',
+    fontSize: 14,
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 20,
+  },
+  horizontalLine: {
+    width: 358,
+    height: 0.7,
+    backgroundColor: '#F0F0F0',
+    margin: 16,
+  },
+  memoContainer: {
+    width: 393,
+    padding: 16,
+    justifyContent: 'flex-start',
+    gap: 7,
+  },
+  memoContent: {
+    flexDirection: 'column',
+    display: 'flex',
+    width: 361,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+    borderRadius: 6,
+  },
+  memoText: {
+    alignSelf: 'stretch',
+    color: '#212429',
+    textAlignVertical: 'top',
+    fontSize: 14,
+    fontFamily: 'Pretendard',
+    fontWeight: '400',
+    fontStyle: 'normal',
+    lineHeight: 20,
+  },
+  maxLength: {
+    color: '#495057',
+    textAlign: 'right',
+    fontSize: 12,
+    fontFamily: 'Pretendard',
+    fontWeight: '400',
+    fontStyle: 'normal',
+    lineHeight: 20,
+  },
+  imgContainer: {
+    flexDirection: 'column',
+    width: 393,
+    padding: 16,
+    justifyContent: 'flex-start',
+    gap: 10,
+  },
+  imgButton: {
+    flexDirection: 'column',
+    display: 'flex',
+    width: 100,
+    height: 100,
+    paddingTop: 20,
+    paddingRight: 18,
+    paddingBottom: 14,
+    paddingLeft: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#D7D7D7',
+    borderStyle: 'dashed',
+    backgroundColor: '#FAFAFA',
+  },
+  imgText: {
+    color: '#D7D7D7',
+    textAlign: 'center',
+    fontSize: 8,
+    fontFamily: 'Pretendard',
+    fontWeight: '600',
+    fontStyle: 'normal',
+    lineHeight: 10,
   },
 });
 
