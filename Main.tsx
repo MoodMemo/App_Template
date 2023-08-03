@@ -41,6 +41,7 @@ async function test() {
   console.log(allStamps.data.listStamps.items);
 }
 
+
 /*
 realm 테스트용 함수
  */

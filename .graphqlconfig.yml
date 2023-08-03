@@ -1,5 +1,5 @@
 projects:
-  Stamps API:
+  Users API:
     schemaPath: src/graphql/schema.json
     includes:
       - src/graphql/**/*.ts
@@ -11,8 +11,5 @@ projects:
         generatedFileName: src/API.ts
         docsFilePath: src/graphql
         region: ap-northeast-2
-        apiId: 2znkxvtbprgybboj47ilfqgvmy
+        apiId: elaksus6q5djrbvoojknynb4fa
         maxDepth: 2
-extensions:
-  amplify:
-    version: 3

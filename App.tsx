@@ -29,8 +29,14 @@ import SplashScreen from 'react-native-splash-screen';
 
 import AnimatedViewBirthday from './AnimatedViewBirthday';
 
-import Main from './Main'
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
+
+import Main from './Main'
+import { create } from 'react-test-renderer';
+
+const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
   
@@ -58,15 +64,17 @@ function App(): JSX.Element {
   if(check==0)
   {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <AnimatedViewBirthday />
-      </View>
+      </SafeAreaView>
     );
   }
   else
   {
     return (
-      <Main/>
+      <SafeAreaView style={styles.container}>
+        <Main/>
+      </SafeAreaView>
     );
   }
 }
@@ -75,6 +83,7 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
+    backgroundColor:"#FFFFFF",
   },
   sectionTitle: {
     fontSize: 24,
