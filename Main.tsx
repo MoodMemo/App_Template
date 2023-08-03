@@ -242,11 +242,13 @@ async function test_saveUserInfo_toAsyncStorage(birthday, job) {
 
 
 function Main({ birthday, job }) {
-  //test(); //graphql 테스트를 위해 넣어뒀음
-  // test2(birthday, job); //realm 테스트를 위해 넣어뒀음
-  test_saveUserInfo_toAsyncStorage(birthday, job); //asyncstorage 테스트를 위해 넣어뒀음
-  test_realm_ver4();
-  test_realm_ver4_RUD();
+  if (birthday !== null) {
+    //test(); //graphql 테스트를 위해 넣어뒀음
+    // test2(birthday, job); //realm 테스트를 위해 넣어뒀음
+    test_saveUserInfo_toAsyncStorage(birthday, job); //asyncstorage 테스트를 위해 넣어뒀음
+    test_realm_ver4();
+    test_realm_ver4_RUD();
+  }
   return (
     /*
     하단 바와 함께 그에 맞는 탭이 렌더링됩니다.

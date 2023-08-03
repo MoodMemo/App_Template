@@ -31,6 +31,7 @@ import AnimatedViewBirthday from './AnimatedViewBirthday';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import Main from './Main'
@@ -60,12 +61,14 @@ function App(): JSX.Element {
   const check=0;
 
   SplashScreen.hide();
-  
-  if(check==0)
-  {
+
+  const isRegistered = AsyncStorage.getItem('@UserInfo:isRegistered');
+
+  if (isRegistered !== null) {
+    console.log("isRegistered: " + isRegistered);
     return (
       <SafeAreaView style={styles.container}>
-        <AnimatedViewBirthday />
+        <Main birthday={null} job={null}/>
       </SafeAreaView>
     );
   }
@@ -73,7 +76,7 @@ function App(): JSX.Element {
   {
     return (
       <SafeAreaView style={styles.container}>
-        <Main/>
+        <AnimatedViewBirthday />
       </SafeAreaView>
     );
   }
