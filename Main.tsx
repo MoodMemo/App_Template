@@ -269,7 +269,7 @@ function Main({ birthday, job }) {
           }}
         />
         <Tab.Screen
-          name="Settings"
+          name="설정"
           component={SettingsScreen} //설정 화면
           options={{
             tabBarIcon: ({color, size}) => (
