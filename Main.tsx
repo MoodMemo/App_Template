@@ -190,8 +190,7 @@ async function test_realm_ver4_RUD() { // 테스트 완료 ! 지워도 됩니다
   console.log(repository.getAllNotifications());
 }
 
-/**
- * asyncstorage 테스트용 함수
+/** asyncstorage 테스트용 함수
  */
 async function test_saveUserInfo_toAsyncStorage(birthday, job) {
   const createUser = async (birthday, job) => {
