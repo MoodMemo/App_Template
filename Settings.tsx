@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Switch} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -141,7 +141,17 @@ const Settings = () => {
                         <Text style={{fontSize: 17, color:"#495057"}}>알림</Text>
                         <SwitchToggle
                           switchOn={isNotificationEnabled}
-                          onPress={() => setIsNotificationEnabled(!isNotificationEnabled)}
+                          onPress={async () => {
+                            setIsNotificationEnabled(!isNotificationEnabled);
+                            if (Platform.OS === 'android') {
+                                try {
+                                    await PermissionsAndroid.request(
+                                      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+                                    );
+                                  } catch (error) {
+                                  }
+                            }
+                          }}
                           containerStyle={{
                             marginTop: 2,
                             width: 45,  
