@@ -12,6 +12,9 @@ import Settings from './Settings';
 
 import Amplify, {API, graphqlOperation} from 'aws-amplify';
 import * as queries from './src/graphql/queries'
+import realm from './src/localDB/document';
+import {createNotification, createCustomStamp, createDailyReport, createPushedStamp} from './src/localDB/document';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const Tab = createBottomTabNavigator();
@@ -38,8 +41,193 @@ async function test() {
   console.log(allStamps.data.listStamps.items);
 }
 
-function Main() {
+
+/*
+realm 테스트용 함수
+ */
+async function test2(birthday, job) {  // 구 버전 - user document ver.
+  Realm.open({}).then((realm) => {
+      console.log("Realm is located at: " + realm.path);
+    });
+  const createUser = (birthday, job) => {
+    realm.write(() => {
+      realm.create('User', {
+        id: new Date().getTime().toString(),
+        // name: "haeun",
+        // birth: new Date("2001-12-30"),
+        birth: new Date(birthday),
+        // job: "student",
+        job: job,
+        // notificationAllow: true,
+        // noficationsTime: ["09:00", "13:00", "17:00", "23:00"],
+        startDate: new Date(),
+        continueDate: 0,
+      });
+    });
+  }
+  createUser(birthday, job);
+  console.log("create user finished");
+  // const getUser = async () => {
+  //   try {
+  //     let localUser: Results<IUser> = await realm.objects("User");
+  //     setUser(localUser[0]);
+  //   } catch (e) {
+  //     Alert.alert("유저데이터가 없어요");
+  //   }
+  // };
+  // getUser();
+}
+/**
+ * // 데이터 삭제
+ * realm.write(() => {
+ * const userToDelete = realm.objects('User').filtered('name = "John"'); // 삭제할 데이터를 쿼리로 가져옴
+ * realm.delete(userToDelete); // 가져온 데이터를 삭제
+ * });
+ */
+async function test_realm_ver4() {
+  Realm.open({}).then((realm) => {
+      console.log("Realm is located at: " + realm.path);
+  });
+
+  const deleteAll = () => {
+    realm.deleteAll();
+    console.log("delete all finished");
+  }
+  const createDefaultNotification = () => {
+    createNotification({
+      day: [true, true, true, true, true, false, false],
+      time: "09:00"
+    });
+    createNotification({
+      day: [true, true, true, true, true, true, true],
+      time: "13:00"
+    });
+    createNotification({
+      day: [true, true, true, true, true, true, true],
+      time: "19:00"
+    });
+    createNotification({
+      day: [true, true, true, true, true, true, true],
+      time: "23:00"
+    });
+    console.log("create default notification finished");
+  }
+  const createDefaultCustomStamp = () => {
+    createCustomStamp({
+      stampName: "기쁨",
+      emoji: "😆"
+    });
+    createCustomStamp({
+      stampName: "슬픔",
+      emoji: "😭"
+    });
+    createCustomStamp({
+      stampName: "짜증",
+      emoji: "😡"
+    });
+    createCustomStamp({
+      stampName: "평온",
+      emoji: "🙂"
+    });
+    createCustomStamp({
+      stampName: "피곤",
+      emoji: "😴"
+    });
+    console.log("create default custom stamp finished");
+  }
+  const createDefaultPushedStamp = () => {
+    createPushedStamp({
+      dateTime: new Date(),
+      stampName: "기쁨",
+      emoji: "😆",
+      memo: "기쁨 스탬프 눌렀다무",
+      imageUrl: "이미지는 안넣었다무"
+    });
+    createPushedStamp({
+      dateTime: new Date("2021-08-03 09:00:00"),
+      stampName: "슬픔",
+      emoji: "😭",
+      memo: "슬픔 스탬프 눌렀다무",
+      imageUrl: "이미지는 안넣었다무"
+    });
+    console.log("create default pushed stamp finished");
+  }
+  const createDefaultDailyReport = () => {
+    createDailyReport({
+      date: "2023-08-03",
+      title: "테스트 일기랍니다",
+      bodytext: "테스트 일기 내용입니다",
+      keyword: ["소마", "희희하하", "무드메모"]
+    });
+    console.log("create default daily report finished");
+  }
+
+  realm.write(() => {
+    deleteAll();
+    createDefaultNotification();
+    createDefaultCustomStamp();
+    createDefaultPushedStamp();
+    createDefaultDailyReport();
+  });
+  console.log("** create default data finished");
+}
+
+/**
+ * asyncstorage 테스트용 함수
+ */
+async function test_saveUserInfo_toAsyncStorage(birthday, job) {
+  const createUser = async (birthday, job) => {
+    try {
+      await AsyncStorage.setItem('@UserInfo:isRegistered', 'true');
+      // await AsyncStorage.setItem('@UserInfo:userName', userName);
+      await AsyncStorage.setItem('@UserInfo:birth', birthday);
+      await AsyncStorage.setItem('@UserInfo:job', job);
+      // await AsyncStorage.setItem('@UserInfo:notificationAllow', notificationAllow ? 'true' : 'false'); -> 얘는 나중에 알림 허용할 때 가져가셔용
+      await AsyncStorage.setItem('@UserInfo:registerDate', new Date().toString());
+      // await AsyncStorage.setItem('@UserInfo:progressedDate', progressedDate); -> 얘는 나중에 스탬프 찍으면 업데이트
+      console.log("create user finished");
+    } catch (e) {
+      console.log('Error saving data:', e);
+    }
+  }
+  const getUser = async () => {
+    try {
+      const isRegistered = await AsyncStorage.getItem('@UserInfo:isRegistered');
+      if (isRegistered !== null) {
+        // value previously stored
+        console.log("isRegistered: " + isRegistered);
+      }
+      const birth = await AsyncStorage.getItem('@UserInfo:birth');
+      if (birth !== null) {
+        // value previously stored
+        console.log("birth: " + birth);
+      }
+      const job = await AsyncStorage.getItem('@UserInfo:job');
+      if (job !== null) {
+        // value previously stored
+        console.log("job: " + job);
+      }
+      const registerDate = await AsyncStorage.getItem('@UserInfo:registerDate');
+      if (registerDate !== null) {
+        // value previously stored
+        console.log("registerDate: " + registerDate);
+      }
+    } catch (e) {
+      // error reading value
+      console.log("error reading value");
+    }
+  }
+  createUser(birthday, job);
+  getUser();
+}
+
+
+
+function Main({ birthday, job }) {
   //test(); //graphql 테스트를 위해 넣어뒀음
+  // test2(birthday, job); //realm 테스트를 위해 넣어뒀음
+  test_saveUserInfo_toAsyncStorage(birthday, job); //asyncstorage 테스트를 위해 넣어뒀음
+  test_realm_ver4();
   return (
     /*
     하단 바와 함께 그에 맞는 탭이 렌더링됩니다.
