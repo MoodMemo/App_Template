@@ -6,6 +6,9 @@ import ThisWeekSummary from './ThisWeekSummary';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
+import Modal from "react-native-modal";
+import AntIcon from 'react-native-vector-icons/AntDesign';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 
 interface DropdownProps {
@@ -34,9 +37,12 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <View style={dropDownStyles.dropdownContainer}>
       <TouchableOpacity onPress={toggleDropdown} style={dropDownStyles.dropdownButton}>
-        <Text style={dropDownStyles.dropdownButtonText}>
-          {selectedValue}{label} 🔽
-        </Text>
+        <View>
+          <Text style={dropDownStyles.dropdownButtonText}>
+            {selectedValue}{label}
+          </Text>
+          <FontAwesomeIcon name='sort-down' size={16} color="#737373" style={{position: 'absolute', right: 7, top: 5}}/>
+        </View>
       </TouchableOpacity>
       {isOpen && (
         <View style={dropDownStyles.dropdownOptions}>
@@ -81,6 +87,8 @@ const Weekly = () => {
     return { startDate, endDate };
   };
   const { startDate, endDate } = getDatesForWeek();
+
+  const [isDetailModelVisible, setIsDetailModalVisible] = useState(false);
 
 
 
@@ -141,8 +149,8 @@ const Weekly = () => {
                   date.isoWeekday() === 7 && styles.dayText_sunday]}>{date.format('ddd')}</Text>
                 <Text style={[
                   styles.dayText, 
-                  date.isSame(today, 'day') && styles.dayText_today,
                   date.isoWeekday() === 7 && styles.dayText_sunday,
+                  date.isSame(today, 'day') && styles.dayText_today,
                   date.isAfter(moment()) && styles.dayText_notYet]}>{date.format('DD')}</Text>
                 <Text style={[
                   styles.dayText,
@@ -159,9 +167,40 @@ const Weekly = () => {
       {/* 3. 오늘의 감정 리스트 */}
       <View style={styles.title}>
         <Text style={{fontSize: 22, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
-        <Text style={{fontSize: 16, color: '#495057'}}>자세히 보기</Text>
+        <TouchableOpacity onPress={() => { setIsDetailModalVisible(!isDetailModelVisible); }}>
+          <Text style={{fontSize: 16, color: '#495057'}}>자세히 보기</Text>
+          {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
+          <Modal
+            isVisible = {isDetailModelVisible}
+            // presentationStyle='pageSheet'
+            animationIn={"fadeIn"}
+            animationInTiming={200}
+            animationOut={"fadeOut"}
+            animationOutTiming={200}
+            onBackdropPress={() => {setIsDetailModalVisible(!isDetailModelVisible);}}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={{backgroundColor: 'white', borderRadius: 10, padding: 20, width: 370, height: 500}}>
+              <Text>TODAY</Text>  
+              <Text>{today.format('M월 D일 dd')}</Text>
+              <Text>스탬프 상세 히스토리</Text>
+              <Text></Text>
+              {getStamp(today.add(1, 'day')).map((stamp) => (
+                <Text key={stamp.id} style={styles.emotion}>
+                  {stamp.emoji} {stamp.stampName} **시간: {stamp.dateTime.getHours()}:{stamp.dateTime.getMinutes()}
+                  **메모: {stamp.memo} **사진: {stamp.imageUrl}
+                </Text>
+              ))}
+            </View>
+          </Modal>
+        </TouchableOpacity>
       </View>
         {/* <Text>{today.toString()}</Text> */}
+      {/* 3-1. 감정 리스트 */}
       <View style={styles.todayEmotionList}>
         {getStamp(today.add(1, 'day')).map((stamp) => (
           <Text key={stamp.id} style={styles.emotion}>{stamp.emoji} {stamp.stampName}</Text>
@@ -207,6 +246,7 @@ const dropDownStyles = StyleSheet.create({
     backgroundColor: '#fafafa',
     padding: 5,
     paddingHorizontal: 12,
+    paddingRight: 22,
     borderRadius: 8,
     fontWeight: 'bold',
   },
@@ -228,7 +268,7 @@ const dropDownStyles = StyleSheet.create({
 
 
 const styles = StyleSheet.create({
-  
+
   emojisContainer: {
     flexDirection: 'row',
     // backgroundColor: '#92AAFF', // blue
