@@ -141,8 +141,8 @@ const Weekly = () => {
                   date.isoWeekday() === 7 && styles.dayText_sunday]}>{date.format('ddd')}</Text>
                 <Text style={[
                   styles.dayText, 
-                  date.isSame(today, 'day') && styles.dayText_today,
                   date.isoWeekday() === 7 && styles.dayText_sunday,
+                  date.isSame(today, 'day') && styles.dayText_today,
                   date.isAfter(moment()) && styles.dayText_notYet]}>{date.format('DD')}</Text>
                 <Text style={[
                   styles.dayText,
@@ -228,7 +228,7 @@ const dropDownStyles = StyleSheet.create({
 
 
 const styles = StyleSheet.create({
-  
+
   emojisContainer: {
     flexDirection: 'row',
     // backgroundColor: '#92AAFF', // blue
