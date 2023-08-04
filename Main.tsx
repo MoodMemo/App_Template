@@ -7,7 +7,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Octicons from 'react-native-vector-icons/Octicons';
 
 import Home from './Home';
-import Weekly from './Weekly';
+import Weekly from './weeklyView/Weekly';
 import Settings from './Settings';
 
 import Amplify, {API, graphqlOperation} from 'aws-amplify';
@@ -16,7 +16,6 @@ import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 const Tab = createBottomTabNavigator();
 
 function HomeScreen() {
@@ -24,7 +23,6 @@ function HomeScreen() {
 }
 
 function WeeklyScreen() {
-
   return <Weekly/>; //Home.tsx
 }
 
