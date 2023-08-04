@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -15,6 +15,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Alert,
 } from 'react-native';
 
 import {
@@ -33,9 +34,13 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import messaging from '@react-native-firebase/messaging';
+import PushNotification from "react-native-push-notification";
 
 import Main from './Main'
 import { create } from 'react-test-renderer';
+
+//import {requestUserPermission, notificationListener} from "./src/utils/PushNotification";
 
 const Stack = createNativeStackNavigator();
 
@@ -52,6 +57,69 @@ function App(): JSX.Element {
     }
   )();
 
+  useEffect(() => {
+    scheduleNotifications();
+  })
+
+  const scheduleNotifications = () =>{
+    console.log(Date.now());
+    const notifications = [
+      {
+        channelId: 'Test_Id',
+        message: 'Notification 1',
+        date: new Date(Date.now() + 1000), // 1 second from now
+        visibility: "public",
+        playSound: false
+      },
+      {
+        channelId: 'Test_Id',
+        message: 'Notification 2',
+        date: new Date(Date.now() + 5000), // 5 seconds from now
+        visibility: "public",
+        playSound: false
+      },
+      {
+        channelId: 'Test_Id',
+        message: 'Notification 3',
+        date: new Date(Date.now() + 10000), // 10 seconds from now
+        visibility: "public",
+        playSound: false
+      },
+    ];
+
+    notifications.forEach((notification) => {
+      PushNotification.localNotificationSchedule(notification)
+    })
+  }
+
+  /*
+  useEffect(() => {
+    requestUserPermission();
+    notificationListener();
+  }, []);
+  */
+  /*
+  useEffect(() => {
+    pushNotification();
+  }, []);
+
+  async function pushNotification() {
+    let fcmToken = await messaging().getToken();
+    if (fcmToken) {
+      console.log('token', fcmToken);
+    }
+  }
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert(
+        'A new FCM message arrived in foreground mode',
+        JSON.stringify(remoteMessage),
+      );
+    });
+    return unsubscribe;
+  }, []);
+  */
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {

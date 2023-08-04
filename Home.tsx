@@ -1,14 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Dropdown from './Dropdown';
 import StampView from './StampView';
+import PushNotification from "react-native-push-notification";
+
+
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const options = ['최근 생성 순', '감정 순', '이름 순'];
+
+  useEffect(() => {
+    createChannels();
+  }, []);
+
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
+
+  const createChannels = () => {
+    PushNotification.createChannel(
+      {
+        channelId: "MoodMemo_ID",
+        channelName: "MoodMemo"
+      }
+    )
+  }
 
   return (
     <View style={styles.view}>

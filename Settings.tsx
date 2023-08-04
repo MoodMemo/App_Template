@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Switch} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
+
 
 
 const test = () => {
@@ -12,16 +13,24 @@ const test = () => {
 
 const Settings = () => {
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
   const [isKakaoModalVisible, setIsKakaoModalVisible] = useState(false);
   const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const [isCoffeeModalVisible, setIsCoffeeModalVisible] = useState(false);
+  const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
-        <ScrollView>
+        <ScrollView
+        alwaysBounceHorizontal={false}
+        alwaysBounceVertical={false}
+        bounces={false}
+        overScrollMode="never"
+        showsVerticalScrollIndicator={false}
+        >
             <TouchableOpacity>
                 <View
                   style={{
@@ -61,11 +70,12 @@ const Settings = () => {
                             width:'80%',
                             height:'50%',
                             justifyContent:'center',
-                            alignItems:'center'
+                            alignItems:'center',
+                            borderRadius:10
                         }}>
                             <View style={{
                                 }}>
-                                    <Text>프로필 설정 변경은 개발 중!</Text>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>프로필 설정 변경은 개발 중!</Text>
                             </View>
                         </View>
                     </Modal>
@@ -101,11 +111,12 @@ const Settings = () => {
                             width:'80%',
                             height:'50%',
                             justifyContent:'center',
-                            alignItems:'center'
+                            alignItems:'center',
+                            borderRadius:10
                         }}>
                             <View style={{
                                 }}>
-                                    <Text>채널톡 연동은 개발 중!</Text>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>채널톡 연동은 개발 중!</Text>
                             </View>
                         </View>
                     </Modal>
@@ -132,7 +143,25 @@ const Settings = () => {
                         <Text style={{fontSize: 17, color:"#495057"}}>알림</Text>
                         <SwitchToggle
                           switchOn={isNotificationEnabled}
-                          onPress={() => setIsNotificationEnabled(!isNotificationEnabled)}
+                          onPress={async () => {
+                            if (Platform.OS === 'android') {
+                                try {
+                                    const granted = await PermissionsAndroid.request(
+                                      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+                                    );
+                                    if(granted===PermissionsAndroid.RESULTS.GRANTED){
+                                        console.log(PermissionsAndroid.RESULTS.GRANTED);
+                                        setIsNotificationEnabled(!isNotificationEnabled);
+                                    }
+                                    else if(granted==='never_ask_again'){
+                                        setIsNotificationModalVisible(!isNotificationModalVisible);
+                                        console.log('denied');
+                                    }
+                                  } catch (error) {
+                                    console.warn(error);
+                                  }
+                            }
+                          }}
                           containerStyle={{
                             marginTop: 2,
                             width: 45,  
@@ -151,10 +180,99 @@ const Settings = () => {
                           backgroundColorOff='#78788029'
                         />
                     </View>
+                    <Modal isVisible={isNotificationModalVisible}
+                        animationIn={"fadeIn"}
+                        animationInTiming={200}
+                        animationOut={"fadeOut"}
+                        animationOutTiming={200}
+                        onBackdropPress={() => {
+                            setIsNotificationModalVisible(!isNotificationModalVisible);
+                        }}
+                        backdropColor='#CCCCCC'//'#FAFAFA'
+                        backdropOpacity={0.8}
+                        style={{
+                            alignItems:'center'
+                        }}>
+                        <View style={{
+                            backgroundColor:"#FFFFFF",
+                            width:'80%',
+                            height:'20%',
+                            justifyContent:'center',
+                            alignItems:'center',
+                            borderRadius:10
+                        }}>
+                            <View style={{
+                                alignItems:'center',
+                                }}>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>알림을 받으시려면 기기 설정에서</Text>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>알림 권한을 허용해주세요!</Text>
+                            </View>
+                        </View>
+                    </Modal>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity>
+                <TouchableOpacity disabled={!isNotificationEnabled}>
+                    <View
+                        style={{
+                            paddingHorizontal: 20,
+                            paddingBottom: 20,
+                            paddingTop: 20,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between'
+                        }}>
+                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림</Text>
+                    </View>
+                </TouchableOpacity>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <TouchableOpacity disabled={!isNotificationEnabled}>
+                    <View
+                        style={{
+                            paddingHorizontal: 20,
+                            paddingBottom: 20,
+                            paddingTop: 20,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between'
+                        }}>
+                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림</Text>
+                    </View>
+                </TouchableOpacity>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <TouchableOpacity disabled={!isNotificationEnabled}>
+                    <View
+                        style={{
+                            paddingHorizontal: 20,
+                            paddingBottom: 20,
+                            paddingTop: 20,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between'
+                        }}>
+                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림</Text>
+                    </View>
+                </TouchableOpacity>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <TouchableOpacity disabled={!isNotificationEnabled}>
+                    <View
+                        style={{
+                            paddingHorizontal: 20,
+                            paddingBottom: 20,
+                            paddingTop: 20,
+                            flexDirection: 'row',
+                            justifyContent: 'space-between'
+                        }}>
+                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림</Text>
+                    </View>
+                </TouchableOpacity>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <TouchableOpacity disabled={true}>
                       <View
                           style={{
                               paddingHorizontal: 20,
@@ -206,11 +324,12 @@ const Settings = () => {
                             width:'80%',
                             height:'50%',
                             justifyContent:'center',
-                            alignItems:'center'
+                            alignItems:'center',
+                            borderRadius:10
                         }}>
                             <View style={{
                                 }}>
-                                    <Text>공지사항/이용 가이드는 개발 중!</Text>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>공지사항/이용 가이드는 개발 중!</Text>
                             </View>
                         </View>
                     </Modal>
@@ -246,11 +365,12 @@ const Settings = () => {
                             width:'80%',
                             height:'50%',
                             justifyContent:'center',
-                            alignItems:'center'
+                            alignItems:'center',
+                            borderRadius:10
                         }}>
                             <View style={{
                                 }}>
-                                    <Text>고객센터/의견 보내기/오류 제보는 개발 중!</Text>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>고객센터/의견 보내기/오류 제보는 개발 중!</Text>
                             </View>
                         </View>
                     </Modal>
@@ -286,11 +406,12 @@ const Settings = () => {
                             width:'80%',
                             height:'50%',
                             justifyContent:'center',
-                            alignItems:'center'
+                            alignItems:'center',
+                            borderRadius:10
                         }}>
                             <View style={{
                                 }}>
-                                    <Text>나는 커피 못 마셔</Text>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>나 커피 못 마셔</Text>
                             </View>
                         </View>
                     </Modal>

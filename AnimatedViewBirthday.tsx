@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet} from 'react-native';
 
 import Main from './Main'
 
@@ -8,7 +8,7 @@ const AnimatedViewBirthday = () => {
   const [birthday, setBirthday] = useState('');
   const [job, setJob] = useState('');
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (section === 'start') {
         setSection('birthday');
     }
@@ -17,10 +17,18 @@ const AnimatedViewBirthday = () => {
         setSection('job');
     } else {
       // Handle completion or other actions when occupation is entered
-        console.log('Selected job:', job);
-        setSection('main');
-    }
+      if (Platform.OS === 'android') {
+          try {
+                await PermissionsAndroid.request(
+                  PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+                );
+              } catch (error) {
+              }
+      console.log('Selected job:', job);
+      setSection('main');
+    };
   };
+};
 
   return (
     <>
