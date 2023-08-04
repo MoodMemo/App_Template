@@ -12,7 +12,7 @@ import PushNotification from "react-native-push-notification";
 import messaging from '@react-native-firebase/messaging';
 
 Amplify.configure(config);
-
+/*
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('Message handled in the background!', remoteMessage);
 });
@@ -20,8 +20,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
 messaging().getInitialNotification(async remoteMessage => {
   console.log('Message handled in the kill state!', remoteMessage);
 });
+*/
 
-/*
 PushNotification.configure({
 
   onRegister: function (token) {
@@ -41,9 +41,10 @@ PushNotification.configure({
 PushNotification.createChannel(
   {
     channelId:"Test_Id",
-    channelName:"Test_Name"
+    channelName:"Test_Name",
+    playSound: false
   }
 )
-*/
+
 AppRegistry.registerComponent(appName, () => App);
 

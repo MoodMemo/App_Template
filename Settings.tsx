@@ -19,7 +19,9 @@ const Settings = () => {
   const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const [isCoffeeModalVisible, setIsCoffeeModalVisible] = useState(false);
+  const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
         <ScrollView
@@ -142,13 +144,21 @@ const Settings = () => {
                         <SwitchToggle
                           switchOn={isNotificationEnabled}
                           onPress={async () => {
-                            setIsNotificationEnabled(!isNotificationEnabled);
                             if (Platform.OS === 'android') {
                                 try {
-                                    await PermissionsAndroid.request(
+                                    const granted = await PermissionsAndroid.request(
                                       PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
                                     );
+                                    if(granted===PermissionsAndroid.RESULTS.GRANTED){
+                                        console.log(PermissionsAndroid.RESULTS.GRANTED);
+                                        setIsNotificationEnabled(!isNotificationEnabled);
+                                    }
+                                    else if(granted==='never_ask_again'){
+                                        setIsNotificationModalVisible(!isNotificationModalVisible);
+                                        console.log('denied');
+                                    }
                                   } catch (error) {
+                                    console.warn(error);
                                   }
                             }
                           }}
@@ -170,6 +180,35 @@ const Settings = () => {
                           backgroundColorOff='#78788029'
                         />
                     </View>
+                    <Modal isVisible={isNotificationModalVisible}
+                        animationIn={"fadeIn"}
+                        animationInTiming={200}
+                        animationOut={"fadeOut"}
+                        animationOutTiming={200}
+                        onBackdropPress={() => {
+                            setIsNotificationModalVisible(!isNotificationModalVisible);
+                        }}
+                        backdropColor='#CCCCCC'//'#FAFAFA'
+                        backdropOpacity={0.8}
+                        style={{
+                            alignItems:'center'
+                        }}>
+                        <View style={{
+                            backgroundColor:"#FFFFFF",
+                            width:'80%',
+                            height:'20%',
+                            justifyContent:'center',
+                            alignItems:'center',
+                            borderRadius:10
+                        }}>
+                            <View style={{
+                                alignItems:'center',
+                                }}>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>알림을 받으시려면 기기 설정에서</Text>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>알림 권한을 허용해주세요!</Text>
+                            </View>
+                        </View>
+                    </Modal>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
