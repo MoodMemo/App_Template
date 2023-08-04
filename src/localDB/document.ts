@@ -261,15 +261,15 @@ export function getPushedStampsByField(fieldName: keyof IPushedStamp, value: any
   const pushedStamp = realm.objects<IPushedStamp>("PushedStamp").filtered(`${fieldName} = $0`, value);
   return pushedStamp.map((pushedStamp) => pushedStamp)[0];
 }
-export function tmppp(
+export function getPushedStampsByFieldBetween(
   fieldName: keyof IPushedStamp, value1: any, value2: any): IPushedStamp[] {
   const pushedStamps = realm.objects<IPushedStamp>("PushedStamp").filtered(`${fieldName} >= $0 AND ${fieldName} < $1`, value1, value2);
   return pushedStamps.map((pushedStamp) => pushedStamp);
 }
-export function getPushedStampsByFieldBetween(startDate: Date, endDate: Date): IPushedStamp[] {
-  const results = realm.objects<IPushedStamp>('PushedStamp').filtered('dateTime BETWEEN $0 AND $1', startDate, endDate);
-  return Array.from(results);
-}
+// export function getPushedStampsByFieldBetween(startDate: Date, endDate: Date): IPushedStamp[] {
+//   const results = realm.objects<IPushedStamp>('PushedStamp').filtered('dateTime BETWEEN $0 AND $1', startDate, endDate);
+//   return Array.from(results);
+// }
 export function deletePushedStamp(pushedStamp: IPushedStamp) {
   realm.delete(pushedStamp);
 }

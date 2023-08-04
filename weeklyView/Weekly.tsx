@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import moment from 'moment';
+import 'moment/locale/ko'; // 한국어로 변환
 import ThisWeekSummary from './ThisWeekSummary';
-import getDatesBetween, { getEmoji, getStamp } from './DocumentFunc';
+import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
+import { deleteUserStamp } from '../src/graphql/mutations';
 
 
 interface DropdownProps {
@@ -29,26 +31,15 @@ const Dropdown: React.FC<DropdownProps> = ({
     setIsOpen(false);
   };
 
-  const [selectedYear, setSelectedYear] = useState<number>(2023);
-  const [selectedMonth, setSelectedMonth] = useState<number>(8);
-  const [selectedWeek, setSelectedWeek] = useState<number>(1);
-  // 해당 주차의 첫째 날과 마지막 날을 구하는 함수
-  const getDatesForWeek = () => {
-    const startDate = moment().year(selectedYear).month(selectedMonth - 1).week(selectedWeek).startOf('week');
-    const endDate = moment().year(selectedYear).month(selectedMonth - 1).week(selectedWeek).endOf('week');
-    return { startDate, endDate };
-  };
-  const { startDate, endDate } = getDatesForWeek();
-
   return (
-    <View style={styles.dropdownContainer}>
-      <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
-        <Text style={styles.dropdownButtonText}>
+    <View style={dropDownStyles.dropdownContainer}>
+      <TouchableOpacity onPress={toggleDropdown} style={dropDownStyles.dropdownButton}>
+        <Text style={dropDownStyles.dropdownButtonText}>
           {selectedValue}{label} 🔽
         </Text>
       </TouchableOpacity>
       {isOpen && (
-        <View style={styles.dropdownOptions}>
+        <View style={dropDownStyles.dropdownOptions}>
           {options.map((option) => (
             <TouchableOpacity
               key={option.value}
@@ -73,20 +64,15 @@ const Weekly = () => {
     // 이 부분에 실제로 일기를 생성하는 로직을 구현해야 합니다.
   };
 
+  const [today, setToday] = useState<moment.Moment>(moment());
+  const handleTodayChange = (date: moment.Moment) => { setToday(moment(date.subtract(2, 'days'))); };
 
   const [selectedYear, setSelectedYear] = useState<number>(2023);
   const [selectedMonth, setSelectedMonth] = useState<number>(8);
   const [selectedWeek, setSelectedWeek] = useState<number>(1);
-
-  const handleYearChange = (year: number) => {
-    setSelectedYear(year);
-  };
-  const handleMonthChange = (month: number) => {
-    setSelectedMonth(month);
-  };
-  const handleWeekChange = (week: number) => {
-    setSelectedWeek(week);
-  };
+  const handleYearChange = (year: number) => { setSelectedYear(year); };
+  const handleMonthChange = (month: number) => { setSelectedMonth(month); };
+  const handleWeekChange = (week: number) => { setSelectedWeek(week); };
 
   const getDatesForWeek = () => {
     const desiredWeekNumber = moment().year(selectedYear).month(selectedMonth - 1).date(1).week() + selectedWeek - 1;
@@ -96,14 +82,13 @@ const Weekly = () => {
   };
   const { startDate, endDate } = getDatesForWeek();
 
-  const [today, setToday] = useState(moment('2023-08-01'));
-  const todayStampList = () => {
-    console.log("todayStampList");
-    return getStamp(today);
-  }
+
+
+
+  // tmp_createDummyData();
 
   return (
-    <ScrollView contentContainerStyle={styles.container} horizontal={false}>
+    <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA',}} horizontal={false}>
       
       {/* 1 & 2. - 상단바 */}
       <View style={{backgroundColor: 'white'}}>
@@ -124,6 +109,7 @@ const Weekly = () => {
             options={[
               { label: '1월', value: 1 },
               { label: '2월', value: 2 },
+              { label: '7월', value: 7 },
               { label: '8월', value: 8 },
               // 이하 생략
             ]}
@@ -135,6 +121,8 @@ const Weekly = () => {
             options={[
               { label: '1주', value: 1 },
               { label: '2주', value: 2 },
+              { label: '3주', value: 2 },
+              { label: '4주', value: 2 },
               // 이하 생략
             ]}
             selectedValue={selectedWeek}
@@ -143,30 +131,51 @@ const Weekly = () => {
         </View>
         
         {/* 2. 이번 주의 요일, 날짜, 이모지들 */}
-        <View style={styles.weekInfo}>
-          <View style={styles.emojisContainer}>
-            {/* TODO - 간격을 완벽하게 동일하게 조정해야함 & 오늘 날짜/ 일요일 날짜는 색상 변경할 것 */}
-            {getDatesBetween(startDate, endDate).map((date) => (
-              <TouchableOpacity key={date.format('YYYYMMDD')}>
-                <Text style={styles.emoji}>{date.format('ddd')}</Text>
-                <Text style={styles.emoji}>{date.format('DD')}</Text>
-                <Text style={styles.emoji}>{getEmoji(getStamp(date))}</Text>
-              </TouchableOpacity>            
-            ))}
-          </View>
+        <View style={styles.emojisContainer}>
+          {/* TODO - 스탬프가 7개 이상일 경우 +n 등을 띄워야 함 */}
+          {getDatesBetween(startDate, endDate).map((date) => (
+            <TouchableOpacity key={date.format('YYYYMMDD')} onPress={() => handleTodayChange(date)}>
+              <View style={[styles.day, date.isSame(today, 'day') && styles.day_today]}>
+                <Text style={[
+                  styles.dayText,
+                  date.isoWeekday() === 7 && styles.dayText_sunday]}>{date.format('ddd')}</Text>
+                <Text style={[
+                  styles.dayText, 
+                  date.isSame(today, 'day') && styles.dayText_today,
+                  date.isoWeekday() === 7 && styles.dayText_sunday,
+                  date.isAfter(moment()) && styles.dayText_notYet]}>{date.format('DD')}</Text>
+                <Text style={[
+                  styles.dayText,
+                  { flex:1,
+                    fontSize: getEmoji(getStamp(date)).length >= 3 ? 14 : 14}
+                  ]}>{getEmoji(getStamp(date))}</Text>
+              </View>
+            </TouchableOpacity>            
+          ))}
         </View>
       </View>
 
+
       {/* 3. 오늘의 감정 리스트 */}
-      <View style={styles.todayEmotionList_text}>
-        <Text style={styles.title}>감정 리스트</Text>
-        <Text style={{fontSize: 16}}>자세히 보기</Text>
+      <View style={styles.title}>
+        <Text style={{fontSize: 22, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
+        <Text style={{fontSize: 16, color: '#495057'}}>자세히 보기</Text>
       </View>
+        {/* <Text>{today.toString()}</Text> */}
       <View style={styles.todayEmotionList}>
-        {getStamp(moment('2023-08-01')).map((stamp) => (
-          <Text key={stamp.id} style={styles.emotion_2}>{stamp.emoji} {stamp.stampName}</Text>
+        {getStamp(today.add(1, 'day')).map((stamp) => (
+          <Text key={stamp.id} style={styles.emotion}>{stamp.emoji} {stamp.stampName}</Text>
         ))}
       </View>
+
+
+
+
+
+
+
+
+
 
       {/* 4. AI 일기 생성 버튼 */}
       <TouchableOpacity onPress={handleGenerateDiary} style={styles.generateButton}>
@@ -181,7 +190,9 @@ const Weekly = () => {
   );
 }
 
-const styles = StyleSheet.create({
+
+
+const dropDownStyles = StyleSheet.create({
   dropdownContainer: {
     position: 'relative',
     marginBottom: 10,
@@ -192,11 +203,10 @@ const styles = StyleSheet.create({
   },
   dropdownButtonText: {
     fontSize: 16,
-    // color: 'red',
+    color: '#212429',
     backgroundColor: '#fafafa',
     padding: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingHorizontal: 12,
     borderRadius: 8,
     fontWeight: 'bold',
   },
@@ -214,39 +224,65 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     alignSelf: 'flex-start',
   },
+});
 
 
-
-
-
-
-
-  container: {
-    // padding: 20,
-    backgroundColor: '#FAFAFA',
-  },
-  header: {
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-  },
-  weekInfo: {
-    marginBottom: 20,
-    marginLeft: 10,
-    marginRight: 10,
-  },
+const styles = StyleSheet.create({
+  
   emojisContainer: {
     flexDirection: 'row',
+    // backgroundColor: '#92AAFF', // blue
+    borderBottomWidth: 1,
+    borderColor: '#f0f0f0',
+  },
+  day: {
+    width: (Dimensions.get('window').width) / 7,
+    height: (Dimensions.get('window').height) / 7,
+    // backgroundColor: '#FFE092', // yellow
+    display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: 10,
-    marginRight: 10,
   },
-  emoji: {
-    fontSize: 16,
+  day_today: {
+    borderBottomWidth: 2,
+    borderColor: '#00E3AD',
+  },
+  dayText: {
+    color: '#212429',
+    fontSize: 14,
     textAlign: 'center',
+    marginVertical: 5,
+    // backgroundColor: 'pink',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  dayText_sunday: {
+    color: '#FF7168',
+  },
+  dayText_notYet: {
+    color: '#F0F0F0',
+  },
+  dayText_today: {
+    // flexDirection: 'column', 
+    color: 'white',
+    backgroundColor: '#00E3AD',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    lineHeight: 20,
+    overflow: 'hidden',
+  },
+
+  title: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+    alignItems: 'baseline', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+    marginTop: 30,
+    marginBottom: 20,
+    marginLeft: 20,
+    marginRight: 20,
   },
   todayEmotionList: {
     flexDirection: 'row',
@@ -256,33 +292,27 @@ const styles = StyleSheet.create({
     marginRight: 20,
     justifyContent: 'flex-start',
     alignItems: 'baseline',
-  },
-  todayEmotionList_text: {
-    flexDirection: 'row',
-    justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
-    alignItems: 'baseline', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
-    marginTop: 30,
-    marginBottom: 20,
-    marginLeft: 20,
-    marginRight: 20,
+    flexWrap: 'wrap',
   },
   emotion: {
     fontSize: 18,
-    marginBottom: 10,
-  },
-  emotion_2: {
-    fontSize: 18,
+    color: '#212429',
     marginBottom: 5,
     marginRight: 10,
     padding: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingHorizontal: 15,
     borderRadius: 7,
     borderWidth: 2,
     borderColor: '#f0f0f0',
     backgroundColor: '#ffffff',
   },
+
+
+
+
   generateButton: {
+    color: '#495057',
+    fontSize: 18,
     alignItems: 'center',
     backgroundColor: '#f0f0f0',
     padding: 10,
@@ -293,12 +323,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
   },
   generateButtonText: {
-    color: '#000000',
-    fontSize: 16,
+    color: '#495057',
+    fontSize: 18,
   },
   uploadedImage: {
     alignItems: 'center',
