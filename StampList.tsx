@@ -22,9 +22,15 @@ const StampList = ({visible, closeModal}) => {
       { id: 10, label: '행복', emotion: '😁'},
     ]
   );
+  const [addStampDataLabel, setAddStampDataLabel] = useState('');
+  const [addStampDataEmotion, setAddStampDataEmotion] = useState('');
+
   const [isChecked, setIsChecked] = useState(false);
 
   const [stampCount, setStampCount] = useState(0);
+
+  const [addStampModalVisible, setAddStampModalVisible] = useState(false);
+  const [addStampButtonDisabled, setAddStampButtonDisabled] = useState(true);
 
   const countSelectedRadioButtons = () => {
     const count = checkedStates.filter((state) => state === true).length;
@@ -56,6 +62,15 @@ const StampList = ({visible, closeModal}) => {
     setStampListData(newStampListData);
     setCheckedStates(newCheckedStates);
     console.log("스탬프 삭제");
+  };
+
+  const handleAddStamp = (label, emotion) => {
+    // 스탬프 추가
+    const newStampListData = [...stampListData, { id: stampListData.length + 1, label, emotion}];
+    setStampListData(newStampListData);
+    setAddStampModalVisible(false);
+    setAddStampButtonDisabled(true);
+    console.log("스탬프 추가");
   };
 
   return (
@@ -110,6 +125,60 @@ const StampList = ({visible, closeModal}) => {
           </TouchableOpacity>
         }
       </View>
+      <Modal visible={addStampModalVisible} animationType='slide' transparent>
+        {/* <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.keyboardAvoidingContainer}
+        > */}
+          <View style={styles.addStampModalContainer}>
+            <View style={styles.addStampModalTitleContainer}>
+              <TouchableOpacity onPress={() => setAddStampModalVisible(false)}>
+                <Image source={require('./assets/close.png')} />
+              </TouchableOpacity>
+              <Text style={styles.addStampModalTitle}>스탬프 추가</Text>
+              <TouchableOpacity disabled={addStampButtonDisabled} onPress={() => handleAddStamp(addStampDataLabel, addStampDataEmotion)}>
+                <Image source={require('./assets/add_check.png')} 
+                  style={[
+                    styles.checkImage,
+                    addStampButtonDisabled && styles.disabledCheckImage
+                  ]}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.addStampModalContent}>
+              <View style={styles.addStampModalEmotionContainer}>
+                <Text style={styles.addStampModalMessage}>이모지</Text>
+                <View style={styles.addStampModalEmotionBox}>
+                  <TextInput
+                    style={styles.addStampModalEmotion}
+                    placeholder='🔥'
+                    maxLength={2}
+                    onChangeText={(text) => {
+                      setAddStampDataEmotion(text);
+                      if(text.length > 0 && addStampDataLabel.length > 0) setAddStampButtonDisabled(false);
+                      else setAddStampButtonDisabled(true);
+                    }}
+                  />
+                </View>
+              </View>
+              <View style={styles.addStampModalLabelContainer}>
+                <Text style={styles.addStampModalMessage}>스탬프 이름</Text>
+                <View style={styles.addStampModalLabelBox}>
+                  <TextInput
+                    style={styles.addStampModalLabel}
+                    placeholder='스탬프 이름 입력'
+                    onChangeText={(text) => {
+                      setAddStampDataLabel(text);
+                      if(text.length > 0 && addStampDataEmotion.length > 0) setAddStampButtonDisabled(false);
+                      else setAddStampButtonDisabled(true);
+                    }}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+      {/* </KeyboardAvoidingView> */}
+      </Modal>
     </Modal>
   );
 };
