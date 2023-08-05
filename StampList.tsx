@@ -2,6 +2,12 @@ import React, {useState} from 'react';
 import { View, Text, Modal, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 
+const StampList = ({visible, closeModal}) => {
+  // 각 스탬프의 상태를 관리하는 배열, 모두 기본값은 false로 초기화
+  const [checkedStates, setCheckedStates] = useState(
+    Array(10).fill(false)
+  );
+
   const [stampListData, setStampListData] = useState(
     [
       { id: 1, label: '기쁨', emotion: '😊'},
@@ -16,6 +22,42 @@ import { RadioButton } from 'react-native-paper';
       { id: 10, label: '행복', emotion: '😁'},
     ]
   );
+  const [isChecked, setIsChecked] = useState(false);
+
+  const [stampCount, setStampCount] = useState(0);
+
+  const countSelectedRadioButtons = () => {
+    const count = checkedStates.filter((state) => state === true).length;
+    if(!isChecked && stampCount > 0) setIsChecked(true);
+    else if(isChecked && stampCount === 0) setIsChecked(false);
+    setStampCount(count);
+    // return count;
+  };
+
+  const handleDeleteStamp = () => {
+    // 라디오버튼 체크된 것들 삭제
+    // checkedStates 배열에서 true로 설정된 항목들의 인덱스들을 찾기
+    const selectedIndexes = checkedStates.reduce(
+      (indexes, state, index) => (state ? [...indexes, index] : indexes),
+      []
+    );
+
+    // 선택된 스탬프들을 삭제
+    const newStampListData = stampListData.filter(
+      (mood) => !selectedIndexes.includes(mood.id - 1) // 인덱스는 0부터 시작
+    );
+
+    // 선택된 스탬프들의 체크 상태 초기화
+    const newCheckedStates = checkedStates.map((_, index) =>
+      selectedIndexes.includes(index) ? false : checkedStates[index]
+    );
+
+    // 변경된 데이터와 상태 적용
+    setStampListData(newStampListData);
+    setCheckedStates(newCheckedStates);
+    console.log("스탬프 삭제");
+  };
+
   return (
     <Modal visible={visible} animationType='slide' transparent>
       <View style={styles.fixModalContainer}>
@@ -39,6 +81,21 @@ import { RadioButton } from 'react-native-paper';
             <RadioButton
               value="first"
               status={checkedStates[index] ? 'checked' : 'unchecked'}
+              onPress={
+                checkedStates[index] ? () => {
+                  setStampCount(stampCount - 1);
+                  const newCheckedStates = [...checkedStates];
+                  newCheckedStates[index] = !checkedStates[index];
+                  setCheckedStates(newCheckedStates);
+                  countSelectedRadioButtons();
+                } : () => {
+                  setStampCount(stampCount + 1);
+                  const newCheckedStates = [...checkedStates];
+                  newCheckedStates[index] = !checkedStates[index];
+                  setCheckedStates(newCheckedStates);
+                  countSelectedRadioButtons();
+                }
+              }
             />
             <TouchableOpacity key={mood.id} style={styles.moodInfo}>
               <Text style={styles.moodEmotion}>{mood.emotion}</Text>
@@ -47,6 +104,11 @@ import { RadioButton } from 'react-native-paper';
           </View>
           ))}
         </ScrollView>
+        { isChecked &&
+          <TouchableOpacity style={styles.fixModalButton} onPress={handleDeleteStamp}>
+            <Text style={styles.fixModalButtonText}>스탬프 삭제</Text>
+          </TouchableOpacity>
+        }
       </View>
     </Modal>
   );
@@ -118,6 +180,97 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'normal',
     lineHeight: 20,
+  },
+  fixModalButton: {
+    position: 'absolute',
+    bottom: 30,
+    width: 393,
+    height: 60,
+    marginBottom: 30,
+    backgroundColor: '#FAFAFA',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fixModalButtonText: {
+    color: '#000000',
+    fontFamily: 'Pretendard',
+    fontWeight: '600',
+    fontSize: 14,
+    fontStyle: 'normal',
+  },
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
+  addStampModalContainer: {
+    backgroundColor: 'white',
+    width: 393,
+    height: 464,
+    marginTop: 380,
+    borderRadius: 16,
+  },
+  addStampModalTitleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 16,
+    marginBottom: 40,
+  },
+  addStampModalTitle: {
+    color: '#212429',
+    fontFamily: 'Pretendard',
+    fontWeight: '400',
+    fontSize: 16,
+  },
+  checkImage: {
+    // 기본 이미지 스타일
+    
+  },
+  disabledCheckImage: {
+    opacity: 0.2, // 비활성 시에 투명도 조절
+  },
+  addStampModalContent: {
+    marginHorizontal: 16,
+    flexDirection: 'row',
+    gap: 16,
+  },
+  addStampModalEmotionContainer: {
+    flexDirection: 'column',
+    gap: 8,
+  },
+  addStampModalMessage: {
+    color: '#212429',
+    fontFamily: 'Pretendard',
+    fontWeight: '400',
+    fontSize: 12,
+    fontStyle: 'normal',
+  },
+  addStampModalEmotionBox: {
+    width: 50,
+    height: 50,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addStampModalEmotion: {
+    fontSize: 24,
+  },
+  addStampModalLabelContainer: {
+    flexDirection: 'column',
+    gap: 8,
+  },
+  addStampModalLabelBox: {
+    width: 296,
+    height: 50,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+    backgroundColor: 'white',
+    paddingHorizontal: 10,
+  },
+  addStampModalLabel: {
+    fontSize: 16,
   },
 });
 
