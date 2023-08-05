@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback } from 'react-native';
+import DatePicker from 'react-native-date-picker';
 
 const StampView = () => {
   const buttonsData = [
@@ -33,6 +34,8 @@ const StampView = () => {
   const [selectedEmotion, setSelectedEmotion] = useState(null);
   const [selectedEmotionLabel, setSelectedEmotionLabel] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [timeModalVisible, setTimeModalVisible] = useState(false);
+  const [date, setDate] = useState(new Date());
 
   const [memo, setMemo] = useState('');
   const [numberOfLines, setNumberOfLines] = useState(1);
@@ -48,6 +51,10 @@ const StampView = () => {
     setSelectedEmotion(button.emotion);
     setSelectedEmotionLabel(button.label);
     setModalVisible(true);
+  }
+
+  const handleCloseTimeModal = () => {
+    setTimeModalVisible(false);
   }
 
   return (
@@ -83,7 +90,11 @@ const StampView = () => {
           </View>
           <View style={styles.timeContainer}>
             <Text style={styles.modalText}>기록 시간</Text>
-            <Text style={styles.timeText}>2021. 09. 10. 12:00</Text>
+            <TouchableOpacity onPress={() => setTimeModalVisible(true)}>
+              <Text style={styles.timeText}>
+                {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes()}
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.horizontalLine} />
           <View style={styles.memoContainer}>
@@ -113,6 +124,23 @@ const StampView = () => {
           </View>
           </ScrollView>
         </View>
+      </Modal>
+      
+      <Modal visible={timeModalVisible} animationType="fade" transparent onRequestClose={handleCloseTimeModal}>
+        <TouchableWithoutFeedback onPress={handleCloseTimeModal}>
+          <View style={styles.timeModalContainer}>
+            <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
+            <DatePicker date={date} onDateChange={setDate} mode="date" />
+            <View style={styles.timeButtons}>
+              <TouchableOpacity onPress={handleCloseTimeModal}>
+                <Text>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleCloseTimeModal}>
+                <Text>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
@@ -288,7 +316,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#D7D7D7',
     borderStyle: 'dashed',
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#F2F2F2',
   },
   imgText: {
     color: '#D7D7D7',
@@ -298,6 +326,36 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontStyle: 'normal',
     lineHeight: 10,
+  },
+  timeModalContainer: {
+    width: 393,
+    height: 335,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    marginTop: 517,
+    shadowColor: '#000000',
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 6,
+    elevation: 30,
+    alignItems: 'center',
+    paddingTop: 20,
+    gap: 10,
+  },
+  timeModalText: {
+    fontFamily: 'Pretendard',
+    fontSize: 16,
+    fontStyle: 'normal',
+    fontWeight: '400',
+  },
+  timeButtons: {
+    flexDirection: 'row',
+    gap: 26,
+    alignSelf: 'flex-end',
+    marginRight: 40,
   },
 });
 
