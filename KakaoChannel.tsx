@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 
-const Weekly = () => {
+import Modal from "react-native-modal";
+
+
+
+const KakaoChannel = () => {
+
+    const [channelId, setId] = useState('');
+
     return (
-        <View style={styles.view}>
-            <Text style={styles.title}>위클리뷰 화면</Text>
-        </View>
+        <Modal>
+            <View style={{ flex: 1 }}>
+                <Text>I am the modal content!</Text>
+            </View>
+        </Modal>
     );
 }
 
@@ -48,4 +57,4 @@ const styles = StyleSheet.create({
     },
   });
 
-export default Weekly;
+export default KakaoChannel;

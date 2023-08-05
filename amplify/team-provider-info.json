@@ -16,5 +16,23 @@
         "moodmemoe964655f": {}
       }
     }
+  },
+  "moodmemo": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-moodmemo-moodmemo-145500-authRole",
+      "UnauthRoleArn": "arn:aws:iam::897922987323:role/amplify-moodmemo-moodmemo-145500-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::897922987323:role/amplify-moodmemo-moodmemo-145500-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-moodmemo-moodmemo-145500-deployment",
+      "UnauthRoleName": "amplify-moodmemo-moodmemo-145500-unauthRole",
+      "StackName": "amplify-moodmemo-moodmemo-145500",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:897922987323:stack/amplify-moodmemo-moodmemo-145500/1e39f9d0-30f9-11ee-aed2-0af8ad78eed6",
+      "AmplifyAppId": "do1hljsbdp6pq"
+    },
+    "categories": {
+      "auth": {
+        "moodmemoe964655f": {}
+      }
+    }
   }
 }

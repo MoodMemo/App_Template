@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -15,6 +15,7 @@ import {
   Text,
   useColorScheme,
   View,
+  Alert,
 } from 'react-native';
 
 import {
@@ -29,8 +30,19 @@ import SplashScreen from 'react-native-splash-screen';
 
 import AnimatedViewBirthday from './AnimatedViewBirthday';
 
-import Main from './Main'
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import messaging from '@react-native-firebase/messaging';
+import PushNotification from "react-native-push-notification";
+
+import Main from './Main'
+import { create } from 'react-test-renderer';
+
+//import {requestUserPermission, notificationListener} from "./src/utils/PushNotification";
+
+const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
   
@@ -45,6 +57,69 @@ function App(): JSX.Element {
     }
   )();
 
+  useEffect(() => {
+    scheduleNotifications();
+  })
+
+  const scheduleNotifications = () =>{
+    console.log(Date.now());
+    const notifications = [
+      {
+        channelId: 'Test_Id',
+        message: 'Notification 1',
+        date: new Date(Date.now() + 1000), // 1 second from now
+        visibility: "public",
+        playSound: false
+      },
+      {
+        channelId: 'Test_Id',
+        message: 'Notification 2',
+        date: new Date(Date.now() + 5000), // 5 seconds from now
+        visibility: "public",
+        playSound: false
+      },
+      {
+        channelId: 'Test_Id',
+        message: 'Notification 3',
+        date: new Date(Date.now() + 10000), // 10 seconds from now
+        visibility: "public",
+        playSound: false
+      },
+    ];
+
+    notifications.forEach((notification) => {
+      PushNotification.localNotificationSchedule(notification)
+    })
+  }
+
+  /*
+  useEffect(() => {
+    requestUserPermission();
+    notificationListener();
+  }, []);
+  */
+  /*
+  useEffect(() => {
+    pushNotification();
+  }, []);
+
+  async function pushNotification() {
+    let fcmToken = await messaging().getToken();
+    if (fcmToken) {
+      console.log('token', fcmToken);
+    }
+  }
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert(
+        'A new FCM message arrived in foreground mode',
+        JSON.stringify(remoteMessage),
+      );
+    });
+    return unsubscribe;
+  }, []);
+  */
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -54,19 +129,23 @@ function App(): JSX.Element {
   const check=0;
 
   SplashScreen.hide();
-  
-  if(check==0)
-  {
+
+  const isRegistered = AsyncStorage.getItem('@UserInfo:isRegistered');
+
+  if (isRegistered !== null) {
+    console.log("isRegistered: " + isRegistered);
     return (
-      <View style={styles.container}>
-        <AnimatedViewBirthday />
-      </View>
+      <SafeAreaView style={styles.container}>
+        <Main birthday={null} job={null}/>
+      </SafeAreaView>
     );
   }
   else
   {
     return (
-      <Main/>
+      <SafeAreaView style={styles.container}>
+        <AnimatedViewBirthday />
+      </SafeAreaView>
     );
   }
 }
@@ -75,6 +154,7 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
+    backgroundColor:"#FFFFFF",
   },
   sectionTitle: {
     fontSize: 24,
