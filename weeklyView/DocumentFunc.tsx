@@ -1,25 +1,34 @@
 import moment, { Moment } from 'moment';
+import dayjs from 'dayjs';
+const weekOfYear = require("dayjs/plugin/weekOfYear");
+var isSameOrBefore = require('dayjs/plugin/isSameOrBefore')
+dayjs.extend(weekOfYear);
+dayjs.extend(isSameOrBefore);
 
 import * as repository from '../src/localDB/document';
 
 import realm from '../src/localDB/document';
 
 
-function getDatesBetween(startDate: Moment, endDate: Moment): Moment[] {
+
+
+function getDatesBetween(startDate: dayjs.Dayjs): dayjs.Dayjs[] {
   const dates = [];
-  const currentDate = startDate.clone();
-  while (currentDate.isSameOrBefore(endDate, 'day')) {
-    dates.push(currentDate.clone());
-    currentDate.add(1, 'day');
+    dates.push(startDate.clone());
+    dates.push(startDate.add(1, 'day').clone());
+    dates.push(startDate.add(2, 'day').clone());
+    dates.push(startDate.add(3, 'day').clone());
+    dates.push(startDate.add(4, 'day').clone());
+    dates.push(startDate.add(5, 'day').clone());
+    dates.push(startDate.add(6, 'day').clone());
+    return dates;
   }
-  return dates;
-}
 
 export default getDatesBetween;
 
 
 
-export function getStamp(date: Moment): repository.IPushedStamp[] {
+export function getStamp(date: dayjs.Dayjs): repository.IPushedStamp[] {
   // console.log("####etStamp3*3***");
   const stampList = [];
   // convert date: Moment to date: Date
@@ -28,9 +37,12 @@ export function getStamp(date: Moment): repository.IPushedStamp[] {
   const dateToCompareEnd = date.add(1, 'day').toDate();
   // console.log("dateToCompareEnd: ", dateToCompareEnd);
   // repository.getPushedStampsByFieldBetween(dateToCompareBegin, dateToCompareEnd).forEach((pushedStamp) => {
-  repository.getPushedStampsByFieldBetween("dateTime", dateToCompareBegin, dateToCompareEnd).forEach((pushedStamp) => {
-    stampList.push(pushedStamp);
-    // console.log("pushedStamp.emoji: ", pushedStamp.emoji);
+  repository.getPushedStampsByFieldBetween(
+    "dateTime", 
+    date.startOf('day').toDate(), 
+    date.endOf('day').toDate()).forEach((pushedStamp) => {
+      stampList.push(pushedStamp);
+      // console.log("pushedStamp.emoji: ", pushedStamp.emoji);
   });
   return stampList;
 }
@@ -44,6 +56,7 @@ export function getEmoji(stampList: repository.IPushedStamp[]): string[] {
   });
   return emojis;
 }
+
 
 const createDefaultPushedStamp = () => {
   repository.createPushedStamp({
