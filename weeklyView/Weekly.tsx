@@ -105,7 +105,6 @@ const Weekly = () => {
 
   // 4. AI 일기 생성 버튼
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
-
   const handleGenerateDiary = () => {
     // TODO - 이 부분 받아오는 함수
     const request = {
@@ -151,6 +150,7 @@ const Weekly = () => {
             options={[
               { label: '2022년', value: 2022 },
               { label: '2023년', value: 2023 },
+              { label: '2024년', value: 2024 },
               // 이하 생략
             ]}
             selectedValue={selectedYear}
@@ -159,10 +159,12 @@ const Weekly = () => {
           <Dropdown
             label="월"
             options={[
-              { label: '1월', value: 1 },
-              { label: '2월', value: 2 },
               { label: '7월', value: 7 },
               { label: '8월', value: 8 },
+              { label: '9월', value: 9 },
+              { label: '10월', value: 10 },
+              { label: '11월', value: 11 },
+              { label: '12월', value: 12 },
               // 이하 생략
             ]}
             selectedValue={selectedMonth}
@@ -175,6 +177,7 @@ const Weekly = () => {
               { label: '2주', value: 2 },
               { label: '3주', value: 3 },
               { label: '4주', value: 4 },
+              { label: '5주', value: 5 },
               // 이하 생략
             ]}
             selectedValue={selectedWeek}
