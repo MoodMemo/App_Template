@@ -5,7 +5,7 @@ interface SendAI {
   // kakaoId: string; // 이거 아마 아예 안할듯!
   userName: string;
   age: number; // birthday 기준으로 만나이 계산해서 넣을듯!
-  gender: '여자' | '남자'; // 얘는 받을지 말지 고민해야함!
+  gender: string; // 얘는 받을지 말지 고민해야함!
   job: string;
 }
 
@@ -47,3 +47,6 @@ async function sendDailyReport(toAI: DailyReportRequest): Promise<DailyReportRes
     throw new Error('Failed to send daily report.');
   }
 }
+
+export default sendDailyReport;
+export { DailyReportRequest, DailyReportResponse };

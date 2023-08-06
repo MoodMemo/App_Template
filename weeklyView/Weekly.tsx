@@ -17,9 +17,11 @@ dayjs.extend(weekOfYear);
 dayjs.extend(isSameOrBefore);
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+import sendDailyReport from './AIService';
+import { DailyReportRequest } from './AIService';
 
 
 
@@ -104,13 +106,25 @@ const Weekly = () => {
   // 4. AI 일기 생성 버튼
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
 
-
-
-
-
   const handleGenerateDiary = () => {
-    // AI 일기 생성 버튼 클릭 시 동작 (일기 생성 로직)
-    // 이 부분에 실제로 일기를 생성하는 로직을 구현해야 합니다.
+    // TODO - 이 부분 받아오는 함수
+    const request = {
+      userDto: {
+        userName: 'test',
+        age: 23,
+        gender: '여자',
+        job: 'test',
+      },
+      todayStampList: [
+        {
+          dateTime: new Date(),
+          stampName: 'test',
+          memo: 'test',
+        }
+      ]
+    }
+    sendDailyReport(request);
+    // todo - 이렇게 생성한 일기를 realm에 저장해야 함 (저장만 하면 알아서 렌더링 됨)
   };
 
 
