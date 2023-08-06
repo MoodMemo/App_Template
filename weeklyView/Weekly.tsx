@@ -2,13 +2,26 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import moment from 'moment';
 import 'moment/locale/ko'; // 한국어로 변환
-import ThisWeekSummary from './ThisWeekSummary';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
 import Modal from "react-native-modal";
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+
+import dayjs from 'dayjs';
+const weekOfYear = require("dayjs/plugin/weekOfYear");
+var isSameOrBefore = require('dayjs/plugin/isSameOrBefore')
+import "dayjs/locale/ko"; //한국어
+dayjs.locale("ko");
+dayjs.extend(weekOfYear);
+dayjs.extend(isSameOrBefore);
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 
 
 interface DropdownProps {
@@ -65,41 +78,51 @@ const Dropdown: React.FC<DropdownProps> = ({
 
 const Weekly = () => {
 
-  const handleGenerateDiary = () => {
-    // AI 일기 생성 버튼 클릭 시 동작 (일기 생성 로직)
-    // 이 부분에 실제로 일기를 생성하는 로직을 구현해야 합니다.
+  // 1. 오늘 날짜
+  const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
+  const handleTodayChange = (date: dayjs.Dayjs) => { setToday(date); };
+
+  const getWeekOfMonth = (date: dayjs.Dayjs) => {
+    const weekOfMonth = date.week() - dayjs(date).startOf('month').week() + 1;
+    return weekOfMonth;
   };
 
-  const [today, setToday] = useState<moment.Moment>(moment());
-  const handleTodayChange = (date: moment.Moment) => { setToday(moment(date.subtract(2, 'days'))); };
-
-  const [selectedYear, setSelectedYear] = useState<number>(2023);
-  const [selectedMonth, setSelectedMonth] = useState<number>(8);
-  const [selectedWeek, setSelectedWeek] = useState<number>(1);
+  const [selectedYear, setSelectedYear] = useState<number>(today.year());
+  const [selectedMonth, setSelectedMonth] = useState<number>(today.month() + 1); // 1월이 0이라서 +1 해줘야 함
+  const [selectedWeek, setSelectedWeek] = useState<number>(getWeekOfMonth(today));
   const handleYearChange = (year: number) => { setSelectedYear(year); };
   const handleMonthChange = (month: number) => { setSelectedMonth(month); };
   const handleWeekChange = (week: number) => { setSelectedWeek(week); };
 
   const getDatesForWeek = () => {
-    const desiredWeekNumber = moment().year(selectedYear).month(selectedMonth - 1).date(1).week() + selectedWeek - 1;
-    const startDate = moment().year(selectedYear).week(desiredWeekNumber).startOf('week');
-    const endDate = moment().year(selectedYear).week(desiredWeekNumber).endOf('week');
-    return { startDate, endDate };
+    var tmpDate = null;
+
+    if (selectedWeek === 1) {
+      tmpDate = dayjs().year(selectedYear).month(selectedMonth - 1).date(1);
+    } else {
+      tmpDate = dayjs().year(selectedYear).month(selectedMonth - 1).date((selectedWeek - 1) * 7 + 1);
+    }
+    return tmpDate.startOf('week');
   };
-  const { startDate, endDate } = getDatesForWeek();
+  const startDate = getDatesForWeek();
 
+
+  // 3. 감정 리스트
   const [isDetailModelVisible, setIsDetailModalVisible] = useState(false);
+  
 
-
-
+  // 4. AI 일기 생성 버튼
+  const handleGenerateDiary = () => {
+    // AI 일기 생성 버튼 클릭 시 동작 (일기 생성 로직)
+    // 이 부분에 실제로 일기를 생성하는 로직을 구현해야 합니다.
+  };
 
   // tmp_createDummyData();
-
   return (
     <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA',}} horizontal={false}>
-      
       {/* 1 & 2. - 상단바 */}
       <View style={{backgroundColor: 'white'}}>
+
         {/* 1. 년, 월, 주 선택 부분 */}
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', }}>
           <Dropdown
@@ -129,40 +152,41 @@ const Weekly = () => {
             options={[
               { label: '1주', value: 1 },
               { label: '2주', value: 2 },
-              { label: '3주', value: 2 },
-              { label: '4주', value: 2 },
+              { label: '3주', value: 3 },
+              { label: '4주', value: 4 },
               // 이하 생략
             ]}
             selectedValue={selectedWeek}
             onValueChange={handleWeekChange}
           />
         </View>
-        
+
         {/* 2. 이번 주의 요일, 날짜, 이모지들 */}
         <View style={styles.emojisContainer}>
           {/* TODO - 스탬프가 7개 이상일 경우 +n 등을 띄워야 함 */}
-          {getDatesBetween(startDate, endDate).map((date) => (
+          {getDatesBetween(startDate).map((date) => (
             <TouchableOpacity key={date.format('YYYYMMDD')} onPress={() => handleTodayChange(date)}>
-              <View style={[styles.day, date.isSame(today, 'day') && styles.day_today]}>
-                <Text style={[
-                  styles.dayText,
-                  date.isoWeekday() === 7 && styles.dayText_sunday]}>{date.format('ddd')}</Text>
-                <Text style={[
+            <View style={[styles.day, date.isSame(today, 'day') && styles.day_today]}>
+              <Text style={[
+                styles.dayText,
+                date.day() === 0 && styles.dayText_sunday]}>{date.format('ddd')}</Text>
+              <Text style={[
                   styles.dayText, 
-                  date.isoWeekday() === 7 && styles.dayText_sunday,
+                  date.day() === 0 && styles.dayText_sunday,
                   date.isSame(today, 'day') && styles.dayText_today,
-                  date.isAfter(moment()) && styles.dayText_notYet]}>{date.format('DD')}</Text>
+                  date.isAfter(dayjs()) && styles.dayText_notYet]}>{date.format('DD')}</Text>
                 <Text style={[
                   styles.dayText,
                   { flex:1,
                     fontSize: getEmoji(getStamp(date)).length >= 3 ? 14 : 14}
                   ]}>{getEmoji(getStamp(date))}</Text>
               </View>
-            </TouchableOpacity>            
+          </TouchableOpacity> 
           ))}
+          
         </View>
-      </View>
 
+      </View>
 
       {/* 3. 오늘의 감정 리스트 */}
       <View style={styles.title}>
@@ -189,7 +213,7 @@ const Weekly = () => {
               <Text>{today.format('M월 D일 dd')}</Text>
               <Text>스탬프 상세 히스토리</Text>
               <Text></Text>
-              {getStamp(today.add(1, 'day')).map((stamp) => (
+              {getStamp(today).map((stamp) => (
                 <Text key={stamp.id} style={styles.emotion}>
                   {stamp.emoji} {stamp.stampName} **시간: {stamp.dateTime.getHours()}:{stamp.dateTime.getMinutes()}
                   **메모: {stamp.memo} **사진: {stamp.imageUrl}
@@ -199,22 +223,12 @@ const Weekly = () => {
           </Modal>
         </TouchableOpacity>
       </View>
-        {/* <Text>{today.toString()}</Text> */}
       {/* 3-1. 감정 리스트 */}
       <View style={styles.todayEmotionList}>
-        {getStamp(today.add(1, 'day')).map((stamp) => (
+        {getStamp(today).map((stamp) => (
           <Text key={stamp.id} style={styles.emotion}>{stamp.emoji} {stamp.stampName}</Text>
         ))}
       </View>
-
-
-
-
-
-
-
-
-
 
       {/* 4. AI 일기 생성 버튼 */}
       <TouchableOpacity onPress={handleGenerateDiary} style={styles.generateButton}>
@@ -225,6 +239,7 @@ const Weekly = () => {
       <View style={styles.uploadedImage}>
         <Image source={uploadedImage} style={styles.image} />
       </View> */}
+
     </ScrollView>
   );
 }
