@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
-import moment from 'moment';
-import 'moment/locale/ko'; // 한국어로 변환
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
 import Modal from "react-native-modal";
-import AntIcon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 import dayjs from 'dayjs';
@@ -78,7 +75,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
 const Weekly = () => {
 
-  // 1. 오늘 날짜
+  // 1. 오늘 날짜 & 2. 스탬프리스트
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
   const handleTodayChange = (date: dayjs.Dayjs) => { setToday(date); };
 
@@ -96,26 +93,20 @@ const Weekly = () => {
 
   const getDatesForWeek = () => {
     var tmpDate = null;
-
-    if (selectedWeek === 1) {
-      tmpDate = dayjs().year(selectedYear).month(selectedMonth - 1).date(1);
-    } else {
-      tmpDate = dayjs().year(selectedYear).month(selectedMonth - 1).date((selectedWeek - 1) * 7 + 1);
-    }
+    if (selectedWeek === 1) tmpDate = dayjs().year(selectedYear).month(selectedMonth - 1).date(1);
+    else tmpDate = dayjs().year(selectedYear).month(selectedMonth - 1).date((selectedWeek - 1) * 7 + 1);
     return tmpDate.startOf('week');
-  };
-  const startDate = getDatesForWeek();
-
+  }; const startDate = getDatesForWeek();
 
   // 3. 감정 리스트
   const [isDetailModelVisible, setIsDetailModalVisible] = useState(false);
-  
 
   // 4. AI 일기 생성 버튼
   const handleGenerateDiary = () => {
     // AI 일기 생성 버튼 클릭 시 동작 (일기 생성 로직)
     // 이 부분에 실제로 일기를 생성하는 로직을 구현해야 합니다.
   };
+
 
   // tmp_createDummyData();
   return (
@@ -166,24 +157,23 @@ const Weekly = () => {
           {/* TODO - 스탬프가 7개 이상일 경우 +n 등을 띄워야 함 */}
           {getDatesBetween(startDate).map((date) => (
             <TouchableOpacity key={date.format('YYYYMMDD')} onPress={() => handleTodayChange(date)}>
-            <View style={[styles.day, date.isSame(today, 'day') && styles.day_today]}>
-              <Text style={[
-                styles.dayText,
-                date.day() === 0 && styles.dayText_sunday]}>{date.format('ddd')}</Text>
-              <Text style={[
-                  styles.dayText, 
-                  date.day() === 0 && styles.dayText_sunday,
-                  date.isSame(today, 'day') && styles.dayText_today,
-                  date.isAfter(dayjs()) && styles.dayText_notYet]}>{date.format('DD')}</Text>
+              <View style={[styles.day, date.isSame(today, 'day') && styles.day_today]}>
                 <Text style={[
                   styles.dayText,
-                  { flex:1,
-                    fontSize: getEmoji(getStamp(date)).length >= 3 ? 14 : 14}
-                  ]}>{getEmoji(getStamp(date))}</Text>
+                  date.day() === 0 && styles.dayText_sunday]}>{date.format('ddd')}</Text>
+                <Text style={[
+                    styles.dayText, 
+                    date.day() === 0 && styles.dayText_sunday,
+                    date.isSame(today, 'day') && styles.dayText_today,
+                    date.isAfter(dayjs()) && styles.dayText_notYet]}>{date.format('DD')}</Text>
+                  <Text style={[
+                    styles.dayText,
+                    { flex:1,
+                      fontSize: getEmoji(getStamp(date)).length >= 3 ? 14 : 14}
+                    ]}>{getEmoji(getStamp(date))}</Text>
               </View>
-          </TouchableOpacity> 
+            </TouchableOpacity> 
           ))}
-          
         </View>
 
       </View>

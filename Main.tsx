@@ -8,6 +8,7 @@ import Octicons from 'react-native-vector-icons/Octicons';
 
 import Home from './Home';
 import Weekly from './weeklyView/Weekly';
+import Tmp from './weeklyView/tmp';
 import Settings from './Settings';
 
 import Amplify, {API, graphqlOperation} from 'aws-amplify';
@@ -24,6 +25,9 @@ function HomeScreen() {
 
 function WeeklyScreen() {
   return <Weekly/>; //Home.tsx
+}
+function TmpScreen() {
+  return <Tmp/>; //Tmp.tsx
 }
 
 function SettingsScreen() {
@@ -281,6 +285,16 @@ function Main({ birthday, job }) {
           name="Search"
 
           component={WeeklyScreen} //위클리 화면
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="tmptmp"
+
+          component={TmpScreen} //위클리 화면
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
