@@ -29,6 +29,8 @@ import axios, { CancelToken } from 'axios';
 import { Card } from 'react-native-paper';
 import StampClick from '../StampClick';
 
+import ExampleScrollView from './tmp';
+
 interface DropdownProps {
   label: string;
   options: { label: string; value: number }[];
@@ -79,7 +81,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   );
 };
 
-const ExampleScrollView = () => {
+const Weekly = () => {
   // 1. 오늘 날짜 & 2. 스탬프리스트
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
   const handleTodayChange = (date: dayjs.Dayjs) => { setToday(date); };
@@ -262,7 +264,7 @@ const ExampleScrollView = () => {
                   </TouchableOpacity>              
                 </View>
                 <Text></Text>
-                <ScrollView contentContainerStyle={{flex: 1}} horizontal={false}>
+                <ScrollView contentContainerStyle={{}}>
                   <Timeline data={getStamp(today)} />
                 </ScrollView>
               </View>
@@ -355,16 +357,11 @@ const ExampleScrollView = () => {
                       
           </View>
         </Modal>
+
         {/* 5. 업로드된 사진 (이미지 컴포넌트로 띄워줄 수 있음)
         <View style={styles.uploadedImage}>
           <Image source={uploadedImage} style={styles.image} />
         </View> */}
-        {/* <Text style={styles.text}></Text>
-        <Text style={styles.text}></Text>
-        <Text style={styles.text}></Text>
-        <Text style={styles.text}></Text>
-        <Text style={styles.text}></Text> */}
-        {/* 추가적인 스크롤 가능한 내용들 */}
       </ScrollView>
     </View>
     
@@ -591,4 +588,4 @@ const diaryStyles = StyleSheet.create({
     flex: 1,
   },
 });
-export default ExampleScrollView;
+export default Weekly;
