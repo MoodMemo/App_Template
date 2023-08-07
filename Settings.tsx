@@ -10,6 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
+import ChangeProfile from './ChangeProfile';
 
 
 
@@ -21,7 +22,6 @@ const test = () => {
 const Settings = () => {
 
   //const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
   const [isKakaoModalVisible, setIsKakaoModalVisible] = useState(false);
   const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
@@ -38,47 +38,8 @@ const Settings = () => {
     else return 0;
   }
 
-  /** 
-  알림 추가하는 테스트 함수입니다. 
-  **/
-  const connectRealmNotification = async () => {
-    Realm.open({}).then((realm) => {
-        console.log("Realm is located at: " + realm.path);
-    });
-    const deleteAll = () => {
-        realm.deleteAll(); // 얘는 웬만하면 사용 안하는걸로 ..! 여기만 예외적으로 사용할 가능성이 있슴다
-        console.log("delete all finished");
-    };
-    const createDefaultNotification = () => {
-        repository.createNotification({
-          day: [true, true, true, true, true, false, false],
-          time: "09:00"
-        });
-        repository.createNotification({
-          day: [true, true, true, true, true, true, true],
-          time: "13:00"
-        });
-        repository.createNotification({
-          day: [true, true, true, true, true, true, true],
-          time: "19:00"
-        });
-        repository.createNotification({
-          day: [true, true, true, true, true, true, true],
-          time: "22:15"
-        });
-        console.log("create default notification finished");
-      };
-      realm.write(() => {
-        deleteAll();
-        createDefaultNotification();
-      });
-      
-      console.log("** create default data finished");
-      console.log(repository.getAllNotifications().length);
-  }
-
   (async () => {
-    await AsyncStorage.getItem("isNotificationAllowed",(err,result)=>{
+    await AsyncStorage.getItem('@UserInfo:notificationAllow',(err,result)=>{
         if(JSON.parse(String(result))) setIsNotificationEnabled(true);
         else setIsNotificationEnabled(false);
     });
@@ -95,7 +56,6 @@ const Settings = () => {
         overScrollMode="never"
         showsVerticalScrollIndicator={false}
         >
-            <TouchableOpacity>
                 <View
                   style={{
                       paddingHorizontal: 20,
@@ -104,46 +64,7 @@ const Settings = () => {
                   }}>
                   <Text>프로필</Text>
                 </View>
-            </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                    setIsProfileModalVisible(!isProfileModalVisible);
-                    }}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                        }}>
-                        <Text style={{fontSize: 17, color:"#495057"}}>프로필 설정 변경</Text>
-                    </View>
-                    <Modal isVisible={isProfileModalVisible}
-                    animationIn={"fadeIn"}
-                    animationInTiming={200}
-                    animationOut={"fadeOut"}
-                    animationOutTiming={200}
-                    onBackdropPress={() => {
-                        setIsProfileModalVisible(!isProfileModalVisible);
-                    }}
-                    backdropColor='#CCCCCC'//'#FAFAFA'
-                    backdropOpacity={0.8}
-                    style={{
-                        alignItems:'center'
-                    }}>
-                        <View style={{
-                            backgroundColor:"#FFFFFF",
-                            width:'80%',
-                            height:'50%',
-                            justifyContent:'center',
-                            alignItems:'center',
-                            borderRadius:10
-                        }}>
-                            <View style={{
-                                }}>
-                                    <Text style={{fontSize: 17, color:"#495057"}}>프로필 설정 변경은 개발 중!</Text>
-                            </View>
-                        </View>
-                    </Modal>
-                </TouchableOpacity>
+                <ChangeProfile/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
@@ -173,7 +94,7 @@ const Settings = () => {
                         <View style={{
                             backgroundColor:"#FFFFFF",
                             width:'80%',
-                            height:'50%',
+                            height:'30%',
                             justifyContent:'center',
                             alignItems:'center',
                             borderRadius:10
@@ -216,9 +137,10 @@ const Settings = () => {
                                     if(granted===PermissionsAndroid.RESULTS.GRANTED){
                                         console.log(PermissionsAndroid.RESULTS.GRANTED);
                                         if(!isNotificationEnabled){
-                                            AsyncStorage.setItem('isNotificationAllowed','true');
+                                            AsyncStorage.setItem('@UserInfo:notificationAllow','true');
                                             setIsNotificationEnabled(!isNotificationEnabled);
                                             repository.getAllNotifications().sort(sortNotificationByTime).map((notification)=>{
+                                                console.log(4,notification.time);
                                                 const notificationTime = new Date();
                                                 const [hour,minute]=notification.time.split(':');
                                                 notificationTime.setHours(Number(hour));
@@ -231,9 +153,11 @@ const Settings = () => {
                                                     date: new Date(notificationTime), // 1 second from now
                                                     visibility: "public",
                                                     playSound: false,
-                                                    id: hour+minute
+                                                    id: hour+minute,
+                                                    repeatType: "day",
+                                                    repeatTime: "1" //하루 단위로 반복
                                                 });
-                                            })
+                                            });
                                             PushNotification.getScheduledLocalNotifications((result:any)=>{
                                                 console.log(result);
                                             });
@@ -242,7 +166,7 @@ const Settings = () => {
                                             PushNotification.getScheduledLocalNotifications((result:any)=>{
                                                 console.log(result);
                                             });
-                                            AsyncStorage.setItem('isNotificationAllowed','false');
+                                            AsyncStorage.setItem('@UserInfo:notificationAllow','false');
                                             setIsNotificationEnabled(!isNotificationEnabled);
                                             PushNotification.cancelAllLocalNotifications();
                                         }
@@ -308,7 +232,6 @@ const Settings = () => {
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity disabled={!isNotificationEnabled}
                 onPress={async () => {
-                    await connectRealmNotification();
                     setIsNotificationListModalVisible(!isNotificationListModalVisible);
                     }}>
                     <View
@@ -424,7 +347,7 @@ const Settings = () => {
                         <View style={{
                             backgroundColor:"#FFFFFF",
                             width:'80%',
-                            height:'50%',
+                            height:'30%',
                             justifyContent:'center',
                             alignItems:'center',
                             borderRadius:10
@@ -465,7 +388,7 @@ const Settings = () => {
                         <View style={{
                             backgroundColor:"#FFFFFF",
                             width:'80%',
-                            height:'50%',
+                            height:'30%',
                             justifyContent:'center',
                             alignItems:'center',
                             borderRadius:10
@@ -506,7 +429,7 @@ const Settings = () => {
                         <View style={{
                             backgroundColor:"#FFFFFF",
                             width:'80%',
-                            height:'50%',
+                            height:'30%',
                             justifyContent:'center',
                             alignItems:'center',
                             borderRadius:10
