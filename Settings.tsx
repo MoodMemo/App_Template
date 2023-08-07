@@ -3,13 +3,20 @@ import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, 
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
+import realm from './src/localDB/document';
+import * as repository from './src/localDB/document';
+import PushNotification from "react-native-push-notification";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import NotificationView from './NotificationView';
+import NotificationAdd from './NotificationAdd';
+
 
 
 
 const test = () => {
   console.log('hello');
 }
-
 
 const Settings = () => {
 
@@ -20,7 +27,64 @@ const Settings = () => {
   const [isReportModalVisible, setIsReportModalVisible] = useState(false);
   const [isCoffeeModalVisible, setIsCoffeeModalVisible] = useState(false);
   const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
+  const [isNotificationListModalVisible, setIsNotificationListModalVisible] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+  const [isNotificationTimeChanged, setIsNotificationTimeChanged] = useState(false);
+  const [isNotificationAdded, setIsNotificationAdded] = useState(false);
+
+  const sortNotificationByTime = (a:any,b:any) => {
+    if(a.time > b.time) return 1;
+    else if(a.time < b.time) return -1;
+    else return 0;
+  }
+
+  /** 
+  알림 추가하는 테스트 함수입니다. 
+  **/
+  const connectRealmNotification = async () => {
+    Realm.open({}).then((realm) => {
+        console.log("Realm is located at: " + realm.path);
+    });
+    const deleteAll = () => {
+        realm.deleteAll(); // 얘는 웬만하면 사용 안하는걸로 ..! 여기만 예외적으로 사용할 가능성이 있슴다
+        console.log("delete all finished");
+    };
+    const createDefaultNotification = () => {
+        repository.createNotification({
+          day: [true, true, true, true, true, false, false],
+          time: "09:00"
+        });
+        repository.createNotification({
+          day: [true, true, true, true, true, true, true],
+          time: "13:00"
+        });
+        repository.createNotification({
+          day: [true, true, true, true, true, true, true],
+          time: "19:00"
+        });
+        repository.createNotification({
+          day: [true, true, true, true, true, true, true],
+          time: "22:15"
+        });
+        console.log("create default notification finished");
+      };
+      realm.write(() => {
+        deleteAll();
+        createDefaultNotification();
+      });
+      
+      console.log("** create default data finished");
+      console.log(repository.getAllNotifications().length);
+  }
+
+  (async () => {
+    await AsyncStorage.getItem("isNotificationAllowed",(err,result)=>{
+        if(JSON.parse(String(result))) setIsNotificationEnabled(true);
+        else setIsNotificationEnabled(false);
+    });
+  })();
+   
+  
 
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
@@ -131,7 +195,7 @@ const Settings = () => {
                   }}>
                   <Text>앱 설정</Text>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity disabled={true}>
                     <View
                         style={{
                             paddingHorizontal: 20,
@@ -151,7 +215,37 @@ const Settings = () => {
                                     );
                                     if(granted===PermissionsAndroid.RESULTS.GRANTED){
                                         console.log(PermissionsAndroid.RESULTS.GRANTED);
-                                        setIsNotificationEnabled(!isNotificationEnabled);
+                                        if(!isNotificationEnabled){
+                                            AsyncStorage.setItem('isNotificationAllowed','true');
+                                            setIsNotificationEnabled(!isNotificationEnabled);
+                                            repository.getAllNotifications().sort(sortNotificationByTime).map((notification)=>{
+                                                const notificationTime = new Date();
+                                                const [hour,minute]=notification.time.split(':');
+                                                notificationTime.setHours(Number(hour));
+                                                notificationTime.setMinutes(Number(minute));
+                                                notificationTime.setSeconds(0);
+                                                if(notificationTime.getTime()<=(new Date(Date.now())).getTime()) notificationTime.setDate(notificationTime.getDate()+1);
+                                                PushNotification.localNotificationSchedule({
+                                                    channelId: "MoodMemo_ID",
+                                                    message: notification.time + ' Notification',
+                                                    date: new Date(notificationTime), // 1 second from now
+                                                    visibility: "public",
+                                                    playSound: false,
+                                                    id: hour+minute
+                                                });
+                                            })
+                                            PushNotification.getScheduledLocalNotifications((result:any)=>{
+                                                console.log(result);
+                                            });
+                                        }
+                                        else{
+                                            PushNotification.getScheduledLocalNotifications((result:any)=>{
+                                                console.log(result);
+                                            });
+                                            AsyncStorage.setItem('isNotificationAllowed','false');
+                                            setIsNotificationEnabled(!isNotificationEnabled);
+                                            PushNotification.cancelAllLocalNotifications();
+                                        }
                                     }
                                     else if(granted==='never_ask_again'){
                                         setIsNotificationModalVisible(!isNotificationModalVisible);
@@ -212,7 +306,11 @@ const Settings = () => {
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity disabled={!isNotificationEnabled}>
+                <TouchableOpacity disabled={!isNotificationEnabled}
+                onPress={async () => {
+                    await connectRealmNotification();
+                    setIsNotificationListModalVisible(!isNotificationListModalVisible);
+                    }}>
                     <View
                         style={{
                             paddingHorizontal: 20,
@@ -221,57 +319,68 @@ const Settings = () => {
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }}>
-                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림</Text>
+                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림 목록</Text>
                     </View>
-                </TouchableOpacity>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity disabled={!isNotificationEnabled}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
+                    <Modal isVisible={isNotificationListModalVisible}
+                    animationIn={"fadeIn"}
+                    animationInTiming={200}
+                    animationOut={"fadeOut"}
+                    animationOutTiming={200}
+                    onBackdropPress={() => {
+                        setIsNotificationListModalVisible(!isNotificationListModalVisible);
+                    }}
+                    backdropColor='#CCCCCC'//'#FAFAFA'
+                    backdropOpacity={0.8}
+                    style={{
+                        alignItems:'center'
+                    }}>
+                        <View style={{
+                            backgroundColor:"#FFFFFF",
+                            width:'90%',
+                            height:'60%',
+                            //justifyContent:'center',
+                            //alignItems:'center',
+                            borderRadius:10
                         }}>
-                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림</Text>
-                    </View>
+                            <View style={{
+                                paddingHorizontal: 20,
+                                paddingBottom: 20,
+                                paddingTop: 20,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                                }}>
+                                    <Text style={{fontSize: 17}}>알림 목록</Text>
+                            </View>
+                            <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                            <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                            <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                            <ScrollView
+                            alwaysBounceHorizontal={false}
+                            alwaysBounceVertical={false}
+                            bounces={false}
+                            overScrollMode="never"
+                            showsVerticalScrollIndicator={true}
+                            >
+                                <NotificationAdd notificationAdded={isNotificationAdded} checkNotificationAdded={setIsNotificationAdded}/>
+                                {
+                                    repository.getAllNotifications().sort(sortNotificationByTime).map((button)=>(
+                                        <NotificationView key={button.id} id={button.id} time={button.time} timeChangedProp={isNotificationTimeChanged} checkTimeChanged={setIsNotificationTimeChanged}/>
+                                    ))
+                                }
+                            </ScrollView>
+                        </View>
+                    </Modal>
                 </TouchableOpacity>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity disabled={!isNotificationEnabled}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                        }}>
-                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림</Text>
-                    </View>
-                </TouchableOpacity>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity disabled={!isNotificationEnabled}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                        }}>
-                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림</Text>
-                    </View>
-                </TouchableOpacity>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#DDDDDD"}}/>
+                <Divider style={{backgroundColor:"#DDDDDD"}}/>
+                <View
+                  style={{
+                      paddingHorizontal: 20,
+                      paddingBottom: 5,
+                      paddingTop: 20,
+                  }}>
+                  <Text>무드메모</Text>
+                </View>
                 <TouchableOpacity disabled={true}>
                       <View
                           style={{
@@ -284,17 +393,10 @@ const Settings = () => {
                           <Text style={{fontSize: 17, color:"#495057"}}>버전</Text>
                           <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 0.1</Text>
                       </View>
-                  </TouchableOpacity>
-                <Divider style={{backgroundColor:"#DDDDDD"}}/>
-                <Divider style={{backgroundColor:"#DDDDDD"}}/>
-                <View
-                  style={{
-                      paddingHorizontal: 20,
-                      paddingBottom: 5,
-                      paddingTop: 20,
-                  }}>
-                  <Text>무드메모</Text>
-                </View>
+                </TouchableOpacity>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
                     setIsNoticeModalVisible(!isNoticeModalVisible);
                     }}>

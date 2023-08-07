@@ -8,6 +8,8 @@
 import React, {useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Alert,
+  PermissionsAndroid,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -15,7 +17,6 @@ import {
   Text,
   useColorScheme,
   View,
-  Alert,
 } from 'react-native';
 
 import {
@@ -58,6 +59,7 @@ function App(): JSX.Element {
   )();
 
   useEffect(() => {
+    PushNotification.cancelAllLocalNotifications();
     scheduleNotifications();
   })
 
@@ -69,21 +71,24 @@ function App(): JSX.Element {
         message: 'Notification 1',
         date: new Date(Date.now() + 1000), // 1 second from now
         visibility: "public",
-        playSound: false
+        playSound: false,
+        id: "1"
       },
       {
         channelId: 'Test_Id',
         message: 'Notification 2',
         date: new Date(Date.now() + 5000), // 5 seconds from now
         visibility: "public",
-        playSound: false
+        playSound: false,
+        id: "2"
       },
       {
         channelId: 'Test_Id',
         message: 'Notification 3',
-        date: new Date(Date.now() + 10000), // 10 seconds from now
+        date: new Date(Date.now() + 20000), // 10 seconds from now
         visibility: "public",
-        playSound: false
+        playSound: false,
+        id: "3"
       },
     ];
 
@@ -127,10 +132,12 @@ function App(): JSX.Element {
   };
 
   const check=0;
+  
 
   SplashScreen.hide();
 
   const isRegistered = AsyncStorage.getItem('@UserInfo:isRegistered');
+  console.log('a',isRegistered);
 
   if (isRegistered !== null) {
     console.log("isRegistered: " + isRegistered);
@@ -142,6 +149,7 @@ function App(): JSX.Element {
   }
   else
   {
+    AsyncStorage.setItem('isNotificationAllowed','false');
     return (
       <SafeAreaView style={styles.container}>
         <AnimatedViewBirthday />
