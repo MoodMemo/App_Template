@@ -29,8 +29,6 @@ import axios, { CancelToken } from 'axios';
 import { Card } from 'react-native-paper';
 import StampClick from '../StampClick';
 
-import ExampleScrollView from './tmp';
-
 interface DropdownProps {
   label: string;
   options: { label: string; value: number }[];
@@ -153,6 +151,22 @@ const Weekly = () => {
         console.log('Error', error.message);
         setIsLodingModalVisible(false);
     });
+  };
+
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(todayReport.title);
+  const [editedBodytext, setEditedBodytext] = useState(todayReport.bodytext);
+  const handleEditButton = () => { setIsEditMode(true); };
+  const handleCancelButton = () => { setIsEditMode(false); };
+  const handleSaveButton = () => {
+    realm.write(() => {
+      const reportToUpdate = realm.objects('DailyReport').filtered('date = $0', todayReport.date)[0];
+      if (reportToUpdate) {
+        reportToUpdate.title = editedTitle;
+        reportToUpdate.bodytext = editedBodytext;
+      }
+    });
+    setIsEditMode(false);
   };
 
   return (
@@ -291,19 +305,33 @@ const Weekly = () => {
           <View>
             <View style={[styles.title, {marginTop: 0,}]}>
               <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>오늘의 일기</Text>
-              <TouchableOpacity>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                  <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
-                  <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
+              {!isEditMode ? (
+                <TouchableOpacity onPress={handleEditButton}>
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                    <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
+                    <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
+                  </View>
+                </TouchableOpacity>
+              ) : (
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                  <TouchableOpacity onPress={handleCancelButton}>
+                    <Text style={{ fontSize: 12, color: '#495057' }}>취소</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleSaveButton}>
+                    <Text style={{ fontSize: 12, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
+                  </TouchableOpacity>
                 </View>
-              </TouchableOpacity>
+              )}
             </View>
+
             <View style={diaryStyles.diaryContainer}>
               <Text style={{fontSize: 12, color: '#212429', marginBottom: 12}}>
                 {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
               </Text>
               <Text style={{fontSize: 16, color: '#212429', marginBottom: 12}}>{todayReport.title}</Text>
+              
               <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 70 }]} />
+              
               <Text style={{fontSize: 12, color: '#495057', marginBottom: 15}}>{todayReport.bodytext}</Text>
               <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
                 {todayReport.keyword.map((keyword) => (
@@ -329,6 +357,7 @@ const Weekly = () => {
           </TouchableOpacity>
         ))}
 
+        {/* 4-1. 일기 생성 로딩 모달 */}
         <Modal 
           isVisible={isLodingModalVisible}
           animationIn={"fadeIn"}
@@ -349,7 +378,7 @@ const Weekly = () => {
             </View>
             <View style={{ flexDirection: 'row'}}>
               <View style={{ flexDirection: 'row', flex: 1}}>
-                <TouchableOpacity style={diaryStyles.cancelBtn}>
+                <TouchableOpacity style={diaryStyles.cancelBtn} onPress={() => setIsLodingModalVisible(false)}>
                   <Text style={{ color: '#344054', fontSize: 16, fontWeight: 'bold',}}>발행 취소</Text>
                 </TouchableOpacity>
               </View>
