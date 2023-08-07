@@ -294,7 +294,7 @@ function Main({ birthday, job }) {
         <Tab.Screen
           name="tmptmp"
 
-          component={TmpScreen} //위클리 화면
+          component={WeeklyScreen} //위클리 화면
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
