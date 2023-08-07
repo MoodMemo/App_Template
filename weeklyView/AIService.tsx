@@ -35,7 +35,7 @@ interface DailyReportResponse {
 }
 
 async function sendDailyReport(toAI: DailyReportRequest): Promise<DailyReportResponse> {
-  const url = 'http://3.39.118.25:5000/journal';
+  const url = 'http://3.39.118.25:5000/dailyReport';
 
   try {
     const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI);

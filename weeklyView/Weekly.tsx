@@ -22,6 +22,7 @@ dayjs.extend(timezone);
 
 import sendDailyReport from './AIService';
 import { DailyReportRequest } from './AIService';
+import Timeline from './Timeline';
 
 
 
@@ -237,13 +238,17 @@ const Weekly = () => {
               <Text>{today.format('M월 D일 dd')}</Text>
               <Text>스탬프 상세 히스토리</Text>
               <Text></Text>
-              {getStamp(today).map((stamp) => (
-                <Text key={stamp.id} style={styles.emotion}>
-                  {stamp.emoji} {stamp.stampName} **시간: {stamp.dateTime.getHours()}:{stamp.dateTime.getMinutes()}
-                  **메모: {stamp.memo} **사진: {stamp.imageUrl}
-                </Text>
-              ))}
+
+              <ScrollView contentContainerStyle={{flex: 1}} horizontal={false}>
+                <Timeline data={getStamp(today)} />
+              </ScrollView>
+
+
+
+              {/* <Timeline data={getStamp(today)} /> */}
+              
             </View>
+            
           </Modal>
         </TouchableOpacity>
       </View>
