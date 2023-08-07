@@ -21,8 +21,10 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 import sendDailyReport from './AIService';
-import { DailyReportRequest } from './AIService';
+import { getUserAsync, DailyReportRequest } from './AIService';
 import Timeline from './Timeline';
+
+
 
 
 
@@ -107,24 +109,40 @@ const Weekly = () => {
   // 4. AI 일기 생성 버튼
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
   const handleGenerateDiary = () => {
-    // TODO - 이 부분 받아오는 함수
+
+    const todatStampList = [];
+    getStamp(today).forEach((stamp) => {
+      console.log("stamp.dateTime: ", stamp.dateTime);
+      todatStampList.push({
+        dateTime: stamp.dateTime,
+        stampName: stamp.stampName,
+        memo: stamp.memo,
+      });
+    });
     const request = {
-      userDto: {
-        userName: 'test',
-        age: 23,
-        gender: '여자',
-        job: 'test',
-      },
-      todayStampList: [
-        {
-          dateTime: new Date(),
-          stampName: 'test',
-          memo: 'test',
-        }
-      ]
+      userDto: getUserAsync(), // from async storage
+      todayStampList: todatStampList,
     }
-    sendDailyReport(request);
-    // todo - 이렇게 생성한 일기를 realm에 저장해야 함 (저장만 하면 알아서 렌더링 됨)
+
+    console.log('ai 서버와의 통신 시작합니다');
+    sendDailyReport(request)
+      .then((response) => {
+        console.log('date: ', response.date);
+        realm.write(() => {
+          console.log('title: ', response.title);
+          repository.createDailyReport({
+            date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
+            // date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
+            title: response.title,
+            bodytext: response.bodytext,
+            keyword: response.keyword,
+          });
+          console.log("create default daily report finished");
+        });
+      })
+      .catch((error) => {
+        console.error("Error occurred while generating daily report:", error);
+    });
   };
 
 

@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // DailyReportDto.Response 타입 정의
 interface SendAI {
@@ -50,3 +51,22 @@ async function sendDailyReport(toAI: DailyReportRequest): Promise<DailyReportRes
 
 export default sendDailyReport;
 export { DailyReportRequest, DailyReportResponse };
+
+export async function getUserAsync() : Promise<SendAI> {
+  const birth = await AsyncStorage.getItem('@UserInfo:birth');
+        if (birth !== null) {
+          // value previously stored
+          console.log("birth: " + birth);
+        }
+  const job = await AsyncStorage.getItem('@UserInfo:job');
+  if (job !== null) {
+    // value previously stored
+    console.log("job: " + job);
+  }
+  return {
+    userName: "테스트 사용자 이름! -> 아직 인트로에서 안받음",
+    age: new Date(new Date().getTime() - new Date(birth!).getTime()).getFullYear() - 1970,
+    gender: "남자", // -> 아직 인트로에서 안받음
+    job: job!,
+  }
+}
