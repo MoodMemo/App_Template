@@ -27,6 +27,7 @@ import { getUserAsync, DailyReportRequest } from './AIService';
 import Timeline from './Timeline';
 import axios, { CancelToken } from 'axios';
 import { Card } from 'react-native-paper';
+import StampClick from '../StampClick';
 
 
 
@@ -108,6 +109,11 @@ const Weekly = () => {
 
   // 3. 감정 리스트
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  const [stampClickModalVisible, setStampClickModalVisible] = useState(false);
+
+  const closeStampClickModal = () => {
+    setStampClickModalVisible(false);
+  };
 
   // 4. AI 일기 생성 버튼
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
@@ -266,7 +272,7 @@ const Weekly = () => {
                   <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
                 </TouchableOpacity>
                 <Text style={{color: '#212429', fontSize: 16}}>스탬프 상세 히스토리</Text>
-                <TouchableOpacity> 
+                <TouchableOpacity onPress={() => setStampClickModalVisible(true)}> 
                   {/* 스탬프 추가랑 연결해야함 */}
                   <FeatherIcon name='plus' color="#00E3AD" style={{ fontWeight: 'bold', fontSize: 20}}/>
                 </TouchableOpacity>              
@@ -283,6 +289,9 @@ const Weekly = () => {
             </View>
           </Modal>
         </TouchableOpacity>
+        <Modal isVisible={stampClickModalVisible}>
+          <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
+        </Modal>
       </View>
       {/* 3-1. 감정 리스트 */}
       <View style={styles.todayEmotionList}>
