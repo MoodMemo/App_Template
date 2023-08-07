@@ -29,9 +29,6 @@ import axios, { CancelToken } from 'axios';
 import { Card } from 'react-native-paper';
 import StampClick from '../StampClick';
 
-
-
-
 interface DropdownProps {
   label: string;
   options: { label: string; value: number }[];
@@ -82,10 +79,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   );
 };
 
-
-
-const Weekly = () => {
-
+const ExampleScrollView = () => {
   // 1. 오늘 날짜 & 2. 스탬프리스트
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
   const handleTodayChange = (date: dayjs.Dayjs) => { setToday(date); };
@@ -143,8 +137,8 @@ const Weekly = () => {
         realm.write(() => {
           console.log('title: ', response.title);
           repository.createDailyReport({
-            date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
-            // date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
+            // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
+            date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
             title: response.title,
             bodytext: response.bodytext,
             keyword: response.keyword,
@@ -158,24 +152,12 @@ const Weekly = () => {
         setIsLodingModalVisible(false);
     });
   };
-  
 
-
-  // tmp_createDummyData();
-  // realm.write(() => {
-  //   repository.createDailyReport({
-  //     date: "2023-08-06",
-  //     title: "테스트 일기랍니다",
-  //     bodytext: "테스트 일기 내용입니다",
-  //     keyword: ["소마", "희희하하", "무드메모"]
-  //   });
-  // });
-  // console.log("create default daily report finished");
-  // validateToadyDiary(today);
   return (
-    <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', flex: 1}} horizontal={false}>
-      {/* 1 & 2. - 상단바 */}
-      <View style={{backgroundColor: 'white'}}>
+    
+    <View style={{backgroundColor: '#FAFAFA', flex:1}}>
+
+      <View style={{backgroundColor: 'white', zIndex: 1,}}>
 
         {/* 1. 년, 월, 주 선택 부분 */}
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', }}>
@@ -246,142 +228,148 @@ const Weekly = () => {
 
       </View>
 
-      {/* 3. 오늘의 감정 리스트 */}
-      <View style={styles.title}>
-        <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
-        <TouchableOpacity onPress={() => setIsDetailModalVisible(!isDetailModalVisible)}>
-          <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
-          {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
-          <Modal
-            isVisible = {isDetailModalVisible}
-            // presentationStyle='pageSheet'
-            animationIn={"fadeIn"}
-            animationInTiming={200}
-            animationOut={"fadeOut"}
-            animationOutTiming={200}
-            onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}
-            backdropColor='#CCCCCC' 
-            backdropOpacity={0.9}
-            style={{ alignItems:'center' }}
-            backdropTransitionInTiming={0} // Disable default backdrop animation
-            backdropTransitionOutTiming={0} // Disable default backdrop animation
-          >
-            <View style={{backgroundColor: 'white', borderRadius: 15, padding: 20, width: 360, height: 500}}>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}>
-                  <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
-                </TouchableOpacity>
-                <Text style={{color: '#212429', fontSize: 16}}>스탬프 상세 히스토리</Text>
-                <TouchableOpacity onPress={() => setStampClickModalVisible(true)}> 
-                  {/* 스탬프 추가랑 연결해야함 */}
-                  <FeatherIcon name='plus' color="#00E3AD" style={{ fontWeight: 'bold', fontSize: 20}}/>
-                </TouchableOpacity>              
-              </View>
-              <Text></Text>
-              <ScrollView contentContainerStyle={{flex: 1}} horizontal={false}>
-                <Timeline data={getStamp(today)} />
-              </ScrollView>
-            </View>
 
-            <View style={{position:'absolute', top: 55, left: -5, }}>
-              <Text style={{ fontSize: 14, color: '#ffffff'}}>TODAY</Text>
-              <Text style={{ fontSize: 24, color: '#ffffff'}}>{today.format('M월 D일 dd')}</Text>
-            </View>
+      <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }}>
+        {/* 3. 오늘의 감정 리스트 */}
+        <View style={styles.title}>
+          <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
+          <TouchableOpacity onPress={() => setIsDetailModalVisible(!isDetailModalVisible)}>
+            <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
+            {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
+            <Modal
+              isVisible = {isDetailModalVisible}
+              // presentationStyle='pageSheet'
+              animationIn={"fadeIn"}
+              animationInTiming={200}
+              animationOut={"fadeOut"}
+              animationOutTiming={200}
+              onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}
+              backdropColor='#CCCCCC' 
+              backdropOpacity={0.9}
+              style={{ alignItems:'center' }}
+              backdropTransitionInTiming={0} // Disable default backdrop animation
+              backdropTransitionOutTiming={0} // Disable default backdrop animation
+            >
+              <View style={{backgroundColor: 'white', borderRadius: 15, padding: 20, width: 360, height: 500}}>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}>
+                    <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
+                  </TouchableOpacity>
+                  <Text style={{color: '#212429', fontSize: 16}}>스탬프 상세 히스토리</Text>
+                  <TouchableOpacity onPress={() => setStampClickModalVisible(true)}> 
+                    {/* 스탬프 추가랑 연결해야함 */}
+                    <FeatherIcon name='plus' color="#00E3AD" style={{ fontWeight: 'bold', fontSize: 20}}/>
+                  </TouchableOpacity>              
+                </View>
+                <Text></Text>
+                <ScrollView contentContainerStyle={{flex: 1}} horizontal={false}>
+                  <Timeline data={getStamp(today)} />
+                </ScrollView>
+              </View>
+
+              <View style={{position:'absolute', top: 55, left: -5, }}>
+                <Text style={{ fontSize: 14, color: '#ffffff'}}>TODAY</Text>
+                <Text style={{ fontSize: 24, color: '#ffffff'}}>{today.format('M월 D일 dd')}</Text>
+              </View>
+            </Modal>
+          </TouchableOpacity>
+          <Modal isVisible={stampClickModalVisible}>
+            <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
           </Modal>
-        </TouchableOpacity>
-        <Modal isVisible={stampClickModalVisible}>
-          <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
-        </Modal>
-      </View>
-      {/* 3-1. 감정 리스트 */}
-      <View style={styles.todayEmotionList}>
-        {getStamp(today).map((stamp) => (
-          <Text key={stamp.id} style={styles.emotion}>{stamp.emoji} {stamp.stampName}</Text>
-        ))}
-      </View>
-
-      {/* 4. AI 일기 생성 버튼 */}
-      {todayReport !== null ? (
-        <View>
-          <View style={[styles.title, {marginTop: 0,}]}>
-            <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>오늘의 일기</Text>
-            <TouchableOpacity>
-              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
-                <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={diaryStyles.diaryContainer}>
-            <Text style={{fontSize: 12, color: '#212429', marginBottom: 12}}>
-              {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
-            </Text>
-            <Text style={{fontSize: 16, color: '#212429', marginBottom: 12}}>{todayReport.title}</Text>
-            <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 70 }]} />
-            <Text style={{fontSize: 12, color: '#495057', marginBottom: 15}}>{todayReport.bodytext}</Text>
-            <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-              {todayReport.keyword.map((keyword) => (
-                <Text key={keyword} style={diaryStyles.keyword}>{keyword}</Text>
-              ))}
-            </View>
-          </View>
         </View>
-      ) : ( getStamp(today).length < 2 ? (
-        <View style={diaryStyles.generateButton}>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-            <FeatherIcon name='plus' size={16} color="white" style={{ fontWeight: 'bold', fontSize: 20}}/>
-            <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>  AI 일기 생성하기</Text>
-          </View>
-          <Text style={[diaryStyles.generateButtonText, { fontSize: 14 }]}> 스탬프가 2개 이상일 때 일기를 만들 수 있어요!</Text>
+        {/* 3-1. 감정 리스트 */}
+        <View style={styles.todayEmotionList}>
+          {getStamp(today).map((stamp) => (
+            <Text key={stamp.id} style={styles.emotion}>{stamp.emoji} {stamp.stampName}</Text>
+          ))}
         </View>
-      ) : (
-        <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
-          <View style={{flexDirection: 'row', }}>
-            <FeatherIcon name='plus' size={16} color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
-            <Text style={[diaryStyles.generateButtonText,]}>  AI 일기 생성하기</Text>
-          </View>
-        </TouchableOpacity>
-      ))}
 
-      <Modal 
-        isVisible={isLodingModalVisible}
-        animationIn={"fadeIn"}
-        animationOut={"fadeOut"}
-        backdropColor='#CCCCCC' 
-        backdropOpacity={0.9}
-        style={{ alignItems:'center' }}
-        backdropTransitionInTiming={0} // Disable default backdrop animation
-        backdropTransitionOutTiming={0} // Disable default backdrop animation
-      >
-        <View style={diaryStyles.lodingModal}>
-          <ActivityIndicator size="large" color="#00E3AD"/>
-          <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중</Text>
-          <View style={{ marginBottom: 10}}>
-            <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>AI 일기가 발행되고 있습니다.</Text>
-            <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>화면을 벗어나지 마세요.</Text>
-            <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>발행 중 이탈 시, 발행이 취소됩니다.</Text>
-          </View>
-          <View style={{ flexDirection: 'row'}}>
-            <View style={{ flexDirection: 'row', flex: 1}}>
-              <TouchableOpacity style={diaryStyles.cancelBtn}>
-                <Text style={{ color: '#344054', fontSize: 16, fontWeight: 'bold',}}>발행 취소</Text>
+        {/* 4. AI 일기 생성 버튼 */}
+        {todayReport !== null ? (
+          <View>
+            <View style={[styles.title, {marginTop: 0,}]}>
+              <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>오늘의 일기</Text>
+              <TouchableOpacity>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                  <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
+                  <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
+                </View>
               </TouchableOpacity>
             </View>
+            <View style={diaryStyles.diaryContainer}>
+              <Text style={{fontSize: 12, color: '#212429', marginBottom: 12}}>
+                {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
+              </Text>
+              <Text style={{fontSize: 16, color: '#212429', marginBottom: 12}}>{todayReport.title}</Text>
+              <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 70 }]} />
+              <Text style={{fontSize: 12, color: '#495057', marginBottom: 15}}>{todayReport.bodytext}</Text>
+              <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+                {todayReport.keyword.map((keyword) => (
+                  <Text key={keyword} style={diaryStyles.keyword}>{keyword}</Text>
+                ))}
+              </View>
+            </View>
           </View>
-                    
-        </View>
-      </Modal>
+        ) : ( getStamp(today).length < 2 ? (
+          <View style={diaryStyles.generateButton}>
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+              <FeatherIcon name='plus' size={16} color="white" style={{ fontWeight: 'bold', fontSize: 20}}/>
+              <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>  AI 일기 생성하기</Text>
+            </View>
+            <Text style={[diaryStyles.generateButtonText, { fontSize: 14 }]}> 스탬프가 2개 이상일 때 일기를 만들 수 있어요!</Text>
+          </View>
+        ) : (
+          <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
+            <View style={{flexDirection: 'row', }}>
+              <FeatherIcon name='plus' size={16} color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
+              <Text style={[diaryStyles.generateButtonText,]}>  AI 일기 생성하기</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
 
-
-      {/* 5. 업로드된 사진 (이미지 컴포넌트로 띄워줄 수 있음)
-      <View style={styles.uploadedImage}>
-        <Image source={uploadedImage} style={styles.image} />
-      </View> */}
-
-    </ScrollView>
+        <Modal 
+          isVisible={isLodingModalVisible}
+          animationIn={"fadeIn"}
+          animationOut={"fadeOut"}
+          backdropColor='#CCCCCC' 
+          backdropOpacity={0.9}
+          style={{ alignItems:'center' }}
+          backdropTransitionInTiming={0} // Disable default backdrop animation
+          backdropTransitionOutTiming={0} // Disable default backdrop animation
+        >
+          <View style={diaryStyles.lodingModal}>
+            <ActivityIndicator size="large" color="#00E3AD"/>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중</Text>
+            <View style={{ marginBottom: 10}}>
+              <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>AI 일기가 발행되고 있습니다.</Text>
+              <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>화면을 벗어나지 마세요.</Text>
+              <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>발행 중 이탈 시, 발행이 취소됩니다.</Text>
+            </View>
+            <View style={{ flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row', flex: 1}}>
+                <TouchableOpacity style={diaryStyles.cancelBtn}>
+                  <Text style={{ color: '#344054', fontSize: 16, fontWeight: 'bold',}}>발행 취소</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+                      
+          </View>
+        </Modal>
+        {/* 5. 업로드된 사진 (이미지 컴포넌트로 띄워줄 수 있음)
+        <View style={styles.uploadedImage}>
+          <Image source={uploadedImage} style={styles.image} />
+        </View> */}
+        {/* <Text style={styles.text}></Text>
+        <Text style={styles.text}></Text>
+        <Text style={styles.text}></Text>
+        <Text style={styles.text}></Text>
+        <Text style={styles.text}></Text> */}
+        {/* 추가적인 스크롤 가능한 내용들 */}
+      </ScrollView>
+    </View>
+    
   );
-}
-
+};
 
 
 const dropDownStyles = StyleSheet.create({
@@ -423,9 +411,15 @@ const dropDownStyles = StyleSheet.create({
   },
 });
 
-
 const styles = StyleSheet.create({
-
+  container: {
+    padding: 20,
+    backgroundColor: '#FAFAFA',
+  },
+  text: {
+    fontSize: 20,
+    marginBottom: 10,
+  },
   emojisContainer: {
     flexDirection: 'row',
     // backgroundColor: '#92AAFF', // blue
@@ -597,5 +591,4 @@ const diaryStyles = StyleSheet.create({
     flex: 1,
   },
 });
-
-export default Weekly;
+export default ExampleScrollView;

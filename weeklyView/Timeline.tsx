@@ -4,17 +4,9 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-nati
 import * as repository from '../src/localDB/document';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 
-interface TimelineItem {
-  emoji: string;
-  stampName: string;
-  memo: string;
-  time: string;
-}
-
 interface TimelineProps {
   data: repository.IPushedStamp[];
 }
-
 
 
 const Timeline: React.FC<TimelineProps> = ({ data }) => {
