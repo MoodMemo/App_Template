@@ -325,44 +325,62 @@ const Weekly = () => {
             </View>
 
             <View style={diaryStyles.diaryContainer}>
+              
               {/* date */}
-              <Text style={{fontSize: 12, color: '#212429', marginBottom: 12}}>
+              {isEditMode ? (
+                <Text style={{fontSize: 12, color: '#dbdbdb', marginBottom: 12}}>
+                  {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
+                </Text>
+              ) : (
+                <Text style={{fontSize: 12, color: '#212429', marginBottom: 12}}>
                 {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
               </Text>
+              )}
               
               {/* title */}
-              {isEditMode ? (
-                <TextInput
-                  style={{ fontSize: 16, color: '#212429', }}
-                  value={editedTitle}
-                  onChangeText={setEditedTitle}
-                />
-              ) : (
-                <Text style={{ fontSize: 16, color: '#212429', marginBottom: 12 }}>{todayReport.title}</Text>
-              )}
+              <View style={{ flexDirection: 'row'}}>
+                {isEditMode ? (
+                  <TextInput
+                    style={diaryStyles.editDiary}
+                    value={editedTitle}
+                    onChangeText={setEditedTitle}
+                  />
+                ) : (
+                  <Text style={{ fontSize: 16, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
+                )}
+              </View>
               
               {/* line */}
-              <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 70 }]} />
+              <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 75 }]} />
               
               {/* bodytext */}
-              {isEditMode ? (
-                <TextInput
-                  style={{ fontSize: 12, color: '#495057', marginBottom: 15 }}
-                  value={editedBodytext}
-                  onChangeText={setEditedBodytext}
-                  multiline
-                />
-              ) : (
-                <Text style={{ fontSize: 12, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
-              )}
-              {/* <Text style={{fontSize: 12, color: '#495057', marginBottom: 15}}>{todayReport.bodytext}</Text> */}
-              
-              {/* keyword */}
-              <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-                {todayReport.keyword.map((keyword) => (
-                  <Text key={keyword} style={diaryStyles.keyword}>{keyword}</Text>
-                ))}
+              <View style={{ flexDirection: 'row'}}>
+                {isEditMode ? (
+                  <TextInput
+                    style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
+                    value={editedBodytext}
+                    onChangeText={setEditedBodytext}
+                    multiline
+                  />
+                ) : (
+                  <Text style={{ fontSize: 12, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
+                )}
               </View>
+
+              {/* keyword */}
+              {isEditMode ? (
+                <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+                  {todayReport.keyword.map((keyword) => (
+                    <Text key={keyword} style={[diaryStyles.keyword, {color:'#DBDBDB'}]}>{keyword}</Text>
+                  ))}
+                </View>
+              ) : (
+                <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+                  {todayReport.keyword.map((keyword) => (
+                    <Text key={keyword} style={diaryStyles.keyword}>{keyword}</Text>
+                  ))}
+                </View>
+              )}
             </View>
           </View>
         ) : ( getStamp(today).length < 2 ? (
@@ -641,5 +659,19 @@ const diaryStyles = StyleSheet.create({
     elevation: 2,              // 안드로이드에서 그림자를 표시하기 위한 설정
     flex: 1,
   },
+  editDiary: {
+    fontSize: 16, 
+    color: '#212429', 
+    margin: 0, 
+    marginBottom:7, 
+    paddingVertical: 5, 
+    paddingLeft: 15, 
+    paddingRight: 15, 
+    borderColor: '#F0F0F0', 
+    borderWidth:1, 
+    borderRadius: 5, 
+    paddingHorizontal:10, 
+    flex:1
+  }
 });
 export default Weekly;
