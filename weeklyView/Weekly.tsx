@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Button, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
@@ -152,7 +152,12 @@ const Weekly = () => {
         setIsLodingModalVisible(false);
     });
   };
-
+  useEffect(() => {
+    if (todayReport) {
+      setEditedTitle(todayReport.title);
+      setEditedBodytext(todayReport.bodytext);
+    }
+  }, [todayReport]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
   const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
