@@ -6,17 +6,9 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import StampClick from '../StampClick';
 import Modal from "react-native-modal";
 
-interface TimelineItem {
-  emoji: string;
-  stampName: string;
-  memo: string;
-  time: string;
-}
-
 interface TimelineProps {
   data: repository.IPushedStamp[];
 }
-
 
 
 const Timeline: React.FC<TimelineProps> = ({ data }) => {

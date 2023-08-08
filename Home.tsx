@@ -11,33 +11,9 @@ const Home = () => {
   const options = ['최근 생성 순', '감정 순', '이름 순'];
   const [fixModalVisible, setFixModalVisible] = useState(false);
 
-  useEffect(() => {
-    createChannels();
-  }, []);
-
-
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
-
-
-  const handleFixButton = () => {
-    setFixModalVisible(true);
-  };
-
-  const handleFixModalClose = () => {
-    setFixModalVisible(false);
-  };
-
-  const createChannels = () => {
-    PushNotification.createChannel(
-      {
-        channelId: "MoodMemo_ID",
-        channelName: "MoodMemo"
-      }
-    )
-  }
-
 
   return (
     <View style={styles.view}>
