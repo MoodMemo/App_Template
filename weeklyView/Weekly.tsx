@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
+import { View, Button, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -29,6 +29,9 @@ import axios, { CancelToken } from 'axios';
 import { Card } from 'react-native-paper';
 import StampClick from '../StampClick';
 import StampView from '../StampView';
+
+import * as Sentry from '@sentry/react-native';
+
 
 interface DropdownProps {
   label: string;
@@ -288,7 +291,10 @@ const Weekly = () => {
                 </ScrollView>
               </View></View>
             </Modal>
-          </TouchableOpacity>
+        </TouchableOpacity>
+
+        {/* sentry test*/}
+        {/* <Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/> */}
 
         {/* </TouchableOpacity> */}
       </View>
