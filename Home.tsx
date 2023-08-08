@@ -15,13 +15,6 @@ const Home = () => {
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
-  
-  const handleFixButton = () => {
-    setFixModalVisible(true);
-  };
-  const handleFixModalClose = () => {
-    setFixModalVisible(false);
-  };
 
   const handleFixButton = () => {
     setFixModalVisible(true);
