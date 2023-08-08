@@ -154,8 +154,8 @@ const Weekly = () => {
   };
 
   const [isEditMode, setIsEditMode] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(todayReport.title);
-  const [editedBodytext, setEditedBodytext] = useState(todayReport.bodytext);
+  const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
+  const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
   const handleEditButton = () => { setIsEditMode(true); };
   const handleCancelButton = () => { setIsEditMode(false); };
   const handleSaveButton = () => {
@@ -325,14 +325,39 @@ const Weekly = () => {
             </View>
 
             <View style={diaryStyles.diaryContainer}>
+              {/* date */}
               <Text style={{fontSize: 12, color: '#212429', marginBottom: 12}}>
                 {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
               </Text>
-              <Text style={{fontSize: 16, color: '#212429', marginBottom: 12}}>{todayReport.title}</Text>
               
+              {/* title */}
+              {isEditMode ? (
+                <TextInput
+                  style={{ fontSize: 16, color: '#212429', }}
+                  value={editedTitle}
+                  onChangeText={setEditedTitle}
+                />
+              ) : (
+                <Text style={{ fontSize: 16, color: '#212429', marginBottom: 12 }}>{todayReport.title}</Text>
+              )}
+              
+              {/* line */}
               <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 70 }]} />
               
-              <Text style={{fontSize: 12, color: '#495057', marginBottom: 15}}>{todayReport.bodytext}</Text>
+              {/* bodytext */}
+              {isEditMode ? (
+                <TextInput
+                  style={{ fontSize: 12, color: '#495057', marginBottom: 15 }}
+                  value={editedBodytext}
+                  onChangeText={setEditedBodytext}
+                  multiline
+                />
+              ) : (
+                <Text style={{ fontSize: 12, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
+              )}
+              {/* <Text style={{fontSize: 12, color: '#495057', marginBottom: 15}}>{todayReport.bodytext}</Text> */}
+              
+              {/* keyword */}
               <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
                 {todayReport.keyword.map((keyword) => (
                   <Text key={keyword} style={diaryStyles.keyword}>{keyword}</Text>
