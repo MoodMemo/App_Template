@@ -42,6 +42,8 @@ const StampView = () => {
 
   const [images, setImages] = useState([]);
 
+  // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
+
   const handleMemoChange = (text) => {
     setMemo(text);
     setNumberOfLines(text.split('\n').length);
@@ -112,16 +114,15 @@ const StampView = () => {
               <Text style={styles.maxLength}>{memo.length}/500</Text>
             </View>
           </View>
-          <View style={styles.imgContainer}>
+          {/* <View style={styles.imgContainer}>
             <Text style={styles.modalText}>사진 추가</Text>
             <TouchableOpacity style={styles.imgButton} onPress={() => {
-              // 이미지 추가 버튼 눌렀을 때 동작
-              // 이미지 추가 기능 구현
+              
             }}>
               <Image source={require('./assets/add-circle.png')} />
               <Text style={styles.imgText}>사진 추가{"\n"}{images.length}/3</Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           </ScrollView>
         </View>
       </Modal>
