@@ -193,8 +193,8 @@ const AnimatedViewBirthday = () => {
                 }}>
                 <View style={{
                       backgroundColor:"#FFFFFF",
-                      width:'90%',
-                      height:'45%',
+                      width:'100%',
+                      height:'47%',
                       paddingHorizontal: 20,
                       paddingBottom: 20,
                       paddingTop: 20,
