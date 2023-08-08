@@ -263,7 +263,15 @@ const Weekly = () => {
             backdropTransitionInTiming={0} // Disable default backdrop animation
             backdropTransitionOutTiming={0} // Disable default backdrop animation
           >
-            <View style={{backgroundColor: 'white', borderRadius: 15, padding: 20, width: 360, height: 500}}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start',}}>
+              <View style={{position:'relative', flex: 1, marginBottom: 5}}>
+                <Text style={{ fontSize: 14, color: '#ffffff'}}>TODAY</Text>
+                <Text style={{ fontSize: 24, color: '#ffffff'}}>{today.format('M월 D일 dd')}</Text>
+              </View>
+            </View>
+
+            <View style={{flexDirection: 'row'}}>
+            <View style={{backgroundColor: 'white', borderRadius: 15, flex: 1, padding: 20, height: 500}}>
               <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                 <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}>
                   <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
@@ -278,18 +286,9 @@ const Weekly = () => {
                 <ScrollView contentContainerStyle={{}}>
                   <Timeline data={getStamp(today)} />
                 </ScrollView>
-
-              </View>
-
-              <View style={{position:'absolute', top: 55, left: -5, }}>
-                <Text style={{ fontSize: 14, color: '#ffffff'}}>TODAY</Text>
-                <Text style={{ fontSize: 24, color: '#ffffff'}}>{today.format('M월 D일 dd')}</Text>
-              </View>
+              </View></View>
             </Modal>
           </TouchableOpacity>
-          {/* <Modal isVisible={stampClickModalVisible}>
-            <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
-          </Modal> */}
 
         {/* </TouchableOpacity> */}
       </View>
