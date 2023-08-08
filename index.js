@@ -40,9 +40,8 @@ PushNotification.configure({
 
 PushNotification.createChannel(
   {
-    channelId:"Test_Id",
-    channelName:"Test_Name",
-    playSound: false
+    channelId: "MoodMemo_ID",
+    channelName: "MoodMemo"
   }
 )
 

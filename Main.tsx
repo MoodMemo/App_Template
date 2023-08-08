@@ -195,62 +195,8 @@ async function test_realm_ver4_RUD() { // 테스트 완료 ! 지워도 됩니다
 
 /** asyncstorage 테스트용 함수
  */
-async function test_saveUserInfo_toAsyncStorage(birthday, job) {
-  const createUser = async (birthday, job) => {
-    try {
-      await AsyncStorage.setItem('@UserInfo:isRegistered', 'true');
-      // await AsyncStorage.setItem('@UserInfo:userName', userName);
-      await AsyncStorage.setItem('@UserInfo:birth', birthday);
-      await AsyncStorage.setItem('@UserInfo:job', job);
-      // await AsyncStorage.setItem('@UserInfo:notificationAllow', notificationAllow ? 'true' : 'false'); -> 얘는 나중에 알림 허용할 때 가져가셔용
-      await AsyncStorage.setItem('@UserInfo:registerDate', new Date().toString());
-      // await AsyncStorage.setItem('@UserInfo:progressedDate', progressedDate); -> 얘는 나중에 스탬프 찍으면 업데이트
-      console.log("create user finished");
-    } catch (e) {
-      console.log('Error saving data:', e);
-    }
-  }
-  const getUser = async () => {
-    try {
-      const isRegistered = await AsyncStorage.getItem('@UserInfo:isRegistered');
-      if (isRegistered !== null) {
-        // value previously stored
-        console.log("isRegistered: " + isRegistered);
-      }
-      const birth = await AsyncStorage.getItem('@UserInfo:birth');
-      if (birth !== null) {
-        // value previously stored
-        console.log("birth: " + birth);
-      }
-      const job = await AsyncStorage.getItem('@UserInfo:job');
-      if (job !== null) {
-        // value previously stored
-        console.log("job: " + job);
-      }
-      const registerDate = await AsyncStorage.getItem('@UserInfo:registerDate');
-      if (registerDate !== null) {
-        // value previously stored
-        console.log("registerDate: " + registerDate);
-      }
-    } catch (e) {
-      // error reading value
-      console.log("error reading value");
-    }
-  }
-  createUser(birthday, job);
-  getUser();
-}
 
-
-
-function Main({ birthday, job }) {
-  if (birthday !== null) {
-    //test(); //graphql 테스트를 위해 넣어뒀음
-    // test2(birthday, job); //realm 테스트를 위해 넣어뒀음
-    test_saveUserInfo_toAsyncStorage(birthday, job); //asyncstorage 테스트를 위해 넣어뒀음
-    test_realm_ver4();
-    test_realm_ver4_RUD();
-  }
+function Main() {
   return (
     /*
     하단 바와 함께 그에 맞는 탭이 렌더링됩니다.

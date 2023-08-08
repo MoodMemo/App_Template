@@ -5,9 +5,11 @@
  * @format
  */
 
-import React, {useEffect} from 'react';
+import React, {useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Alert,
+  PermissionsAndroid,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -15,7 +17,6 @@ import {
   Text,
   useColorScheme,
   View,
-  Alert,
 } from 'react-native';
 
 import {
@@ -45,106 +46,48 @@ import { create } from 'react-test-renderer';
 const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
-  
-  (async () => { 
-    // Do something before delay
-    console.log('before delay')
 
-    await new Promise(f => setTimeout(f, 1000));
+  const [isRegistered, setIsRegistered] = useState(false);
 
-    // Do something after
-    console.log('after delay')
-    }
-  )();
-
-  useEffect(() => {
-    scheduleNotifications();
-  })
-
-  const scheduleNotifications = () =>{
-    console.log(Date.now());
-    const notifications = [
-      {
-        channelId: 'Test_Id',
-        message: 'Notification 1',
-        date: new Date(Date.now() + 1000), // 1 second from now
-        visibility: "public",
-        playSound: false
-      },
-      {
-        channelId: 'Test_Id',
-        message: 'Notification 2',
-        date: new Date(Date.now() + 5000), // 5 seconds from now
-        visibility: "public",
-        playSound: false
-      },
-      {
-        channelId: 'Test_Id',
-        message: 'Notification 3',
-        date: new Date(Date.now() + 10000), // 10 seconds from now
-        visibility: "public",
-        playSound: false
-      },
-    ];
-
-    notifications.forEach((notification) => {
-      PushNotification.localNotificationSchedule(notification)
-    })
-  }
-
-  /*
-  useEffect(() => {
-    requestUserPermission();
-    notificationListener();
-  }, []);
-  */
-  /*
-  useEffect(() => {
-    pushNotification();
-  }, []);
-
-  async function pushNotification() {
-    let fcmToken = await messaging().getToken();
-    if (fcmToken) {
-      console.log('token', fcmToken);
-    }
-  }
-
-  useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert(
-        'A new FCM message arrived in foreground mode',
-        JSON.stringify(remoteMessage),
-      );
-    });
-    return unsubscribe;
-  }, []);
-  */
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  const check=0;
 
-  SplashScreen.hide();
+  AsyncStorage.removeItem('@UserInfo:isRegistered'); //-> 처음부터 돌리고 싶으면 주석 해제하고 빌드
 
-  const isRegistered = AsyncStorage.getItem('@UserInfo:isRegistered');
+  
+  AsyncStorage.getItem('@UserInfo:isRegistered',(err,result)=>{
+      if(result!==null)
+      {
+        setIsRegistered(true);
+      }
+  });
 
-  if (isRegistered !== null) {
+  (async () => { 
+    // Do something before delay
+    await new Promise(f => setTimeout(f, 300));
+    SplashScreen.hide();
+    // Do something after
+    }
+  )();
+
+  if (isRegistered) {
     console.log("isRegistered: " + isRegistered);
     return (
       <SafeAreaView style={styles.container}>
-        <Main birthday={null} job={null}/>
+        <Main/>
       </SafeAreaView>
     );
   }
   else
   {
+    AsyncStorage.setItem('@UserInfo:notificationAllow','false');
     return (
       <SafeAreaView style={styles.container}>
-        <AnimatedViewBirthday />
+        <AnimatedViewBirthday/>
       </SafeAreaView>
     );
   }
