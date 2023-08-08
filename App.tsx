@@ -54,7 +54,9 @@ function App(): JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  AsyncStorage.removeItem('@UserInfo:isRegistered');
+
+
+  AsyncStorage.removeItem('@UserInfo:isRegistered'); //-> 처음부터 돌리고 싶으면 주석 해제하고 빌드
 
   
   AsyncStorage.getItem('@UserInfo:isRegistered',(err,result)=>{
