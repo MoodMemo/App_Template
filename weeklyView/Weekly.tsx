@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Button, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -29,6 +29,9 @@ import axios, { CancelToken } from 'axios';
 import { Card } from 'react-native-paper';
 import StampClick from '../StampClick';
 import StampView from '../StampView';
+
+import * as Sentry from '@sentry/react-native';
+
 
 interface DropdownProps {
   label: string;
@@ -109,6 +112,7 @@ const Weekly = () => {
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
   const [isLodingModalVisible, setIsLodingModalVisible] = useState(false);
   const handleGenerateDiary = () => {
+    Sentry.captureMessage('[일기 생성] 사용자가 일기 생성 버튼을 눌렀습니다!');
 
     setIsLodingModalVisible(true);
 
@@ -148,11 +152,19 @@ const Weekly = () => {
         setIsLodingModalVisible(false);
     });
   };
-
+  useEffect(() => {
+    if (todayReport) {
+      setEditedTitle(todayReport.title);
+      setEditedBodytext(todayReport.bodytext);
+    }
+  }, [todayReport]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
   const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
-  const handleEditButton = () => { setIsEditMode(true); };
+  const handleEditButton = () => { 
+    Sentry.captureMessage('[일기 수정] 사용자가 일기 수정 버튼을 눌렀습니다!');
+    setIsEditMode(true); 
+  };
   const handleCancelButton = () => { setIsEditMode(false); };
   const handleSaveButton = () => {
     realm.write(() => {
@@ -165,7 +177,7 @@ const Weekly = () => {
     setIsEditMode(false);
   };
 
-  // tmp_createDummyData();
+  // tmp_createDummyData(); 
 
   return (
     
@@ -246,7 +258,10 @@ const Weekly = () => {
       {/* 3. 오늘의 감정 리스트 */}
       <View style={styles.title}>
         <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
-        <TouchableOpacity onPress={() => setIsDetailModalVisible(!isDetailModalVisible)}>
+        <TouchableOpacity onPress={() => {
+          setIsDetailModalVisible(!isDetailModalVisible),
+          Sentry.captureMessage('[스탬프리스트] 사용자가 자세히 보기 버튼을 눌렀습니다!');
+          }}>
           <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
           {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
           <Modal
@@ -288,7 +303,10 @@ const Weekly = () => {
                 </ScrollView>
               </View></View>
             </Modal>
-          </TouchableOpacity>
+        </TouchableOpacity>
+
+        {/* sentry test*/}
+        {/* <Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/> */}
 
         {/* </TouchableOpacity> */}
       </View>

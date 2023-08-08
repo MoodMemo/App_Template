@@ -43,6 +43,13 @@ import { create } from 'react-test-renderer';
 
 //import {requestUserPermission, notificationListener} from "./src/utils/PushNotification";
 
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({ 
+  dsn: 'https://3554b53489972dd0d1159d97e9cc6eb7@o4505669151555584.ingest.sentry.io/4505669208375296', 
+});
+
+
 const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
@@ -116,4 +123,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+// export default App;
+export default Sentry.wrap(App);
