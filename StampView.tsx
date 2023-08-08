@@ -61,10 +61,10 @@ const StampView = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.container} horizontal={false}>
+      <ScrollView contentContainerStyle={styles.stampView} horizontal={false}>
         {buttonsData.map((button) => (
           <TouchableOpacity key={button.id} style={styles.stampButton} onPress={() => {handleButtonPress(button)}}>
-            <Text style={styles.buttonText}>{button.emotion}</Text>
+            <Text style={styles.buttonEmotion}>{button.emotion}</Text>
             <Text style={styles.buttonText}>{button.label}</Text>
           </TouchableOpacity>
         ))}
@@ -149,30 +149,42 @@ const StampView = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    marginTop: 19,
+    backgroundColor: '#FAFAFA',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stampView: {
     top: 0,
     alignContent: 'center',
     flexDirection: 'row', // 버튼들을 가로로 배열
     flexWrap: 'wrap', // 가로로 공간이 부족하면 다음 줄로 넘어감
     justifyContent: 'space-between', // 버튼들 사이의 간격을 동일하게 분배
     width: 336,
-    height: 583,
+    height: 'auto',
     marginHorizontal: 20, // 버튼들의 좌우 여백을 조절
     gap: 20, // 버튼들 사이의 간격을 조절
   },
   stampButton: {
     width: 69, // 버튼 너비 설정 (한 줄에 4개씩 배치하므로 약 23%)
     height: 84, // 버튼 높이 설정
-    aspectRatio: 1, // 가로 세로 비율을 1:1로 유지하여 버튼이 정사각형이 되도록 함
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F2F2F2',
     borderRadius: 12,
     gap: 10,
-    marginBottom: 10, // 버튼들 사이의 간격을 조절
+    paddingBottom: 10, // 버튼들 사이의 간격을 조절
+  },
+  buttonEmotion: {
+    fontSize: 24,
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#212429',
+    textAlign: 'center',
+    fontFamily: 'Pretendard',
   },
   modalContainer: {
     flex: 1,

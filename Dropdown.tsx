@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 const Dropdown = ({ options, onSelectOption }) => {
   const [isOptionsVisible, setOptionsVisible] = useState(false);
@@ -12,8 +12,9 @@ const Dropdown = ({ options, onSelectOption }) => {
   return (
     <View>
       {/* 드롭다운 버튼 */}
-      <TouchableOpacity onPress={() => setOptionsVisible(!isOptionsVisible)}>
-        <Text>Select an option</Text>
+      <TouchableOpacity style={styles.orderButton} onPress={() => setOptionsVisible(!isOptionsVisible)}>
+        <Text style={styles.orderText}>최근 생성 순</Text>
+        <Image style={styles.orderImg} source={require('./assets/arrow-drop-down.png')} />
       </TouchableOpacity>
 
       {/* 선택지 영역 */}
@@ -35,6 +36,22 @@ const Dropdown = ({ options, onSelectOption }) => {
 };
 
 const styles = StyleSheet.create({
+  orderButton: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  orderText: {
+    color: 'rgba(0, 0, 0, 0.5)',
+    fontFamily: 'Pretendard',
+    fontWeight: '400',
+    fontSize: 12,
+    fontStyle: 'normal',
+    textAlignVertical: 'center',
+  },
+  orderImg: {
+    width: 24,
+    height: 24,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
