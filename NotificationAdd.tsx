@@ -46,7 +46,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                 }}>
                     <View style={{
                         backgroundColor:"#FFFFFF",
-                        width:'80%',
+                        width:'85%',
                         height:'45%',
                         paddingHorizontal: 20,
                         paddingBottom: 20,

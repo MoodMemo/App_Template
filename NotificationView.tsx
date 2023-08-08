@@ -51,7 +51,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                 }}>
                     <View style={{
                         backgroundColor:"#FFFFFF",
-                        width:'80%',
+                        width:'85%',
                         height:'45%',
                         paddingHorizontal: 20,
                         paddingBottom: 20,

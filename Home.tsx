@@ -15,6 +15,14 @@ const Home = () => {
     setSelectedOption(option);
   };
 
+  const handleFixButton = () => {
+    setFixModalVisible(true);
+  };
+
+  const handleFixModalClose = () => {
+    setFixModalVisible(false);
+  };
+
   return (
     <View style={styles.view}>
       <View style={styles.titleContainer}>
