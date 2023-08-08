@@ -28,6 +28,7 @@ import Timeline from './Timeline';
 import axios, { CancelToken } from 'axios';
 import { Card } from 'react-native-paper';
 import StampClick from '../StampClick';
+import StampView from '../StampView';
 
 interface DropdownProps {
   label: string;
@@ -103,11 +104,6 @@ const Weekly = () => {
 
   // 3. 감정 리스트
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
-  const [stampClickModalVisible, setStampClickModalVisible] = useState(false);
-
-  const closeStampClickModal = () => {
-    setStampClickModalVisible(false);
-  };
 
   // 4. AI 일기 생성 버튼
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
@@ -244,43 +240,43 @@ const Weekly = () => {
 
       </View>
 
-
       <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }}>
-        {/* 3. 오늘의 감정 리스트 */}
-        <View style={styles.title}>
-          <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
-          <TouchableOpacity onPress={() => setIsDetailModalVisible(!isDetailModalVisible)}>
-            <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
-            {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
-            <Modal
-              isVisible = {isDetailModalVisible}
-              // presentationStyle='pageSheet'
-              animationIn={"fadeIn"}
-              animationInTiming={200}
-              animationOut={"fadeOut"}
-              animationOutTiming={200}
-              onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}
-              backdropColor='#CCCCCC' 
-              backdropOpacity={0.9}
-              style={{ alignItems:'center' }}
-              backdropTransitionInTiming={0} // Disable default backdrop animation
-              backdropTransitionOutTiming={0} // Disable default backdrop animation
-            >
-              <View style={{backgroundColor: 'white', borderRadius: 15, padding: 20, width: 360, height: 500}}>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                  <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}>
-                    <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
-                  </TouchableOpacity>
-                  <Text style={{color: '#212429', fontSize: 16}}>스탬프 상세 히스토리</Text>
-                  <TouchableOpacity onPress={() => setStampClickModalVisible(true)}> 
-                    {/* 스탬프 추가랑 연결해야함 */}
-                    <FeatherIcon name='plus' color="#00E3AD" style={{ fontWeight: 'bold', fontSize: 20}}/>
-                  </TouchableOpacity>              
+      {/* 3. 오늘의 감정 리스트 */}
+      <View style={styles.title}>
+        <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
+        <TouchableOpacity onPress={() => setIsDetailModalVisible(!isDetailModalVisible)}>
+          <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
+          {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
+          <Modal
+            isVisible = {isDetailModalVisible}
+            // presentationStyle='pageSheet'
+            animationIn={"fadeIn"}
+            animationInTiming={200}
+            animationOut={"fadeOut"}
+            animationOutTiming={200}
+            onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={{backgroundColor: 'white', borderRadius: 15, padding: 20, width: 360, height: 500}}>
+              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}>
+                  <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
+                </TouchableOpacity>
+                <Text style={{color: '#212429', fontSize: 16}}>스탬프 상세 히스토리</Text>
+                <TouchableOpacity> 
+                  {/* 스탬프 추가랑 연결해야함 */}
+                  <FeatherIcon name='plus' color="white" style={{ fontWeight: 'bold', fontSize: 20}}/>
+                </TouchableOpacity>                                         
                 </View>
                 <Text></Text>
                 <ScrollView contentContainerStyle={{}}>
                   <Timeline data={getStamp(today)} />
                 </ScrollView>
+
               </View>
 
               <View style={{position:'absolute', top: 55, left: -5, }}>
@@ -292,13 +288,15 @@ const Weekly = () => {
           <Modal isVisible={stampClickModalVisible}>
             <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
           </Modal>
-        </View>
-        {/* 3-1. 감정 리스트 */}
-        <View style={styles.todayEmotionList}>
-          {getStamp(today).map((stamp) => (
-            <Text key={stamp.id} style={styles.emotion}>{stamp.emoji} {stamp.stampName}</Text>
-          ))}
-        </View>
+
+        </TouchableOpacity>
+      </View>
+      {/* 3-1. 감정 리스트 */}
+      <View style={styles.todayEmotionList}>
+        {getStamp(today).map((stamp) => (
+          <Text key={stamp.id} style={styles.emotion}>{stamp.emoji} {stamp.stampName}</Text>
+        ))}
+      </View>
 
         {/* 4. AI 일기 생성 버튼 */}
         {todayReport !== null ? (

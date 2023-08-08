@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, TextInput } from 'react-native';
+// import Modal from 'react-native-modal';
 
 const StampClick = ({visible, onClose}) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -9,6 +10,7 @@ const StampClick = ({visible, onClose}) => {
   const [numberOfLines, setNumberOfLines] = useState(1);
   const [images, setImages] = useState([]);
 
+  // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
 
   const handleMemoChange = (text) => {
     setMemo(text);
@@ -59,16 +61,42 @@ const StampClick = ({visible, onClose}) => {
           <Text style={styles.maxLength}>{memo.length}/500</Text>
         </View>
       </View>
-      <View style={styles.imgContainer}>
+      {/* <View style={styles.imgContainer}>
         <Text style={styles.modalText}>사진 추가</Text>
         <TouchableOpacity style={styles.imgButton} onPress={() => {
-          // 이미지 추가 버튼 눌렀을 때 동작
-          // 이미지 추가 기능 구현
+          setNotDevelopedModalVisible(true);
         }}>
           <Image source={require('./assets/add-circle.png')} />
           <Text style={styles.imgText}>사진 추가{"\n"}{images.length}/3</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
+      <Modal isVisible={notDevelopedModalVisible}
+        animationIn={"fadeIn"}
+        animationInTiming={200}
+        animationOut={"fadeOut"}
+        animationOutTiming={200}
+        onBackdropPress={() => {
+            setNotDevelopedModalVisible(!notDevelopedModalVisible);
+        }}
+        backdropColor='#CCCCCC'//'#FAFAFA'
+        backdropOpacity={0.8}
+        style={{
+            alignItems:'center'
+        }}>
+          <View style={{
+            backgroundColor:"#FFFFFF",
+            width:'80%',
+            height:'20%',
+            justifyContent:'center',
+            alignItems:'center',
+            borderRadius:10
+          }}>
+            <View style={{
+              }}>
+                <Text style={{fontSize: 17, color:"#495057"}}>사진 업로드는 개발 중!</Text>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
     </View>
   );

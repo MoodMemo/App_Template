@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 
 import * as repository from '../src/localDB/document';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
+import StampClick from '../StampClick';
+import Modal from "react-native-modal";
 
 interface TimelineProps {
   data: repository.IPushedStamp[];
@@ -15,6 +17,12 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
     // ko-KR
     // hour: '2-digit', minute: '2-digit', hour12: true,
     hour: "numeric", minute: "numeric" ,
+  };
+
+  const [stampClickModalVisible, setStampClickModalVisible] = useState(false);
+
+  const closeStampClickModal = () => {
+    setStampClickModalVisible(false);
   };
 
 
@@ -37,11 +45,14 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
               <Text style={{ fontSize: 12, color: '#212429'}}>{item.stampName}</Text>
               <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
                 <Text style={{ fontSize: 12, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
-                <TouchableOpacity >
+                <TouchableOpacity onPress={() => setStampClickModalVisible(true)}>
                   {/* 스탬프 수정! */}
                   <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}}/>
                 </TouchableOpacity>
               </View>
+              <Modal isVisible={stampClickModalVisible}>
+                <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
+              </Modal>
             </View>
 
             <View style={styles.line}></View>
