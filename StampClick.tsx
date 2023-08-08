@@ -70,7 +70,7 @@ const StampClick = ({visible, onClose}) => {
           <Text style={styles.imgText}>사진 추가{"\n"}{images.length}/3</Text>
         </TouchableOpacity>
       </View> */}
-      <Modal isVisible={notDevelopedModalVisible}
+      {/* <Modal isVisible={notDevelopedModalVisible}
         animationIn={"fadeIn"}
         animationInTiming={200}
         animationOut={"fadeOut"}
@@ -96,7 +96,7 @@ const StampClick = ({visible, onClose}) => {
                 <Text style={{fontSize: 17, color:"#495057"}}>사진 업로드는 개발 중!</Text>
             </View>
           </View>
-        </Modal>
+        </Modal> */}
       </ScrollView>
     </View>
   );

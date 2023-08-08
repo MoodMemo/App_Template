@@ -165,6 +165,8 @@ const Weekly = () => {
     setIsEditMode(false);
   };
 
+  // tmp_createDummyData();
+
   return (
     
     <View style={{backgroundColor: '#FAFAFA', flex:1}}>
@@ -285,11 +287,11 @@ const Weekly = () => {
               </View>
             </Modal>
           </TouchableOpacity>
-          <Modal isVisible={stampClickModalVisible}>
+          {/* <Modal isVisible={stampClickModalVisible}>
             <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
-          </Modal>
+          </Modal> */}
 
-        </TouchableOpacity>
+        {/* </TouchableOpacity> */}
       </View>
       {/* 3-1. 감정 리스트 */}
       <View style={styles.todayEmotionList}>

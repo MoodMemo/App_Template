@@ -6,6 +6,7 @@ import StampList from './StampList';
 import PushNotification from "react-native-push-notification";
 
 
+
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const options = ['최근 생성 순', '감정 순', '이름 순'];
@@ -13,6 +14,13 @@ const Home = () => {
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
+  };
+  
+  const handleFixButton = () => {
+    setFixModalVisible(true);
+  };
+  const handleFixModalClose = () => {
+    setFixModalVisible(false);
   };
 
   const handleFixButton = () => {
