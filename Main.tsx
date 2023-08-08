@@ -26,9 +26,6 @@ function HomeScreen() {
 function WeeklyScreen() {
   return <Weekly/>; //Home.tsx
 }
-function TmpScreen() {
-  return <Tmp/>; //Tmp.tsx
-}
 
 function SettingsScreen() {
   return <Settings/>; //Home.tsx
@@ -229,16 +226,6 @@ function Main() {
         />
         <Tab.Screen
           name="Search"
-
-          component={WeeklyScreen} //위클리 화면
-          options={{
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="tmptmp"
 
           component={WeeklyScreen} //위클리 화면
           options={{
