@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Touchable, TouchableOpacity, Image, Modal } from 'react-native';
 import Dropdown from './Dropdown';
 import StampView from './StampView';
+import StampList from './StampList';
 import PushNotification from "react-native-push-notification";
-
 
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const options = ['최근 생성 순', '감정 순', '이름 순'];
+  const [fixModalVisible, setFixModalVisible] = useState(false);
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -20,9 +21,16 @@ const Home = () => {
         {/* 드롭다운 컴포넌트 */}
         <Text style={styles.title}>지금 나의 감정은?</Text>
       </View>
-      <Dropdown options={options} onSelectOption={handleOptionSelect} />
+      <View style={styles.options}>
+        <Dropdown options={options} onSelectOption={handleOptionSelect} />
+        <TouchableOpacity onPress={handleFixButton}>
+          <Image source={require('./assets/edit.png')} />
+        </TouchableOpacity>
+      </View>
       {/* 감정 스탬프 뷰 */}
       <StampView />
+      {/* 스탬프 설정 모달 */}
+      <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
     </View>
   );
 }
@@ -42,18 +50,15 @@ const styles = StyleSheet.create({
       lineHeight: 28.8,
       marginBottom: 20, // title과 Dropdown 사이 간격 조절
     },
-    input: {
-      width: '80%',
-      height: 40,
-      borderWidth: 1,
-      borderColor: 'gray',
-      padding: 10,
-      marginBottom: 20,
+    options: {
+      flexDirection: 'row', // 옵션들을 가로로 배치
+      justifyContent: 'space-between', // 옵션들 사이 간격을 동일하게 배치
+      alignItems: 'center', // 옵션들을 세로로 가운데 정렬
+      marginHorizontal: 28,
     },
     button: {
       position: 'absolute',
       bottom: 20,
-      width: '90%',
       alignItems: 'center',
       backgroundColor: '#EFEFEF',
       padding: 10,
@@ -62,6 +67,17 @@ const styles = StyleSheet.create({
     buttonText: {
       color: '#000000',
       fontSize: 16,
+    },
+    fixModalContainer: {
+      flex: 1,
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      backgroundColor: '#FFFFFF',
+      width: 393,
+      height: 785,
+      flexShrink: 0,
+      borderRadius: 16,
+      marginTop: 67,
     },
   });
 

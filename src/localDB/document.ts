@@ -266,10 +266,6 @@ export function getPushedStampsByFieldBetween(
   const pushedStamps = realm.objects<IPushedStamp>("PushedStamp").filtered(`${fieldName} >= $0 AND ${fieldName} < $1`, value1, value2);
   return pushedStamps.map((pushedStamp) => pushedStamp);
 }
-// export function getPushedStampsByFieldBetween(startDate: Date, endDate: Date): IPushedStamp[] {
-//   const results = realm.objects<IPushedStamp>('PushedStamp').filtered('dateTime BETWEEN $0 AND $1', startDate, endDate);
-//   return Array.from(results);
-// }
 export function deletePushedStamp(pushedStamp: IPushedStamp) {
   realm.delete(pushedStamp);
 }
@@ -337,9 +333,9 @@ export function getAllDailyReports(): IDailyReport[] {
   const dailyReports = realm.objects<IDailyReport>("DailyReport");
   return dailyReports.map((dailyReport) => dailyReport);
 }
-export function getDailyReportsByField(fieldName: keyof IDailyReport, value: any): IDailyReport {
+export function getDailyReportsByField(fieldName: keyof IDailyReport, value: any): IDailyReport | null {
   const dailyReport = realm.objects<IDailyReport>("DailyReport").filtered(`${fieldName} = $0`, value);
-  return dailyReport.map((dailyReport) => dailyReport)[0];
+  return dailyReport.length > 0 ? dailyReport[0] : null;
 }
 export function deleteDailyReport(dailyReport: IDailyReport) {
   realm.delete(dailyReport);

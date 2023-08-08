@@ -10,6 +10,11 @@ import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import java.util.List;
 
+// for amplitude
+// import com.amplitude.android.Amplitude;
+// import com.amplitude.android.Configuration;
+// import com.amplitude.android.DefaultTrackingOptions;
+
 
 
 public class MainApplication extends Application implements ReactApplication {
@@ -60,5 +65,16 @@ public class MainApplication extends Application implements ReactApplication {
       DefaultNewArchitectureEntryPoint.load();
     }
     ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+
+
+    // // Amplitude
+    // Configuration configuration = new Configuration(
+    //   "71c6aec47b758215ad5b07a0241099c8",
+    //   getApplicationContext()
+    // );
+    // configuration.setDefaultTracking(DefaultTrackingOptions.ALL);
+    // Amplitude amplitude = new Amplitude(configuration);
+    // // 사용자 지정 이벤트 추적
+    // amplitude.track("Sign Up");
   }
 }
