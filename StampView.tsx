@@ -56,6 +56,7 @@ const StampView = () => {
     console.log("체크 버튼 누름!");
     // 기록 시간 설정
     const dateTime = date.toISOString();
+    // const dateTime = new Date();
 
     realm.write(() => {
       // 실제로 Realm에 PushedStamp를 생성하는 함수 호출
@@ -80,6 +81,7 @@ const StampView = () => {
   const handleButtonPress = (stampButton) => {
     setSelectedEmotion(stampButton.emoji);
     setSelectedEmotionLabel(stampButton.stampName);
+    setDate(new Date());
     setModalVisible(true);
   }
 
