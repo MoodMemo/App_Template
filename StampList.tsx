@@ -1,12 +1,20 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, Text, Modal, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { RadioButton } from 'react-native-paper';
+import { ICustomStamp, getAllCustomStamps } from './src/localDB/document';
 
 const StampList = ({visible, closeModal}) => {
   // 각 스탬프의 상태를 관리하는 배열, 모두 기본값은 false로 초기화
   const [checkedStates, setCheckedStates] = useState(
     Array(20).fill(false)
   );
+
+  const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
+
+  useEffect(() => {
+    const fetchedCustomStamps = getAllCustomStamps();
+    setCustomStamps(fetchedCustomStamps);
+  }, []);
 
   const [stampListData, setStampListData] = useState(
     [
@@ -97,8 +105,8 @@ const StampList = ({visible, closeModal}) => {
           <Text style={styles.fixModalMessage}>감정 스티커 순서를 변경하거나 삭제할 수 있어요.</Text>
         </View>
         <ScrollView style={styles.stampList}>
-          {stampListData.map((mood, index) => (
-          <View key={mood.id} style={styles.stampListContainer}>
+          {customStamps.map((stamp, index) => (
+          <View key={stamp.id} style={styles.stampListContainer}>
             <RadioButton
               value="first"
               status={checkedStates[index] ? 'checked' : 'unchecked'}
@@ -118,9 +126,9 @@ const StampList = ({visible, closeModal}) => {
                 }
               }
             />
-            <TouchableOpacity key={mood.id} style={styles.moodInfo}>
-              <Text style={styles.moodEmotion}>{mood.emotion}</Text>
-              <Text style={styles.moodText}>{mood.label}</Text>
+            <TouchableOpacity key={stamp.id} style={styles.moodInfo}>
+              <Text style={styles.moodEmotion}>{stamp.emoji}</Text>
+              <Text style={styles.moodText}>{stamp.stampName}</Text>
             </TouchableOpacity>
           </View>
           ))}

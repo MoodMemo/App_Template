@@ -1,8 +1,16 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback } from 'react-native';
 import DatePicker from 'react-native-date-picker';
+import { ICustomStamp, getAllCustomStamps } from './src/localDB/document';
 
 const StampView = () => {
+  const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
+
+  useEffect(() => {
+    const fetchedCustomStamps = getAllCustomStamps();
+    setCustomStamps(fetchedCustomStamps);
+  }, []);
+
   const buttonsData = [
     { id: 1, label: '기쁨', emotion: '😊'},
     { id: 2, label: '슬픔', emotion: '😢'},
@@ -49,9 +57,9 @@ const StampView = () => {
     setNumberOfLines(text.split('\n').length);
   };
 
-  const handleButtonPress = (button) => {
-    setSelectedEmotion(button.emotion);
-    setSelectedEmotionLabel(button.label);
+  const handleButtonPress = (stampButton) => {
+    setSelectedEmotion(stampButton.emoji);
+    setSelectedEmotionLabel(stampButton.stampName);
     setModalVisible(true);
   }
 
@@ -62,10 +70,10 @@ const StampView = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.stampView} horizontal={false}>
-        {buttonsData.map((button) => (
-          <TouchableOpacity key={button.id} style={styles.stampButton} onPress={() => {handleButtonPress(button)}}>
-            <Text style={styles.buttonEmotion}>{button.emotion}</Text>
-            <Text style={styles.buttonText}>{button.label}</Text>
+        {customStamps.map((stampButton) => (
+          <TouchableOpacity key={stampButton.id} style={styles.stampButton} onPress={() => {handleButtonPress(stampButton)}}>
+            <Text style={styles.buttonEmotion}>{stampButton.emoji}</Text>
+            <Text style={styles.buttonText}>{stampButton.stampName}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
