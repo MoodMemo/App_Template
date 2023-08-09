@@ -44,6 +44,7 @@ const Settings = () => {
     await AsyncStorage.getItem('@UserInfo:notificationAllow',(err,result)=>{
         if(JSON.parse(String(result))) setIsNotificationEnabled(true);
         else setIsNotificationEnabled(false);
+        console.log('notificationallowed',result);
     });
   })();
    
@@ -136,7 +137,7 @@ const Settings = () => {
                                     const granted = await PermissionsAndroid.request(
                                       PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
                                     );
-                                    if(granted===PermissionsAndroid.RESULTS.GRANTED){
+                                    if(granted==='granted'){
                                         console.log(PermissionsAndroid.RESULTS.GRANTED);
                                         if(!isNotificationEnabled){
                                             AsyncStorage.setItem('@UserInfo:notificationAllow','true');
@@ -175,7 +176,7 @@ const Settings = () => {
                                     }
                                     else if(granted==='never_ask_again'){
                                         setIsNotificationModalVisible(!isNotificationModalVisible);
-                                        console.log('denied');
+                                        console.log(1,'denied');
                                     }
                                   } catch (error) {
                                     console.warn(error);

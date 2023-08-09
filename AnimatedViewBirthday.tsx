@@ -18,7 +18,7 @@ async function saveUserInfo_toAsyncStorage(userName:any, birthday:any, job:any) 
       await AsyncStorage.setItem('@UserInfo:birth', birthday);
       await AsyncStorage.setItem('@UserInfo:birthShow', birthday);
       await AsyncStorage.setItem('@UserInfo:job', job);
-      await AsyncStorage.setItem('@UserInfo:notificationAllow', 'true');
+      //await AsyncStorage.setItem('@UserInfo:notificationAllow', 'true');
       await AsyncStorage.setItem('@UserInfo:registerDate', new Date().toString());
       // await AsyncStorage.setItem('@UserInfo:progressedDate', progressedDate); -> 얘는 나중에 스탬프 찍으면 업데이트
       console.log("create user finished");
@@ -266,8 +266,10 @@ const AnimatedViewBirthday = () => {
                   );
                   if(granted===PermissionsAndroid.RESULTS.GRANTED){
                     AsyncStorage.setItem('@UserInfo:notificationAllow','true');
+                    console.log(1);
                     connectRealmNotification();
                   }
+                  console.log(granted);
                   saveUserInfo_toAsyncStorage(name, showingBirthday, job);
                   test_realm_ver4();
                 } catch (error) {
