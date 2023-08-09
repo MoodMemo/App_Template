@@ -85,7 +85,7 @@ async function test_realm_ver4() {
 
   const deleteAll = () => {
     realm.deleteAll(); // 얘는 웬만하면 사용 안하는걸로 ..! 여기만 예외적으로 사용할 가능성이 있슴다
-    console.log("delete all finished");
+    console.log("delete all finished"); 
   }
   const createDefaultNotification = () => {
     repository.createNotification({

@@ -316,7 +316,7 @@ const AnimatedViewBirthday = () => {
                 placeholderTextColor='#E2E2E2'
                 onChangeText={(text) => setJob(text)}
               />
-              {isWarningVisible &&
+              {isWarningVisible && 
               <View style={styles.warning}>
                 <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
               </View>}

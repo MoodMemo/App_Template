@@ -85,7 +85,7 @@ function App(): JSX.Element {
 
   
   AsyncStorage.getItem('@UserInfo:isRegistered',(err,result)=>{
-      if(result!==null)
+      if(result!==null) 
       {
         setIsRegistered(true);
       }
