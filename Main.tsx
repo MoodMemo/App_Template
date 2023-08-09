@@ -168,10 +168,10 @@ async function test_realm_ver4() {
     deleteAll();
     createDefaultNotification();
     createDefaultCustomStamp();
-    // createDefaultPushedStamp();
-    // createDefaultDailyReport();
-    createPushedStampDocument();
-    createDailyReportDocument();
+    createDefaultPushedStamp();
+    createDefaultDailyReport();
+    // createPushedStampDocument();
+    // createDailyReportDocument();
   });
   console.log("** create default data finished");
 }

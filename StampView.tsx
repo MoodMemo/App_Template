@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import { ICustomStamp, getAllCustomStamps } from './src/localDB/document';
+import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps } from './src/localDB/document';
 
 const StampView = () => {
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
@@ -52,6 +52,26 @@ const StampView = () => {
 
   // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
 
+  const handleCreatePushedStamp = () => {
+    console.log("체크 버튼 누름!");
+    // 기록 시간 설정
+    const dateTime = date.toISOString();
+
+    realm.write(() => {
+      // 실제로 Realm에 PushedStamp를 생성하는 함수 호출
+      createPushedStamp({
+        dateTime: dateTime,
+        stampName: selectedEmotionLabel,
+        emoji: selectedEmotion,
+        memo: memo,
+        imageUrl: '', // 이미지를 추가하려면 여기에 이미지 URL을 추가
+      });
+    });
+
+    // 모달 닫기
+    setModalVisible(false);
+  }
+
   const handleMemoChange = (text) => {
     setMemo(text);
     setNumberOfLines(text.split('\n').length);
@@ -86,7 +106,7 @@ const StampView = () => {
               <Image source={require('./assets/close.png')} />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>감정 기록</Text>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
+            <TouchableOpacity onPress={handleCreatePushedStamp}>
               <Image source={require('./assets/check.png')} />
             </TouchableOpacity>
           </View>
