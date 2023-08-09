@@ -71,6 +71,7 @@ const AnimatedViewBirthday = () => {
   const [name, setName] = useState('');
   const [job, setJob] = useState('');
   const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
+  const [isWarningVisible, setIsWarningVisible] = useState(false);
 
   const connectRealmNotification = async () => {
     Realm.open({}).then((realm) => {
@@ -139,27 +140,44 @@ const AnimatedViewBirthday = () => {
         setSection('name');
     }
     else if (section === 'name') {
-      console.log('Selected name:', name);
-      setSection('birthday');
+      if(name===''){
+        setIsWarningVisible(true);
+      }
+      else{
+        setIsWarningVisible(false);
+        console.log('Selected name:', name);
+        setSection('birthday');
+      }
     }
     else if (section === 'birthday') {
+      if(showingBirthday==='NNNN/NN/NN'){
+        setIsWarningVisible(true);
+      }
+      else{
+        setIsWarningVisible(false);
         console.log('Selected birthday:', birthday);
         setSection('job');
+      }
     } else {
-      // Handle completion or other actions when occupation is entered
+      if(job===''){
+        setIsWarningVisible(true);
+      }
+      else{
       if (Platform.OS === 'android') {
-          try {
-                const granted = await PermissionsAndroid.request(
-                  PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-                );
-                if(granted===PermissionsAndroid.RESULTS.GRANTED){
+            try {
+                  const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+                  );
+                  if(granted===PermissionsAndroid.RESULTS.GRANTED){
+                    AsyncStorage.setItem('@UserInfo:notificationAllow','true');
+                    connectRealmNotification();
+                  }
                   saveUserInfo_toAsyncStorage(name, showingBirthday, job);
-                  connectRealmNotification();
+                } catch (error) {
                 }
-              } catch (error) {
-              }
-      console.log('Selected job:', job);
-      setSection('main');
+        console.log('Selected job:', job);
+        setSection('main');
+      }
     };
   };
 };
@@ -257,6 +275,10 @@ const AnimatedViewBirthday = () => {
               </TouchableOpacity>
               <Divider style={{backgroundColor:"#000000",width:'50%',marginHorizontal:'5%'}}/>
               <Divider style={{backgroundColor:"#000000",width:'50%',marginHorizontal:'5%'}}/>
+              {isWarningVisible &&
+              <View style={styles.warning}>
+                <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
+              </View>}
               <TouchableOpacity style={styles.button} onPress={handleNext}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
               </TouchableOpacity>
@@ -288,12 +310,16 @@ const AnimatedViewBirthday = () => {
             alignItems: 'center',
             flex:1}}>
               <Text style={styles.title}>내 직업은</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="디자이너"
-                  placeholderTextColor='#E2E2E2'
-                  onChangeText={(text) => setJob(text)}
-                />
+              <TextInput
+                style={styles.input}
+                placeholder="디자이너"
+                placeholderTextColor='#E2E2E2'
+                onChangeText={(text) => setJob(text)}
+              />
+              {isWarningVisible && 
+              <View style={styles.warning}>
+                <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
+              </View>}
               <TouchableOpacity style={styles.button} onPress={handleNext}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
               </TouchableOpacity>
@@ -331,6 +357,10 @@ const AnimatedViewBirthday = () => {
                 placeholderTextColor='#E2E2E2'
                 onChangeText={(text) => setName(text)}
               />
+              {isWarningVisible &&
+              <View style={styles.warning}>
+                <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
+              </View>}
               <TouchableOpacity style={styles.button} onPress={handleNext}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
               </TouchableOpacity>
@@ -371,7 +401,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize:25,
-    color: '#E2E2E2',
+    color: '#666666',
     textAlign: 'center',
     width: '40%',
     padding: 10,
@@ -391,6 +421,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#000000',
     fontSize: 16,
+  },
+  warning: {
+    position: 'absolute',
+    bottom: 80,
+    alignItems: 'center',
   },
 });
 
