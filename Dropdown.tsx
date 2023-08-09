@@ -18,7 +18,7 @@ const Dropdown = ({ options, onSelectOption }) => {
       </TouchableOpacity>
 
       {/* 선택지 영역 */}
-      {isOptionsVisible && (
+      {/* {isOptionsVisible && (
         <View style={styles.optionsContainer}>
           {options.map((option) => (
             <TouchableOpacity
@@ -30,7 +30,7 @@ const Dropdown = ({ options, onSelectOption }) => {
             </TouchableOpacity>
           ))}
         </View>
-      )}
+      )} */}
     </View>
   );
 };
