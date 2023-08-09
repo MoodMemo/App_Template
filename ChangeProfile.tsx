@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
+import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -11,6 +11,7 @@ import DatePicker from 'react-native-date-picker';
 
 
 const ChangeProfile = () => {
+    const {height,width}=useWindowDimensions();
     const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
     const [name, setName] = useState('');
     const [job, setJob] = useState('');
@@ -66,7 +67,7 @@ const ChangeProfile = () => {
         }}>
             <View style={{
                 backgroundColor:"#FFFFFF",
-                width:'80%',
+                width:'85%',
                 height:'70%',
                 paddingHorizontal: '5%',
                 paddingBottom: '5%',
@@ -75,7 +76,7 @@ const ChangeProfile = () => {
                 //alignItems:'center',
                 borderRadius:10
             }}>
-                <View style={{paddingBottom: 60,
+                <View style={{paddingBottom: 40,
                             }}>
                                 <Text style={{fontSize: 17, color:"#495057"}}>프로필 설정 변경</Text>
                 </View>
@@ -84,7 +85,7 @@ const ChangeProfile = () => {
                         }}>
                             <Text style={{fontSize: 17, color:'#666666'}}>이름</Text>
                     </View>
-                    <View style={{paddingBottom: 20,
+                    <View style={{paddingBottom: 15,
                         }}>
                             <TextInput
                             style={styles.input}

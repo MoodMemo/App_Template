@@ -237,12 +237,12 @@ function Main() {
         />
         <Tab.Screen
           name="Search"
-
           component={WeeklyScreen} //위클리 화면
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
             ),
+            
           }}
         />
         <Tab.Screen
@@ -252,6 +252,7 @@ function Main() {
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="settings" color={color} size={size} /> //하단 바 아이콘
             ),
+            lazy:false
           }}
         />
       </Tab.Navigator>

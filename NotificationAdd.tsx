@@ -46,8 +46,8 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                 }}>
                     <View style={{
                         backgroundColor:"#FFFFFF",
-                        width:'85%',
-                        height:'45%',
+                        width:'90%',
+                        height:'47%',
                         paddingHorizontal: 20,
                         paddingBottom: 20,
                         paddingTop: 20,
@@ -56,12 +56,12 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                         borderRadius:10
                         }}>
                         <View style={{
-                            paddingBottom: 20,
+                            paddingBottom: '10%',
                             }}>
                                 <Text style={{fontSize: 17, color:"#495057"}}>알림 추가</Text>
                         </View>
                         <View style={{
-                            paddingBottom: 20,
+                            paddingBottom: 10,
                             alignItems:'center',
                             }}>
                             <DatePicker date={date} onDateChange={(changedDate) => {
@@ -69,9 +69,8 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                             }} mode="time"/>
                         </View>
                         <View style={{
-                            paddingHorizontal: "20%",
-                            paddingBottom: 20,
-                            paddingTop: 15,
+                            paddingHorizontal: "15%",
+                            padding:'8%',
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                             }}>

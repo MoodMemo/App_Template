@@ -168,97 +168,173 @@ const AnimatedViewBirthday = () => {
     <>
         {section === 'start' ? (
           <View style={styles.view}>
-            <Text style={styles.title}>나에 대한 정보를</Text>
-            <Text style={styles.title}>입력해 맞춤형 AI 일기를</Text>
-            <Text style={styles.title}>받아 보세요.</Text>
-            <TouchableOpacity style={styles.button} onPress={handleNext}>
-                <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
-            </TouchableOpacity>
+            <View style={{justifyContent: 'center',
+            alignItems: 'center',
+            flex:1}}>
+              <Text style={styles.title}>나에 대한 정보를</Text>
+              <Text style={styles.title}>입력해 맞춤형 AI 일기를</Text>
+              <Text style={styles.title}>받아 보세요.</Text>
+              <TouchableOpacity style={styles.button} onPress={handleNext}>
+                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (section === 'birthday' ? (
           <View style={styles.view}>
-            <Text style={styles.title}>내 생일은</Text>
-            <Modal isVisible={isDatePickerVisible}
-                animationIn={"fadeIn"}
-                animationInTiming={200}
-                animationOut={"fadeOut"}
-                animationOutTiming={200}
-                onBackdropPress={() => {
-                    setIsDatePickerVisible(!isDatePickerVisible);
-                }}
-                backdropColor='#CCCCCC'//'#FAFAFA'
-                backdropOpacity={0.8}
-                style={{
-                    alignItems:'center'
-                }}>
-                <View style={{
-                      backgroundColor:"#FFFFFF",
-                      width:'100%',
-                      height:'47%',
-                      paddingHorizontal: 20,
-                      paddingBottom: 20,
-                      paddingTop: 20,
-                      //justifyContent:'center',
-                      //alignItems:'center',
-                      borderRadius:10
-                      }}>
-                    <View style={{
-                        paddingBottom: 20,
-                        }}>
-                            <Text style={{fontSize: 17, color:"#495057"}}>생일 입력</Text>
-                    </View>
-                    <View style={{
-                        paddingBottom: 20,
-                        alignItems:'center',
-                        }}>
-                        <DatePicker date={birthday}
-                        onDateChange={(changedDate) => {
-                            setBirthday(changedDate);}}
-                        mode='date'/>
-                    </View>
-                    <TouchableOpacity style={{alignItems:'center',}}
-                    onPress={()=>{
-                      setShowingBirthday(formatDate(birthday));
+            <Divider style={{
+                position: 'absolute',
+                top: 0,
+                paddingTop:5,
+                marginTop:50,
+                width: '80%',
+                backgroundColor:"#FAFAFA",
+                marginLeft:'10%',
+                borderRadius:5,
+              }}/>
+              <Divider style={{
+                position: 'absolute',
+                top: 0,
+                paddingTop:5,
+                marginTop:50,
+                width: '40%',
+                backgroundColor:"#72D193",
+                marginLeft:'10%',
+                borderRadius:5,
+              }}/>
+            <View style={{justifyContent: 'center',
+            alignItems: 'center',
+            flex:1}}>
+              <Text style={styles.title}>내 생일은</Text>
+              <Modal isVisible={isDatePickerVisible}
+                  animationIn={"fadeIn"}
+                  animationInTiming={200}
+                  animationOut={"fadeOut"}
+                  animationOutTiming={200}
+                  onBackdropPress={() => {
                       setIsDatePickerVisible(!isDatePickerVisible);
-                    }}>
-                      <Text style={{paddingTop: 20, fontSize: 17,}}>저장</Text>
-                    </TouchableOpacity>  
-                </View>     
-            </Modal>
-            <TouchableOpacity onPress={() => {setIsDatePickerVisible(!isDatePickerVisible)}}>
-              <Text style={{fontSize:25, color: '#E2E2E2'}}>{showingBirthday}</Text>
-            </TouchableOpacity>
-            <Divider style={{backgroundColor:"#000000",width:'50%',marginHorizontal:'5%'}}/>
-            <Divider style={{backgroundColor:"#000000",width:'50%',marginHorizontal:'5%'}}/>
-            <TouchableOpacity style={styles.button} onPress={handleNext}>
-                <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
-            </TouchableOpacity>
+                  }}
+                  backdropColor='#CCCCCC'//'#FAFAFA'
+                  backdropOpacity={0.8}
+                  style={{
+                      alignItems:'center'
+                  }}>
+                  <View style={{
+                        backgroundColor:"#FFFFFF",
+                        width:'100%',
+                        height:'47%',
+                        paddingHorizontal: 20,
+                        paddingBottom: 20,
+                        paddingTop: 20,
+                        //justifyContent:'center',
+                        //alignItems:'center',
+                        borderRadius:10
+                        }}>
+                      <View style={{
+                          paddingBottom: 20,
+                          }}>
+                              <Text style={{fontSize: 17, color:"#495057"}}>생일 입력</Text>
+                      </View>
+                      <View style={{
+                          paddingBottom: 20,
+                          alignItems:'center',
+                          }}>
+                          <DatePicker date={birthday}
+                          onDateChange={(changedDate) => {
+                              setBirthday(changedDate);}}
+                          mode='date'/>
+                      </View>
+                      <TouchableOpacity style={{alignItems:'center',}}
+                      onPress={()=>{
+                        setShowingBirthday(formatDate(birthday));
+                        setIsDatePickerVisible(!isDatePickerVisible);
+                      }}>
+                        <Text style={{paddingTop: 20, fontSize: 17,}}>저장</Text>
+                      </TouchableOpacity>  
+                  </View>     
+              </Modal>
+              <TouchableOpacity onPress={() => {setIsDatePickerVisible(!isDatePickerVisible)}}>
+                <Text style={{fontSize:25, color: '#E2E2E2'}}>{showingBirthday}</Text>
+              </TouchableOpacity>
+              <Divider style={{backgroundColor:"#000000",width:'50%',marginHorizontal:'5%'}}/>
+              <Divider style={{backgroundColor:"#000000",width:'50%',marginHorizontal:'5%'}}/>
+              <TouchableOpacity style={styles.button} onPress={handleNext}>
+                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (section === 'job' ? (
           <View style={styles.view}>
-            <Text style={styles.title}>내 직업은</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="디자이너"
-                placeholderTextColor='#E2E2E2'
-                onChangeText={(text) => setJob(text)}
-              />
-            <TouchableOpacity style={styles.button} onPress={handleNext}>
-                <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
-            </TouchableOpacity>
+            <Divider style={{
+                position: 'absolute',
+                top: 0,
+                paddingTop:5,
+                marginTop:50,
+                width: '80%',
+                backgroundColor:"#FAFAFA",
+                marginLeft:'10%',
+                borderRadius:5,
+              }}/>
+              <Divider style={{
+                position: 'absolute',
+                top: 0,
+                paddingTop:5,
+                marginTop:50,
+                width: '80%',
+                backgroundColor:"#72D193",
+                marginLeft:'10%',
+                borderRadius:5,
+              }}/>
+            <View style={{justifyContent: 'center',
+            alignItems: 'center',
+            flex:1}}>
+              <Text style={styles.title}>내 직업은</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="디자이너"
+                  placeholderTextColor='#E2E2E2'
+                  onChangeText={(text) => setJob(text)}
+                />
+              <TouchableOpacity style={styles.button} onPress={handleNext}>
+                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (section === 'name' ? (
           <View style={styles.view}>
-            <Text style={styles.title}>내 이름은</Text>
+              <Divider style={{
+                position: 'absolute',
+                top: 0,
+                paddingTop:5,
+                marginTop:50,
+                width: '80%',
+                backgroundColor:"#FAFAFA",
+                marginLeft:'10%',
+                borderRadius:5,
+              }}/>
+              <Divider style={{
+                position: 'absolute',
+                top: 0,
+                paddingTop:5,
+                marginTop:50,
+                width: '15%',
+                backgroundColor:"#72D193",
+                marginLeft:'10%',
+                borderRadius:5,
+              }}/>
+            <View style={{justifyContent: 'center',
+            alignItems: 'center',
+            flex:1}}>
+              <Text style={styles.title}>내 이름은</Text>
               <TextInput
                 style={styles.input}
                 placeholder="홍길동"
                 placeholderTextColor='#E2E2E2'
                 onChangeText={(text) => setName(text)}
               />
-            <TouchableOpacity style={styles.button} onPress={handleNext}>
-                <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
-            </TouchableOpacity>
+              <TouchableOpacity style={styles.button} onPress={handleNext}>
+                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (
           <Main/> // 새로운 정보가 추가되면 이 부분 수정해주시고, Main.tsx도 수정해주세요! (주석처리된 부분)
@@ -269,14 +345,22 @@ const AnimatedViewBirthday = () => {
 
 
 const styles = StyleSheet.create({
+  bar: {
+    position: 'absolute',
+    top: 0,
+    paddingTop:5,
+    marginTop:50,
+    width: '90%',
+    backgroundColor:"#EAEAEA",
+    marginHorizontal:'5%'
+  },
   container: {
     flex: 1,
   },
   view: {
     position: 'relative',
     backgroundColor: '#ffffff',
-    justifyContent: 'center',
-    alignItems: 'center',
+
     flex:1,
   },
   title: {

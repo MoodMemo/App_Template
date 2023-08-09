@@ -143,7 +143,7 @@ const StampView = () => {
                 multiline={true}
                 maxLength={500}
                 onChangeText={handleMemoChange}
-                value={memo}
+                //value={memo}
                 numberOfLines={numberOfLines}
               />
               <Text style={styles.maxLength}>{memo.length}/500</Text>
