@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
+import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -21,6 +21,8 @@ const test = () => {
 
 const Settings = () => {
 
+
+  const {height,width}=useWindowDimensions();
   //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isKakaoModalVisible, setIsKakaoModalVisible] = useState(false);
   const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
@@ -394,8 +396,11 @@ const Settings = () => {
                             borderRadius:10
                         }}>
                             <View style={{
+                                justifyContent:'center',
+                                alignItems:'center',
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057"}}>고객센터/의견 보내기/오류 제보는 개발 중!</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>고객센터/의견 보내기/오류 제보는</Text>
+                                    <Text style={{fontSize: 17, color:"#495057"}}>개발 중!</Text>
                             </View>
                         </View>
                     </Modal>
@@ -435,8 +440,12 @@ const Settings = () => {
                             borderRadius:10
                         }}>
                             <View style={{
+                                justifyContent:'center',
+                                alignItems:'center',
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057"}}>나 커피 못 마셔</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>카카오뱅크 이준하</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>3333-27-9623079</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", }}>감사합니다!</Text>
                             </View>
                         </View>
                     </Modal>
