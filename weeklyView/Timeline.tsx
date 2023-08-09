@@ -45,9 +45,11 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
               <Text style={{ fontSize: 12, color: '#212429'}}>{item.stampName}</Text>
               <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
                 <Text style={{ fontSize: 12, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
-                <TouchableOpacity onPress={() => setStampClickModalVisible(true)}>
+                <TouchableOpacity
+                  // onPress={() => setStampClickModalVisible(true)}
+                >
                   {/* 스탬프 수정! */}
-                  <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}}/>
+                  <EntypoIcon name='dots-three-horizontal' color="#fafafa" style={{ fontWeight: 'bold', fontSize: 10}}/>
                 </TouchableOpacity>
               </View>
               <Modal isVisible={stampClickModalVisible}>
