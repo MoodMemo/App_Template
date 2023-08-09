@@ -34,6 +34,8 @@ import AnimatedViewBirthday from './AnimatedViewBirthday';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import realm from './src/localDB/document';
+import * as repository from './src/localDB/document';
 
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from "react-native-push-notification";
@@ -52,6 +54,22 @@ Sentry.init({
 
 const Stack = createNativeStackNavigator();
 
+/**
+ * AsyncStorage, Realm 초기화
+ */
+const initiailze = () => {
+  AsyncStorage.removeItem('@UserInfo:isRegistered');
+
+  const deleteAll = () => {
+    realm.deleteAll(); // 얘는 웬만하면 사용 안하는걸로 ..! 여기만 예외적으로 사용할 가능성이 있슴다
+    console.log("delete all finished");
+  }
+  realm.write(() => {
+    deleteAll();
+  });
+}
+
+
 function App(): JSX.Element {
 
   const [isRegistered, setIsRegistered] = useState(false);
@@ -63,7 +81,7 @@ function App(): JSX.Element {
   };
 
 
-  AsyncStorage.removeItem('@UserInfo:isRegistered'); //-> 처음부터 돌리고 싶으면 주석 해제하고 빌드
+  initiailze(); //처음에는 주석 해제하고 실행해서 초기화 한 다음에 바로 껐다가, 주석 처리하고 다시 실행합시다!
 
   
   AsyncStorage.getItem('@UserInfo:isRegistered',(err,result)=>{

@@ -165,8 +165,8 @@ async function test_realm_ver4() {
   }
 
   realm.write(() => {
-    deleteAll();
-    createDefaultNotification();
+    //deleteAll();
+    //createDefaultNotification();
     createDefaultCustomStamp();
     // createDefaultPushedStamp();
     // createDefaultDailyReport();
@@ -242,7 +242,7 @@ function Main() {
             tabBarIcon: ({color, size}) => (
               <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
             ),
-            
+            unmountOnBlur: true,
           }}
         />
         <Tab.Screen
