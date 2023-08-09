@@ -62,7 +62,103 @@ async function saveUserInfo_toAsyncStorage(userName:any, birthday:any, job:any) 
   getUser();
 }
 
+async function test_realm_ver4() {
+  Realm.open({}).then((realm) => {
+      console.log("Realm is located at: " + realm.path);
+  });
 
+  const deleteAll = () => {
+    realm.deleteAll(); // 얘는 웬만하면 사용 안하는걸로 ..! 여기만 예외적으로 사용할 가능성이 있슴다
+    console.log("delete all finished"); 
+  }
+  const createDefaultNotification = () => {
+    repository.createNotification({
+      day: [true, true, true, true, true, false, false],
+      time: "09:00"
+    });
+    repository.createNotification({
+      day: [true, true, true, true, true, true, true],
+      time: "13:00"
+    });
+    repository.createNotification({
+      day: [true, true, true, true, true, true, true],
+      time: "19:00"
+    });
+    repository.createNotification({
+      day: [true, true, true, true, true, true, true],
+      time: "23:00"
+    });
+    console.log("create default notification finished");
+  }
+  const createDefaultCustomStamp = () => {
+    repository.createCustomStamp({
+      stampName: "기쁨",
+      emoji: "😆"
+    });
+    repository.createCustomStamp({
+      stampName: "슬픔",
+      emoji: "😭"
+    });
+    repository.createCustomStamp({
+      stampName: "짜증",
+      emoji: "😡"
+    });
+    repository.createCustomStamp({
+      stampName: "평온",
+      emoji: "🙂"
+    });
+    repository.createCustomStamp({
+      stampName: "피곤",
+      emoji: "😴"
+    });
+    console.log("create default custom stamp finished");
+  }
+  const createDefaultPushedStamp = () => {
+    repository.createPushedStamp({
+      dateTime: new Date(),
+      stampName: "기쁨",
+      emoji: "😆",
+      memo: "기쁨 스탬프 눌렀다무",
+      imageUrl: "이미지는 안넣었다무"
+    });
+    repository.createPushedStamp({
+      dateTime: new Date("2021-08-03 09:00:00"),
+      stampName: "슬픔",
+      emoji: "😭",
+      memo: "슬픔 스탬프 눌렀다무",
+      imageUrl: "이미지는 안넣었다무"
+    });
+    console.log("create default pushed stamp finished");
+  }
+  const createPushedStampDocument = () => {
+    repository.createPushedStamp({});
+    console.log("create pushed stamp document finished");
+  }
+  const createDefaultDailyReport = () => {
+    repository.createDailyReport({
+      date: "2023-08-03",
+      title: "테스트 일기랍니다",
+      bodytext: "테스트 일기 내용입니다",
+      keyword: ["소마", "희희하하", "무드메모"]
+    });
+    console.log("create default daily report finished");
+  }
+  const createDailyReportDocument = () => {
+    repository.createDailyReport({});
+    console.log("create daily report document finished");
+  }
+
+  realm.write(() => {
+    //deleteAll();
+    //createDefaultNotification();
+    createDefaultCustomStamp();
+    // createDefaultPushedStamp();
+    // createDefaultDailyReport();
+    // createPushedStampDocument();
+    // createDailyReportDocument();
+  });
+  console.log("** create default data finished");
+}
 
 const AnimatedViewBirthday = () => {
   const [section, setSection] = useState('start');
@@ -173,6 +269,7 @@ const AnimatedViewBirthday = () => {
                     connectRealmNotification();
                   }
                   saveUserInfo_toAsyncStorage(name, showingBirthday, job);
+                  test_realm_ver4();
                 } catch (error) {
                 }
         console.log('Selected job:', job);

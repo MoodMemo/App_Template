@@ -204,7 +204,7 @@ async function test_realm_ver4_RUD() { // 테스트 완료 ! 지워도 됩니다
  */
 
 function Main() {
-  test_realm_ver4();
+  //test_realm_ver4();
   return (
     /*
     하단 바와 함께 그에 맞는 탭이 렌더링됩니다.
