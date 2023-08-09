@@ -81,7 +81,7 @@ function App(): JSX.Element {
   };
 
 
-  initiailze(); //처음에는 주석 해제하고 실행해서 초기화 한 다음에 바로 껐다가, 주석 처리하고 다시 실행합시다!
+  //initiailze(); //처음에는 주석 해제하고 실행해서 초기화 한 다음에 바로 껐다가, 주석 처리하고 다시 실행합시다!
 
   
   AsyncStorage.getItem('@UserInfo:isRegistered',(err,result)=>{
