@@ -5,7 +5,7 @@ import { RadioButton } from 'react-native-paper';
 const StampList = ({visible, closeModal}) => {
   // 각 스탬프의 상태를 관리하는 배열, 모두 기본값은 false로 초기화
   const [checkedStates, setCheckedStates] = useState(
-    Array(10).fill(false)
+    Array(20).fill(false)
   );
 
   const [stampListData, setStampListData] = useState(
@@ -20,6 +20,12 @@ const StampList = ({visible, closeModal}) => {
       { id: 8, label: '불안', emotion: '😨'},
       { id: 9, label: '짜증', emotion: '😤'},
       { id: 10, label: '행복', emotion: '😁'},
+      { id: 11, label: '평온', emotion: '😌'},
+      { id: 12, label: '불만', emotion: '😒'},
+      { id: 13, label: '놀람', emotion: '😱'},
+      { id: 14, label: '당황', emotion: '😳'},
+      { id: 15, label: '무표정', emotion: '😐'},
+      { id: 16, label: '우울', emotion: '😔'},
     ]
   );
   const [addStampDataLabel, setAddStampDataLabel] = useState('');
@@ -188,7 +194,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: 393,
     height: 812,
-    marginTop: 54,
   },
   fixModalTitleContainer: {
     flexDirection: 'row',
@@ -223,7 +228,7 @@ const styles = StyleSheet.create({
     width: 393,
     // paddingHorizontal: 20,
     // marginTop: 132,
-    marginBottom: 60,
+    // marginBottom: 60,
   },
   stampListContainer: {
     flexDirection: 'row',
@@ -251,8 +256,8 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   fixModalButton: {
-    position: 'absolute',
-    bottom: 30,
+    // position: 'absolute',
+    // bottom: 0,
     width: 393,
     height: 60,
     marginBottom: 30,
