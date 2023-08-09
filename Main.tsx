@@ -146,6 +146,10 @@ async function test_realm_ver4() {
     });
     console.log("create default pushed stamp finished");
   }
+  const createPushedStampDocument = () => {
+    repository.createPushedStamp({});
+    console.log("create pushed stamp document finished");
+  }
   const createDefaultDailyReport = () => {
     repository.createDailyReport({
       date: "2023-08-03",
@@ -155,13 +159,19 @@ async function test_realm_ver4() {
     });
     console.log("create default daily report finished");
   }
+  const createDailyReportDocument = () => {
+    repository.createDailyReport({});
+    console.log("create daily report document finished");
+  }
 
   realm.write(() => {
     deleteAll();
     createDefaultNotification();
     createDefaultCustomStamp();
-    createDefaultPushedStamp();
-    createDefaultDailyReport();
+    // createDefaultPushedStamp();
+    // createDefaultDailyReport();
+    createPushedStampDocument();
+    createDailyReportDocument();
   });
   console.log("** create default data finished");
 }
@@ -194,6 +204,7 @@ async function test_realm_ver4_RUD() { // 테스트 완료 ! 지워도 됩니다
  */
 
 function Main() {
+  test_realm_ver4();
   return (
     /*
     하단 바와 함께 그에 맞는 탭이 렌더링됩니다.
