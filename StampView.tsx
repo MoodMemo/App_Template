@@ -70,7 +70,12 @@ const StampView = () => {
     });
 
     // 모달 닫기
+    onClose();
+  }
+
+  const onClose = () => {
     setModalVisible(false);
+    setMemo('');
   }
 
   const handleMemoChange = (text) => {
@@ -104,7 +109,7 @@ const StampView = () => {
         <View style={styles.modalContainer}>
           {/* 모달 내용 */}
           <View style={styles.modalTitleContainer}>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
+            <TouchableOpacity onPress={onClose}>
               <Image source={require('./assets/close.png')} />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>감정 기록</Text>
@@ -124,7 +129,7 @@ const StampView = () => {
             <Text style={styles.modalText}>기록 시간</Text>
             <TouchableOpacity onPress={() => setTimeModalVisible(true)}>
               <Text style={styles.timeText}>
-                {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes()}
+                {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
               </Text>
             </TouchableOpacity>
           </View>
