@@ -130,7 +130,7 @@ const Weekly = () => {
       todayStampList: todatStampList,
     }
 
-    console.log('ai 서버와의 통신 시작합니다');
+    console.log('ai 서버와의 통신 시작합니다?');
     sendDailyReport(request)
       .then((response) => {
         console.log('date: ', response.date);
