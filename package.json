@@ -25,6 +25,7 @@
     "@react-navigation/bottom-tabs": "^6.5.8",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/native-stack": "^6.9.13",
+    "@realm/react": "^0.5.2",
     "@sentry/react-native": "^5.8.1",
     "aws-amplify": "^5.3.5",
     "dayjs": "^1.11.9",
@@ -49,7 +50,7 @@
     "react-native-switch-toggle": "^2.2.1",
     "react-native-uuid": "^2.0.1",
     "react-native-vector-icons": "^10.0.0",
-    "realm": "^11.10.1",
+    "realm": "^11.10.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
