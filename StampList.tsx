@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { View, Text, Modal, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { RadioButton } from 'react-native-paper';
-import { ICustomStamp, getAllCustomStamps } from './src/localDB/document';
+import realm, { ICustomStamp, createCustomStamp, deleteCustomStamp, getAllCustomStamps } from './src/localDB/document';
 
 const StampList = ({visible, closeModal}) => {
   // 각 스탬프의 상태를 관리하는 배열, 모두 기본값은 false로 초기화
@@ -12,9 +12,14 @@ const StampList = ({visible, closeModal}) => {
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
 
   useEffect(() => {
-    const fetchedCustomStamps = getAllCustomStamps();
-    setCustomStamps(fetchedCustomStamps);
+    const fetchStamps = async () => {
+      const fetchedCustomStamps = await getAllCustomStamps();
+      setCustomStamps(fetchedCustomStamps);
+    };
+    
+    fetchStamps();
   }, []);
+  
 
   const [stampListData, setStampListData] = useState(
     [
@@ -46,26 +51,32 @@ const StampList = ({visible, closeModal}) => {
   const [addStampModalVisible, setAddStampModalVisible] = useState(false);
   const [addStampButtonDisabled, setAddStampButtonDisabled] = useState(true);
 
-  const countSelectedRadioButtons = () => {
-    const count = checkedStates.filter((state) => state === true).length;
-    if(!isChecked && stampCount > 0) setIsChecked(true);
-    else if(isChecked && stampCount === 0) setIsChecked(false);
+  const handleRadioButtonPress = (index) => {
+    const newCheckedStates = [...checkedStates];
+    newCheckedStates[index] = !checkedStates[index];
+    const count = newCheckedStates.filter((state) => state).length;
+  
+    setCheckedStates(newCheckedStates);
+    setIsChecked(count > 0);
     setStampCount(count);
-    // return count;
   };
 
   const handleDeleteStamp = () => {
     // 라디오버튼 체크된 것들 삭제
-    // checkedStates 배열에서 true로 설정된 항목들의 인덱스들을 찾기
     const selectedIndexes = checkedStates.reduce(
       (indexes, state, index) => (state ? [...indexes, index] : indexes),
       []
     );
 
     // 선택된 스탬프들을 삭제
-    const newStampListData = stampListData.filter(
-      (mood) => !selectedIndexes.includes(mood.id - 1) // 인덱스는 0부터 시작
+    const newCustomStamps = customStamps.filter(
+      (stamp, index) => !selectedIndexes.includes(index)
     );
+
+    // realm에서 선택된 스탬프들을 삭제
+    selectedIndexes.forEach(index => {
+      deleteCustomStamp(customStamps[index]);
+    });
 
     // 선택된 스탬프들의 체크 상태 초기화
     const newCheckedStates = checkedStates.map((_, index) =>
@@ -73,19 +84,34 @@ const StampList = ({visible, closeModal}) => {
     );
 
     // 변경된 데이터와 상태 적용
-    setStampListData(newStampListData);
+    setCustomStamps(newCustomStamps);
     setCheckedStates(newCheckedStates);
     console.log("스탬프 삭제");
   };
 
   const handleAddStamp = (label, emotion) => {
-    // 스탬프 추가
-    const newStampListData = [...stampListData, { id: stampListData.length + 1, label, emotion}];
-    setStampListData(newStampListData);
+    // 새 스탬프 객체의 초기 데이터를 생성
+    const newStampData = {
+      stampName: label,
+      emoji: emotion,
+    };
+  
+    let newStamp;
+    // Realm 데이터베이스에 스탬프 추가
+    realm.write(() => {
+      newStamp = createCustomStamp(newStampData);
+    });
+  
+    // 상태 업데이트: 새 스탬프를 customStamps에 추가
+    const updatedCustomStamps = [...customStamps, newStamp];
+    setCustomStamps(updatedCustomStamps);
+  
+    // 모달과 버튼 상태 초기화
     setAddStampModalVisible(false);
     setAddStampButtonDisabled(true);
     console.log("스탬프 추가");
   };
+    
 
   return (
     <Modal visible={visible} animationType='slide' transparent>
@@ -110,21 +136,7 @@ const StampList = ({visible, closeModal}) => {
             <RadioButton
               value="first"
               status={checkedStates[index] ? 'checked' : 'unchecked'}
-              onPress={
-                checkedStates[index] ? () => {
-                  setStampCount(stampCount - 1);
-                  const newCheckedStates = [...checkedStates];
-                  newCheckedStates[index] = !checkedStates[index];
-                  setCheckedStates(newCheckedStates);
-                  countSelectedRadioButtons();
-                } : () => {
-                  setStampCount(stampCount + 1);
-                  const newCheckedStates = [...checkedStates];
-                  newCheckedStates[index] = !checkedStates[index];
-                  setCheckedStates(newCheckedStates);
-                  countSelectedRadioButtons();
-                }
-              }
+              onPress={() => handleRadioButtonPress(index)}
             />
             <TouchableOpacity key={stamp.id} style={styles.moodInfo}>
               <Text style={styles.moodEmotion}>{stamp.emoji}</Text>
