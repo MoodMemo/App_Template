@@ -358,7 +358,8 @@ const AnimatedViewBirthday = () => {
                           <DatePicker date={birthday}
                           onDateChange={(changedDate) => {
                               setBirthday(changedDate);}}
-                          mode='date'/>
+                          mode='date'
+                          theme='light'/>
                       </View>
                       <TouchableOpacity style={{alignItems:'center',}}
                       onPress={()=>{

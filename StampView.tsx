@@ -167,7 +167,7 @@ const StampView = () => {
         <TouchableWithoutFeedback onPress={handleCloseTimeModal}>
           <View style={styles.timeModalContainer}>
             <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
-            <DatePicker date={date} onDateChange={setDate} mode="date" />
+            <DatePicker date={date} onDateChange={setDate} mode="date" theme="light"/>
             <View style={styles.timeButtons}>
               <TouchableOpacity onPress={handleCloseTimeModal}>
                 <Text>취소</Text>
