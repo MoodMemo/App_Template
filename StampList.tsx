@@ -19,28 +19,7 @@ const StampList = ({visible, closeModal}) => {
     
     fetchStamps();
   }, []);
-  
 
-  const [stampListData, setStampListData] = useState(
-    [
-      { id: 1, label: '기쁨', emotion: '😊'},
-      { id: 2, label: '슬픔', emotion: '😢'},
-      { id: 3, label: '화남', emotion: '😡'},
-      { id: 4, label: '놀람', emotion: '😱'},
-      { id: 5, label: '당황', emotion: '😳'},
-      { id: 6, label: '무표정', emotion: '😐'},
-      { id: 7, label: '우울', emotion: '😔'},
-      { id: 8, label: '불안', emotion: '😨'},
-      { id: 9, label: '짜증', emotion: '😤'},
-      { id: 10, label: '행복', emotion: '😁'},
-      { id: 11, label: '평온', emotion: '😌'},
-      { id: 12, label: '불만', emotion: '😒'},
-      { id: 13, label: '놀람', emotion: '😱'},
-      { id: 14, label: '당황', emotion: '😳'},
-      { id: 15, label: '무표정', emotion: '😐'},
-      { id: 16, label: '우울', emotion: '😔'},
-    ]
-  );
   const [addStampDataLabel, setAddStampDataLabel] = useState('');
   const [addStampDataEmotion, setAddStampDataEmotion] = useState('');
 
@@ -151,59 +130,51 @@ const StampList = ({visible, closeModal}) => {
           </TouchableOpacity>
         }
       </View>
+      {addStampModalVisible && (
+        <View style={styles.overlay} />
+      )}
       <Modal visible={addStampModalVisible} animationType='slide' transparent>
-        {/* <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.keyboardAvoidingContainer}
-        > */}
-          <View style={styles.addStampModalContainer}>
-            <View style={styles.addStampModalTitleContainer}>
-              <TouchableOpacity onPress={() => setAddStampModalVisible(false)}>
-                <Image source={require('./assets/close.png')} />
-              </TouchableOpacity>
-              <Text style={styles.addStampModalTitle}>스탬프 추가</Text>
-              <TouchableOpacity disabled={addStampButtonDisabled} onPress={() => handleAddStamp(addStampDataLabel, addStampDataEmotion)}>
-                <Image source={require('./assets/add_check.png')} 
-                  style={[
-                    styles.checkImage,
-                    addStampButtonDisabled && styles.disabledCheckImage
-                  ]}
-                />
-              </TouchableOpacity>
+        <View style={styles.addStampModalContainer}>
+          <View style={styles.addStampModalTitleContainer}>
+            <TouchableOpacity onPress={() => setAddStampModalVisible(false)}>
+              <Image source={require('./assets/close.png')} />
+            </TouchableOpacity>
+            <Text style={styles.addStampModalTitle}>스탬프 추가</Text>
+            <TouchableOpacity disabled={addStampButtonDisabled} onPress={() => handleAddStamp(addStampDataLabel, addStampDataEmotion)}>
+              <Image source={require('./assets/add_check.png')} 
+                style={[
+                  styles.checkImage,
+                  addStampButtonDisabled && styles.disabledCheckImage
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.addStampModalContent}>
+            <View style={styles.addStampModalEmotionBox}>
+              <TextInput
+                style={styles.addStampModalEmotion}
+                placeholder='🔥'
+                maxLength={2}
+                onChangeText={(text) => {
+                  setAddStampDataEmotion(text);
+                  if(text.length > 0 && addStampDataLabel.length > 0) setAddStampButtonDisabled(false);
+                  else setAddStampButtonDisabled(true);
+                }}
+              />
             </View>
-            <View style={styles.addStampModalContent}>
-              <View style={styles.addStampModalEmotionContainer}>
-                <Text style={styles.addStampModalMessage}>이모지</Text>
-                <View style={styles.addStampModalEmotionBox}>
-                  <TextInput
-                    style={styles.addStampModalEmotion}
-                    placeholder='🔥'
-                    maxLength={2}
-                    onChangeText={(text) => {
-                      setAddStampDataEmotion(text);
-                      if(text.length > 0 && addStampDataLabel.length > 0) setAddStampButtonDisabled(false);
-                      else setAddStampButtonDisabled(true);
-                    }}
-                  />
-                </View>
-              </View>
-              <View style={styles.addStampModalLabelContainer}>
-                <Text style={styles.addStampModalMessage}>스탬프 이름</Text>
-                <View style={styles.addStampModalLabelBox}>
-                  <TextInput
-                    style={styles.addStampModalLabel}
-                    placeholder='스탬프 이름 입력'
-                    onChangeText={(text) => {
-                      setAddStampDataLabel(text);
-                      if(text.length > 0 && addStampDataEmotion.length > 0) setAddStampButtonDisabled(false);
-                      else setAddStampButtonDisabled(true);
-                    }}
-                  />
-                </View>
-              </View>
+            <View style={styles.addStampModalLabelBox}>
+              <TextInput
+                style={styles.addStampModalLabel}
+                placeholder='스탬프 이름 입력'
+                onChangeText={(text) => {
+                  setAddStampDataLabel(text);
+                  if(text.length > 0 && addStampDataEmotion.length > 0) setAddStampButtonDisabled(false);
+                  else setAddStampButtonDisabled(true);
+                }}
+              />
             </View>
           </View>
-      {/* </KeyboardAvoidingView> */}
+        </View>
       </Modal>
     </Modal>
   );
@@ -212,8 +183,8 @@ const StampList = ({visible, closeModal}) => {
 const styles = StyleSheet.create({
   fixModalContainer: {
     backgroundColor: 'white',
-    width: 393,
-    height: 812,
+    width: '100%',
+    height: '100%',
   },
   fixModalTitleContainer: {
     flexDirection: 'row',
@@ -223,6 +194,7 @@ const styles = StyleSheet.create({
   },
   fixModalTitleContent: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   fixModalTitle: {
@@ -278,7 +250,7 @@ const styles = StyleSheet.create({
   fixModalButton: {
     // position: 'absolute',
     // bottom: 0,
-    width: 393,
+    width: '100%',
     height: 60,
     marginBottom: 30,
     backgroundColor: '#FAFAFA',
@@ -295,16 +267,28 @@ const styles = StyleSheet.create({
   keyboardAvoidingContainer: {
     flex: 1,
   },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // 반투명한 검정색 배경
+  },
   addStampModalContainer: {
+    // flex: 1,
     backgroundColor: 'white',
-    width: 393,
-    height: 464,
-    marginTop: 380,
+    width: '80%',
+    height: 260,
+    alignSelf: 'center',
+    marginTop: 'auto',
+    marginBottom: 'auto',
     borderRadius: 16,
   },
   addStampModalTitleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 15,
     marginHorizontal: 16,
     marginBottom: 40,
   },
@@ -322,20 +306,13 @@ const styles = StyleSheet.create({
     opacity: 0.2, // 비활성 시에 투명도 조절
   },
   addStampModalContent: {
-    marginHorizontal: 16,
-    flexDirection: 'row',
-    gap: 16,
-  },
-  addStampModalEmotionContainer: {
+    // 가운데에 위치하도록
+    flex: 1,
+    justifyContent: 'space-between',
     flexDirection: 'column',
-    gap: 8,
-  },
-  addStampModalMessage: {
-    color: '#212429',
-    fontFamily: 'Pretendard',
-    fontWeight: '400',
-    fontSize: 12,
-    fontStyle: 'normal',
+    alignItems: 'center',
+    // gap: 15,
+    marginBottom: 55,
   },
   addStampModalEmotionBox: {
     width: 50,
@@ -349,10 +326,6 @@ const styles = StyleSheet.create({
   },
   addStampModalEmotion: {
     fontSize: 24,
-  },
-  addStampModalLabelContainer: {
-    flexDirection: 'column',
-    gap: 8,
   },
   addStampModalLabelBox: {
     width: 296,
