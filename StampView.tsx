@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps } from './src/localDB/document';
+import renderWhenStampAdded from './weeklyView/Weekly'
 
 const StampView = () => {
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
