@@ -66,7 +66,8 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                             }}>
                             <DatePicker date={date} onDateChange={(changedDate) => {
                             setDate(changedDate);
-                            }} mode="time"/>
+                            }} mode="time"
+                            theme="light"/>
                         </View>
                         <View style={{
                             paddingHorizontal: "15%",

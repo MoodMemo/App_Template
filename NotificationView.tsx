@@ -71,7 +71,8 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                             }}>
                             <DatePicker date={date} onDateChange={(changedDate) => {
                             setDate(changedDate);
-                            }} mode="time"/>
+                            }} mode="time"
+                            theme="light"/>
                         </View>
                         <View style={{
                             paddingHorizontal: "15%",
