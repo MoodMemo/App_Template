@@ -8,37 +8,17 @@ const StampView = () => {
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
 
   useEffect(() => {
-    const fetchedCustomStamps = getAllCustomStamps();
-    setCustomStamps(fetchedCustomStamps);
-  }, []);
-
-  const buttonsData = [
-    { id: 1, label: '기쁨', emotion: '😊'},
-    { id: 2, label: '슬픔', emotion: '😢'},
-    { id: 3, label: '화남', emotion: '😡'},
-    { id: 4, label: '놀람', emotion: '😱'},
-    { id: 5, label: '당황', emotion: '😳'},
-    { id: 6, label: '무표정', emotion: '😐'},
-    { id: 7, label: '우울', emotion: '😔'},
-    { id: 8, label: '불안', emotion: '😨'},
-    { id: 9, label: '짜증', emotion: '😤'},
-    { id: 10, label: '행복', emotion: '😁'},
-    { id: 11, label: '평온', emotion: '😌'},
-    { id: 12, label: '불만', emotion: '😒'},
-    { id: 13, label: '놀람', emotion: '😱'},
-    { id: 14, label: '당황', emotion: '😳'},
-    { id: 15, label: '무표정', emotion: '😐'},
-    { id: 16, label: '우울', emotion: '😔'},
-    { id: 17, label: '불안', emotion: '😨'},
-    { id: 18, label: '짜증', emotion: '😤'},
-    { id: 19, label: '행복', emotion: '😁'},
-    { id: 20, label: '평온', emotion: '😌'},
-    { id: 21, label: '불만', emotion: '😒'},
-    { id: 22, label: '놀람', emotion: '😱'},
-    { id: 23, label: '당황', emotion: '😳'},
-    { id: 24, label: '무표정', emotion: '😐'},
-    // 추가 버튼들...
-  ];
+    const stampsListener = (collection, changes) => {
+      setCustomStamps([...collection]);
+    };
+  
+    const stampsCollection = realm.objects('CustomStamp');
+    stampsCollection.addListener(stampsListener);
+  
+    return () => {
+      stampsCollection.removeListener(stampsListener);
+    }
+  }, []);  
 
   const [selectedEmotion, setSelectedEmotion] = useState(null);
   const [selectedEmotionLabel, setSelectedEmotionLabel] = useState(null);

@@ -190,7 +190,9 @@ export function getCustomStampsByField(fieldName: keyof ICustomStamp, value: any
   return customStamp.map((customStamp) => customStamp)[0];
 }
 export function deleteCustomStamp(customStamp: ICustomStamp) {
-  realm.delete(customStamp);
+  realm.write(() => {
+    realm.delete(customStamp);
+  });
 }
 
 
