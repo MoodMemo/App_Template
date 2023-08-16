@@ -28,6 +28,29 @@ export function moveToWeekly() {
 export function moveToSetting() {
   amplitude.track('move to SETTING');           
 }
+export function moveToStatistics() {
+  amplitude.track('move to SETTING');           
+}
+
+/* AnimatedViewBirthDay view */
+export function userRegiStart() {
+  amplitude.track('move to SETTING');           
+}
+export function userRegiName() {
+  amplitude.track('move to SETTING');           
+}
+export function userRegiBirthday() {
+  amplitude.track('move to SETTING');           
+}
+export function userRegiJob_Fin() {
+  amplitude.track('move to SETTING');           
+}
+
+/* AnimatedViewBirthDay view */
+export function userRegiFinish() {
+  amplitude.track('move to SETTING');           
+}
+
 
 /* home(stamp) view */
 export function showCustomStampList() {
@@ -104,5 +127,76 @@ export function cancelToEditDiary() {
   amplitude.track('cancel editing diary');           
 }
 export function saveEditedDiary() {
+  amplitude.track('save edited diary');           
+}
+
+/* setting view */
+export function intoProfile() {
+  amplitude.track('save edited diary');           
+}
+export function setProfileName() {
+  amplitude.track('save edited diary');           
+}
+export function setProfileBirthday() {
+  amplitude.track('save edited diary');           
+}
+export function setProfileJob() {
+  amplitude.track('save edited diary');           
+}
+export function saveNewProfile() {
+  amplitude.track('save edited diary');           
+}
+export function cancelToChangeProfile() { // backdrop 역시 같음
+  amplitude.track('save edited diary');           
+}
+export function connectToKakaoChatBot() { // backdrop 역시 같음
+  amplitude.track('save edited diary');           
+}
+export function notiONtoOFF() { // backdrop 역시 같음
+  amplitude.track('save edited diary');           
+}
+export function nofiOFFtoON() { // backdrop 역시 같음
+  amplitude.track('save edited diary');           
+}
+export function intoNotiList() { // backdrop 역시 같음
+  amplitude.track('save edited diary');
+}
+export function intoAddNewNoti() { // backdrop 역시 같음
+  amplitude.track('save edited diary');           
+}
+export function saveNewNoti() { // 알림 시각 받기
+  amplitude.track('save edited diary');           
+}
+export function cancelNewNoti() { // backdrop 역시 같음
+  amplitude.track('save edited diary');           
+}
+export function intoRenewNoti() { // backdrop 역시 같음
+  amplitude.track('save edited diary');           
+}
+export function saveRenewNoti() { // 알림 시각(기존, 이후) 받기
+  amplitude.track('save edited diary');           
+}
+export function cancelRenewNoti() { // backdrop 역시 같음
+  amplitude.track('save edited diary');           
+}
+export function deleteNoti() { // 알림 시각 받기
+  amplitude.track('save edited diary');           
+}
+export function intoGuide() { // 알림 시각 받기
+  amplitude.track('save edited diary');           
+}
+export function outToSettingFromGuide() { // 알림 시각 받기
+  amplitude.track('save edited diary');           
+}
+export function intoServiceCenter() { // 알림 시각 받기
+  amplitude.track('save edited diary');           
+}
+export function outToSettingFromServiceCenter() { // 알림 시각 받기
+  amplitude.track('save edited diary');           
+}
+export function intoCoffee() { // 알림 시각 받기
+  amplitude.track('save edited diary');           
+}
+export function outToSettingFromCoffee() { // 알림 시각 받기
   amplitude.track('save edited diary');           
 }

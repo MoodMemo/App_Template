@@ -199,7 +199,6 @@ const Weekly = () => {
           <Dropdown
             label="년"
             options={[
-              { label: '2022년', value: 2022 },
               { label: '2023년', value: 2023 },
               { label: '2024년', value: 2024 },
               // 이하 생략
@@ -210,7 +209,6 @@ const Weekly = () => {
           <Dropdown
             label="월"
             options={[
-              { label: '7월', value: 7 },
               { label: '8월', value: 8 },
               { label: '9월', value: 9 },
               { label: '10월', value: 10 },
