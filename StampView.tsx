@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps } from './src/localDB/document';
+import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
 import renderWhenStampAdded from './weeklyView/Weekly'
 
 const StampView = () => {
@@ -22,6 +22,7 @@ const StampView = () => {
 
   const [selectedEmotion, setSelectedEmotion] = useState(null);
   const [selectedEmotionLabel, setSelectedEmotionLabel] = useState(null);
+  const [selectedEmotionId, setSelectedEmotionId] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [date, setDate] = useState(new Date());
@@ -50,6 +51,7 @@ const StampView = () => {
       });
     });
 
+    updateCustomStampPushedCountById(selectedEmotionId, 1);
     // 모달 닫기
     onClose();
   }
@@ -67,6 +69,7 @@ const StampView = () => {
   const handleButtonPress = (stampButton) => {
     setSelectedEmotion(stampButton.emoji);
     setSelectedEmotionLabel(stampButton.stampName);
+    setSelectedEmotionId(stampButton.id);
     setDate(new Date());
     setModalVisible(true);
   }
