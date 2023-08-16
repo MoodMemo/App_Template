@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
   },
   day_today: {
     borderBottomWidth: 2,
-    borderColor: '#00E3AD',
+    borderColor: '#72D193',
   },
   dayText: {
     color: '#212429',
@@ -608,7 +608,7 @@ const styles = StyleSheet.create({
   dayText_today: {
     // flexDirection: 'column', 
     color: 'white',
-    backgroundColor: '#00E3AD',
+    backgroundColor: '#72D193',
     borderRadius: 10,
     width: 20,
     height: 20,

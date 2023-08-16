@@ -223,7 +223,7 @@ function Main() {
       screenOptions={{
         tabBarShowLabel: false, //이게 true면 하단 바 아이콘 밑에 label도 같이 렌더링됩니다.
         headerShown: false, //이게 true면 각 탭의 상단에 해당 Tab의 label이 렌더링됩니다. 매우 보기 싫습니다.
-        tabBarActiveTintColor:"#484C52",
+        tabBarActiveTintColor:"#72D193",
         tabBarInactiveTintColor:"#484C524D"
         }}>
         <Tab.Screen
