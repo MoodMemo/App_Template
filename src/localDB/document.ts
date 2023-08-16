@@ -179,6 +179,10 @@ export function updateCustomStampPushedCountById(id: string, number: number) {
   } else {
     console.warn("PushedStamp not found with the provided id:", id);
   }
+  // 예시 사용법입니다!
+  // console.log(repository.getAllCustomStamps()[0].id);
+  // repository.updateCustomStampPushedCountById('33456232-ac6e-43f5-8a55-9c05c23020e3', -3);
+  // console.log(repository.getAllCustomStamps()[0].pushedCnt);
 }
 
 export function updateCustomStamp(customStamp: ICustomStamp, updates: Partial<ICustomStamp>) {
