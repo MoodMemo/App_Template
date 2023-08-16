@@ -110,7 +110,6 @@ function App(): JSX.Element {
   }
   else
   {
-    AsyncStorage.setItem('@UserInfo:notificationAllow','false');
     return (
       <SafeAreaView style={styles.container}>
         <AnimatedViewBirthday/>
