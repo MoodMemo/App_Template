@@ -111,6 +111,7 @@ const Weekly = () => {
   // 4. AI 일기 생성 버튼
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
   const [isLodingModalVisible, setIsLodingModalVisible] = useState(false);
+  const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
   const handleGenerateDiary = () => {
     Sentry.captureMessage('[일기 생성] 사용자가 일기 생성 버튼을 눌렀습니다!');
 
@@ -146,10 +147,12 @@ const Weekly = () => {
           console.log("create default daily report finished");
         });
         setIsLodingModalVisible(false);
+        setIsLodingFinishModalVisible(true);
       })
       .catch((error) => {
         console.log('Error', error.message);
         setIsLodingModalVisible(false);
+        // todo - 에러 처리 해야함
     });
   };
   useEffect(() => {
@@ -449,17 +452,57 @@ const Weekly = () => {
             backdropTransitionOutTiming={0} // Disable default backdrop animation
           >
             <View style={diaryStyles.lodingModal}>
-              <ActivityIndicator size="large" color="#00E3AD"/>
-              <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중</Text>
-              <View style={{ marginBottom: 10}}>
-                <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>AI 일기가 발행되고 있습니다.</Text>
-                <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>화면을 벗어나지 마세요.</Text>
-                <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>발행 중 이탈 시, 발행이 취소됩니다.</Text>
+              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중이다</Text>
+                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
               </View>
-              <View style={{ flexDirection: 'row'}}>
-                <View style={{ flexDirection: 'row', flex: 1}}>
+              <View style={{alignItems: 'center',}}>
+                <Text style={{ color: '#475467', fontSize: 14, }}>AI 일기가 발행되고 있으니, 화면을 벗어나지 말라 무.</Text>
+                <Text style={{ color: '#475467', fontSize: 14, }}>발행 중 이탈 시, 발행이 취소된다무...</Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+                <View style={{ flexDirection: 'row', flex: 1,}}>
                   <TouchableOpacity style={diaryStyles.cancelBtn} onPress={() => setIsLodingModalVisible(false)}>
-                    <Text style={{ color: '#344054', fontSize: 16, fontWeight: 'bold',}}>발행 취소</Text>
+                    <Text style={{ color: '#72D193', fontSize: 16, fontWeight: '600',}}>발행 취소</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                        
+            </View>
+          </Modal>
+          {/* 4-2. 일기 생성 완료 모달 */}
+          <Modal 
+            isVisible={isLodingFinishModalVisible}
+            animationIn={"fadeIn"}
+            animationOut={"fadeOut"}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={diaryStyles.finishLodingModal}>
+              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기가 발행됐다</Text>
+                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
+              </View>
+              <View style={{alignItems: 'center',}}>
+                <Text style={{ color: '#475467', fontSize: 14, }}>내가 멋지게 만든 일기를 확인해 봐라무!</Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+                <View style={{ flexDirection: 'row', flex: 1,}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsLodingFinishModalVisible(false)}>
+                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -544,7 +587,7 @@ const styles = StyleSheet.create({
   },
   day_today: {
     borderBottomWidth: 2,
-    borderColor: '#00E3AD',
+    borderColor: '#72D193',
   },
   dayText: {
     color: '#212429',
@@ -565,7 +608,7 @@ const styles = StyleSheet.create({
   dayText_today: {
     // flexDirection: 'column', 
     color: 'white',
-    backgroundColor: '#00E3AD',
+    backgroundColor: '#72D193',
     borderRadius: 10,
     width: 20,
     height: 20,
@@ -666,16 +709,16 @@ const diaryStyles = StyleSheet.create({
     marginBottom: 20,
   },
   lodingModal: {
-    backgroundColor: 'white', 
-    // justifyContent: 'space-between', 
-    justifyContent: 'space-around', 
-    alignItems: 'flex-start', 
+    backgroundColor: '#FFFAF4', 
+    justifyContent: 'space-between', // 상하로 딱 붙이기
+    // justifyContent: 'space-around', 
+    // alignItems: 'flex-start', 
+    alignItems: 'center', // 가운데 정렬
     flexDirection: 'column',
-    borderRadius: 15, 
-    padding: 10, 
-    paddingHorizontal: 15, 
-    width: 340, 
-    height: 250,
+    borderRadius: 12, 
+    paddingHorizontal: 16,
+    width: 343, 
+    height: 302,
     shadowColor: 'black',
     shadowRadius: 50,           // 그림자 블러 반경
     elevation: 5, 
@@ -686,13 +729,34 @@ const diaryStyles = StyleSheet.create({
     justifyContent: 'center',
     color: '#344054', 
     padding: 10,
+    marginBottom: 16,
     backgroundColor: 'white', 
-    borderColor: '#D0D5DD',
+    borderColor: '#72D193',
     borderWidth:1,
-    borderRadius: 10,
+    borderRadius: 8,
+    flex: 1,
+  },
+  finishLodingModal: {
+    backgroundColor: '#FFFAF4', 
+    justifyContent: 'space-between', // 상하로 딱 붙이기
+    alignItems: 'center', // 가운데 정렬
+    flexDirection: 'column',
+    borderRadius: 12, 
+    paddingHorizontal: 16,
+    width: 343, 
+    height: 284,
     shadowColor: 'black',
     shadowRadius: 50,           // 그림자 블러 반경
-    elevation: 2,              // 안드로이드에서 그림자를 표시하기 위한 설정
+    elevation: 5, 
+  },
+  confirmBtn: {
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: '#72D193', 
+    borderRadius: 8,
     flex: 1,
   },
   editDiary: {
