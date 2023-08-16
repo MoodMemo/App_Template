@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
+import { View, Button, Image, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -178,7 +178,7 @@ const Weekly = () => {
   };
 
   // tmp_createDummyData(); 
-  
+
   // console.log(repository.getAllCustomStamps()[0].id);
   // repository.updateCustomStampPushedCountById('33456232-ac6e-43f5-8a55-9c05c23020e3', -3);
   // console.log(repository.getAllCustomStamps()[0].pushedCnt);
@@ -186,6 +186,8 @@ const Weekly = () => {
     
     <View style={{backgroundColor: '#FAFAFA', flex:1}}>
 
+
+      {/* 1 & 2 */}
       <View style={{backgroundColor: 'white', zIndex: 1,}}>
 
         {/* 1. 년, 월, 주 선택 부분 */}
@@ -257,204 +259,216 @@ const Weekly = () => {
 
       </View>
 
-      <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }}>
-      {/* 3. 오늘의 감정 리스트 */}
-      <View style={styles.title}>
-        <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
-        <TouchableOpacity onPress={() => {
-          setIsDetailModalVisible(!isDetailModalVisible),
-          Sentry.captureMessage('[스탬프리스트] 사용자가 자세히 보기 버튼을 눌렀습니다!');
-          }}>
-          <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
-          {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
-          <Modal
-            isVisible = {isDetailModalVisible}
-            // presentationStyle='pageSheet'
+      {/* 3 & 4 & 5 */}
+      {getEmoji(getStamp(today)).length === 0 ? (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <Image 
+            source={require('../assets/emptyMoo.png')}
+            style={{ width: 64, height: (67 * 64) / 64 }} // 비율을 유지하며 height 자동 조절
+          />
+          <Text style={{fontSize: 14, color: '#dbdbdb', marginTop: 16}}>기록된 감정 스탬프가 없다무..</Text>
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }}>
+          
+          {/* 3. 오늘의 감정 리스트 */}
+          <View style={styles.title}>
+            <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
+            <TouchableOpacity onPress={() => {
+              setIsDetailModalVisible(!isDetailModalVisible),
+              Sentry.captureMessage('[스탬프리스트] 사용자가 자세히 보기 버튼을 눌렀습니다!');
+              }}>
+              <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
+              {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
+              <Modal
+                isVisible = {isDetailModalVisible}
+                // presentationStyle='pageSheet'
+                animationIn={"fadeIn"}
+                animationInTiming={200}
+                animationOut={"fadeOut"}
+                animationOutTiming={200}
+                onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}
+                backdropColor='#CCCCCC' 
+                backdropOpacity={0.9}
+                style={{ alignItems:'center' }}
+                backdropTransitionInTiming={0} // Disable default backdrop animation
+                backdropTransitionOutTiming={0} // Disable default backdrop animation
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start',}}>
+                  <View style={{position:'relative', flex: 1, marginBottom: 5}}>
+                    <Text style={{ fontSize: 14, color: '#ffffff'}}>TODAY</Text>
+                    <Text style={{ fontSize: 24, color: '#ffffff'}}>{today.format('M월 D일 dd')}</Text>
+                  </View>
+                </View>
+
+                <View style={{flexDirection: 'row'}}>
+                <View style={{backgroundColor: 'white', borderRadius: 15, flex: 1, padding: 20, height: 500}}>
+                  <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}>
+                      <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
+                    </TouchableOpacity>
+                    <Text style={{color: '#212429', fontSize: 16}}>스탬프 상세 히스토리</Text>
+                    <TouchableOpacity> 
+                      {/* 스탬프 추가랑 연결해야함 */}
+                      <FeatherIcon name='plus' color="white" style={{ fontWeight: 'bold', fontSize: 20}}/>
+                    </TouchableOpacity>                                         
+                    </View>
+                    <Text></Text>
+                    <ScrollView contentContainerStyle={{}}>
+                      <Timeline data={getStamp(today)} />
+                    </ScrollView>
+                  </View></View>
+                </Modal>
+            </TouchableOpacity>
+
+            {/* sentry test*/}
+            {/* <Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/> */}
+
+            {/* </TouchableOpacity> */}
+          </View>
+          {/* 3-1. 감정 리스트 */}
+          <View style={styles.todayEmotionList}>
+            {getStamp(today).map((stamp) => (
+              <Text key={stamp.id} style={styles.emotion}>{stamp.emoji} {stamp.stampName}</Text>
+            ))}
+          </View>
+
+          {/* 4. AI 일기 생성 버튼 */}
+          {todayReport !== null ? (
+            <View>
+              <View style={[styles.title, {marginTop: 0,}]}>
+                <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>오늘의 일기</Text>
+                {!isEditMode ? (
+                  <TouchableOpacity onPress={handleEditButton}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                      <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
+                      <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
+                    </View>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                    <TouchableOpacity onPress={handleCancelButton}>
+                      <Text style={{ fontSize: 12, color: '#495057' }}>취소</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleSaveButton}>
+                      <Text style={{ fontSize: 12, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+
+              <View style={diaryStyles.diaryContainer}>
+                
+                {/* date */}
+                {isEditMode ? (
+                  <Text style={{fontSize: 12, color: '#dbdbdb', marginBottom: 12}}>
+                    {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
+                  </Text>
+                ) : (
+                  <Text style={{fontSize: 12, color: '#212429', marginBottom: 12}}>
+                  {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
+                </Text>
+                )}
+                
+                {/* title */}
+                <View style={{ flexDirection: 'row'}}>
+                  {isEditMode ? (
+                    <TextInput
+                      style={diaryStyles.editDiary}
+                      value={editedTitle}
+                      onChangeText={setEditedTitle}
+                    />
+                  ) : (
+                    <Text style={{ fontSize: 16, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
+                  )}
+                </View>
+                
+                {/* line */}
+                <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 75 }]} />
+                
+                {/* bodytext */}
+                <View style={{ flexDirection: 'row'}}>
+                  {isEditMode ? (
+                    <TextInput
+                      style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
+                      value={editedBodytext}
+                      onChangeText={setEditedBodytext}
+                      multiline
+                    />
+                  ) : (
+                    <Text style={{ fontSize: 12, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
+                  )}
+                </View>
+
+                {/* keyword */}
+                {isEditMode ? (
+                  <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+                    {todayReport.keyword.map((keyword) => (
+                      <Text key={keyword} style={[diaryStyles.keyword, {color:'#DBDBDB'}]}>{keyword}</Text>
+                    ))}
+                  </View>
+                ) : (
+                  <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+                    {todayReport.keyword.map((keyword) => (
+                      <Text key={keyword} style={diaryStyles.keyword}>{keyword}</Text>
+                    ))}
+                  </View>
+                )}
+              </View>
+            </View>
+          ) : ( getStamp(today).length < 2 ? (
+            <View style={diaryStyles.generateButton}>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                <FeatherIcon name='plus' size={16} color="white" style={{ fontWeight: 'bold', fontSize: 20}}/>
+                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>  AI 일기 생성하기</Text>
+              </View>
+              <Text style={[diaryStyles.generateButtonText, { fontSize: 14 }]}> 스탬프가 2개 이상일 때 일기를 만들 수 있어요!</Text>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
+              <View style={{flexDirection: 'row', }}>
+                <FeatherIcon name='plus' size={16} color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
+                <Text style={[diaryStyles.generateButtonText,]}>  AI 일기 생성하기</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+
+          {/* 4-1. 일기 생성 로딩 모달 */}
+          <Modal 
+            isVisible={isLodingModalVisible}
             animationIn={"fadeIn"}
-            animationInTiming={200}
             animationOut={"fadeOut"}
-            animationOutTiming={200}
-            onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}
             backdropColor='#CCCCCC' 
             backdropOpacity={0.9}
             style={{ alignItems:'center' }}
             backdropTransitionInTiming={0} // Disable default backdrop animation
             backdropTransitionOutTiming={0} // Disable default backdrop animation
           >
-            <View style={{ flexDirection: 'row', alignItems: 'flex-start',}}>
-              <View style={{position:'relative', flex: 1, marginBottom: 5}}>
-                <Text style={{ fontSize: 14, color: '#ffffff'}}>TODAY</Text>
-                <Text style={{ fontSize: 24, color: '#ffffff'}}>{today.format('M월 D일 dd')}</Text>
+            <View style={diaryStyles.lodingModal}>
+              <ActivityIndicator size="large" color="#00E3AD"/>
+              <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중</Text>
+              <View style={{ marginBottom: 10}}>
+                <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>AI 일기가 발행되고 있습니다.</Text>
+                <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>화면을 벗어나지 마세요.</Text>
+                <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>발행 중 이탈 시, 발행이 취소됩니다.</Text>
               </View>
-            </View>
-
-            <View style={{flexDirection: 'row'}}>
-            <View style={{backgroundColor: 'white', borderRadius: 15, flex: 1, padding: 20, height: 500}}>
-              <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}>
-                  <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
-                </TouchableOpacity>
-                <Text style={{color: '#212429', fontSize: 16}}>스탬프 상세 히스토리</Text>
-                <TouchableOpacity> 
-                  {/* 스탬프 추가랑 연결해야함 */}
-                  <FeatherIcon name='plus' color="white" style={{ fontWeight: 'bold', fontSize: 20}}/>
-                </TouchableOpacity>                                         
-                </View>
-                <Text></Text>
-                <ScrollView contentContainerStyle={{}}>
-                  <Timeline data={getStamp(today)} />
-                </ScrollView>
-              </View></View>
-            </Modal>
-        </TouchableOpacity>
-
-        {/* sentry test*/}
-        {/* <Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/> */}
-
-        {/* </TouchableOpacity> */}
-      </View>
-      {/* 3-1. 감정 리스트 */}
-      <View style={styles.todayEmotionList}>
-        {getStamp(today).map((stamp) => (
-          <Text key={stamp.id} style={styles.emotion}>{stamp.emoji} {stamp.stampName}</Text>
-        ))}
-      </View>
-
-        {/* 4. AI 일기 생성 버튼 */}
-        {todayReport !== null ? (
-          <View>
-            <View style={[styles.title, {marginTop: 0,}]}>
-              <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>오늘의 일기</Text>
-              {!isEditMode ? (
-                <TouchableOpacity onPress={handleEditButton}>
-                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                    <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
-                    <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
-                  </View>
-                </TouchableOpacity>
-              ) : (
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                  <TouchableOpacity onPress={handleCancelButton}>
-                    <Text style={{ fontSize: 12, color: '#495057' }}>취소</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={handleSaveButton}>
-                    <Text style={{ fontSize: 12, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
+              <View style={{ flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row', flex: 1}}>
+                  <TouchableOpacity style={diaryStyles.cancelBtn} onPress={() => setIsLodingModalVisible(false)}>
+                    <Text style={{ color: '#344054', fontSize: 16, fontWeight: 'bold',}}>발행 취소</Text>
                   </TouchableOpacity>
                 </View>
-              )}
-            </View>
-
-            <View style={diaryStyles.diaryContainer}>
-              
-              {/* date */}
-              {isEditMode ? (
-                <Text style={{fontSize: 12, color: '#dbdbdb', marginBottom: 12}}>
-                  {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
-                </Text>
-              ) : (
-                <Text style={{fontSize: 12, color: '#212429', marginBottom: 12}}>
-                {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
-              </Text>
-              )}
-              
-              {/* title */}
-              <View style={{ flexDirection: 'row'}}>
-                {isEditMode ? (
-                  <TextInput
-                    style={diaryStyles.editDiary}
-                    value={editedTitle}
-                    onChangeText={setEditedTitle}
-                  />
-                ) : (
-                  <Text style={{ fontSize: 16, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
-                )}
               </View>
-              
-              {/* line */}
-              <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 75 }]} />
-              
-              {/* bodytext */}
-              <View style={{ flexDirection: 'row'}}>
-                {isEditMode ? (
-                  <TextInput
-                    style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
-                    value={editedBodytext}
-                    onChangeText={setEditedBodytext}
-                    multiline
-                  />
-                ) : (
-                  <Text style={{ fontSize: 12, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
-                )}
-              </View>
+                        
+            </View>
+          </Modal>
 
-              {/* keyword */}
-              {isEditMode ? (
-                <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-                  {todayReport.keyword.map((keyword) => (
-                    <Text key={keyword} style={[diaryStyles.keyword, {color:'#DBDBDB'}]}>{keyword}</Text>
-                  ))}
-                </View>
-              ) : (
-                <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-                  {todayReport.keyword.map((keyword) => (
-                    <Text key={keyword} style={diaryStyles.keyword}>{keyword}</Text>
-                  ))}
-                </View>
-              )}
-            </View>
-          </View>
-        ) : ( getStamp(today).length < 2 ? (
-          <View style={diaryStyles.generateButton}>
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-              <FeatherIcon name='plus' size={16} color="white" style={{ fontWeight: 'bold', fontSize: 20}}/>
-              <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>  AI 일기 생성하기</Text>
-            </View>
-            <Text style={[diaryStyles.generateButtonText, { fontSize: 14 }]}> 스탬프가 2개 이상일 때 일기를 만들 수 있어요!</Text>
-          </View>
-        ) : (
-          <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
-            <View style={{flexDirection: 'row', }}>
-              <FeatherIcon name='plus' size={16} color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
-              <Text style={[diaryStyles.generateButtonText,]}>  AI 일기 생성하기</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-
-        {/* 4-1. 일기 생성 로딩 모달 */}
-        <Modal 
-          isVisible={isLodingModalVisible}
-          animationIn={"fadeIn"}
-          animationOut={"fadeOut"}
-          backdropColor='#CCCCCC' 
-          backdropOpacity={0.9}
-          style={{ alignItems:'center' }}
-          backdropTransitionInTiming={0} // Disable default backdrop animation
-          backdropTransitionOutTiming={0} // Disable default backdrop animation
-        >
-          <View style={diaryStyles.lodingModal}>
-            <ActivityIndicator size="large" color="#00E3AD"/>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중</Text>
-            <View style={{ marginBottom: 10}}>
-              <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>AI 일기가 발행되고 있습니다.</Text>
-              <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>화면을 벗어나지 마세요.</Text>
-              <Text style={{ color: '#475467', marginTop: 0, fontSize: 14, }}>발행 중 이탈 시, 발행이 취소됩니다.</Text>
-            </View>
-            <View style={{ flexDirection: 'row'}}>
-              <View style={{ flexDirection: 'row', flex: 1}}>
-                <TouchableOpacity style={diaryStyles.cancelBtn} onPress={() => setIsLodingModalVisible(false)}>
-                  <Text style={{ color: '#344054', fontSize: 16, fontWeight: 'bold',}}>발행 취소</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-                      
-          </View>
-        </Modal>
-
-        {/* 5. 업로드된 사진 (이미지 컴포넌트로 띄워줄 수 있음)
-        <View style={styles.uploadedImage}>
-          <Image source={uploadedImage} style={styles.image} />
-        </View> */}
-      </ScrollView>
+          {/* 5. 업로드된 사진 (이미지 컴포넌트로 띄워줄 수 있음)
+          <View style={styles.uploadedImage}>
+            <Image source={uploadedImage} style={styles.image} />
+          </View> */}
+        </ScrollView>
+      )}
     </View>
     
   );
