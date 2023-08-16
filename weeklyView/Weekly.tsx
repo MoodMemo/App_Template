@@ -178,7 +178,10 @@ const Weekly = () => {
   };
 
   // tmp_createDummyData(); 
-
+  
+  // console.log(repository.getAllCustomStamps()[0].id);
+  // repository.updateCustomStampPushedCountById('33456232-ac6e-43f5-8a55-9c05c23020e3', -3);
+  // console.log(repository.getAllCustomStamps()[0].pushedCnt);
   return (
     
     <View style={{backgroundColor: '#FAFAFA', flex:1}}>

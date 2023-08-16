@@ -140,6 +140,8 @@ export interface ICustomStamp {
   stampName: string;
   emoji: string;
   createdAt: Date;
+  updatedAt: Date;
+  pushedCnt: number;
 }
 class CustomStamp extends Realm.Object {
   public static schema: Realm.ObjectSchema = {
@@ -150,16 +152,39 @@ class CustomStamp extends Realm.Object {
       stampName: { type: "string", optional: false },
       emoji: { type: "string", optional: false },
       createdAt: { type: "date", optional: false },
+      updatedAt: { type: "date", optional: false },
+      pushedCnt: { type: "int", optional: false },
     },
   };
 }
 export function createCustomStamp(values: any) {
+  var createDate = new Date();
   return realm.create('CustomStamp', {
     ...values,
     id: uuid.v4(), // 새로운 객체 생성 시 UUID 할당
-    createdAt: new Date(),
+    createdAt: createDate,
+    updatedAt: createDate,
+    pushedCnt: 0,
   });
 }
+export function updateCustomStampPushedCountById(id: string, number: number) {
+  // 스탬프 생성일 경우 number = 1
+  // 스탬프 삭제일 경우 number = -1
+  const customStamp = realm.objectForPrimaryKey<ICustomStamp>("CustomStamp", id);
+  if (customStamp) {
+    realm.write(() => {
+      customStamp.pushedCnt += number; // 'pushedCnt' 속성 1 증감
+      customStamp.updatedAt = new Date(); // 업데이트 시간 갱신
+    });
+  } else {
+    console.warn("PushedStamp not found with the provided id:", id);
+  }
+  // 예시 사용법입니다!
+  // console.log(repository.getAllCustomStamps()[0].id);
+  // repository.updateCustomStampPushedCountById('33456232-ac6e-43f5-8a55-9c05c23020e3', -3);
+  // console.log(repository.getAllCustomStamps()[0].pushedCnt);
+}
+
 export function updateCustomStamp(customStamp: ICustomStamp, updates: Partial<ICustomStamp>) {
   realm.write(() => {
     for (const key in updates) {
@@ -231,7 +256,7 @@ export function createPushedStamp(values: any) {
     ...values,
     id: uuid.v4(), // 새로운 객체 생성 시 UUID 할당
     createdAt: createDate,
-    updatedAt: createDate,  
+    updatedAt: createDate,
   });
 }
 export function updatePushedStamp(pushedStamp: IPushedStamp, updates: Partial<IPushedStamp>) {
@@ -346,6 +371,6 @@ export function deleteDailyReport(dailyReport: IDailyReport) {
 
 
 let realm = new Realm({ schema: [Notification, CustomStamp, PushedStamp, DailyReport],
-  schemaVersion: 4, });
+  schemaVersion: 5, });
 
 export default realm;
