@@ -419,17 +419,21 @@ const Weekly = () => {
           ) : ( getStamp(today).length < 2 ? (
             <View style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                <FeatherIcon name='plus' size={16} color="white" style={{ fontWeight: 'bold', fontSize: 20}}/>
-                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>  AI 일기 생성하기</Text>
+                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text>
               </View>
-              <Text style={[diaryStyles.generateButtonText, { fontSize: 14 }]}> 스탬프가 2개 이상일 때 일기를 만들 수 있어요!</Text>
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 37, height: (39 * 37) / 37 , position: 'relative', bottom: 21.5, left: 122, overflow: 'hidden'}}></Image>
+              {/* <Text style={[diaryStyles.generateButtonText, { fontSize: 14 }]}> 스탬프가 2개 이상일 때 일기를 만들 수 있어요!</Text> */}
             </View>
           ) : (
             <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
-              <View style={{flexDirection: 'row', }}>
-                <FeatherIcon name='plus' size={16} color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
-                <Text style={[diaryStyles.generateButtonText,]}>  AI 일기 생성하기</Text>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text>
               </View>
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 37, height: (39 * 37) / 37 , position: 'relative', bottom: 21.5, left: 122, overflow: 'hidden'}}></Image>
             </TouchableOpacity>
           ))}
 
@@ -637,14 +641,12 @@ const diaryStyles = StyleSheet.create({
   },
   generateButton: {
     color: '#495057',
-    fontSize: 18,
+    height: 46,
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    padding: 10,
-    marginBottom: 20,
-    marginLeft: 20,
-    marginRight: 20,
-    borderRadius: 7,
+    backgroundColor: '#72D193',
+    paddingVertical: 12,
+    marginHorizontal: 20,
+    borderRadius: 6,
   },
   buttonText: {
     fontSize: 18,
