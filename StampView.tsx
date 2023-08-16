@@ -85,6 +85,7 @@ const StampView = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           {/* 모달 내용 */}
@@ -204,17 +205,18 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-start',
-    // alignItems: 'center',
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    width: '100%',
-    height: '100%',
+    width: 393,
+    height: 785,
     flexShrink: 0,
     borderRadius: 16,
+    marginTop: 67,
   },
   modalTitleContainer: {
     flexDirection: 'row',
     display: 'flex',
-    width: '100%',
+    width: 393,
     padding: 16,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -239,10 +241,9 @@ const styles = StyleSheet.create({
   },
   stampContainer: {
     flexDirection: 'row',
-    width: '100%',
+    width: 393,
     height: 60,
     paddingLeft: 16,
-    // justifyContent 종류: flex-start, flex-end, center, space-between, space-around, space-evenly
     justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 20,
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     paddingTop: 8,
     paddingBottom: 8,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
   },
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     flexDirection: 'row',
-    width: '100%',
+    width: 393,
     height: 60,
     paddingLeft: 16,
     justifyContent: 'flex-start',
@@ -280,16 +281,13 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   horizontalLine: {
-    width: '100%',
+    width: 358,
     height: 0.7,
     backgroundColor: '#F0F0F0',
-    marginLeft: 16,
-    marginRight: 19,
-    marginTop: 27,
-    marginBottom: 27,
+    margin: 16,
   },
   memoContainer: {
-    width: '100%',
+    width: 393,
     padding: 16,
     justifyContent: 'flex-start',
     gap: 7,
@@ -297,7 +295,7 @@ const styles = StyleSheet.create({
   memoContent: {
     flexDirection: 'column',
     display: 'flex',
-    width: '100%',
+    width: 361,
     paddingHorizontal: 16,
     paddingVertical: 10,
     gap: 6,
@@ -326,7 +324,7 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     flexDirection: 'column',
-    width: '100%',
+    width: 393,
     padding: 16,
     justifyContent: 'flex-start',
     gap: 10,
@@ -359,7 +357,7 @@ const styles = StyleSheet.create({
     lineHeight: 10,
   },
   timeModalContainer: {
-    width: '100%',
+    width: 393,
     height: 335,
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
