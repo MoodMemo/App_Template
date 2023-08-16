@@ -141,19 +141,21 @@ const StampView = () => {
           </ScrollView>
         </View>
       </Modal>
-      
+
       <Modal visible={timeModalVisible} animationType="fade" transparent onRequestClose={handleCloseTimeModal}>
         <TouchableWithoutFeedback onPress={handleCloseTimeModal}>
-          <View style={styles.timeModalContainer}>
-            <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
-            <DatePicker date={date} onDateChange={setDate} mode="date" theme="light"/>
-            <View style={styles.timeButtons}>
-              <TouchableOpacity onPress={handleCloseTimeModal}>
-                <Text>취소</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleCloseTimeModal}>
-                <Text>확인</Text>
-              </TouchableOpacity>
+          <View style={styles.timeModalWrapper}>
+            <View style={styles.timeModalContainer}>
+              <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
+              <DatePicker date={date} onDateChange={setDate} mode="datetime" theme="light"/>
+              <View style={styles.timeButtons}>
+                <TouchableOpacity onPress={handleCloseTimeModal}>
+                  <Text>취소</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleCloseTimeModal}>
+                  <Text>확인</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -280,7 +282,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   horizontalLine: {
-    width: '100%',
+    // width: '100%',
     height: 0.7,
     backgroundColor: '#F0F0F0',
     marginLeft: 16,
@@ -358,12 +360,20 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 10,
   },
+  timeModalWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end', // 이 부분이 모달을 하단으로 밀어줍니다.
+  },
   timeModalContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     width: '100%',
-    height: 335,
+    height: '50%',
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    marginTop: 517,
+    // 아래의 marginTop 제거 또는 조절
+    // marginTop: 517,
     shadowColor: '#000000',
     shadowOffset: {
       width: 0,
@@ -372,10 +382,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.30,
     shadowRadius: 6,
     elevation: 30,
-    alignItems: 'center',
     paddingTop: 20,
     gap: 10,
   },
+  
   timeModalText: {
     fontFamily: 'Pretendard',
     fontSize: 16,
@@ -387,6 +397,7 @@ const styles = StyleSheet.create({
     gap: 26,
     alignSelf: 'flex-end',
     marginRight: 40,
+    marginBottom: 20,
   },
 });
 
