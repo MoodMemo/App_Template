@@ -112,15 +112,17 @@ const Weekly = () => {
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
   const [isLodingModalVisible, setIsLodingModalVisible] = useState(false);
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
+  const [isCanceled, setIsCanceled] = useState(false);
+  let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
     Sentry.captureMessage('[일기 생성] 사용자가 일기 생성 버튼을 눌렀습니다!');
 
     setIsLodingModalVisible(true);
 
-    const todatStampList = [];
+    const todayStampList = [];
     getStamp(today).forEach((stamp) => {
       console.log("stamp.dateTime: ", stamp.dateTime);
-      todatStampList.push({
+      todayStampList.push({
         dateTime: stamp.dateTime,
         stampName: stamp.stampName,
         memo: stamp.memo,
@@ -128,32 +130,41 @@ const Weekly = () => {
     });
     const request = {
       userDto: getUserAsync(), // from async storage
-      todayStampList: todatStampList,
+      todayStampList: todayStampList,
     }
 
     console.log('ai 서버와의 통신 시작합니다');
-    sendDailyReport(request)
+    sendDailyReport(request, cancelTokenSource.token)
       .then((response) => {
-        console.log('date: ', response.date);
-        realm.write(() => {
-          console.log('title: ', response.title);
-          repository.createDailyReport({
-            // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
-            date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
-            title: response.title,
-            bodytext: response.bodytext,
-            keyword: response.keyword,
+        if (!isCanceled) {
+          console.log('date: ', response.date);
+          realm.write(() => {
+            console.log('title: ', response.title);
+            repository.createDailyReport({
+              // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
+              date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
+              title: response.title,
+              bodytext: response.bodytext,
+              keyword: response.keyword,
+            });
+            console.log("create default daily report finished");
           });
-          console.log("create default daily report finished");
-        });
-        setIsLodingModalVisible(false);
-        setIsLodingFinishModalVisible(true);
+          setIsLodingModalVisible(false);
+          setIsLodingFinishModalVisible(true);
+        }
       })
       .catch((error) => {
-        console.log('Error', error.message);
-        setIsLodingModalVisible(false);
-        // todo - 에러 처리 해야함
-    });
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          console.log('Error', error.message);
+          setIsLodingModalVisible(false);
+          // todo - 에러 처리 해야함
+      }});
+  };
+  const cancelRequest = () => {
+    setIsCanceled(true);
+    cancelTokenSource.cancel('Request canceled by the user');
   };
   useEffect(() => {
     if (todayReport) {
@@ -467,7 +478,10 @@ const Weekly = () => {
               </View>
               <View style={{ flexDirection: 'row', marginTop: 24 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.cancelBtn} onPress={() => setIsLodingModalVisible(false)}>
+                  <TouchableOpacity style={diaryStyles.cancelBtn} onPress={() => {
+                    cancelRequest();
+                    setIsLodingModalVisible(false);
+                  }}>
                     <Text style={{ color: '#72D193', fontSize: 16, fontWeight: '600',}}>발행 취소</Text>
                   </TouchableOpacity>
                 </View>
