@@ -204,7 +204,8 @@ const Settings = () => {
                                                 if(notificationTime.getTime()<=(new Date(Date.now())).getTime()) notificationTime.setDate(notificationTime.getDate()+1);
                                                 PushNotification.localNotificationSchedule({
                                                     channelId: "MoodMemo_ID",
-                                                    message: notification.time + ' Notification',
+                                                    smallIcon: "ic_notification",
+                                                    message: notification.time + ' 알림',
                                                     date: new Date(notificationTime), // 1 second from now
                                                     visibility: "public",
                                                     playSound: false,

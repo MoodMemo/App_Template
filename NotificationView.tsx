@@ -55,8 +55,8 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                 }}>
                     <View style={{
                         backgroundColor:"#FFFFFF",
-                        width:'90%',
-                        height:'47%',
+                        width:340,
+                        height:340,
                         paddingHorizontal: 20,
                         paddingBottom: 20,
                         paddingTop: 20,
@@ -98,6 +98,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                                         if(date.getTime()<=(new Date(Date.now())).getTime()) date.setDate(date.getDate()+1);
                                         PushNotification.localNotificationSchedule({
                                             channelId: "MoodMemo_ID",
+                                            smallIcon: "ic_notification",
                                             message: notificationTime+" 알림",
                                             date: date, //입력 받은 시간으로 알림 설정
                                             visibility: "public",

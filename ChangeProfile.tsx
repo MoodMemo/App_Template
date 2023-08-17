@@ -70,7 +70,7 @@ const ChangeProfile = () => {
             alignItems:'center'
         }}>
             <View style={{
-                backgroundColor:"#FFFFFF",
+                backgroundColor:"#FFFAF4",
                 width:'85%',
                 height:'70%',
                 paddingHorizontal: '5%',
@@ -176,12 +176,12 @@ const ChangeProfile = () => {
             }}>
             <View style={{
                     backgroundColor:"#FFFFFF",
-                    width:'90%',
-                    height:'45%',
+                    width:340,
+                    height:340,
                     paddingHorizontal: 20,
                     paddingBottom: 20,
                     paddingTop: 20,
-                    //justifyContent:'center',
+                    justifyContent:'space-between',
                     //alignItems:'center',
                     borderRadius:10
                     }}>
@@ -205,7 +205,7 @@ const ChangeProfile = () => {
                     await AsyncStorage.setItem('@UserInfo:birthShow', formatDate(birthday));
                     setIsDatePickerVisible(!isDatePickerVisible);
                 }}>
-                    <Text style={{paddingTop: 20, fontSize: 17,}}>저장</Text>
+                    <Text style={{paddingBottom: 20, fontSize: 17,}}>저장</Text>
                 </TouchableOpacity>  
             </View>     
         </Modal>
