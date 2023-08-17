@@ -1,6 +1,6 @@
 import * as amplitude from '@amplitude/analytics-react-native';
 
-// import * as amplutude from './AmplitudeAPI';
+// import * as amplitude from './AmplitudeAPI';
 
 /* splash */
 function AmplitudeInit() {
@@ -155,7 +155,10 @@ export function connectToKakaoChatBot() { // backdrop 역시 같음
 export function notiONtoOFF() { // backdrop 역시 같음
   amplitude.track('save edited diary');           
 }
-export function nofiOFFtoON() { // backdrop 역시 같음
+export function notiOFFtoON() { // backdrop 역시 같음
+  amplitude.track('save edited diary');           
+}
+export function notiONwhenPermissionDenied() { // TODO - amplitude
   amplitude.track('save edited diary');           
 }
 export function intoNotiList() { // backdrop 역시 같음
@@ -165,6 +168,9 @@ export function intoAddNewNoti() { // backdrop 역시 같음
   amplitude.track('save edited diary');           
 }
 export function saveNewNoti() { // 알림 시각 받기
+  amplitude.track('save edited diary');           
+}
+export function saveDuplicatedNoti() { // TODO - amplitude
   amplitude.track('save edited diary');           
 }
 export function cancelNewNoti() { // backdrop 역시 같음
@@ -181,6 +187,9 @@ export function cancelRenewNoti() { // backdrop 역시 같음
 }
 export function deleteNoti() { // 알림 시각 받기
   amplitude.track('save edited diary');           
+}
+export function outToSettingFromNotiList() { // TODO - amplitude
+  amplitude.track('save edited diary');
 }
 export function intoGuide() { // 알림 시각 받기
   amplitude.track('save edited diary');           

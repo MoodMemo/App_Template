@@ -10,6 +10,8 @@ import { Divider } from 'react-native-paper';
 
 import Main from './Main'
 
+import * as amplitude from './AmplitudeAPI';
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
@@ -330,7 +332,10 @@ const AnimatedViewBirthday = () => {
                   marginLeft: 25
                 }}>이제부터 나를 따라와라무!</Text>
               </View>
-              <TouchableOpacity style={styles.button} onPress={handleNext}>
+              <TouchableOpacity style={styles.button} onPress={()=>{
+                handleNext();
+                amplitude.userRegiStart();
+              }}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
             </View>
@@ -428,7 +433,10 @@ const AnimatedViewBirthday = () => {
               <View style={styles.warning}>
                 <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
               </View>}
-              <TouchableOpacity style={styles.button} onPress={handleNext}>
+              <TouchableOpacity style={styles.button} onPress={()=>{
+                handleNext();
+                amplitude.userRegiBirthday();
+              }}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
             </View>
@@ -470,7 +478,10 @@ const AnimatedViewBirthday = () => {
               <View style={styles.warning}>
                 <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
               </View>}
-              <TouchableOpacity style={styles.button} onPress={handleNext}>
+              <TouchableOpacity style={styles.button} onPress={()=>{
+                handleNext();
+                amplitude.userRegiJob_Fin();
+              }}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
             </View>
@@ -522,7 +533,10 @@ const AnimatedViewBirthday = () => {
               <View style={styles.warning}>
                 <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
               </View>}
-              <TouchableOpacity style={styles.button} onPress={handleNext}>
+              <TouchableOpacity style={styles.button} onPress={() => {
+                handleNext();
+                amplitude.userRegiName();
+              }}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
             </View>

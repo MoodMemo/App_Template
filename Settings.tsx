@@ -12,6 +12,7 @@ import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
 import ChangeProfile from './ChangeProfile';
 
+import * as amplitude from './AmplitudeAPI';
 
 
 
@@ -71,6 +72,7 @@ const Settings = () => {
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
+                    amplitude.connectToKakaoChatBot();
                     setIsKakaoModalVisible(!isKakaoModalVisible);
                     }}>
                     <View
@@ -161,6 +163,7 @@ const Settings = () => {
                                                     repeatTime: "1" //하루 단위로 반복
                                                 });
                                             });
+                                            amplitude.notiONtoOFF();
                                             PushNotification.getScheduledLocalNotifications((result:any)=>{
                                                 console.log(result);
                                             });
@@ -171,10 +174,12 @@ const Settings = () => {
                                             });
                                             AsyncStorage.setItem('@UserInfo:notificationAllow','false');
                                             setIsNotificationEnabled(!isNotificationEnabled);
+                                            amplitude.notiONtoOFF();
                                             PushNotification.cancelAllLocalNotifications();
                                         }
                                     }
                                     else if(granted==='never_ask_again'){
+                                        amplitude.notiONwhenPermissionDenied();
                                         setIsNotificationModalVisible(!isNotificationModalVisible);
                                         console.log(1,'denied');
                                     }
@@ -253,6 +258,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
+                        amplitude.outToSettingFromNotiList();
                         setIsNotificationListModalVisible(!isNotificationListModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -317,13 +323,14 @@ const Settings = () => {
                               justifyContent: 'space-between'
                           }}>
                           <Text style={{fontSize: 17, color:"#495057"}}>버전</Text>
-                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 0.1</Text>
+                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.0</Text>
                       </View>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
+                    amplitude.intoGuide();
                     setIsNoticeModalVisible(!isNoticeModalVisible);
                     }}>
                     <View
@@ -340,6 +347,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
+                        amplitude.outToSettingFromGuide();
                         setIsNoticeModalVisible(!isNoticeModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -365,6 +373,7 @@ const Settings = () => {
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
+                    amplitude.intoServiceCenter();
                     setIsReportModalVisible(!isReportModalVisible);
                     }}>
                     <View
@@ -381,6 +390,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
+                        amplitude.outToSettingFromServiceCenter();
                         setIsReportModalVisible(!isReportModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -409,6 +419,7 @@ const Settings = () => {
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
+                    amplitude.intoCoffee();
                     setIsCoffeeModalVisible(!isCoffeeModalVisible);
                     }}>
                     <View
@@ -425,6 +436,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
+                        amplitude.outToSettingFromCoffee();
                         setIsCoffeeModalVisible(!isCoffeeModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
