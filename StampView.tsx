@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById, getPushedStampsAllByField } from './src/localDB/document';
+import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
 import renderWhenStampAdded from './weeklyView/Weekly'
 
 const StampView = () => {
@@ -85,8 +85,6 @@ const StampView = () => {
           <TouchableOpacity key={stampButton.id} style={styles.stampButton} onPress={() => {handleButtonPress(stampButton)}}>
             <Text style={styles.buttonEmotion}>{stampButton.emoji}</Text>
             <Text style={styles.buttonText}>{stampButton.stampName}</Text>
-            <Text style={styles.buttonText}>{stampButton.pushedCnt}</Text>
-            <Text style={styles.buttonText}>{getPushedStampsAllByField('stampName', stampButton.stampName).length}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

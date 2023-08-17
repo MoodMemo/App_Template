@@ -1,6 +1,5 @@
 import Realm = require("realm");
 import uuid from "react-native-uuid";
-import { CollapsedItem } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /** [document schema - User -> to AsyncStorage (@UserInfo)]
