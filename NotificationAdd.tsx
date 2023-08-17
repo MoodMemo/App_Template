@@ -80,8 +80,10 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                             justifyContent: 'space-between'
                             }}>
                                 <TouchableOpacity onPress={()=>{
-                                    amplitude.saveNewNoti();
                                     const notificationTime=String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
+                                    console.log(notificationTime);
+                                    console.log("**********");
+                                    amplitude.saveNewNoti(notificationTime);
                                     if(repository.getNotificationsByField("time",notificationTime)===undefined){
                                         realm.write(() => {repository.createNotification({
                                             day: [true, true, true, true, true, false, false],

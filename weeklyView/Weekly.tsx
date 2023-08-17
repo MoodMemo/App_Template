@@ -49,6 +49,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
+    amplitude.clickDropDown();
     setIsOpen(!isOpen);
   };
 
@@ -59,6 +60,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <View style={dropDownStyles.dropdownContainer}>
+      
       <TouchableOpacity onPress={toggleDropdown} style={dropDownStyles.dropdownButton}>
         <View>
           <Text style={dropDownStyles.dropdownButtonText}>
@@ -67,6 +69,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           <FontAwesomeIcon name='sort-down' size={16} color="#737373" style={{position: 'absolute', right: 7, top: 5}}/>
         </View>
       </TouchableOpacity>
+
       {isOpen && (
         <View style={dropDownStyles.dropdownOptions}>
           {options.map((option) => (
@@ -95,9 +98,9 @@ const Weekly = () => {
     const weekOfMonth = date.week() - dayjs(date).startOf('month').week() + 1;
     return weekOfMonth;
   }; const [selectedWeek, setSelectedWeek] = useState<number>(getWeekOfMonth(today));
-  const handleYearChange = (year: number) => { setSelectedYear(year); };
-  const handleMonthChange = (month: number) => { setSelectedMonth(month); };
-  const handleWeekChange = (week: number) => { setSelectedWeek(week); };
+  const handleYearChange = (year: number) => { setSelectedYear(year); amplitude.changeYear(); };
+  const handleMonthChange = (month: number) => { setSelectedMonth(month); amplitude.changeMonth(); };
+  const handleWeekChange = (week: number) => { setSelectedWeek(week); amplitude.changeWeek();};
 
   const getDatesForWeek = () => {
     var tmpDate = null;
@@ -168,12 +171,12 @@ const Weekly = () => {
     setIsCanceled(true);
     cancelTokenSource.cancel('Request canceled by the user');
   };
-  useEffect(() => {
-    if (todayReport) {
-      setEditedTitle(todayReport.title);
-      setEditedBodytext(todayReport.bodytext);
-    }
-  }, [todayReport]);
+  // useEffect(() => {
+  //   if (todayReport) {
+  //     setEditedTitle(todayReport.title);
+  //     setEditedBodytext(todayReport.bodytext);
+  //   }
+  // }, [todayReport]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
   const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
@@ -250,8 +253,7 @@ const Weekly = () => {
         <View style={styles.emojisContainer}>
           {/* TODO - 스탬프가 7개 이상일 경우 +n 등을 띄워야 함 */}
           {getDatesBetween(startDate).map((date) => (
-            <TouchableOpacity key={date.format('YYYYMMDD')} onPress={() => 
-            handleTodayChange(date)}>
+            <TouchableOpacity key={date.format('YYYYMMDD')} onPress={() => handleTodayChange(date)}>
               <View style={[styles.day, date.isSame(today, 'day') && styles.day_today]}>
                 <Text style={[
                   styles.dayText,
@@ -290,7 +292,7 @@ const Weekly = () => {
             <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
             <TouchableOpacity onPress={() => {
               setIsDetailModalVisible(!isDetailModalVisible),
-              Sentry.captureMessage('[스탬프리스트] 사용자가 자세히 보기 버튼을 눌렀습니다!');
+              amplitude.showDetailModal();
               }}>
               <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
               {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
@@ -301,7 +303,7 @@ const Weekly = () => {
                 animationInTiming={200}
                 animationOut={"fadeOut"}
                 animationOutTiming={200}
-                onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}
+                onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible); amplitude.backToWeeklyFromDetailModal();}}
                 backdropColor='#CCCCCC' 
                 backdropOpacity={0.9}
                 style={{ alignItems:'center' }}
@@ -318,7 +320,7 @@ const Weekly = () => {
                 <View style={{flexDirection: 'row'}}>
                 <View style={{backgroundColor: 'white', borderRadius: 15, flex: 1, padding: 20, height: 500}}>
                   <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}>
+                    <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible); amplitude.backToWeeklyFromDetailModal();}}>
                       <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
                     </TouchableOpacity>
                     <Text style={{color: '#212429', fontSize: 16}}>스탬프 상세 히스토리</Text>
@@ -353,7 +355,7 @@ const Weekly = () => {
               <View style={[styles.title, {marginTop: 0,}]}>
                 <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>오늘의 일기</Text>
                 {!isEditMode ? (
-                  <TouchableOpacity onPress={handleEditButton}>
+                  <TouchableOpacity onPress={ () => {handleEditButton(); amplitude.editAIDiary();}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                       <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
                       <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
@@ -361,10 +363,10 @@ const Weekly = () => {
                   </TouchableOpacity>
                 ) : (
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={handleCancelButton}>
+                    <TouchableOpacity onPress={() => {handleCancelButton(); amplitude.cancelToEditDiary();}}>
                       <Text style={{ fontSize: 12, color: '#495057' }}>취소</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleSaveButton}>
+                    <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary();}}>
                       <Text style={{ fontSize: 12, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
                     </TouchableOpacity>
                   </View>
@@ -391,6 +393,7 @@ const Weekly = () => {
                       style={diaryStyles.editDiary}
                       value={editedTitle}
                       onChangeText={setEditedTitle}
+                      onFocus={() => {amplitude.editTitle();}}
                     />
                   ) : (
                     <Text style={{ fontSize: 16, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
@@ -407,6 +410,7 @@ const Weekly = () => {
                       style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
                       value={editedBodytext}
                       onChangeText={setEditedBodytext}
+                      onFocus={() => {amplitude.editBodyText();}}
                       multiline
                     />
                   ) : (
@@ -431,7 +435,9 @@ const Weekly = () => {
               </View>
             </View>
           ) : ( getStamp(today).length < 2 ? (
-            <TouchableOpacity onPress={() => {setIsCannotModalVisible(true);}} style={diaryStyles.generateButton}>
+            <TouchableOpacity 
+              onPress={() => {setIsCannotModalVisible(true); amplitude.tryGenerateAIDiary_cannot();}} 
+              style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                 {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
                 <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>Moo에게 일기 작성을 요청해 봐요</Text>
@@ -441,7 +447,9 @@ const Weekly = () => {
                 style={{ width: 37, height: (39 * 37) / 37 , position: 'relative', bottom: 21.5, left: 122, overflow: 'hidden'}}></Image>
             </TouchableOpacity>
           ) : (
-            <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
+            <TouchableOpacity 
+                onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can();}} 
+                style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                 {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
                 <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>Moo에게 일기 작성을 요청해 봐요</Text>
@@ -480,6 +488,7 @@ const Weekly = () => {
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
                   <TouchableOpacity style={diaryStyles.cancelBtn} 
+                  onPress={() => {amplitude.waitingForAIDiary();}}
                   // onPress={() => {
                   //   cancelRequest();
                   //   setIsLodingModalVisible(false);
@@ -518,7 +527,7 @@ const Weekly = () => {
               </View>
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsLodingFinishModalVisible(false)}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false); amplitude.backToWeeklyFromCanModal();}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
@@ -552,7 +561,7 @@ const Weekly = () => {
               </View>
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsCannotModalVisible(false)}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsCannotModalVisible(false); amplitude.backToWeeklyFromCannotModal();}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>

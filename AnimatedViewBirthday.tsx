@@ -431,7 +431,7 @@ const AnimatedViewBirthday = () => {
               </Modal>
               {isWarningVisible &&
               <View style={styles.warning}>
-                <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
+                <Text style={{color: '#FF7168', fontSize: 16,}}>입력은 필수다무!</Text>
               </View>}
               <TouchableOpacity style={styles.button} onPress={()=>{
                 handleNext();
@@ -476,7 +476,7 @@ const AnimatedViewBirthday = () => {
               />
               {isWarningVisible && 
               <View style={styles.warning}>
-                <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
+                <Text style={{color: '#FF7168', fontSize: 16,}}>입력은 필수다무!</Text>
               </View>}
               <TouchableOpacity style={styles.button} onPress={()=>{
                 handleNext();
@@ -531,7 +531,7 @@ const AnimatedViewBirthday = () => {
               />
               {isWarningVisible &&
               <View style={styles.warning}>
-                <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
+                <Text style={{color: '#FF7168', fontSize: 16,}}>입력은 필수다무!</Text>
               </View>}
               <TouchableOpacity style={styles.button} onPress={() => {
                 handleNext();
