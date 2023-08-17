@@ -113,15 +113,18 @@ const Weekly = () => {
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
   const [isLodingModalVisible, setIsLodingModalVisible] = useState(false);
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
+  const [isCannotModalVisible, setIsCannotModalVisible] = useState(false);
+  const [isCanceled, setIsCanceled] = useState(false);
+  let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
     Sentry.captureMessage('[일기 생성] 사용자가 일기 생성 버튼을 눌렀습니다!');
 
     setIsLodingModalVisible(true);
 
-    const todatStampList = [];
+    const todayStampList = [];
     getStamp(today).forEach((stamp) => {
       console.log("stamp.dateTime: ", stamp.dateTime);
-      todatStampList.push({
+      todayStampList.push({
         dateTime: stamp.dateTime,
         stampName: stamp.stampName,
         memo: stamp.memo,
@@ -129,32 +132,41 @@ const Weekly = () => {
     });
     const request = {
       userDto: getUserAsync(), // from async storage
-      todayStampList: todatStampList,
+      todayStampList: todayStampList,
     }
 
     console.log('ai 서버와의 통신 시작합니다');
-    sendDailyReport(request)
+    sendDailyReport(request, cancelTokenSource.token)
       .then((response) => {
-        console.log('date: ', response.date);
-        realm.write(() => {
-          console.log('title: ', response.title);
-          repository.createDailyReport({
-            // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
-            date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
-            title: response.title,
-            bodytext: response.bodytext,
-            keyword: response.keyword,
+        if (!isCanceled) {
+          console.log('date: ', response.date);
+          realm.write(() => {
+            console.log('title: ', response.title);
+            repository.createDailyReport({
+              // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
+              date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
+              title: response.title,
+              bodytext: response.bodytext,
+              keyword: response.keyword,
+            });
+            console.log("create default daily report finished");
           });
-          console.log("create default daily report finished");
-        });
-        setIsLodingModalVisible(false);
-        setIsLodingFinishModalVisible(true);
+          setIsLodingModalVisible(false);
+          setIsLodingFinishModalVisible(true);
+        }
       })
       .catch((error) => {
-        console.log('Error', error.message);
-        setIsLodingModalVisible(false);
-        // todo - 에러 처리 해야함
-    });
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          console.log('Error', error.message);
+          setIsLodingModalVisible(false);
+          // todo - 에러 처리 해야함
+      }});
+  };
+  const cancelRequest = () => {
+    setIsCanceled(true);
+    cancelTokenSource.cancel('Request canceled by the user');
   };
   useEffect(() => {
     if (todayReport) {
@@ -419,19 +431,20 @@ const Weekly = () => {
               </View>
             </View>
           ) : ( getStamp(today).length < 2 ? (
-            <View style={diaryStyles.generateButton}>
+            <TouchableOpacity onPress={() => {setIsCannotModalVisible(true);}} style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text>
+                {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
+                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>Moo에게 일기 작성을 요청해 봐요</Text>
               </View>
               <Image 
                 source={require('../assets/colorMooMini.png')}
                 style={{ width: 37, height: (39 * 37) / 37 , position: 'relative', bottom: 21.5, left: 122, overflow: 'hidden'}}></Image>
-              {/* <Text style={[diaryStyles.generateButtonText, { fontSize: 14 }]}> 스탬프가 2개 이상일 때 일기를 만들 수 있어요!</Text> */}
-            </View>
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text>
+                {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
+                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>Moo에게 일기 작성을 요청해 봐요</Text>
               </View>
               <Image 
                 source={require('../assets/colorMooMini.png')}
@@ -454,8 +467,8 @@ const Weekly = () => {
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
                 source={require('../assets/colorMooMini.png')}
-                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
-              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중이다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
@@ -464,10 +477,15 @@ const Weekly = () => {
                 <Text style={{ color: '#475467', fontSize: 14, }}>AI 일기가 발행되고 있으니, 화면을 벗어나지 말라 무.</Text>
                 <Text style={{ color: '#475467', fontSize: 14, }}>발행 중 이탈 시, 발행이 취소된다무...</Text>
               </View>
-              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.cancelBtn} onPress={() => setIsLodingModalVisible(false)}>
-                    <Text style={{ color: '#72D193', fontSize: 16, fontWeight: '600',}}>발행 취소</Text>
+                  <TouchableOpacity style={diaryStyles.cancelBtn} 
+                  // onPress={() => {
+                  //   cancelRequest();
+                  //   setIsLodingModalVisible(false);
+                  // }}
+                  >
+                    <Text style={{ color: '#72D193', fontSize: 14, fontWeight: '600',}}>조금만 기다려달라무 ...✏️💦</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -489,8 +507,8 @@ const Weekly = () => {
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
                 source={require('../assets/colorMooMini.png')}
-                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
-              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기가 발행됐다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
@@ -498,9 +516,43 @@ const Weekly = () => {
               <View style={{alignItems: 'center',}}>
                 <Text style={{ color: '#475467', fontSize: 14, }}>내가 멋지게 만든 일기를 확인해 봐라무!</Text>
               </View>
-              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
                   <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsLodingFinishModalVisible(false)}>
+                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                        
+            </View>
+          </Modal>
+          {/* 4-3. 일기 생성 불가 모달 */}
+          <Modal 
+            isVisible={isCannotModalVisible}
+            animationIn={"fadeIn"}
+            animationOut={"fadeOut"}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={diaryStyles.finishLodingModal}>
+              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>일기를 만들 재료가 부족하다</Text>
+                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>...</Text>
+              </View>
+              <View style={{alignItems: 'center',}}>
+                <Text style={{ color: '#475467', fontSize: 14, }}>감정을 두 개 이상 주면 만들 수 있다무!</Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', flex: 1,}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsCannotModalVisible(false)}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
@@ -718,6 +770,7 @@ const diaryStyles = StyleSheet.create({
     paddingHorizontal: 16,
     width: 343, 
     height: 302,
+    // height: 218,
     shadowColor: 'black',
     shadowRadius: 50,           // 그림자 블러 반경
     elevation: 5, 
