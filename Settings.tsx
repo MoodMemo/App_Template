@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
+import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -28,38 +28,51 @@ const Settings = () => {
     const [memo, setMemo] = useState('');
     const handleMemoChange = (text) => {
         setMemo(text);
-      };
+      };  
     const sentryUserFeedback = () => {
 
-        const sentryId = Sentry.captureMessage("고객센터/의견 보내기/요류 제보");
+        const sentryId = Sentry.captureMessage("고객센터/의견 보내기/요류 제보");    
         // OR: const sentryId = Sentry.lastEventId();
         // var userName = await AsyncStorage.getItem('@UserInfo:userName');
         // if (userName === null) userName = '익명';
 
+        console.log(sentryId);
+
         const userFeedback: UserFeedback = {
+            event_id: sentryId,
+            name: "사용자도 아직",
+            email: "이메일은 아직 개발 안했음",
+            comments: memo,
+            // comments: "memo",
+        };
+        Sentry.captureUserFeedback(userFeedback);
+        
+        const userFeedback2: UserFeedback = {
             event_id: sentryId,
             name: "사용자도 아직",
             email: "이메일은 아직 개발 안했음",
             // comments: memo,
             comments: "memo",
         };
-
-        console.log(memo);
-        Sentry.captureUserFeedback(userFeedback);
+        Sentry.captureUserFeedback(userFeedback2);
+        
+        
+        setMemo('');
         setIsReportModalVisible(!isReportModalVisible);
     }
 
-    const sentryId = Sentry.captureMessage("고객센터/의견 보내기/요류 제보");
-
-    const userFeedback: UserFeedback = {
-    event_id: sentryId,
-    name: "사용자도 아직",
-    email: "이메일은 아직 개발 안했음",
-    comments: '???',
-    };
-
-    Sentry.captureUserFeedback(userFeedback);
-
+    // const handleOpenLink = async () => {
+    //     const url = 'http://pf.kakao.com/_xhGnxgxj'; // 원하는 웹 링크
+    
+    //     // 웹 링크를 열기 위해 Linking.openURL()을 사용합니다.
+    //     const supported = await Linking.canOpenURL(url);
+    
+    //     if (supported) {
+    //       await Linking.openURL(url);
+    //     } else {
+    //       console.log("Don't know how to open URL: " + url);
+    //     }
+    //   };
   const {height,width}=useWindowDimensions();
   //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isKakaoModalVisible, setIsKakaoModalVisible] = useState(false);
