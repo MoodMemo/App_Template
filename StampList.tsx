@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { View, Text, Modal, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import realm, { ICustomStamp, createCustomStamp, deleteCustomStamp, getAllCustomStamps } from './src/localDB/document';
+import * as amplitude from './AmplitudeAPI';
 
 const StampList = ({visible, closeModal}) => {
   // 각 스탬프의 상태를 관리하는 배열, 모두 기본값은 false로 초기화
@@ -32,6 +33,7 @@ const StampList = ({visible, closeModal}) => {
   const [addStampButtonDisabled, setAddStampButtonDisabled] = useState(true);
 
   const handleRadioButtonPress = (index) => {
+    amplitude.choiceDeleteCustomStampCandidate();
     const newCheckedStates = [...checkedStates];
     newCheckedStates[index] = !checkedStates[index];
     const count = newCheckedStates.filter((state) => state).length;
@@ -42,6 +44,7 @@ const StampList = ({visible, closeModal}) => {
   };
 
   const handleDeleteStamp = () => {
+    amplitude.deleteCustomStamp();
     // 라디오버튼 체크된 것들 삭제
     const selectedIndexes = checkedStates.reduce(
       (indexes, state, index) => (state ? [...indexes, index] : indexes),
@@ -70,6 +73,7 @@ const StampList = ({visible, closeModal}) => {
   };
 
   const handleAddStamp = (label, emotion) => {
+    amplitude.submitAddCustomStamp(label);
     // 새 스탬프 객체의 초기 데이터를 생성
     const newStampData = {
       stampName: label,
@@ -103,12 +107,15 @@ const StampList = ({visible, closeModal}) => {
             </TouchableOpacity>
             <Text style={styles.fixModalTitle}>스탬프 설정</Text>
           </View>
-          <TouchableOpacity onPress={() => setAddStampModalVisible(true)}>
+          <TouchableOpacity onPress={() => {
+            amplitude.tryAddCustomStamp();
+            setAddStampModalVisible(true);
+          }}>
             <Image source={require('./assets/add.png')} />
           </TouchableOpacity>
         </View>
         <View style={styles.fixModalMessageContainer}>
-          <Text style={styles.fixModalMessage}>감정 스티커 순서를 변경하거나 삭제할 수 있어요.</Text>
+          <Text style={styles.fixModalMessage}>감정스탬프를 삭제할 수 있다무🥬</Text>
         </View>
         <ScrollView style={styles.stampList}>
           {customStamps.map((stamp, index) => (
@@ -137,7 +144,10 @@ const StampList = ({visible, closeModal}) => {
       <Modal visible={addStampModalVisible} animationType='slide' transparent>
         <View style={styles.addStampModalContainer}>
           <View style={styles.addStampModalTitleContainer}>
-            <TouchableOpacity onPress={() => setAddStampModalVisible(false)}>
+            <TouchableOpacity onPress={() => {
+              amplitude.cancelAddCustomStamp();
+              setAddStampModalVisible(false);
+            }}>
               <Image source={require('./assets/close.png')} />
             </TouchableOpacity>
             <Text style={styles.addStampModalTitle}>스탬프 추가</Text>

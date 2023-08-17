@@ -4,6 +4,7 @@ import DatePicker from 'react-native-date-picker';
 import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
 import Weekly from './weeklyView/Weekly'
 import { useNavigation } from '@react-navigation/native';
+import * as amplitude from './AmplitudeAPI';
 
 // 화면의 가로 크기
 const screenWidth = Dimensions.get('window').width;
@@ -52,6 +53,7 @@ const StampView = () => {
   // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
 
   const handleCreatePushedStamp = () => {
+    amplitude.submitStamp();
     console.log("체크 버튼 누름!");
     // 기록 시간 설정
     const dateTime = date.toISOString();
@@ -77,6 +79,7 @@ const StampView = () => {
   }
 
   const onClose = () => {
+    amplitude.cancelStamp();
     setModalVisible(false);
     setMemo('');
   }
@@ -87,6 +90,7 @@ const StampView = () => {
   };
 
   const handleButtonPress = (stampButton) => {
+    amplitude.pushStamp(stampButton.stampName);
     setSelectedEmotion(stampButton.emoji);
     setSelectedEmotionLabel(stampButton.stampName);
     setSelectedEmotionId(stampButton.id);
@@ -96,6 +100,16 @@ const StampView = () => {
 
   const handleCloseTimeModal = () => {
     setTimeModalVisible(false);
+  }
+
+  const handleCancleTimeModal = () => {
+    amplitude.cancelChangeStampTime();
+    handleCloseTimeModal();
+  }
+  
+  const handleSubmitTimeModal = () => {
+    amplitude.submitChangeStampTime();
+    handleCloseTimeModal();
   }
 
   return (
@@ -130,7 +144,10 @@ const StampView = () => {
           </View>
           <View style={styles.timeContainer}>
             <Text style={styles.modalText}>기록 시간</Text>
-            <TouchableOpacity onPress={() => setTimeModalVisible(true)}>
+            <TouchableOpacity onPress={() => {
+              amplitude.tryChangeStampTime();
+              setTimeModalVisible(true);
+            }}>
               <Text style={styles.timeText}>
                 {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
               </Text>
@@ -146,6 +163,9 @@ const StampView = () => {
                 multiline={true}
                 maxLength={500}
                 onChangeText={handleMemoChange}
+                onFocus={() => {
+                  amplitude.editStampMemo();
+                }}
                 value={memo}
                 numberOfLines={numberOfLines}
               />
@@ -172,10 +192,10 @@ const StampView = () => {
               <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
               <DatePicker date={date} onDateChange={setDate} mode="datetime" theme="light"/>
               <View style={styles.timeButtons}>
-                <TouchableOpacity onPress={handleCloseTimeModal}>
+                <TouchableOpacity onPress={handleCancleTimeModal}>
                   <Text>취소</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleCloseTimeModal}>
+                <TouchableOpacity onPress={handleSubmitTimeModal}>
                   <Text>확인</Text>
                 </TouchableOpacity>
               </View>
