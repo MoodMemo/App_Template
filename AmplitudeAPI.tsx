@@ -2,11 +2,13 @@ import * as amplitude from '@amplitude/analytics-react-native';
 
 // import * as amplitude from './AmplitudeAPI';
 
+
 /* splash */
 function AmplitudeInit() {
   amplitude.init('71c6aec47b758215ad5b07a0241099c8');
 }
 export default AmplitudeInit;
+
 
 /* submit information */
 export function submitInfo(section: String) {
@@ -14,6 +16,7 @@ export function submitInfo(section: String) {
   // TODO - value = section   
 }
 // TODO - 입력 필수 관련 붙여야 함
+
 
 /* navigator */
 export function beginSession() {
@@ -32,6 +35,7 @@ export function moveToStatistics() {
   amplitude.track('move to SETTING');           
 }
 
+
 /* AnimatedViewBirthDay view */
 export function userRegiStart() {
   amplitude.track('move to SETTING');           
@@ -45,11 +49,10 @@ export function userRegiBirthday() {
 export function userRegiJob_Fin() {
   amplitude.track('move to SETTING');           
 }
-
 /* AnimatedViewBirthDay view */
 export function userRegiFinish() {
   amplitude.track('move to SETTING');           
-}
+} // TODO - @이준하 -> 얘는 안쓰는앤가요?
 
 
 /* home(stamp) view */
@@ -102,6 +105,9 @@ export function changeToday() {
   console.log('go amplitude!');
   amplitude.track('weekly: click another day');           
 }
+export function clickDropDown() {
+  amplitude.track('change year');           
+}
 export function changeYear() {
   amplitude.track('change year');           
 }
@@ -111,15 +117,17 @@ export function changeMonth() {
 export function changeWeek() {
   amplitude.track('change week');           
 }
+
 export function showDetailModal() {
   amplitude.track('show detail modal');           
 }
-export function pushCloseToDetailModal() {
+export function backToWeeklyFromDetailModal() {
   amplitude.track('push close button to detail modal');           
 }
 export function addNewStampInDetailModal() {
   amplitude.track('add new Stamp in detail modal');           
 }
+
 export function editAIDiary() {
   amplitude.track('edit diary');           
 }
@@ -129,6 +137,29 @@ export function cancelToEditDiary() {
 export function saveEditedDiary() {
   amplitude.track('save edited diary');           
 }
+export function editTitle() {
+  amplitude.track('edit title');
+}
+export function editBodyText() {
+  amplitude.track('edit body text');
+}
+
+export function tryGenerateAIDiary_cannot() {
+  amplitude.track('try generate AI diary');
+}
+export function backToWeeklyFromCannotModal() {
+  amplitude.track('back to weekly from cannot modal');
+}
+export function tryGenerateAIDiary_can() {
+  amplitude.track('try generate AI diary');
+}
+export function waitingForAIDiary() {
+  amplitude.track('waiting for AI diary');
+}
+export function backToWeeklyFromCanModal() {
+  amplitude.track('back to weekly from can modal');
+}
+
 
 /* setting view */
 export function intoProfile() {
