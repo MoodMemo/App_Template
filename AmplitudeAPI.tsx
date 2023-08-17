@@ -10,7 +10,7 @@ function AmplitudeInit() {
 export default AmplitudeInit;
 
 
-/* submit information */
+/* submit information */ // 얘 왜 만들었더라
 export function submitInfo(section: String) {
   amplitude.track('subimt information');
   // TODO - value = section   
@@ -20,223 +20,221 @@ export function submitInfo(section: String) {
 
 /* navigator */
 export function beginSession() {
-  amplitude.track('move to HOME');           
+  amplitude.track('START');           
 }
 export function moveToHome() {
-  amplitude.track('move to HOME');           
+  amplitude.track('stamp:');           
 }
 export function moveToWeekly() {
-  amplitude.track('move to WEEKLY');           
+  amplitude.track('weekly:');           
 }
 export function moveToSetting() {
-  amplitude.track('move to SETTING');           
+  amplitude.track('setting:');           
 }
 export function moveToStatistics() {
-  amplitude.track('move to SETTING');           
+  amplitude.track('statistics:');           
 }
 
 
 /* AnimatedViewBirthDay view */
 export function userRegiStart() {
-  amplitude.track('move to SETTING');           
+  amplitude.track('intro: submit start');
 }
 export function userRegiName() {
-  amplitude.track('move to SETTING');           
+  amplitude.track('intro: submit name');        
 }
 export function userRegiBirthday() {
-  amplitude.track('move to SETTING');           
+  amplitude.track('intro: submit birthday');        
 }
 export function userRegiJob_Fin() {
-  amplitude.track('move to SETTING');           
+  amplitude.track('intro: submit job');    
 }
 /* AnimatedViewBirthDay view */
 export function userRegiFinish() {
-  amplitude.track('move to SETTING');           
+  amplitude.track('intro: move to main view');         
 } // TODO - @이준하 -> 얘는 안쓰는앤가요?
 
 
 /* home(stamp) view */
 export function showCustomStampList() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: into - custom stamp list');
 }
 export function deleteCustomStamp() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: delete custom stamp');      
 }
 export function choiceDeleteCustomStampCandidate() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: choice delete custom stamp candidate');
 }
 export function tryAddCustomStamp() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: into - add custom stamp');
 }
 export function submitAddCustomStamp() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: submit - add custom stamp');
 }
 export function exitCustomStampList() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: exit - custom stamp list');
 }
 export function pushStamp() {
   // tODO -> 스탬프 이름 받자
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: push stamp');       
 }
 export function tryChangeStampTime() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: try to change stamp time');
 }
 export function submitChangeStampTime() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: submit change stamp time');     
 }
 export function cancelChangeStampTime() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: cancel change stamp time');     
 }
 export function editStampMemo() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: edit stamp memo');     
 }
 export function submitStamp() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: submit stamp');
 }
 export function cancelStamp() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('stamp: cancel stamp');
 }
 // TODO - 정렬 방식 변경은 추후 업데이트에 포함될 예정
 
 
-
 /* weekly view */
 export function changeToday() {
-  console.log('go amplitude!');
   amplitude.track('weekly: click another day');           
 }
 export function clickDropDown() {
-  amplitude.track('change year');           
+  amplitude.track('weekly: click drop down');
 }
 export function changeYear() {
-  amplitude.track('change year');           
+  amplitude.track('weekly: change year');           
 }
 export function changeMonth() {
-  amplitude.track('change month');           
+  amplitude.track('weekly: change month');           
 }
 export function changeWeek() {
-  amplitude.track('change week');           
+  amplitude.track('weekly: change week');           
 }
 
 export function showDetailModal() {
-  amplitude.track('show detail modal');           
+  amplitude.track('weekly: into - detail modal');           
 }
 export function backToWeeklyFromDetailModal() {
-  amplitude.track('push close button to detail modal');           
+  amplitude.track('weekly: exit - detail modal');
 }
 export function addNewStampInDetailModal() {
-  amplitude.track('add new Stamp in detail modal');           
+  amplitude.track('weekly: push new stamp in detail modal');           
 }
 
 export function editAIDiary() {
-  amplitude.track('edit diary');           
+  amplitude.track('weekly: edit diary');           
 }
 export function cancelToEditDiary() {
-  amplitude.track('cancel editing diary');           
+  amplitude.track('weekly: cancel editing diary');           
 }
 export function saveEditedDiary() {
-  amplitude.track('save edited diary');           
+  amplitude.track('weekly: save edited diary');           
 }
 export function editTitle() {
-  amplitude.track('edit title');
+  amplitude.track('weekly: edit title');
 }
 export function editBodyText() {
-  amplitude.track('edit body text');
+  amplitude.track('weekly: edit body text');
 }
 
 export function tryGenerateAIDiary_cannot() {
-  amplitude.track('try generate AI diary');
+  amplitude.track('weekly: into - generate AI diary (cannot)');
 }
 export function backToWeeklyFromCannotModal() {
-  amplitude.track('back to weekly from cannot modal');
+  amplitude.track('weekly: exit - cannot modal (fail to generate AI diary)');
 }
 export function tryGenerateAIDiary_can() {
-  amplitude.track('try generate AI diary');
+  amplitude.track('weekly: into - generate AI diary (can)'); 
 }
 export function waitingForAIDiary() {
-  amplitude.track('waiting for AI diary');
+  amplitude.track('weekly: waiting for AI diary');
 }
 export function backToWeeklyFromCanModal() {
-  amplitude.track('back to weekly from can modal');
+  amplitude.track('weekly: exit - can modal (finish generating AI diary)');
 }
 
 
 /* setting view */
 export function intoProfile() {
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: click profile');
 }
 export function setProfileName() {
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: edit profile name');
 }
 export function setProfileBirthday() {
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: edit profile birthday');  
 }
 export function setProfileJob() {
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: edit profile job');
 }
 export function saveNewProfile() {
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: save new profile');    
 }
 export function cancelToChangeProfile() { // backdrop 역시 같음
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: cancel to change profile');  
 }
 export function connectToKakaoChatBot() { // backdrop 역시 같음
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: try to kakao chat bot');
 }
 export function notiONtoOFF() { // backdrop 역시 같음
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: turn off notification');
 }
 export function notiOFFtoON() { // backdrop 역시 같음
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: turn on notification');
 }
 export function notiONwhenPermissionDenied() { // TODO - amplitude
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: turn on notification (permission denied)');
 }
 export function intoNotiList() { // backdrop 역시 같음
-  amplitude.track('save edited diary');
+  amplitude.track('setting: click notification list');
 }
 export function intoAddNewNoti() { // backdrop 역시 같음
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: try to add new notification');
 }
 export function saveNewNoti() { // 알림 시각 받기
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: save new notification');
 }
 export function saveDuplicatedNoti() { // TODO - amplitude
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: save duplicated notification');
 }
 export function cancelNewNoti() { // backdrop 역시 같음
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: cancel to add new notification');
 }
 export function intoRenewNoti() { // backdrop 역시 같음
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: try to edit notification');
 }
 export function saveRenewNoti() { // 알림 시각(기존, 이후) 받기
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: save edited notification');
 }
 export function cancelRenewNoti() { // backdrop 역시 같음
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: cancel to edit notification');
 }
 export function deleteNoti() { // 알림 시각 받기
-  amplitude.track('save edited diary');           
+  amplitude.track('setting: delete notification');
 }
 export function outToSettingFromNotiList() { // TODO - amplitude
-  amplitude.track('save edited diary');
+  amplitude.track('setting: close notification list');
 }
-export function intoGuide() { // 알림 시각 받기
-  amplitude.track('save edited diary');           
+export function intoGuide() {
+  amplitude.track('setting: click guide');
 }
-export function outToSettingFromGuide() { // 알림 시각 받기
-  amplitude.track('save edited diary');           
+export function outToSettingFromGuide() { 
+  amplitude.track('setting: close guide');        
 }
-export function intoServiceCenter() { // 알림 시각 받기
-  amplitude.track('save edited diary');           
+export function intoServiceCenter() {
+  amplitude.track('setting: click service center');           
 }
-export function outToSettingFromServiceCenter() { // 알림 시각 받기
-  amplitude.track('save edited diary');           
+export function outToSettingFromServiceCenter() { 
+  amplitude.track('setting: close service center');
 }
-export function intoCoffee() { // 알림 시각 받기
-  amplitude.track('save edited diary');           
+export function intoCoffee() { 
+  amplitude.track('setting: click coffee');
 }
-export function outToSettingFromCoffee() { // 알림 시각 받기
-  amplitude.track('save edited diary');           
+export function outToSettingFromCoffee() { 
+  amplitude.track('setting: close coffee');       
 }
