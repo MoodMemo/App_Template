@@ -17,10 +17,12 @@ import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Popup from './Popup';
+import * as amplitude from './AmplitudeAPI';
 
 const Tab = createBottomTabNavigator();
 
 function HomeScreen() {
+  amplitude.moveToHome();;
   return <Home/>; //Home.tsx
 }
 
@@ -32,6 +34,7 @@ function WeeklyScreen({ route, navigation }) {
       navigation.setParams({ showPopup: false });
     }
   }, [route.params?.showPopup]);
+  amplitude.moveToWeekly();
   return (
     <View style={{ flex: 1 }}>
       <Weekly/>
@@ -41,6 +44,7 @@ function WeeklyScreen({ route, navigation }) {
 }
 
 function SettingsScreen() {
+  amplitude.moveToSetting();
   return <Settings/>; //Home.tsx
 }
 
