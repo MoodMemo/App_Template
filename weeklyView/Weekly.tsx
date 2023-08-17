@@ -433,7 +433,8 @@ const Weekly = () => {
           ) : ( getStamp(today).length < 2 ? (
             <TouchableOpacity onPress={() => {setIsCannotModalVisible(true);}} style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text>
+                {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
+                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>Moo에게 일기 작성을 요청해 봐요</Text>
               </View>
               <Image 
                 source={require('../assets/colorMooMini.png')}
@@ -442,7 +443,8 @@ const Weekly = () => {
           ) : (
             <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text>
+                {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
+                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>Moo에게 일기 작성을 요청해 봐요</Text>
               </View>
               <Image 
                 source={require('../assets/colorMooMini.png')}
