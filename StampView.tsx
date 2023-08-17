@@ -1,8 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
 import renderWhenStampAdded from './weeklyView/Weekly'
+
+// 화면의 가로 크기
+const screenWidth = Dimensions.get('window').width;
+// screenWidth가 500보다 크면 500으로, 작으면 screenWidth로 설정
+const width = screenWidth > 500 ? 500 : screenWidth;
+
+// 4개의 버튼과 각 버튼 사이의 간격을 위한 값
+const buttonWidth = (width - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
+
+// 기본 디자인에서의 버튼 너비
+const defaultButtonWidth = 69;
+
+// 비율 계산
+const scale = buttonWidth / defaultButtonWidth
 
 const StampView = () => {
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
@@ -181,26 +195,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // 버튼들을 가로로 배열
     flexWrap: 'wrap', // 가로로 공간이 부족하면 다음 줄로 넘어감
     justifyContent: 'space-between', // 버튼들 사이의 간격을 동일하게 분배
-    width: 336,
     height: 'auto',
-    marginHorizontal: 20, // 버튼들의 좌우 여백을 조절
-    gap: 20, // 버튼들 사이의 간격을 조절
+    marginLeft: 28,
+    marginRight: 28,
+    maxWidth: 500, // stampView의 최대 너비 설정
+    alignSelf: 'center', // 화면의 중앙에 위치하도록 설정
+    columnGap: 20,
   },
   stampButton: {
-    width: 69, // 버튼 너비 설정 (한 줄에 4개씩 배치하므로 약 23%)
-    height: 84, // 버튼 높이 설정
+    width: buttonWidth, 
+    height: 84 * scale, // 기본 높이에 비율을 곱함
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F2F2F2',
-    borderRadius: 12,
+    borderRadius: 12 * scale, // 기본 borderRadius에 비율을 곱함
+    marginBottom: 20 * scale, // 기본 marginBottom에 비율을 곱함
     gap: 10,
-    paddingBottom: 10, // 버튼들 사이의 간격을 조절
   },
   buttonEmotion: {
-    fontSize: 24,
+    fontSize: 24 * scale, // 기본 fontSize에 비율을 곱함
   },
   buttonText: {
-    fontSize: 12,
+    fontSize: 12 * scale, // 기본 fontSize에 비율을 곱함
     fontWeight: '400',
     color: '#212429',
     textAlign: 'center',
