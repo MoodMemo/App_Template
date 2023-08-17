@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet} from 'react-native';
+import { Dimensions, Image, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet} from 'react-native';
 import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,6 +9,11 @@ import Modal from "react-native-modal";
 import { Divider } from 'react-native-paper';
 
 import Main from './Main'
+
+import * as amplitude from './AmplitudeAPI';
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 async function saveUserInfo_toAsyncStorage(userName:any, birthday:any, job:any) {
   const createUser = async (userName:any, birthday:any, job:any) => {
@@ -269,6 +274,9 @@ const AnimatedViewBirthday = () => {
                     console.log(1);
                     connectRealmNotification();
                   }
+                  else{
+                    AsyncStorage.setItem('@UserInfo:notificationAllow','false');
+                  }
                   console.log(granted);
                   saveUserInfo_toAsyncStorage(name, showingBirthday, job);
                   test_realm_ver4();
@@ -286,13 +294,49 @@ const AnimatedViewBirthday = () => {
         {section === 'start' ? (
           <View style={styles.view}>
             <View style={{justifyContent: 'center',
-            alignItems: 'center',
             flex:1}}>
-              <Text style={styles.title}>나에 대한 정보를</Text>
-              <Text style={styles.title}>입력해 맞춤형 AI 일기를</Text>
-              <Text style={styles.title}>받아 보세요.</Text>
-              <TouchableOpacity style={styles.button} onPress={handleNext}>
-                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
+              <Image 
+                source={require('./assets/colorMooMedium.png')}
+                style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '14%', left: '55%', overflow: 'hidden'}}></Image>
+              <View style={{
+                position:'relative',
+                bottom:'12%'
+              }}>
+                <Text style={{
+                  fontSize: 24,
+                  color:"#212429",
+                  marginLeft: 25
+                }}>어서와라<Text style={{
+                  fontSize: 24,
+                  color:"#FCD49B",
+                }}>무</Text></Text>
+                <Text style={{
+                  fontSize: 24,
+                  color:"#212429",
+                  marginLeft: 25
+                }}>나는 '무드메모'의 요정,</Text>
+                <Text style={{
+                  fontSize: 32,
+                  fontWeight:'bold',
+                  color:"#72D193",
+                  marginLeft: 25
+                }}>무(Moo)</Text>
+              </View>
+              <View style={{
+                position:'relative',
+                bottom:'8%'
+              }}>
+                <Text style={{
+                  fontSize: 16,
+                  color:"#212429",
+                  marginLeft: 25
+                }}>이제부터 나를 따라와라무!</Text>
+              </View>
+              <TouchableOpacity style={styles.button} onPress={()=>{
+                handleNext();
+                amplitude.userRegiStart();
+              }}>
+                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -301,27 +345,42 @@ const AnimatedViewBirthday = () => {
             <Divider style={{
                 position: 'absolute',
                 top: 0,
-                paddingTop:5,
+                paddingTop:3,
                 marginTop:50,
-                width: '80%',
+                width: '90%',
                 backgroundColor:"#FAFAFA",
-                marginLeft:'10%',
+                marginLeft:'5%',
                 borderRadius:5,
               }}/>
               <Divider style={{
                 position: 'absolute',
                 top: 0,
-                paddingTop:5,
+                paddingTop:3,
                 marginTop:50,
-                width: '40%',
+                width:'50%',
                 backgroundColor:"#72D193",
-                marginLeft:'10%',
+                marginLeft:'5%',
                 borderRadius:5,
               }}/>
             <View style={{justifyContent: 'center',
-            alignItems: 'center',
             flex:1}}>
-              <Text style={styles.title}>내 생일은</Text>
+              <View style={{
+                position:'relative',
+                bottom:'6%'
+              }}>
+                <Text style={{
+                    fontSize: 22,
+                    color:"#212429",
+                    marginLeft: 16
+                  }}>생일을 입력해달라<Text style={{
+                    fontSize: 22,
+                    color:"#FCD49B",
+                  }}>무</Text></Text>
+                <TouchableOpacity onPress={() => {setIsDatePickerVisible(!isDatePickerVisible)}}>
+                  <Text style={{fontSize:25, marginLeft: 16, paddingTop:20, color: '#E2E2E2'}}>{showingBirthday}</Text>
+                </TouchableOpacity>
+                <Divider style={{backgroundColor:"#000000",width:'50%',marginLeft:16}}/>
+              </View>
               <Modal isVisible={isDatePickerVisible}
                   animationIn={"fadeIn"}
                   animationInTiming={200}
@@ -370,17 +429,15 @@ const AnimatedViewBirthday = () => {
                       </TouchableOpacity>  
                   </View>     
               </Modal>
-              <TouchableOpacity onPress={() => {setIsDatePickerVisible(!isDatePickerVisible)}}>
-                <Text style={{fontSize:25, color: '#E2E2E2'}}>{showingBirthday}</Text>
-              </TouchableOpacity>
-              <Divider style={{backgroundColor:"#000000",width:'50%',marginHorizontal:'5%'}}/>
-              <Divider style={{backgroundColor:"#000000",width:'50%',marginHorizontal:'5%'}}/>
               {isWarningVisible &&
               <View style={styles.warning}>
                 <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
               </View>}
-              <TouchableOpacity style={styles.button} onPress={handleNext}>
-                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
+              <TouchableOpacity style={styles.button} onPress={()=>{
+                handleNext();
+                amplitude.userRegiBirthday();
+              }}>
+                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -389,39 +446,43 @@ const AnimatedViewBirthday = () => {
             <Divider style={{
                 position: 'absolute',
                 top: 0,
-                paddingTop:5,
+                paddingTop:3,
                 marginTop:50,
-                width: '80%',
-                backgroundColor:"#FAFAFA",
-                marginLeft:'10%',
-                borderRadius:5,
-              }}/>
-              <Divider style={{
-                position: 'absolute',
-                top: 0,
-                paddingTop:5,
-                marginTop:50,
-                width: '80%',
+                width:'90%',
                 backgroundColor:"#72D193",
-                marginLeft:'10%',
+                marginLeft:'5%',
                 borderRadius:5,
               }}/>
             <View style={{justifyContent: 'center',
-            alignItems: 'center',
             flex:1}}>
-              <Text style={styles.title}>내 직업은</Text>
+              <View style={{
+                position:'relative',
+                bottom:'6%'
+              }}>
+                <Text style={{
+                  fontSize: 22,
+                  color:"#212429",
+                  marginLeft: 16
+                }}>직업을 알려달라<Text style={{
+                  fontSize: 22,
+                  color:"#FCD49B",
+                }}>무</Text></Text>
+              </View>
               <TextInput
                 style={styles.input}
-                placeholder="디자이너"
-                placeholderTextColor='#E2E2E2'
+                placeholder="10자 이내 입력"
+                placeholderTextColor='#DBDBDB'
                 onChangeText={(text) => setJob(text)}
               />
               {isWarningVisible && 
               <View style={styles.warning}>
                 <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
               </View>}
-              <TouchableOpacity style={styles.button} onPress={handleNext}>
-                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
+              <TouchableOpacity style={styles.button} onPress={()=>{
+                handleNext();
+                amplitude.userRegiJob_Fin();
+              }}>
+                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -430,39 +491,53 @@ const AnimatedViewBirthday = () => {
               <Divider style={{
                 position: 'absolute',
                 top: 0,
-                paddingTop:5,
+                paddingTop:3,
                 marginTop:50,
-                width: '80%',
+                width: '90%',
                 backgroundColor:"#FAFAFA",
-                marginLeft:'10%',
+                marginLeft:'5%',
                 borderRadius:5,
               }}/>
               <Divider style={{
                 position: 'absolute',
                 top: 0,
-                paddingTop:5,
+                paddingTop:3,
                 marginTop:50,
-                width: '15%',
+                width:'15%',
                 backgroundColor:"#72D193",
-                marginLeft:'10%',
+                marginLeft:'5%',
                 borderRadius:5,
               }}/>
             <View style={{justifyContent: 'center',
-            alignItems: 'center',
             flex:1}}>
-              <Text style={styles.title}>내 이름은</Text>
+              <View style={{
+                position:'relative',
+                bottom:'6%'
+              }}>
+                <Text style={{
+                  fontSize: 22,
+                  color:"#212429",
+                  marginLeft: 16
+                }}>무가 불러줄 이름을 말해달라<Text style={{
+                  fontSize: 22,
+                  color:"#FCD49B",
+                }}>무</Text></Text>
+              </View>
               <TextInput
                 style={styles.input}
-                placeholder="홍길동"
-                placeholderTextColor='#E2E2E2'
+                placeholder="10자 이내 입력"
+                placeholderTextColor='#DBDBDB'
                 onChangeText={(text) => setName(text)}
               />
               {isWarningVisible &&
               <View style={styles.warning}>
                 <Text style={{color: '#FF0000', fontSize: 16,}}>입력 필수</Text>
               </View>}
-              <TouchableOpacity style={styles.button} onPress={handleNext}>
-                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '제출'}</Text>
+              <TouchableOpacity style={styles.button} onPress={() => {
+                handleNext();
+                amplitude.userRegiName();
+              }}>
+                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -500,32 +575,38 @@ const styles = StyleSheet.create({
     paddingBottom: 15
   },
   input: {
-    fontSize:25,
-    color: '#666666',
-    textAlign: 'center',
-    width: '40%',
+    position:'relative',
+    bottom:'3%',
+    fontSize:14,
+    color: '#DBDBDB',
+    width: windowWidth-32,
     padding: 10,
     marginBottom: 20,
-    borderBottomWidth:1,
-    borderBottomColor:'#E2E2E2',
+    borderWidth:1,
+    borderRadius: 10,
+    borderColor:'#F0F0F0',
+    marginHorizontal:16
   },
   button: {
     position: 'absolute',
-    bottom: 20,
+    bottom: '3%',
     width: '90%',
+    height: 50,
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#EFEFEF',
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#72D193',
+    borderRadius: 7,
+    marginHorizontal:'5%'
   },
   buttonText: {
-    color: '#000000',
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 20,
   },
   warning: {
     position: 'absolute',
     bottom: 80,
     alignItems: 'center',
+    paddingLeft: '50%'
   },
 });
 

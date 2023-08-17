@@ -9,6 +9,8 @@ import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DatePicker from 'react-native-date-picker';
 
+import * as amplitude from './AmplitudeAPI';
+
 
 const ChangeProfile = () => {
     const {height,width}=useWindowDimensions();
@@ -37,6 +39,7 @@ const ChangeProfile = () => {
     })
     return (
     <TouchableOpacity onPress={() => {
+        amplitude.intoProfile();
         setIsProfileModalVisible(!isProfileModalVisible);
         }}>
         <View
@@ -58,6 +61,7 @@ const ChangeProfile = () => {
                 birth=data;
             })
             AsyncStorage.setItem('@UserInfo:birthShow',String(birth));
+            amplitude.cancelToChangeProfile();
             setIsProfileModalVisible(!isProfileModalVisible);
         }}
         backdropColor='#CCCCCC'//'#FAFAFA'
@@ -92,6 +96,7 @@ const ChangeProfile = () => {
                             defaultValue={nameDefault}
                             placeholderTextColor='#E2E2E2'
                             onChangeText={(text) => setName(text)}
+                            onFocus={amplitude.setProfileName}
                             />
                     </View>
                     <View style={{paddingBottom: 25,
@@ -100,7 +105,10 @@ const ChangeProfile = () => {
                     </View>
                     <View style={{paddingBottom: 30,
                         }}>
-                        <TouchableOpacity onPress={() => {setIsDatePickerVisible(!isDatePickerVisible)}}
+                        <TouchableOpacity onPress={() => {
+                            amplitude.setProfileBirthday();
+                            setIsDatePickerVisible(!isDatePickerVisible);
+                        }}
                         style={{paddingBottom:10}}>
                             <Text style={{fontSize:20, paddingHorizontal:10, color: '#666666'}}>{showingBirthday}</Text>
                         </TouchableOpacity>
@@ -120,6 +128,7 @@ const ChangeProfile = () => {
                             defaultValue={jobDefault}
                             placeholderTextColor='#E2E2E2'
                             onChangeText={(text) => setJob(text)}
+                            onFocus={amplitude.setProfileJob}
                             />
                     </View>
                 </ScrollView>
@@ -135,6 +144,7 @@ const ChangeProfile = () => {
                         birth=data;
                     })
                     AsyncStorage.setItem('@UserInfo:birthShow',String(birth));
+                    amplitude.cancelToChangeProfile();
                     setIsProfileModalVisible(!isProfileModalVisible);
                     }}>
                     <Text style={{fontSize: 17}}>취소</Text>
@@ -143,6 +153,7 @@ const ChangeProfile = () => {
                     if(job!=='') await AsyncStorage.setItem('@UserInfo:job', job);
                     if(name!=='') await AsyncStorage.setItem('@UserInfo:userName', name);
                     await AsyncStorage.setItem('@UserInfo:birth', showingBirthday);
+                    amplitude.saveNewProfile();
                     setIsProfileModalVisible(!isProfileModalVisible);
                 }}>
                     <Text style={{fontSize: 17}}>저장</Text>

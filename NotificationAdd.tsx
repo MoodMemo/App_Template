@@ -8,6 +8,8 @@ import * as repository from './src/localDB/document';
 import DatePicker from 'react-native-date-picker';
 import PushNotification from "react-native-push-notification";
 
+import * as amplitude from './AmplitudeAPI';
+
 const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -19,6 +21,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
     return (
         <View>
             <TouchableOpacity onPress={() => {
+                    amplitude.intoAddNewNoti();
                     setIsModalVisible(!isModalVisible);
                 }}>
                 <View style={{
@@ -37,6 +40,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                 animationOut={"fadeOut"}
                 animationOutTiming={200}
                 onBackdropPress={() => {
+                    amplitude.cancelNewNoti();
                     setIsModalVisible(!isModalVisible);
                 }}
                 backdropColor='#CCCCCC'//'#FAFAFA'
@@ -76,6 +80,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                             justifyContent: 'space-between'
                             }}>
                                 <TouchableOpacity onPress={()=>{
+                                    amplitude.saveNewNoti();
                                     const notificationTime=String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
                                     if(repository.getNotificationsByField("time",notificationTime)===undefined){
                                         realm.write(() => {repository.createNotification({
@@ -106,6 +111,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                                     <Text style={{fontSize: 17}}>저장</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={()=>{
+                                    amplitude.cancelNewNoti();
                                     setIsModalVisible(!isModalVisible);
                                 }}>
                                     <Text style={{fontSize: 17}}>취소</Text>
@@ -119,6 +125,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                 animationOut={"fadeOut"}
                 animationOutTiming={200}
                 onBackdropPress={() => {
+                    amplitude.saveDuplicatedNoti();
                     setIsModalNoticeVisible(!isModalNoticeVisible);
                 }}
                 backdropColor='#CCCCCC'//'#FAFAFA'
