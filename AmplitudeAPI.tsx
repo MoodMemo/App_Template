@@ -68,15 +68,15 @@ export function choiceDeleteCustomStampCandidate() {
 export function tryAddCustomStamp() {
   amplitude.track('stamp: into - add custom stamp');
 }
-export function submitAddCustomStamp() {
-  amplitude.track('stamp: submit - add custom stamp');
+export function submitAddCustomStamp(stampName: String) {
+  amplitude.track('stamp: submit - add custom stamp', { stampName });
 }
 export function exitCustomStampList() {
   amplitude.track('stamp: exit - custom stamp list');
 }
-export function pushStamp() {
+export function pushStamp(stampName: String) {
   // tODO -> 스탬프 이름 받자
-  amplitude.track('stamp: push stamp');       
+  amplitude.track('stamp: push stamp', { stampName });       
 }
 export function tryChangeStampTime() {
   amplitude.track('stamp: try to change stamp time');
@@ -196,8 +196,8 @@ export function intoNotiList() { // backdrop 역시 같음
 export function intoAddNewNoti() { // backdrop 역시 같음
   amplitude.track('setting: try to add new notification');
 }
-export function saveNewNoti() { // 알림 시각 받기
-  amplitude.track('setting: save new notification');
+export function saveNewNoti(notiTime: String) { // 알림 시각 받기
+  amplitude.track('setting: save new notification', { notiTime });
 }
 export function saveDuplicatedNoti() { // TODO - amplitude
   amplitude.track('setting: save duplicated notification');
