@@ -465,8 +465,8 @@ const Weekly = () => {
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
                 source={require('../assets/colorMooMini.png')}
-                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
-              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중이다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
@@ -475,7 +475,7 @@ const Weekly = () => {
                 <Text style={{ color: '#475467', fontSize: 14, }}>AI 일기가 발행되고 있으니, 화면을 벗어나지 말라 무.</Text>
                 <Text style={{ color: '#475467', fontSize: 14, }}>발행 중 이탈 시, 발행이 취소된다무...</Text>
               </View>
-              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
                   <TouchableOpacity style={diaryStyles.cancelBtn} 
                   // onPress={() => {
@@ -505,8 +505,8 @@ const Weekly = () => {
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
                 source={require('../assets/colorMooMini.png')}
-                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
-              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기가 발행됐다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
@@ -514,7 +514,7 @@ const Weekly = () => {
               <View style={{alignItems: 'center',}}>
                 <Text style={{ color: '#475467', fontSize: 14, }}>내가 멋지게 만든 일기를 확인해 봐라무!</Text>
               </View>
-              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
                   <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsLodingFinishModalVisible(false)}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
@@ -539,8 +539,8 @@ const Weekly = () => {
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
                 source={require('../assets/colorMooMini.png')}
-                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
-              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>일기를 만들 재료가 부족하다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>...</Text>
@@ -548,7 +548,7 @@ const Weekly = () => {
               <View style={{alignItems: 'center',}}>
                 <Text style={{ color: '#475467', fontSize: 14, }}>감정을 두 개 이상 주면 만들 수 있다무!</Text>
               </View>
-              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
                   <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsCannotModalVisible(false)}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
