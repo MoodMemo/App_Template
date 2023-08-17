@@ -2,7 +2,8 @@ import React, {useEffect, useState} from 'react';
 import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
-import renderWhenStampAdded from './weeklyView/Weekly'
+import Weekly from './weeklyView/Weekly'
+import { useNavigation } from '@react-navigation/native';
 
 // 화면의 가로 크기
 const screenWidth = Dimensions.get('window').width;
@@ -46,6 +47,8 @@ const StampView = () => {
 
   const [images, setImages] = useState([]);
 
+  const navigation = useNavigation();
+
   // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
 
   const handleCreatePushedStamp = () => {
@@ -68,6 +71,9 @@ const StampView = () => {
     updateCustomStampPushedCountById(selectedEmotionId, 1);
     // 모달 닫기
     onClose();
+
+    // Weekly.tsx 뷰로 이동
+    navigation.navigate('Weekly', { showPopup: true });
   }
 
   const onClose = () => {
