@@ -113,6 +113,7 @@ const Weekly = () => {
   const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
   const [isLodingModalVisible, setIsLodingModalVisible] = useState(false);
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
+  const [isCannotModalVisible, setIsCannotModalVisible] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
@@ -430,15 +431,14 @@ const Weekly = () => {
               </View>
             </View>
           ) : ( getStamp(today).length < 2 ? (
-            <View style={diaryStyles.generateButton}>
+            <TouchableOpacity onPress={() => {setIsCannotModalVisible(true);}} style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                 <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text>
               </View>
               <Image 
                 source={require('../assets/colorMooMini.png')}
                 style={{ width: 37, height: (39 * 37) / 37 , position: 'relative', bottom: 21.5, left: 122, overflow: 'hidden'}}></Image>
-              {/* <Text style={[diaryStyles.generateButtonText, { fontSize: 14 }]}> 스탬프가 2개 이상일 때 일기를 만들 수 있어요!</Text> */}
-            </View>
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
@@ -515,6 +515,40 @@ const Weekly = () => {
               <View style={{ flexDirection: 'row', marginTop: 24 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
                   <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsLodingFinishModalVisible(false)}>
+                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                        
+            </View>
+          </Modal>
+          {/* 4-3. 일기 생성 불가 모달 */}
+          <Modal 
+            isVisible={isCannotModalVisible}
+            animationIn={"fadeIn"}
+            animationOut={"fadeOut"}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={diaryStyles.finishLodingModal}>
+              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>일기를 만들 재료가 부족하다</Text>
+                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>...</Text>
+              </View>
+              <View style={{alignItems: 'center',}}>
+                <Text style={{ color: '#475467', fontSize: 14, }}>감정이 두 개 이상이면 된다무!</Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+                <View style={{ flexDirection: 'row', flex: 1,}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsCannotModalVisible(false)}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
