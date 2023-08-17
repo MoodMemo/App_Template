@@ -63,6 +63,9 @@ export function tryAddCustomStamp() {
 export function submitAddCustomStamp(stampName: String) {
   amplitude.track('stamp: submit - add custom stamp', { stampName });
 }
+export function cancelAddCustomStamp() {
+  amplitude.track('stamp: cancel - add custom stamp');
+}
 export function exitCustomStampList() {
   amplitude.track('stamp: exit - custom stamp list');
 }
