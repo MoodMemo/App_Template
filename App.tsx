@@ -94,6 +94,7 @@ function App(): JSX.Element {
   )();
 
   if (isRegistered) {
+    repository.updatePushedStampCount(); // db 4->5 migration
     console.log("isRegistered: " + isRegistered);
     return (
       <SafeAreaView style={styles.container}>

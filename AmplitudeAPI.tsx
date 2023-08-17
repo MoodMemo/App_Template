@@ -10,14 +10,6 @@ function AmplitudeInit() {
 export default AmplitudeInit;
 
 
-/* submit information */ // 얘 왜 만들었더라
-export function submitInfo(section: String) {
-  amplitude.track('subimt information');
-  // TODO - value = section   
-}
-// TODO - 입력 필수 관련 붙여야 함
-
-
 /* navigator */
 export function beginSession() {
   amplitude.track('START');           

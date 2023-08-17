@@ -1,6 +1,7 @@
 import Realm = require("realm");
 import uuid from "react-native-uuid";
-
+import { CollapsedItem } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /** [document schema - User -> to AsyncStorage (@UserInfo)]
  * ## AsyncStorage는 보안적으로 안전한 데이터가 아니라고 하는데 ... user 정보를 어떻게 저장하면 좋을까
@@ -288,6 +289,10 @@ export function getPushedStampsByField(fieldName: keyof IPushedStamp, value: any
   const pushedStamp = realm.objects<IPushedStamp>("PushedStamp").filtered(`${fieldName} = $0`, value);
   return pushedStamp.map((pushedStamp) => pushedStamp)[0];
 }
+export function getPushedStampsAllByField(fieldName: keyof IPushedStamp, value: any): IPushedStamp[] {
+  const pushedStamp = realm.objects<IPushedStamp>("PushedStamp").filtered(`${fieldName} = $0`, value);
+  return pushedStamp.map((pushedStamp) => pushedStamp);
+}
 export function getPushedStampsByFieldBetween(
   fieldName: keyof IPushedStamp, value1: any, value2: any): IPushedStamp[] {
   const pushedStamps = realm.objects<IPushedStamp>("PushedStamp").filtered(`${fieldName} >= $0 AND ${fieldName} < $1`, value1, value2);
@@ -370,7 +375,76 @@ export function deleteDailyReport(dailyReport: IDailyReport) {
 
 
 
+const oldCustomStampSchema: Realm.ObjectSchema = { // for version 4->5
+  name: 'CustomStamp',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    stampName: { type: 'string', optional: false },
+    emoji: { type: 'string', optional: false },
+    createdAt: { type: 'date', optional: false },
+  },
+};
+// 마이그레이션을 수행하는 함수
+function performMigration(oldRealm: Realm, newRealm: Realm) {
+  const oldCustomStamps = oldRealm.objects('CustomStamp');
+  const oldPushedStamps = oldRealm.objects('PushedStamp');
+  const newCustomStamps = newRealm.objects('CustomStamp');
+
+  // 이전 버전의 CustomStamp 데이터를 새로운 버전으로 복사
+  for (const oldStamp of oldCustomStamps) {
+    const newStamp = newCustomStamps.filtered(`id = '${oldStamp.id}'`)[0];
+    if (!newStamp) {
+      newRealm.create('CustomStamp', {
+        id: oldStamp.id,
+        stampName: oldStamp.stampName,
+        emoji: oldStamp.emoji,
+        createdAt: oldStamp.createdAt,
+        updatedAt: oldStamp.createdAt,
+        pushedCnt: 0,
+      });
+    }
+  }
+}
+// let realm = new Realm({ schema: [Notification, oldCustomStampSchema, PushedStamp, DailyReport],
+//   schemaVersion: 4,
+// });
+// 새로운 버전의 Realm 인스턴스 생성
 let realm = new Realm({ schema: [Notification, CustomStamp, PushedStamp, DailyReport],
-  schemaVersion: 5, });
+  schemaVersion: 5,
+  onMigration: (oldRealm, newRealm) => {
+    if (oldRealm.schemaVersion < 5) {
+      performMigration(oldRealm, newRealm);
+    }
+  },
+});
+export const updatePushedStampCount = async() => {
+  try {
+    const isMigrationTo5 = await AsyncStorage.getItem('@UserInfo:isMigrationTo5');
+    if (isMigrationTo5 === null) {
+      console.log('Running the function...');
+      // 여기에 초기 실행할 함수 내용을 추가하세요.
+      const oldCustomStamps = realm.objects('CustomStamp');
+      const oldPushedStamps = realm.objects('PushedStamp');
+      // 이전 버전의 CustomStamp 데이터를 새로운 버전으로 복사
+      for (const oldStamp of oldCustomStamps) {
+        const fieldName = 'stampName';
+        const oldCount = oldPushedStamps.filtered(`${fieldName} = $0`, oldStamp.stampName).length;
+        console.log(oldCount);
+        realm.write(() => {
+          oldStamp.pushedCnt += oldCount; // 'pushedCnt' 속성 1 증감
+          oldStamp.updatedAt = new Date(); // 업데이트 시간 갱신
+        });
+      }
+      // 실행이 완료되면 AsyncStorage에 값을 추가합니다.
+      await AsyncStorage.setItem('@UserInfo:isMigrationTo5', 'true');
+      console.log('Function executed and value added to AsyncStorage.');
+    } else {
+      console.log('Function has already been executed.');
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
 
 export default realm;
