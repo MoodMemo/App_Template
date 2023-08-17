@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { View, Text, Modal, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { RadioButton } from 'react-native-paper';
-import { ICustomStamp, getAllCustomStamps } from './src/localDB/document';
+import realm, { ICustomStamp, createCustomStamp, deleteCustomStamp, getAllCustomStamps } from './src/localDB/document';
+import * as amplitude from './AmplitudeAPI';
 
 const StampList = ({visible, closeModal}) => {
   // 각 스탬프의 상태를 관리하는 배열, 모두 기본값은 false로 초기화
@@ -12,30 +13,15 @@ const StampList = ({visible, closeModal}) => {
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
 
   useEffect(() => {
-    const fetchedCustomStamps = getAllCustomStamps();
-    setCustomStamps(fetchedCustomStamps);
+    const fetchStamps = async () => {
+      const fetchedCustomStamps = await getAllCustomStamps();
+      setCustomStamps(fetchedCustomStamps);
+    };
+    
+    fetchStamps();
   }, []);
+  
 
-  const [stampListData, setStampListData] = useState(
-    [
-      { id: 1, label: '기쁨', emotion: '😊'},
-      { id: 2, label: '슬픔', emotion: '😢'},
-      { id: 3, label: '화남', emotion: '😡'},
-      { id: 4, label: '놀람', emotion: '😱'},
-      { id: 5, label: '당황', emotion: '😳'},
-      { id: 6, label: '무표정', emotion: '😐'},
-      { id: 7, label: '우울', emotion: '😔'},
-      { id: 8, label: '불안', emotion: '😨'},
-      { id: 9, label: '짜증', emotion: '😤'},
-      { id: 10, label: '행복', emotion: '😁'},
-      { id: 11, label: '평온', emotion: '😌'},
-      { id: 12, label: '불만', emotion: '😒'},
-      { id: 13, label: '놀람', emotion: '😱'},
-      { id: 14, label: '당황', emotion: '😳'},
-      { id: 15, label: '무표정', emotion: '😐'},
-      { id: 16, label: '우울', emotion: '😔'},
-    ]
-  );
   const [addStampDataLabel, setAddStampDataLabel] = useState('');
   const [addStampDataEmotion, setAddStampDataEmotion] = useState('');
 
@@ -46,26 +32,34 @@ const StampList = ({visible, closeModal}) => {
   const [addStampModalVisible, setAddStampModalVisible] = useState(false);
   const [addStampButtonDisabled, setAddStampButtonDisabled] = useState(true);
 
-  const countSelectedRadioButtons = () => {
-    const count = checkedStates.filter((state) => state === true).length;
-    if(!isChecked && stampCount > 0) setIsChecked(true);
-    else if(isChecked && stampCount === 0) setIsChecked(false);
+  const handleRadioButtonPress = (index) => {
+    amplitude.choiceDeleteCustomStampCandidate();
+    const newCheckedStates = [...checkedStates];
+    newCheckedStates[index] = !checkedStates[index];
+    const count = newCheckedStates.filter((state) => state).length;
+  
+    setCheckedStates(newCheckedStates);
+    setIsChecked(count > 0);
     setStampCount(count);
-    // return count;
   };
 
   const handleDeleteStamp = () => {
+    amplitude.deleteCustomStamp();
     // 라디오버튼 체크된 것들 삭제
-    // checkedStates 배열에서 true로 설정된 항목들의 인덱스들을 찾기
     const selectedIndexes = checkedStates.reduce(
       (indexes, state, index) => (state ? [...indexes, index] : indexes),
       []
     );
 
     // 선택된 스탬프들을 삭제
-    const newStampListData = stampListData.filter(
-      (mood) => !selectedIndexes.includes(mood.id - 1) // 인덱스는 0부터 시작
+    const newCustomStamps = customStamps.filter(
+      (stamp, index) => !selectedIndexes.includes(index)
     );
+
+    // realm에서 선택된 스탬프들을 삭제
+    selectedIndexes.forEach(index => {
+      deleteCustomStamp(customStamps[index]);
+    });
 
     // 선택된 스탬프들의 체크 상태 초기화
     const newCheckedStates = checkedStates.map((_, index) =>
@@ -73,19 +67,35 @@ const StampList = ({visible, closeModal}) => {
     );
 
     // 변경된 데이터와 상태 적용
-    setStampListData(newStampListData);
+    setCustomStamps(newCustomStamps);
     setCheckedStates(newCheckedStates);
     console.log("스탬프 삭제");
   };
 
   const handleAddStamp = (label, emotion) => {
-    // 스탬프 추가
-    const newStampListData = [...stampListData, { id: stampListData.length + 1, label, emotion}];
-    setStampListData(newStampListData);
+    amplitude.submitAddCustomStamp(label);
+    // 새 스탬프 객체의 초기 데이터를 생성
+    const newStampData = {
+      stampName: label,
+      emoji: emotion,
+    };
+  
+    let newStamp;
+    // Realm 데이터베이스에 스탬프 추가
+    realm.write(() => {
+      newStamp = createCustomStamp(newStampData);
+    });
+  
+    // 상태 업데이트: 새 스탬프를 customStamps에 추가
+    const updatedCustomStamps = [...customStamps, newStamp];
+    setCustomStamps(updatedCustomStamps);
+  
+    // 모달과 버튼 상태 초기화
     setAddStampModalVisible(false);
     setAddStampButtonDisabled(true);
     console.log("스탬프 추가");
   };
+    
 
   return (
     <Modal visible={visible} animationType='slide' transparent>
@@ -97,12 +107,15 @@ const StampList = ({visible, closeModal}) => {
             </TouchableOpacity>
             <Text style={styles.fixModalTitle}>스탬프 설정</Text>
           </View>
-          <TouchableOpacity onPress={() => setAddStampModalVisible(true)}>
+          <TouchableOpacity onPress={() => {
+            amplitude.tryAddCustomStamp();
+            setAddStampModalVisible(true);
+          }}>
             <Image source={require('./assets/add.png')} />
           </TouchableOpacity>
         </View>
         <View style={styles.fixModalMessageContainer}>
-          <Text style={styles.fixModalMessage}>감정 스티커 순서를 변경하거나 삭제할 수 있어요.</Text>
+          <Text style={styles.fixModalMessage}>감정스탬프를 삭제할 수 있다무🥬</Text>
         </View>
         <ScrollView style={styles.stampList}>
           {customStamps.map((stamp, index) => (
@@ -110,21 +123,7 @@ const StampList = ({visible, closeModal}) => {
             <RadioButton
               value="first"
               status={checkedStates[index] ? 'checked' : 'unchecked'}
-              onPress={
-                checkedStates[index] ? () => {
-                  setStampCount(stampCount - 1);
-                  const newCheckedStates = [...checkedStates];
-                  newCheckedStates[index] = !checkedStates[index];
-                  setCheckedStates(newCheckedStates);
-                  countSelectedRadioButtons();
-                } : () => {
-                  setStampCount(stampCount + 1);
-                  const newCheckedStates = [...checkedStates];
-                  newCheckedStates[index] = !checkedStates[index];
-                  setCheckedStates(newCheckedStates);
-                  countSelectedRadioButtons();
-                }
-              }
+              onPress={() => handleRadioButtonPress(index)}
             />
             <TouchableOpacity key={stamp.id} style={styles.moodInfo}>
               <Text style={styles.moodEmotion}>{stamp.emoji}</Text>
@@ -139,59 +138,54 @@ const StampList = ({visible, closeModal}) => {
           </TouchableOpacity>
         }
       </View>
+      {addStampModalVisible && (
+        <View style={styles.overlay} />
+      )}
       <Modal visible={addStampModalVisible} animationType='slide' transparent>
-        {/* <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          style={styles.keyboardAvoidingContainer}
-        > */}
-          <View style={styles.addStampModalContainer}>
-            <View style={styles.addStampModalTitleContainer}>
-              <TouchableOpacity onPress={() => setAddStampModalVisible(false)}>
-                <Image source={require('./assets/close.png')} />
-              </TouchableOpacity>
-              <Text style={styles.addStampModalTitle}>스탬프 추가</Text>
-              <TouchableOpacity disabled={addStampButtonDisabled} onPress={() => handleAddStamp(addStampDataLabel, addStampDataEmotion)}>
-                <Image source={require('./assets/add_check.png')} 
-                  style={[
-                    styles.checkImage,
-                    addStampButtonDisabled && styles.disabledCheckImage
-                  ]}
-                />
-              </TouchableOpacity>
+        <View style={styles.addStampModalContainer}>
+          <View style={styles.addStampModalTitleContainer}>
+            <TouchableOpacity onPress={() => {
+              amplitude.cancelAddCustomStamp();
+              setAddStampModalVisible(false);
+            }}>
+              <Image source={require('./assets/close.png')} />
+            </TouchableOpacity>
+            <Text style={styles.addStampModalTitle}>스탬프 추가</Text>
+            <TouchableOpacity disabled={addStampButtonDisabled} onPress={() => handleAddStamp(addStampDataLabel, addStampDataEmotion)}>
+              <Image source={require('./assets/add_check.png')} 
+                style={[
+                  styles.checkImage,
+                  addStampButtonDisabled && styles.disabledCheckImage
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.addStampModalContent}>
+            <View style={styles.addStampModalEmotionBox}>
+              <TextInput
+                style={styles.addStampModalEmotion}
+                placeholder='🔥'
+                maxLength={2}
+                onChangeText={(text) => {
+                  setAddStampDataEmotion(text);
+                  if(text.length > 0 && addStampDataLabel.length > 0) setAddStampButtonDisabled(false);
+                  else setAddStampButtonDisabled(true);
+                }}
+              />
             </View>
-            <View style={styles.addStampModalContent}>
-              <View style={styles.addStampModalEmotionContainer}>
-                <Text style={styles.addStampModalMessage}>이모지</Text>
-                <View style={styles.addStampModalEmotionBox}>
-                  <TextInput
-                    style={styles.addStampModalEmotion}
-                    placeholder='🔥'
-                    maxLength={2}
-                    onChangeText={(text) => {
-                      setAddStampDataEmotion(text);
-                      if(text.length > 0 && addStampDataLabel.length > 0) setAddStampButtonDisabled(false);
-                      else setAddStampButtonDisabled(true);
-                    }}
-                  />
-                </View>
-              </View>
-              <View style={styles.addStampModalLabelContainer}>
-                <Text style={styles.addStampModalMessage}>스탬프 이름</Text>
-                <View style={styles.addStampModalLabelBox}>
-                  <TextInput
-                    style={styles.addStampModalLabel}
-                    placeholder='스탬프 이름 입력'
-                    onChangeText={(text) => {
-                      setAddStampDataLabel(text);
-                      if(text.length > 0 && addStampDataEmotion.length > 0) setAddStampButtonDisabled(false);
-                      else setAddStampButtonDisabled(true);
-                    }}
-                  />
-                </View>
-              </View>
+            <View style={styles.addStampModalLabelBox}>
+              <TextInput
+                style={styles.addStampModalLabel}
+                placeholder='스탬프 이름 입력'
+                onChangeText={(text) => {
+                  setAddStampDataLabel(text);
+                  if(text.length > 0 && addStampDataEmotion.length > 0) setAddStampButtonDisabled(false);
+                  else setAddStampButtonDisabled(true);
+                }}
+              />
             </View>
           </View>
-      {/* </KeyboardAvoidingView> */}
+        </View>
       </Modal>
     </Modal>
   );
@@ -200,8 +194,8 @@ const StampList = ({visible, closeModal}) => {
 const styles = StyleSheet.create({
   fixModalContainer: {
     backgroundColor: 'white',
-    width: 393,
-    height: 812,
+    width: '100%',
+    height: '100%',
   },
   fixModalTitleContainer: {
     flexDirection: 'row',
@@ -211,6 +205,7 @@ const styles = StyleSheet.create({
   },
   fixModalTitleContent: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   fixModalTitle: {
@@ -266,7 +261,7 @@ const styles = StyleSheet.create({
   fixModalButton: {
     // position: 'absolute',
     // bottom: 0,
-    width: 393,
+    width: '100%',
     height: 60,
     marginBottom: 30,
     backgroundColor: '#FAFAFA',
@@ -283,16 +278,28 @@ const styles = StyleSheet.create({
   keyboardAvoidingContainer: {
     flex: 1,
   },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // 반투명한 검정색 배경
+  },
   addStampModalContainer: {
+    // flex: 1,
     backgroundColor: 'white',
-    width: 393,
-    height: 464,
-    marginTop: 380,
+    width: '80%',
+    height: 260,
+    alignSelf: 'center',
+    marginTop: 'auto',
+    marginBottom: 'auto',
     borderRadius: 16,
   },
   addStampModalTitleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginTop: 15,
     marginHorizontal: 16,
     marginBottom: 40,
   },
@@ -310,20 +317,13 @@ const styles = StyleSheet.create({
     opacity: 0.2, // 비활성 시에 투명도 조절
   },
   addStampModalContent: {
-    marginHorizontal: 16,
-    flexDirection: 'row',
-    gap: 16,
-  },
-  addStampModalEmotionContainer: {
+    // 가운데에 위치하도록
+    flex: 1,
+    justifyContent: 'space-between',
     flexDirection: 'column',
-    gap: 8,
-  },
-  addStampModalMessage: {
-    color: '#212429',
-    fontFamily: 'Pretendard',
-    fontWeight: '400',
-    fontSize: 12,
-    fontStyle: 'normal',
+    alignItems: 'center',
+    // gap: 15,
+    marginBottom: 55,
   },
   addStampModalEmotionBox: {
     width: 50,
@@ -337,10 +337,6 @@ const styles = StyleSheet.create({
   },
   addStampModalEmotion: {
     fontSize: 24,
-  },
-  addStampModalLabelContainer: {
-    flexDirection: 'column',
-    gap: 8,
   },
   addStampModalLabelBox: {
     width: 296,

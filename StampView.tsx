@@ -1,59 +1,60 @@
 import React, {useEffect, useState} from 'react';
-import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps } from './src/localDB/document';
-import renderWhenStampAdded from './weeklyView/Weekly'
+import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
+import Weekly from './weeklyView/Weekly'
+import { useNavigation } from '@react-navigation/native';
+import * as amplitude from './AmplitudeAPI';
+
+// 화면의 가로 크기
+const screenWidth = Dimensions.get('window').width;
+// screenWidth가 500보다 크면 500으로, 작으면 screenWidth로 설정
+const width = screenWidth > 500 ? 500 : screenWidth;
+
+// 4개의 버튼과 각 버튼 사이의 간격을 위한 값
+const buttonWidth = (width - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
+
+// 기본 디자인에서의 버튼 너비
+const defaultButtonWidth = 69;
+
+// 비율 계산
+const scale = buttonWidth / defaultButtonWidth
 
 const StampView = () => {
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
 
   useEffect(() => {
-    const fetchedCustomStamps = getAllCustomStamps();
-    setCustomStamps(fetchedCustomStamps);
-  }, []);
-
-  const buttonsData = [
-    { id: 1, label: '기쁨', emotion: '😊'},
-    { id: 2, label: '슬픔', emotion: '😢'},
-    { id: 3, label: '화남', emotion: '😡'},
-    { id: 4, label: '놀람', emotion: '😱'},
-    { id: 5, label: '당황', emotion: '😳'},
-    { id: 6, label: '무표정', emotion: '😐'},
-    { id: 7, label: '우울', emotion: '😔'},
-    { id: 8, label: '불안', emotion: '😨'},
-    { id: 9, label: '짜증', emotion: '😤'},
-    { id: 10, label: '행복', emotion: '😁'},
-    { id: 11, label: '평온', emotion: '😌'},
-    { id: 12, label: '불만', emotion: '😒'},
-    { id: 13, label: '놀람', emotion: '😱'},
-    { id: 14, label: '당황', emotion: '😳'},
-    { id: 15, label: '무표정', emotion: '😐'},
-    { id: 16, label: '우울', emotion: '😔'},
-    { id: 17, label: '불안', emotion: '😨'},
-    { id: 18, label: '짜증', emotion: '😤'},
-    { id: 19, label: '행복', emotion: '😁'},
-    { id: 20, label: '평온', emotion: '😌'},
-    { id: 21, label: '불만', emotion: '😒'},
-    { id: 22, label: '놀람', emotion: '😱'},
-    { id: 23, label: '당황', emotion: '😳'},
-    { id: 24, label: '무표정', emotion: '😐'},
-    // 추가 버튼들...
-  ];
+    const stampsListener = (collection, changes) => {
+      setCustomStamps([...collection]);
+    };
+  
+    const stampsCollection = realm.objects('CustomStamp');
+    stampsCollection.addListener(stampsListener);
+  
+    return () => {
+      stampsCollection.removeListener(stampsListener);
+    }
+  }, []);  
 
   const [selectedEmotion, setSelectedEmotion] = useState(null);
   const [selectedEmotionLabel, setSelectedEmotionLabel] = useState(null);
+  const [selectedEmotionId, setSelectedEmotionId] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [date, setDate] = useState(new Date());
+  const [tempDate, setTempDate] = useState(date);
 
   const [memo, setMemo] = useState('');
   const [numberOfLines, setNumberOfLines] = useState(1);
 
   const [images, setImages] = useState([]);
 
+  const navigation = useNavigation();
+
   // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
 
   const handleCreatePushedStamp = () => {
+    amplitude.submitStamp();
     console.log("체크 버튼 누름!");
     // 기록 시간 설정
     const dateTime = date.toISOString();
@@ -70,11 +71,16 @@ const StampView = () => {
       });
     });
 
+    updateCustomStampPushedCountById(selectedEmotionId, 1);
     // 모달 닫기
     onClose();
+
+    // Weekly.tsx 뷰로 이동
+    navigation.navigate('Weekly', { showPopup: true });
   }
 
   const onClose = () => {
+    amplitude.cancelStamp();
     setModalVisible(false);
     setMemo('');
   }
@@ -85,14 +91,29 @@ const StampView = () => {
   };
 
   const handleButtonPress = (stampButton) => {
+    amplitude.pushStamp(stampButton.stampName);
     setSelectedEmotion(stampButton.emoji);
     setSelectedEmotionLabel(stampButton.stampName);
+    setSelectedEmotionId(stampButton.id);
     setDate(new Date());
     setModalVisible(true);
   }
 
   const handleCloseTimeModal = () => {
+    setTempDate(date);
     setTimeModalVisible(false);
+  }
+
+  const handleCancleTimeModal = () => {
+    amplitude.cancelChangeStampTime();
+    setTempDate(date);
+    handleCloseTimeModal();
+  }
+  
+  const handleSubmitTimeModal = () => {
+    amplitude.submitChangeStampTime();
+    setDate(tempDate);
+    handleCloseTimeModal();
   }
 
   return (
@@ -105,7 +126,6 @@ const StampView = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
-
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           {/* 모달 내용 */}
@@ -128,7 +148,10 @@ const StampView = () => {
           </View>
           <View style={styles.timeContainer}>
             <Text style={styles.modalText}>기록 시간</Text>
-            <TouchableOpacity onPress={() => setTimeModalVisible(true)}>
+            <TouchableOpacity onPress={() => {
+              amplitude.tryChangeStampTime();
+              setTimeModalVisible(true);
+            }}>
               <Text style={styles.timeText}>
                 {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
               </Text>
@@ -144,7 +167,10 @@ const StampView = () => {
                 multiline={true}
                 maxLength={500}
                 onChangeText={handleMemoChange}
-                //value={memo}
+                onFocus={() => {
+                  amplitude.editStampMemo();
+                }}
+                value={memo}
                 numberOfLines={numberOfLines}
               />
               <Text style={styles.maxLength}>{memo.length}/500</Text>
@@ -162,19 +188,21 @@ const StampView = () => {
           </ScrollView>
         </View>
       </Modal>
-      
+
       <Modal visible={timeModalVisible} animationType="fade" transparent onRequestClose={handleCloseTimeModal}>
         <TouchableWithoutFeedback onPress={handleCloseTimeModal}>
-          <View style={styles.timeModalContainer}>
-            <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
-            <DatePicker date={date} onDateChange={setDate} mode="date" />
-            <View style={styles.timeButtons}>
-              <TouchableOpacity onPress={handleCloseTimeModal}>
-                <Text>취소</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleCloseTimeModal}>
-                <Text>확인</Text>
-              </TouchableOpacity>
+          <View style={styles.timeModalWrapper}>
+            <View style={styles.timeModalContainer}>
+              <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
+              <DatePicker date={tempDate} onDateChange={setTempDate} mode="datetime" theme="light"/>
+              <View style={styles.timeButtons}>
+                <TouchableOpacity onPress={handleCancleTimeModal}>
+                  <Text>취소</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleSubmitTimeModal}>
+                  <Text>확인</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -197,26 +225,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row', // 버튼들을 가로로 배열
     flexWrap: 'wrap', // 가로로 공간이 부족하면 다음 줄로 넘어감
     justifyContent: 'space-between', // 버튼들 사이의 간격을 동일하게 분배
-    width: 336,
     height: 'auto',
-    marginHorizontal: 20, // 버튼들의 좌우 여백을 조절
-    gap: 20, // 버튼들 사이의 간격을 조절
+    marginLeft: 28,
+    marginRight: 28,
+    maxWidth: 500, // stampView의 최대 너비 설정
+    alignSelf: 'center', // 화면의 중앙에 위치하도록 설정
+    columnGap: 20,
   },
   stampButton: {
-    width: 69, // 버튼 너비 설정 (한 줄에 4개씩 배치하므로 약 23%)
-    height: 84, // 버튼 높이 설정
+    width: buttonWidth, 
+    height: 84 * scale, // 기본 높이에 비율을 곱함
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F2F2F2',
-    borderRadius: 12,
+    borderRadius: 12 * scale, // 기본 borderRadius에 비율을 곱함
+    marginBottom: 20 * scale, // 기본 marginBottom에 비율을 곱함
     gap: 10,
-    paddingBottom: 10, // 버튼들 사이의 간격을 조절
   },
   buttonEmotion: {
-    fontSize: 24,
+    fontSize: 24 * scale, // 기본 fontSize에 비율을 곱함
   },
   buttonText: {
-    fontSize: 12,
+    fontSize: 12 * scale, // 기본 fontSize에 비율을 곱함
     fontWeight: '400',
     color: '#212429',
     textAlign: 'center',
@@ -225,18 +255,17 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-start',
-    alignItems: 'center',
+    // alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    width: 393,
-    height: 785,
+    width: '100%',
+    height: '100%',
     flexShrink: 0,
     borderRadius: 16,
-    marginTop: 67,
   },
   modalTitleContainer: {
     flexDirection: 'row',
     display: 'flex',
-    width: 393,
+    width: '100%',
     padding: 16,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -261,9 +290,10 @@ const styles = StyleSheet.create({
   },
   stampContainer: {
     flexDirection: 'row',
-    width: 393,
+    width: '100%',
     height: 60,
     paddingLeft: 16,
+    // justifyContent 종류: flex-start, flex-end, center, space-between, space-around, space-evenly
     justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 20,
@@ -273,7 +303,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     paddingTop: 8,
     paddingBottom: 8,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 8,
   },
@@ -286,7 +316,7 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     flexDirection: 'row',
-    width: 393,
+    width: '100%',
     height: 60,
     paddingLeft: 16,
     justifyContent: 'flex-start',
@@ -301,13 +331,16 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   horizontalLine: {
-    width: 358,
+    // width: '100%',
     height: 0.7,
     backgroundColor: '#F0F0F0',
-    margin: 16,
+    marginLeft: 16,
+    marginRight: 19,
+    marginTop: 27,
+    marginBottom: 27,
   },
   memoContainer: {
-    width: 393,
+    width: '100%',
     padding: 16,
     justifyContent: 'flex-start',
     gap: 7,
@@ -315,7 +348,7 @@ const styles = StyleSheet.create({
   memoContent: {
     flexDirection: 'column',
     display: 'flex',
-    width: 361,
+    width: '100%',
     paddingHorizontal: 16,
     paddingVertical: 10,
     gap: 6,
@@ -344,7 +377,7 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     flexDirection: 'column',
-    width: 393,
+    width: '100%',
     padding: 16,
     justifyContent: 'flex-start',
     gap: 10,
@@ -376,12 +409,20 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 10,
   },
+  timeModalWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end', // 이 부분이 모달을 하단으로 밀어줍니다.
+  },
   timeModalContainer: {
-    width: 393,
-    height: 335,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: '50%',
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    marginTop: 517,
+    // 아래의 marginTop 제거 또는 조절
+    // marginTop: 517,
     shadowColor: '#000000',
     shadowOffset: {
       width: 0,
@@ -390,10 +431,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.30,
     shadowRadius: 6,
     elevation: 30,
-    alignItems: 'center',
     paddingTop: 20,
     gap: 10,
   },
+  
   timeModalText: {
     fontFamily: 'Pretendard',
     fontSize: 16,
@@ -405,6 +446,7 @@ const styles = StyleSheet.create({
     gap: 26,
     alignSelf: 'flex-end',
     marginRight: 40,
+    marginBottom: 20,
   },
 });
 

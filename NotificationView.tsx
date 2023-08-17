@@ -8,6 +8,8 @@ import * as repository from './src/localDB/document';
 import DatePicker from 'react-native-date-picker';
 import PushNotification from "react-native-push-notification";
 
+import * as amplitude from './AmplitudeAPI';
+
 const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
     const {height,width}=useWindowDimensions();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -22,6 +24,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
             <Divider style={{backgroundColor:"#EAEAEA",width:'80%',marginHorizontal:'10%'}}/>
             <Divider style={{backgroundColor:"#EAEAEA",width:'80%',marginHorizontal:'10%'}}/>
             <TouchableOpacity onPress={() => {
+                    amplitude.intoRenewNoti();
                     date.setHours(hour);
                     date.setMinutes(minute);
                     setIsModalVisible(!isModalVisible);
@@ -42,6 +45,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                 animationOut={"fadeOut"}
                 animationOutTiming={200}
                 onBackdropPress={() => {
+                    amplitude.cancelRenewNoti();
                     setIsModalVisible(!isModalVisible);
                 }}
                 backdropColor='#CCCCCC'//'#FAFAFA'
@@ -51,8 +55,8 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                 }}>
                     <View style={{
                         backgroundColor:"#FFFFFF",
-                        width:'90%',
-                        height:'47%',
+                        width:340,
+                        height:340,
                         paddingHorizontal: 20,
                         paddingBottom: 20,
                         paddingTop: 20,
@@ -71,7 +75,8 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                             }}>
                             <DatePicker date={date} onDateChange={(changedDate) => {
                             setDate(changedDate);
-                            }} mode="time"/>
+                            }} mode="time"
+                            theme="light"/>
                         </View>
                         <View style={{
                             paddingHorizontal: "15%",
@@ -80,6 +85,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                             justifyContent: 'space-between'
                             }}>
                                 <TouchableOpacity onPress={()=>{
+                                    amplitude.saveRenewNoti();
                                     const notificationTime=String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
                                     if(notificationTime===time){
                                         setIsModalVisible(!isModalVisible);
@@ -92,6 +98,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                                         if(date.getTime()<=(new Date(Date.now())).getTime()) date.setDate(date.getDate()+1);
                                         PushNotification.localNotificationSchedule({
                                             channelId: "MoodMemo_ID",
+                                            smallIcon: "ic_notification",
                                             message: notificationTime+" 알림",
                                             date: date, //입력 받은 시간으로 알림 설정
                                             visibility: "public",
@@ -115,6 +122,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                                     <Text style={{fontSize: 17}}>저장</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={()=>{
+                                    amplitude.deleteNoti();
                                     realm.write(() => {repository.deleteNotification(repository.getNotificationsByField("id",id));});
                                     PushNotification.cancelLocalNotification(hour+minute);
                                     checkTimeChanged(!timeChangedProp);
@@ -134,6 +142,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                 animationOut={"fadeOut"}
                 animationOutTiming={200}
                 onBackdropPress={() => {
+                    amplitude.saveDuplicatedNoti();
                     setIsModalNoticeVisible(!isModalNoticeVisible);
                 }}
                 backdropColor='#CCCCCC'//'#FAFAFA'

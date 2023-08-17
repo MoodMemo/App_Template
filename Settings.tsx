@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
+import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -12,7 +12,10 @@ import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
 import ChangeProfile from './ChangeProfile';
 
+import * as amplitude from './AmplitudeAPI';
 
+import * as Sentry from "@sentry/react-native";
+import { UserFeedback } from "@sentry/react-native";
 
 
 const test = () => {
@@ -22,6 +25,54 @@ const test = () => {
 const Settings = () => {
 
 
+    const [memo, setMemo] = useState('');
+    const handleMemoChange = (text) => {
+        setMemo(text);
+      };  
+    const sentryUserFeedback = () => {
+
+        const sentryId = Sentry.captureMessage("고객센터/의견 보내기/요류 제보");    
+        // OR: const sentryId = Sentry.lastEventId();
+        // var userName = await AsyncStorage.getItem('@UserInfo:userName');
+        // if (userName === null) userName = '익명';
+
+        console.log(sentryId);
+
+        const userFeedback: UserFeedback = {
+            event_id: sentryId,
+            name: "사용자도 아직",
+            email: "이메일은 아직 개발 안했음",
+            comments: memo,
+            // comments: "memo",
+        };
+        Sentry.captureUserFeedback(userFeedback);
+        
+        const userFeedback2: UserFeedback = {
+            event_id: sentryId,
+            name: "사용자도 아직",
+            email: "이메일은 아직 개발 안했음",
+            // comments: memo,
+            comments: "memo",
+        };
+        Sentry.captureUserFeedback(userFeedback2);
+        
+        
+        setMemo('');
+        setIsReportModalVisible(!isReportModalVisible);
+    }
+
+    // const handleOpenLink = async () => {
+    //     const url = 'http://pf.kakao.com/_xhGnxgxj'; // 원하는 웹 링크
+    
+    //     // 웹 링크를 열기 위해 Linking.openURL()을 사용합니다.
+    //     const supported = await Linking.canOpenURL(url);
+    
+    //     if (supported) {
+    //       await Linking.openURL(url);
+    //     } else {
+    //       console.log("Don't know how to open URL: " + url);
+    //     }
+    //   };
   const {height,width}=useWindowDimensions();
   //const [isModalVisible, setIsModalVisible] = useState(false);
   const [isKakaoModalVisible, setIsKakaoModalVisible] = useState(false);
@@ -71,6 +122,7 @@ const Settings = () => {
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
+                    amplitude.connectToKakaoChatBot();
                     setIsKakaoModalVisible(!isKakaoModalVisible);
                     }}>
                     <View
@@ -95,7 +147,7 @@ const Settings = () => {
                         alignItems:'center'
                     }}>
                         <View style={{
-                            backgroundColor:"#FFFFFF",
+                            backgroundColor:"#FFFAF4",
                             width:'80%',
                             height:'30%',
                             justifyContent:'center',
@@ -152,7 +204,8 @@ const Settings = () => {
                                                 if(notificationTime.getTime()<=(new Date(Date.now())).getTime()) notificationTime.setDate(notificationTime.getDate()+1);
                                                 PushNotification.localNotificationSchedule({
                                                     channelId: "MoodMemo_ID",
-                                                    message: notification.time + ' Notification',
+                                                    smallIcon: "ic_notification",
+                                                    message: notification.time + ' 알림',
                                                     date: new Date(notificationTime), // 1 second from now
                                                     visibility: "public",
                                                     playSound: false,
@@ -161,6 +214,7 @@ const Settings = () => {
                                                     repeatTime: "1" //하루 단위로 반복
                                                 });
                                             });
+                                            amplitude.notiONtoOFF();
                                             PushNotification.getScheduledLocalNotifications((result:any)=>{
                                                 console.log(result);
                                             });
@@ -171,10 +225,12 @@ const Settings = () => {
                                             });
                                             AsyncStorage.setItem('@UserInfo:notificationAllow','false');
                                             setIsNotificationEnabled(!isNotificationEnabled);
+                                            amplitude.notiONtoOFF();
                                             PushNotification.cancelAllLocalNotifications();
                                         }
                                     }
                                     else if(granted==='never_ask_again'){
+                                        amplitude.notiONwhenPermissionDenied();
                                         setIsNotificationModalVisible(!isNotificationModalVisible);
                                         console.log(1,'denied');
                                     }
@@ -215,7 +271,7 @@ const Settings = () => {
                             alignItems:'center'
                         }}>
                         <View style={{
-                            backgroundColor:"#FFFFFF",
+                            backgroundColor:"#FFFAF4",
                             width:'80%',
                             height:'20%',
                             justifyContent:'center',
@@ -253,6 +309,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
+                        amplitude.outToSettingFromNotiList();
                         setIsNotificationListModalVisible(!isNotificationListModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -261,7 +318,7 @@ const Settings = () => {
                         alignItems:'center'
                     }}>
                         <View style={{
-                            backgroundColor:"#FFFFFF",
+                            backgroundColor:"#FFFAF4",
                             width:'90%',
                             height:'60%',
                             //justifyContent:'center',
@@ -317,13 +374,14 @@ const Settings = () => {
                               justifyContent: 'space-between'
                           }}>
                           <Text style={{fontSize: 17, color:"#495057"}}>버전</Text>
-                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 0.1</Text>
+                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.0</Text>
                       </View>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
+                    amplitude.intoGuide();
                     setIsNoticeModalVisible(!isNoticeModalVisible);
                     }}>
                     <View
@@ -340,6 +398,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
+                        amplitude.outToSettingFromGuide();
                         setIsNoticeModalVisible(!isNoticeModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -348,7 +407,7 @@ const Settings = () => {
                         alignItems:'center'
                     }}>
                         <View style={{
-                            backgroundColor:"#FFFFFF",
+                            backgroundColor:"#FFFAF4",
                             width:'80%',
                             height:'30%',
                             justifyContent:'center',
@@ -365,6 +424,7 @@ const Settings = () => {
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
+                    amplitude.intoServiceCenter();
                     setIsReportModalVisible(!isReportModalVisible);
                     }}>
                     <View
@@ -381,6 +441,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
+                        amplitude.outToSettingFromServiceCenter();
                         setIsReportModalVisible(!isReportModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -389,26 +450,47 @@ const Settings = () => {
                         alignItems:'center'
                     }}>
                         <View style={{
-                            backgroundColor:"#FFFFFF",
+                            backgroundColor:"#FFFAF4",
                             width:'80%',
                             height:'30%',
-                            justifyContent:'center',
+                            // justifyContent:'center',
                             alignItems:'center',
                             borderRadius:10
                         }}>
                             <View style={{
-                                justifyContent:'center',
+                                // justifyContent:'center',
                                 alignItems:'center',
+                                paddingHorizontal: 20,
+                                justifyContent: 'space-between', // 상하로 딱 붙이기
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>고객센터/의견 보내기/오류 제보는</Text>
-                                    <Text style={{fontSize: 17, color:"#495057"}}>개발 중!</Text>
-                            </View>
+                                    <Text style={{fontSize: 14, color:"#495057", paddingVertical: 10,}}>오류/의견은 언제나 환영이라무! 🥬</Text>
+                                    {/* <Text style={{fontSize: 14, color:"#495057"}}>무가 귀기울여 듣겠다무!</Text> */}
+                                    <View style={{ flexDirection: 'row', flex: 1,}}>
+                                        <View style={styles.memoContent}>
+                                            <TextInput
+                                                style={{ fontSize: 12, color:"#DBDBDB",}}
+                                                placeholder="운영진에게 메세지 남기기"
+                                                multiline={true}
+                                                // maxLength={500}
+                                                onChangeText={handleMemoChange}
+                                                value={memo}
+                                                // numberOfLines={numberOfLines}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', paddingVertical: 13,}}>
+                                        <TouchableOpacity style={styles.confirmBtn} onPress={() => {sentryUserFeedback();}}>
+                                            <Text style={{ color: '#ffffff', fontSize: 14, fontWeight: '600',}}>확인</Text>
+                                        </TouchableOpacity>
+                                        </View>
+                                    </View>
                         </View>
                     </Modal>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
+                    amplitude.intoCoffee();
                     setIsCoffeeModalVisible(!isCoffeeModalVisible);
                     }}>
                     <View
@@ -425,6 +507,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
+                        amplitude.outToSettingFromCoffee();
                         setIsCoffeeModalVisible(!isCoffeeModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -433,7 +516,7 @@ const Settings = () => {
                         alignItems:'center'
                     }}>
                         <View style={{
-                            backgroundColor:"#FFFFFF",
+                            backgroundColor:"#FFFAF4",
                             width:'80%',
                             height:'30%',
                             justifyContent:'center',
@@ -444,7 +527,7 @@ const Settings = () => {
                                 justifyContent:'center',
                                 alignItems:'center',
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>카카오뱅크 이준하</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>카카오뱅크 ㅇㅈㅎ</Text>
                                     <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>3333-27-9623079</Text>
                                     <Text style={{fontSize: 17, color:"#495057", }}>감사합니다!</Text>
                             </View>
@@ -493,6 +576,31 @@ const styles = StyleSheet.create({
       color: '#000000',
       fontSize: 16,
     },
+    confirmBtn: {
+        alignSelf: 'center',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        padding: 8,
+        backgroundColor: '#72D193', 
+        borderRadius: 8,
+        flex: 1,
+        
+    },
+    memoContent: { 
+        justifyContent: 'center',
+        padding: 10,
+        borderRadius: 8,
+        flex: 1,
+        flexDirection: 'column',
+        display: 'flex',
+        // width: 320,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        // gap: 6,
+        borderWidth: 1,
+        borderColor: '#F0F0F0',
+        // borderRadius: 6,
+      },
   });
 
 export default Settings;

@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, CancelToken } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // DailyReportDto.Response 타입 정의
@@ -35,17 +35,22 @@ interface DailyReportResponse {
   // likeCnt: number; // 안할듯!
 }
 
-async function sendDailyReport(toAI: DailyReportRequest): Promise<DailyReportResponse> {
+async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToken): Promise<DailyReportResponse> {
   const url = 'http://3.39.118.25:5000/dailyReport';
 
+  console.log('cancel : ', cancelToken);
   try {
-    const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI);
+    const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI, { cancelToken });
+    // const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI);
 
     // 서버 응답 데이터를 반환합니다.
     return response.data;
   } catch (error) {
-    // 에러 처리를 해줍니다.
-    throw new Error('Failed to send daily report.');
+    if (axios.isCancel(error)) {
+      console.log('Request canceled');
+    } else {
+      throw new Error('Failed to send daily report.');
+    }
   }
 }
 

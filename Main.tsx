@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Text} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -16,18 +16,35 @@ import * as queries from './src/graphql/queries'
 import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Popup from './Popup';
+import * as amplitude from './AmplitudeAPI';
 
 const Tab = createBottomTabNavigator();
 
 function HomeScreen() {
+  amplitude.moveToHome();;
   return <Home/>; //Home.tsx
 }
 
-function WeeklyScreen() {
-  return <Weekly/>; //Home.tsx
+function WeeklyScreen({ route, navigation }) {
+  const [showPopup, setShowPopup] = useState(route.params?.showPopup || false);
+  useEffect(() => {
+    if (route.params?.showPopup) {      
+      // 다음 번에 Weekly 화면을 방문했을 때 팝업이 다시 뜨지 않도록 파라미터를 초기화
+      navigation.setParams({ showPopup: false });
+    }
+  }, [route.params?.showPopup]);
+  amplitude.moveToWeekly();
+  return (
+    <View style={{ flex: 1 }}>
+      <Weekly/>
+      <Popup visible={showPopup} onClose={() => setShowPopup(false)} />
+    </View>
+  );
 }
 
 function SettingsScreen() {
+  amplitude.moveToSetting();
   return <Settings/>; //Home.tsx
 }
 
@@ -223,7 +240,7 @@ function Main() {
       screenOptions={{
         tabBarShowLabel: false, //이게 true면 하단 바 아이콘 밑에 label도 같이 렌더링됩니다.
         headerShown: false, //이게 true면 각 탭의 상단에 해당 Tab의 label이 렌더링됩니다. 매우 보기 싫습니다.
-        tabBarActiveTintColor:"#484C52",
+        tabBarActiveTintColor:"#72D193",
         tabBarInactiveTintColor:"#484C524D"
         }}>
         <Tab.Screen
@@ -236,8 +253,8 @@ function Main() {
           }}
         />
         <Tab.Screen
-          name="Search"
-          component={WeeklyScreen} //위클리 화면
+          name="Weekly"
+          component={WeeklyScreen} //주간 화면
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘

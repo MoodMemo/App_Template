@@ -4,8 +4,7 @@ import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
 import PushNotification from "react-native-push-notification";
-
-
+import * as amplitude from './AmplitudeAPI';
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -17,10 +16,12 @@ const Home = () => {
   };
 
   const handleFixButton = () => {
+    amplitude.showCustomStampList();
     setFixModalVisible(true);
   };
 
   const handleFixModalClose = () => {
+    amplitude.exitCustomStampList();
     setFixModalVisible(false);
   };
 
