@@ -42,6 +42,7 @@ const StampView = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [date, setDate] = useState(new Date());
+  const [tempDate, setTempDate] = useState(date);
 
   const [memo, setMemo] = useState('');
   const [numberOfLines, setNumberOfLines] = useState(1);
@@ -99,16 +100,19 @@ const StampView = () => {
   }
 
   const handleCloseTimeModal = () => {
+    setTempDate(date);
     setTimeModalVisible(false);
   }
 
   const handleCancleTimeModal = () => {
     amplitude.cancelChangeStampTime();
+    setTempDate(date);
     handleCloseTimeModal();
   }
   
   const handleSubmitTimeModal = () => {
     amplitude.submitChangeStampTime();
+    setDate(tempDate);
     handleCloseTimeModal();
   }
 
@@ -190,7 +194,7 @@ const StampView = () => {
           <View style={styles.timeModalWrapper}>
             <View style={styles.timeModalContainer}>
               <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
-              <DatePicker date={date} onDateChange={setDate} mode="datetime" theme="light"/>
+              <DatePicker date={tempDate} onDateChange={setTempDate} mode="datetime" theme="light"/>
               <View style={styles.timeButtons}>
                 <TouchableOpacity onPress={handleCancleTimeModal}>
                   <Text>취소</Text>
