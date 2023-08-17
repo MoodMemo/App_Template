@@ -477,11 +477,13 @@ const Weekly = () => {
               </View>
               <View style={{ flexDirection: 'row', marginTop: 24 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.cancelBtn} onPress={() => {
-                    cancelRequest();
-                    setIsLodingModalVisible(false);
-                  }}>
-                    <Text style={{ color: '#72D193', fontSize: 16, fontWeight: '600',}}>발행 취소</Text>
+                  <TouchableOpacity style={diaryStyles.cancelBtn} 
+                  // onPress={() => {
+                  //   cancelRequest();
+                  //   setIsLodingModalVisible(false);
+                  // }}
+                  >
+                    <Text style={{ color: '#72D193', fontSize: 14, fontWeight: '600',}}>조금만 기다려달라무 ...✏️💦</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -544,7 +546,7 @@ const Weekly = () => {
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>...</Text>
               </View>
               <View style={{alignItems: 'center',}}>
-                <Text style={{ color: '#475467', fontSize: 14, }}>감정이 두 개 이상이면 된다무!</Text>
+                <Text style={{ color: '#475467', fontSize: 14, }}>감정을 두 개 이상 주면 만들 수 있다무!</Text>
               </View>
               <View style={{ flexDirection: 'row', marginTop: 24 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
@@ -766,6 +768,7 @@ const diaryStyles = StyleSheet.create({
     paddingHorizontal: 16,
     width: 343, 
     height: 302,
+    // height: 218,
     shadowColor: 'black',
     shadowRadius: 50,           // 그림자 블러 반경
     elevation: 5, 
