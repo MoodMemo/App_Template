@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Button, Image, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
-import { deleteUserStamp } from '../src/graphql/mutations';
 import Modal from "react-native-modal";
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import FeatherIcon from 'react-native-vector-icons/Feather';
@@ -27,9 +25,6 @@ import sendDailyReport from './AIService';
 import { getUserAsync, DailyReportRequest } from './AIService';
 import Timeline from './Timeline';
 import axios, { CancelToken } from 'axios';
-import { Card } from 'react-native-paper';
-import StampClick from '../StampClick';
-import StampView from '../StampView';
 
 import * as Sentry from '@sentry/react-native';
 
