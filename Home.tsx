@@ -49,7 +49,7 @@ const Home = () => {
       /> */}
       <View style={styles.titleContainer}>
         {/* 드롭다운 컴포넌트 */}
-        <Text style={styles.title}>지금의 감정은 어떠냐무~?{'\n'}{`${userName}`}의{'\n'}감정을 알려줘라무!</Text>
+        <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${userName}`}의{'\n'}감정을 알려줘라무!</Text>
       </View>
       <Image source={require('./assets/image16.png')} style={styles.mooImage}/>
       <View style={styles.options}>
@@ -84,8 +84,8 @@ const styles = StyleSheet.create({
       // 폰트 크기 16px
       width: '100%',
       height: '100%',
-      fontSize: 16,
-      marginTop: 21,
+      fontSize: 18,
+      marginTop: 28,
       marginLeft: 28,
       marginRight: 200,
       marginBottom: 27, // title과 Dropdown 사이 간격 조절
