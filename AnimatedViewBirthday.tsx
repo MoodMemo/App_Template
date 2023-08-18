@@ -215,7 +215,8 @@ const AnimatedViewBirthday = () => {
         if(notificationTime.getTime()<=(new Date(Date.now())).getTime()) notificationTime.setDate(notificationTime.getDate()+1);
         PushNotification.localNotificationSchedule({
             channelId: "MoodMemo_ID",
-            message: notification.time + ' Notification',
+            smallIcon: "ic_notification",
+            message: notification.time + ' 알림',
             date: new Date(notificationTime), // 1 second from now
             visibility: "public",
             playSound: false,
@@ -297,29 +298,29 @@ const AnimatedViewBirthday = () => {
             flex:1}}>
               <Image 
                 source={require('./assets/colorMooMedium.png')}
-                style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '14%', left: '55%', overflow: 'hidden'}}></Image>
+                style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '14%', left: windowWidth-160, overflow: 'hidden'}}></Image>
               <View style={{
                 position:'relative',
                 bottom:'12%'
               }}>
                 <Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#212429",
-                  marginLeft: 25
+                  marginLeft: '5%'
                 }}>어서와라<Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#FCD49B",
                 }}>무</Text></Text>
                 <Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#212429",
-                  marginLeft: 25
+                  marginLeft: '5%'
                 }}>나는 '무드메모'의 요정,</Text>
                 <Text style={{
-                  fontSize: 32,
+                  fontSize: 34,
                   fontWeight:'bold',
                   color:"#72D193",
-                  marginLeft: 25
+                  marginLeft: '5%'
                 }}>무(Moo)</Text>
               </View>
               <View style={{
@@ -327,9 +328,9 @@ const AnimatedViewBirthday = () => {
                 bottom:'8%'
               }}>
                 <Text style={{
-                  fontSize: 16,
+                  fontSize: 18,
                   color:"#212429",
-                  marginLeft: 25
+                  marginLeft: '5%'
                 }}>이제부터 나를 따라와라무!</Text>
               </View>
               <TouchableOpacity style={styles.button} onPress={()=>{
@@ -369,17 +370,17 @@ const AnimatedViewBirthday = () => {
                 bottom:'6%'
               }}>
                 <Text style={{
-                    fontSize: 22,
+                    fontSize: 24,
                     color:"#212429",
-                    marginLeft: 16
+                    marginLeft: '5%'
                   }}>생일을 입력해달라<Text style={{
-                    fontSize: 22,
+                    fontSize: 24,
                     color:"#FCD49B",
                   }}>무</Text></Text>
                 <TouchableOpacity onPress={() => {setIsDatePickerVisible(!isDatePickerVisible)}}>
-                  <Text style={{fontSize:25, marginLeft: 16, paddingTop:20, color: '#E2E2E2'}}>{showingBirthday}</Text>
+                  <Text style={{fontSize:25, marginLeft: '5%', paddingTop:20, color: '#E2E2E2'}}>{showingBirthday}</Text>
                 </TouchableOpacity>
-                <Divider style={{backgroundColor:"#000000",width:'50%',marginLeft:16}}/>
+                <Divider style={{backgroundColor:"#000000",width:'50%',marginLeft:'5%'}}/>
               </View>
               <Modal isVisible={isDatePickerVisible}
                   animationIn={"fadeIn"}
@@ -392,15 +393,16 @@ const AnimatedViewBirthday = () => {
                   backdropColor='#CCCCCC'//'#FAFAFA'
                   backdropOpacity={0.8}
                   style={{
-                      alignItems:'center'
+                      alignItems:'center',
                   }}>
                   <View style={{
                         backgroundColor:"#FFFFFF",
-                        width:'100%',
-                        height:'47%',
+                        width:340,
+                        height:340,
                         paddingHorizontal: 20,
                         paddingBottom: 20,
                         paddingTop: 20,
+                        justifyContent:'space-between',
                         //justifyContent:'center',
                         //alignItems:'center',
                         borderRadius:10
@@ -408,7 +410,7 @@ const AnimatedViewBirthday = () => {
                       <View style={{
                           paddingBottom: 20,
                           }}>
-                              <Text style={{fontSize: 17, color:"#495057"}}>생일 입력</Text>
+                              <Text style={{fontSize: 24, color:"#495057"}}>생일 입력</Text>
                       </View>
                       <View style={{
                           paddingBottom: 20,
@@ -425,7 +427,7 @@ const AnimatedViewBirthday = () => {
                         setShowingBirthday(formatDate(birthday));
                         setIsDatePickerVisible(!isDatePickerVisible);
                       }}>
-                        <Text style={{paddingTop: 20, fontSize: 17,}}>저장</Text>
+                        <Text style={{paddingTop: 20, fontSize: 24, marginBottom: 8}}>저장</Text>
                       </TouchableOpacity>  
                   </View>     
               </Modal>
@@ -460,11 +462,11 @@ const AnimatedViewBirthday = () => {
                 bottom:'6%'
               }}>
                 <Text style={{
-                  fontSize: 22,
+                  fontSize: 24,
                   color:"#212429",
-                  marginLeft: 16
+                  marginLeft: '5%'
                 }}>직업을 알려달라<Text style={{
-                  fontSize: 22,
+                  fontSize: 24,
                   color:"#FCD49B",
                 }}>무</Text></Text>
               </View>
@@ -476,7 +478,7 @@ const AnimatedViewBirthday = () => {
               />
               {isWarningVisible && 
               <View style={styles.warning}>
-                <Text style={{color: '#FF7168', fontSize: 16,}}>입력은 필수다무!</Text>
+                <Text style={{color: '#FF7168', fontSize: 16, }}>입력은 필수다무!</Text>
               </View>}
               <TouchableOpacity style={styles.button} onPress={()=>{
                 handleNext();
@@ -515,11 +517,11 @@ const AnimatedViewBirthday = () => {
                 bottom:'6%'
               }}>
                 <Text style={{
-                  fontSize: 22,
+                  fontSize: 24,
                   color:"#212429",
-                  marginLeft: 16
+                  marginLeft: '5%'
                 }}>무가 불러줄 이름을 말해달라<Text style={{
-                  fontSize: 22,
+                  fontSize: 24,
                   color:"#FCD49B",
                 }}>무</Text></Text>
               </View>
@@ -577,9 +579,10 @@ const styles = StyleSheet.create({
   input: {
     position:'relative',
     bottom:'3%',
-    fontSize:14,
-    color: '#DBDBDB',
-    width: windowWidth-32,
+    fontSize:18,
+    color: '#000000',
+    width: '90%',
+    marginLeft: '5%',
     padding: 10,
     marginBottom: 20,
     borderWidth:1,
@@ -605,8 +608,9 @@ const styles = StyleSheet.create({
   warning: {
     position: 'absolute',
     bottom: 80,
+    left: '50%',
     alignItems: 'center',
-    paddingLeft: '50%'
+    transform:[{translateX:-50}]
   },
 });
 
