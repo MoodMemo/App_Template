@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking} from 'react-native';
+import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -106,6 +106,10 @@ const Settings = () => {
 
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
+        {/* <StatusBar
+            backgroundColor="#FFFFFF"
+            barStyle={'dark-content'}
+        /> */}
         <ScrollView
         alwaysBounceHorizontal={false}
         alwaysBounceVertical={false}
@@ -377,7 +381,7 @@ const Settings = () => {
                               justifyContent: 'space-between'
                           }}>
                           <Text style={{fontSize: 17, color:"#495057"}}>버전</Text>
-                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.0</Text>
+                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.5</Text>
                       </View>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
