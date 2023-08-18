@@ -256,7 +256,7 @@ const Settings = () => {
                           }}
                           circleColorOff='#FFFFFF'
                           circleColorOn='#FFFFFF'
-                          backgroundColorOn='#00E3AD'
+                          backgroundColorOn='#72D193'
                           backgroundColorOff='#78788029'
                         />
                     </View>
@@ -454,8 +454,8 @@ const Settings = () => {
                     }}>
                         <View style={{
                             backgroundColor:"#FFFAF4",
-                            width:'80%',
-                            height:'30%',
+                            width:300,
+                            height:300,
                             // justifyContent:'center',
                             alignItems:'center',
                             borderRadius:10
@@ -471,7 +471,7 @@ const Settings = () => {
                                     <View style={{ flexDirection: 'row', flex: 1,}}>
                                         <View style={styles.memoContent}>
                                             <TextInput
-                                                style={{ fontSize: 12, color:"#DBDBDB",}}
+                                                style={{ fontSize: 12, color:"#000000",}}
                                                 placeholder="운영진에게 메세지 남기기"
                                                 multiline={true}
                                                 // maxLength={500}
@@ -530,7 +530,7 @@ const Settings = () => {
                                 justifyContent:'center',
                                 alignItems:'center',
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>카카오뱅크 ㅇㅈㅎ</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>카카오뱅크 이O하</Text>
                                     <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>3333-27-9623079</Text>
                                     <Text style={{fontSize: 17, color:"#495057", }}>감사합니다!</Text>
                             </View>
