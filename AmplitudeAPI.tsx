@@ -258,8 +258,8 @@ export function test6() {
 export function test7() { 
   amplitude.track('** try {');       
 }
-export function test8(error: any) { 
-  amplitude.track('**!!!!! } catch (error) {', { error });       
+export function failToConnectAIServer(error: any) { 
+  amplitude.track('weekly: ERROR ! cannot connect with ai server', { error });       
 }
 export function test9(error: any) { 
   amplitude.track('** if (axios.isCancel(error)) {', { error });       

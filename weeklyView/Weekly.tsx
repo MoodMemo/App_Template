@@ -141,11 +141,9 @@ const Weekly = () => {
     console.log('ai 서버와의 통신 시작합니다');
     sendDailyReport(request, cancelTokenSource.token)
       .then((response) => {
-        amplitude.test1();
         if (!isCanceled) {
           console.log('date: ', response.date);
           realm.write(() => {
-            amplitude.test2();
             console.log('title: ', response.title);
             repository.createDailyReport({
               // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
@@ -161,12 +159,9 @@ const Weekly = () => {
         }
       })
       .catch((error) => {
-        amplitude.test3();
         if (axios.isCancel(error)) {
-          amplitude.test4(error.message);
           console.log('Request canceled', error.message);
         } else {
-          amplitude.test5(error.message);
           console.log('Error', error.message);
           setIsLodingModalVisible(false);
           // todo - 에러 처리 해야함

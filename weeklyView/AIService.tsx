@@ -41,9 +41,7 @@ async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToke
   const url = 'http://3.39.118.25:5000/dailyReport';
 
   console.log('cancel : ', cancelToken);
-  amplitude.test6();
   try {
-    amplitude.test7();
     // TODO - 여기까지 들어오기는 하는데 그 다음이 안됨
     const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI, { cancelToken });
     // const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI);
@@ -51,12 +49,10 @@ async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToke
     // 서버 응답 데이터를 반환합니다.
     return response.data;
   } catch (error) {
-    amplitude.test8(error);
+    amplitude.failToConnectAIServer(error);
     if (axios.isCancel(error)) {
-      amplitude.test9(error);
       console.log('Request canceled');
     } else {
-      amplitude.test10();
       throw new Error('Failed to send daily report.');
     }
   }
