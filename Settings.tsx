@@ -381,7 +381,7 @@ const Settings = () => {
                               justifyContent: 'space-between'
                           }}>
                           <Text style={{fontSize: 17, color:"#495057"}}>버전</Text>
-                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.5</Text>
+                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.6</Text>
                       </View>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
