@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, Image, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
+import { View, Button, Image, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -179,12 +179,18 @@ const Weekly = () => {
   // }, [todayReport]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
+  const [tmpEditedTitle, setTmpEditedTitle] = useState(editedTitle);
   const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
+  const [tmpEditedBodyText, setTmpEditedBodyText] = useState(editedBodytext);
   const handleEditButton = () => { 
     Sentry.captureMessage('[일기 수정] 사용자가 일기 수정 버튼을 눌렀습니다!');
     setIsEditMode(true); 
   };
-  const handleCancelButton = () => { setIsEditMode(false); };
+  const handleCancelButton = () => { 
+    setIsEditMode(false);
+    setEditedTitle(tmpEditedTitle);
+    setEditedBodytext(tmpEditedBodyText);
+  };
   const handleSaveButton = () => {
     realm.write(() => {
       const reportToUpdate = realm.objects('DailyReport').filtered('date = $0', todayReport.date)[0];
@@ -194,6 +200,15 @@ const Weekly = () => {
       }
     });
     setIsEditMode(false);
+    setTmpEditedTitle(editedTitle);
+    setTmpEditedBodyText(editedBodytext);
+  };
+  const handleEditedTitleChange = (text) => {
+     setEditedTitle(text);
+  };
+
+  const handleEditedBodyTextChange = (text) => {
+    setEditedBodytext(text);
   };
 
   // tmp_createDummyData(); 
@@ -204,7 +219,10 @@ const Weekly = () => {
   return (
     
     <View style={{backgroundColor: '#FAFAFA', flex:1}}>
-
+      {/* <StatusBar
+        backgroundColor="#FFFFFF"
+        barStyle={'dark-content'}
+      /> */}
 
       {/* 1 & 2 */}
       <View style={{backgroundColor: 'white', zIndex: 1,}}>
@@ -392,7 +410,7 @@ const Weekly = () => {
                     <TextInput
                       style={diaryStyles.editDiary}
                       value={editedTitle}
-                      onChangeText={setEditedTitle}
+                      onChangeText={handleEditedTitleChange}
                       onFocus={() => {amplitude.editTitle();}}
                     />
                   ) : (
@@ -409,7 +427,7 @@ const Weekly = () => {
                     <TextInput
                       style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
                       value={editedBodytext}
-                      onChangeText={setEditedBodytext}
+                      onChangeText={handleEditedBodyTextChange}
                       onFocus={() => {amplitude.editBodyText();}}
                       multiline
                     />

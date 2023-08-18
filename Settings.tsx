@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking} from 'react-native';
+import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -16,6 +16,7 @@ import * as amplitude from './AmplitudeAPI';
 
 import * as Sentry from "@sentry/react-native";
 import { UserFeedback } from "@sentry/react-native";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const test = () => {
@@ -46,7 +47,8 @@ const Settings = () => {
             // comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback);
-        
+        amplitude.test11(userFeedback.comments)
+        /*
         const userFeedback2: UserFeedback = {
             event_id: sentryId,
             name: "사용자도 아직",
@@ -55,7 +57,8 @@ const Settings = () => {
             comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback2);
-        
+        amplitude.test11(userFeedback2.comments);
+        */
         
         setMemo('');
         setIsReportModalVisible(!isReportModalVisible);
@@ -103,6 +106,10 @@ const Settings = () => {
 
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
+        {/* <StatusBar
+            backgroundColor="#FFFFFF"
+            barStyle={'dark-content'}
+        /> */}
         <ScrollView
         alwaysBounceHorizontal={false}
         alwaysBounceVertical={false}
@@ -253,7 +260,7 @@ const Settings = () => {
                           }}
                           circleColorOff='#FFFFFF'
                           circleColorOn='#FFFFFF'
-                          backgroundColorOn='#00E3AD'
+                          backgroundColorOn='#72D193'
                           backgroundColorOff='#78788029'
                         />
                     </View>
@@ -374,7 +381,7 @@ const Settings = () => {
                               justifyContent: 'space-between'
                           }}>
                           <Text style={{fontSize: 17, color:"#495057"}}>버전</Text>
-                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.0</Text>
+                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.6</Text>
                       </View>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
@@ -451,8 +458,8 @@ const Settings = () => {
                     }}>
                         <View style={{
                             backgroundColor:"#FFFAF4",
-                            width:'80%',
-                            height:'30%',
+                            width:300,
+                            height:300,
                             // justifyContent:'center',
                             alignItems:'center',
                             borderRadius:10
@@ -468,7 +475,7 @@ const Settings = () => {
                                     <View style={{ flexDirection: 'row', flex: 1,}}>
                                         <View style={styles.memoContent}>
                                             <TextInput
-                                                style={{ fontSize: 12, color:"#DBDBDB",}}
+                                                style={{ fontSize: 12, color:"#000000",}}
                                                 placeholder="운영진에게 메세지 남기기"
                                                 multiline={true}
                                                 // maxLength={500}
@@ -527,7 +534,7 @@ const Settings = () => {
                                 justifyContent:'center',
                                 alignItems:'center',
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>카카오뱅크 ㅇㅈㅎ</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>카카오뱅크 이O하</Text>
                                     <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>3333-27-9623079</Text>
                                     <Text style={{fontSize: 17, color:"#495057", }}>감사합니다!</Text>
                             </View>

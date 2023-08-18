@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 19,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -237,7 +237,10 @@ const styles = StyleSheet.create({
     height: 84 * scale, // 기본 높이에 비율을 곱함
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F2F2F2',
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: '#7CD0B2',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12 * scale, // 기본 borderRadius에 비율을 곱함
     marginBottom: 20 * scale, // 기본 marginBottom에 비율을 곱함
     gap: 10,
