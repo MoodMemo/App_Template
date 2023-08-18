@@ -544,7 +544,7 @@ const AnimatedViewBirthday = () => {
             </View>
           </View>
         ) : (
-          <Main/> // 새로운 정보가 추가되면 이 부분 수정해주시고, Main.tsx도 수정해주세요! (주석처리된 부분)
+          <Main username={name}/> // 새로운 정보가 추가되면 이 부분 수정해주시고, Main.tsx도 수정해주세요! (주석처리된 부분)
         ))))}
     </>
   );

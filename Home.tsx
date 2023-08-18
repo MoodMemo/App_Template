@@ -8,7 +8,7 @@ import * as amplitude from './AmplitudeAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {StatusBarStyle} from 'react-native';
 
-const Home = () => {
+const Home = ({name}:any) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const options = ['최근 생성 순'];
   const [fixModalVisible, setFixModalVisible] = useState(false);
@@ -40,7 +40,7 @@ const Home = () => {
     amplitude.exitCustomStampList();
     setFixModalVisible(false);
   };
-
+  console.log('aa',name);
   return (
     <View style={styles.view}>
       {/* <StatusBar
@@ -49,7 +49,7 @@ const Home = () => {
       /> */}
       <View style={styles.titleContainer}>
         {/* 드롭다운 컴포넌트 */}
-        <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${userName}`}의{'\n'}감정을 알려줘라무!</Text>
+        <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
       </View>
       <Image source={require('./assets/image16.png')} style={styles.mooImage}/>
       <View style={styles.options}>

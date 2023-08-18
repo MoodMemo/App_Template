@@ -21,9 +21,9 @@ import * as amplitude from './AmplitudeAPI';
 
 const Tab = createBottomTabNavigator();
 
-function HomeScreen() {
+function HomeScreen(username:any) {
   amplitude.moveToHome();;
-  return <Home/>; //Home.tsx
+  return <Home name={username}/>; //Home.tsx
 }
 
 function WeeklyScreen({ route, navigation }) {
@@ -220,8 +220,9 @@ async function test_realm_ver4_RUD() { // 테스트 완료 ! 지워도 됩니다
 /** asyncstorage 테스트용 함수
  */
 
-function Main() {
+function Main({username}:any) {
   const [statusBar, setStatusBar] = useState('#FFFAF4');
+  console.log('bbb',username)
   //test_realm_ver4();
   return (
     /*
@@ -250,7 +251,7 @@ function Main() {
         }}>
         <Tab.Screen
           name="Home"
-          component={HomeScreen} //홈 화면
+          children={()=>HomeScreen(username)}//홈 화면
           listeners={{
             tabPress: e => {
               setStatusBar('#FFFAF4');
@@ -264,6 +265,7 @@ function Main() {
             tabBarIcon: ({color, size}) => (
               <Octicons name="smiley" color={color} size={size} /> //하단 바 아이콘
             ),
+            unmountOnBlur: true,
           }}
         />
         <Tab.Screen
