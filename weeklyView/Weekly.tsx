@@ -120,7 +120,6 @@ const Weekly = () => {
   const [isCanceled, setIsCanceled] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
-    Sentry.captureMessage('[일기 생성] 사용자가 일기 생성 버튼을 눌렀습니다!');
 
     setIsLodingModalVisible(true);
 
@@ -183,7 +182,6 @@ const Weekly = () => {
   const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
   const [tmpEditedBodyText, setTmpEditedBodyText] = useState(editedBodytext);
   const handleEditButton = () => { 
-    Sentry.captureMessage('[일기 수정] 사용자가 일기 수정 버튼을 눌렀습니다!');
     setIsEditMode(true);
     setEditedTitle(todayReport ? todayReport.title : '');
     setEditedBodytext(todayReport ? todayReport.bodytext : '');
@@ -502,7 +500,7 @@ const Weekly = () => {
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
               </View>
               <View style={{alignItems: 'center',}}>
-                <Text style={{ color: '#475467', fontSize: 14, }}>AI 일기가 발행되고 있으니, 화면을 벗어나지 말라 무.</Text>
+                <Text style={{ color: '#475467', fontSize: 14, }}>AI 일기가 발행되고 있으니, 화면을 벗어나지 말라무.</Text>
                 <Text style={{ color: '#475467', fontSize: 14, }}>발행 중 이탈 시, 발행이 취소된다무...</Text>
               </View>
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
