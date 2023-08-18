@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, Image, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
+import { View, Button, Image, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -224,7 +224,10 @@ const Weekly = () => {
   return (
     
     <View style={{backgroundColor: '#FAFAFA', flex:1}}>
-
+      {/* <StatusBar
+        backgroundColor="#FFFFFF"
+        barStyle={'dark-content'}
+      /> */}
 
       {/* 1 & 2 */}
       <View style={{backgroundColor: 'white', zIndex: 1,}}>
