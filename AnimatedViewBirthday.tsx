@@ -304,20 +304,20 @@ const AnimatedViewBirthday = () => {
                 bottom:'12%'
               }}>
                 <Text style={{
-                  fontSize: 26,
+                  fontSize: 24,
                   color:"#212429",
                   marginLeft: '5%'
                 }}>어서와라<Text style={{
-                  fontSize: 26,
+                  fontSize: 24,
                   color:"#FCD49B",
                 }}>무</Text></Text>
                 <Text style={{
-                  fontSize: 26,
+                  fontSize: 24,
                   color:"#212429",
                   marginLeft: '5%'
                 }}>나는 '무드메모'의 요정,</Text>
                 <Text style={{
-                  fontSize: 34,
+                  fontSize: 32,
                   fontWeight:'bold',
                   color:"#72D193",
                   marginLeft: '5%'
@@ -410,7 +410,7 @@ const AnimatedViewBirthday = () => {
                       <View style={{
                           paddingBottom: 20,
                           }}>
-                              <Text style={{fontSize: 24, color:"#495057"}}>생일 입력</Text>
+                              <Text style={{fontSize: 17, color:"#495057"}}>생일 입력</Text>
                       </View>
                       <View style={{
                           paddingBottom: 20,
@@ -427,7 +427,7 @@ const AnimatedViewBirthday = () => {
                         setShowingBirthday(formatDate(birthday));
                         setIsDatePickerVisible(!isDatePickerVisible);
                       }}>
-                        <Text style={{paddingTop: 20, fontSize: 24, marginBottom: 8}}>저장</Text>
+                        <Text style={{paddingTop: 20, fontSize: 17, marginBottom: 10}}>저장</Text>
                       </TouchableOpacity>  
                   </View>     
               </Modal>
