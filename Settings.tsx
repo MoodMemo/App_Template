@@ -48,7 +48,7 @@ const Settings = () => {
         };
         Sentry.captureUserFeedback(userFeedback);
         amplitude.test11(userFeedback.comments)
-        
+        /*
         const userFeedback2: UserFeedback = {
             event_id: sentryId,
             name: "사용자도 아직",
@@ -58,6 +58,7 @@ const Settings = () => {
         };
         Sentry.captureUserFeedback(userFeedback2);
         amplitude.test11(userFeedback2.comments);
+        */
         
         setMemo('');
         setIsReportModalVisible(!isReportModalVisible);
