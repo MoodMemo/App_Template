@@ -1,5 +1,7 @@
 import axios, { AxiosResponse, CancelToken } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Amplify } from 'aws-amplify';
+import * as amplitude from '../AmplitudeAPI'
 
 // DailyReportDto.Response 타입 정의
 interface SendAI {
@@ -39,16 +41,22 @@ async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToke
   const url = 'http://3.39.118.25:5000/dailyReport';
 
   console.log('cancel : ', cancelToken);
+  amplitude.test6();
   try {
+    amplitude.test7();
+    // TODO - 여기까지 들어오기는 하는데 그 다음이 안됨
     const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI, { cancelToken });
     // const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI);
 
     // 서버 응답 데이터를 반환합니다.
     return response.data;
   } catch (error) {
+    amplitude.test8(error);
     if (axios.isCancel(error)) {
+      amplitude.test9(error);
       console.log('Request canceled');
     } else {
+      amplitude.test10();
       throw new Error('Failed to send daily report.');
     }
   }

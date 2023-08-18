@@ -233,3 +233,42 @@ export function intoCoffee() {
 export function outToSettingFromCoffee() { 
   amplitude.track('setting: close coffee');       
 }
+
+
+
+export function test1() { 
+  amplitude.track('** .then((response) => {');       
+}
+export function test2() { 
+  amplitude.track('** realm.write(() => {');       
+}
+export function test3() { 
+  amplitude.track('** .catch((error) => {');       
+}
+export function test4(error: any) { 
+  amplitude.track('** if (axios.isCancel(error)) {', { error });       
+}
+export function test5(error: any) { 
+  amplitude.track('** else {', { error });       
+}
+
+export function test6() { 
+  amplitude.track('** sendDailyReport(toAI: Da');       
+}
+export function test7() { 
+  amplitude.track('** try {');       
+}
+export function test8(error: any) { 
+  amplitude.track('**!!!!! } catch (error) {', { error });       
+}
+export function test9(error: any) { 
+  amplitude.track('** if (axios.isCancel(error)) {', { error });       
+}
+export function test10() { 
+  amplitude.track('**} else {');       
+}
+
+export function test11(memo: string) {
+  amplitude.track('** realm.write(() => {', {memo});       
+}
+
