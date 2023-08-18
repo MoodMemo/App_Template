@@ -141,9 +141,11 @@ const Weekly = () => {
     console.log('ai 서버와의 통신 시작합니다');
     sendDailyReport(request, cancelTokenSource.token)
       .then((response) => {
+        amplitude.test1();
         if (!isCanceled) {
           console.log('date: ', response.date);
           realm.write(() => {
+            amplitude.test2();
             console.log('title: ', response.title);
             repository.createDailyReport({
               // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
@@ -159,9 +161,12 @@ const Weekly = () => {
         }
       })
       .catch((error) => {
+        amplitude.test3();
         if (axios.isCancel(error)) {
+          amplitude.test4(error.message);
           console.log('Request canceled', error.message);
         } else {
+          amplitude.test5(error.message);
           console.log('Error', error.message);
           setIsLodingModalVisible(false);
           // todo - 에러 처리 해야함
@@ -179,12 +184,18 @@ const Weekly = () => {
   // }, [todayReport]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
+  const [tmpEditedTitle, setTmpEditedTitle] = useState(editedTitle);
   const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
+  const [tmpEditedBodyText, setTmpEditedBodyText] = useState(editedBodytext);
   const handleEditButton = () => { 
     Sentry.captureMessage('[일기 수정] 사용자가 일기 수정 버튼을 눌렀습니다!');
     setIsEditMode(true); 
   };
-  const handleCancelButton = () => { setIsEditMode(false); };
+  const handleCancelButton = () => { 
+    setIsEditMode(false);
+    setEditedTitle(tmpEditedTitle);
+    setEditedBodytext(tmpEditedBodyText);
+  };
   const handleSaveButton = () => {
     realm.write(() => {
       const reportToUpdate = realm.objects('DailyReport').filtered('date = $0', todayReport.date)[0];
@@ -194,6 +205,15 @@ const Weekly = () => {
       }
     });
     setIsEditMode(false);
+    setTmpEditedTitle(editedTitle);
+    setTmpEditedBodyText(editedBodytext);
+  };
+  const handleEditedTitleChange = (text) => {
+     setEditedTitle(text);
+  };
+
+  const handleEditedBodyTextChange = (text) => {
+    setEditedBodytext(text);
   };
 
   // tmp_createDummyData(); 
@@ -392,7 +412,7 @@ const Weekly = () => {
                     <TextInput
                       style={diaryStyles.editDiary}
                       value={editedTitle}
-                      onChangeText={setEditedTitle}
+                      onChangeText={handleEditedTitleChange}
                       onFocus={() => {amplitude.editTitle();}}
                     />
                   ) : (
@@ -409,7 +429,7 @@ const Weekly = () => {
                     <TextInput
                       style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
                       value={editedBodytext}
-                      onChangeText={setEditedBodytext}
+                      onChangeText={handleEditedBodyTextChange}
                       onFocus={() => {amplitude.editBodyText();}}
                       multiline
                     />

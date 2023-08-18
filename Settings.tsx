@@ -16,6 +16,7 @@ import * as amplitude from './AmplitudeAPI';
 
 import * as Sentry from "@sentry/react-native";
 import { UserFeedback } from "@sentry/react-native";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const test = () => {
@@ -46,6 +47,7 @@ const Settings = () => {
             // comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback);
+        amplitude.test11(userFeedback.comments)
         
         const userFeedback2: UserFeedback = {
             event_id: sentryId,
@@ -55,7 +57,7 @@ const Settings = () => {
             comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback2);
-        
+        amplitude.test11(userFeedback2.comments);
         
         setMemo('');
         setIsReportModalVisible(!isReportModalVisible);
