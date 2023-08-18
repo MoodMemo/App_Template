@@ -32,7 +32,7 @@ interface DailyReportResponse {
   bodytext: string;
   keyword: string[]
   time: string; // 없어도 됨!
-  // likeCnt: number; // 안할듯!
+  // likeCnt: number; // 안할듯!  -> 근데 이거는 서버에 저장할 용도로는 쓸수도 있음 ... 같이 얘기해봐용
 }
 
 async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToken): Promise<DailyReportResponse> {
