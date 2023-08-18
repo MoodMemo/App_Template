@@ -184,7 +184,9 @@ const Weekly = () => {
   const [tmpEditedBodyText, setTmpEditedBodyText] = useState(editedBodytext);
   const handleEditButton = () => { 
     Sentry.captureMessage('[일기 수정] 사용자가 일기 수정 버튼을 눌렀습니다!');
-    setIsEditMode(true); 
+    setIsEditMode(true);
+    setEditedTitle(todayReport ? todayReport.title : '');
+    setEditedBodytext(todayReport ? todayReport.bodytext : '');
   };
   const handleCancelButton = () => { 
     setIsEditMode(false);
