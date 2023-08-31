@@ -90,7 +90,10 @@ const Dropdown: React.FC<DropdownProps> = ({
 const Weekly = () => {
   // 1. 오늘 날짜 & 2. 스탬프리스트
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
-  const handleTodayChange = (date: dayjs.Dayjs) => { setToday(date); amplitude.changeToday();};
+  const handleTodayChange = (date: dayjs.Dayjs) => { 
+    setToday(date); amplitude.changeToday();
+    setTodayReport(repository.getDailyReportsByField("date", date.format('YYYY-MM-DD')))
+  };
 
   const [selectedYear, setSelectedYear] = useState<number>(today.year());
   const [selectedMonth, setSelectedMonth] = useState<number>(today.month() + 1); // 1월이 0이라서 +1 해줘야 함
@@ -113,7 +116,8 @@ const Weekly = () => {
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
 
   // 4. AI 일기 생성 버튼
-  const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
+  // const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
+  const [todayReport, setTodayReport] = useState<repository.IDailyReport | null>(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')));
   const [isLodingModalVisible, setIsLodingModalVisible] = useState(false);
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
   const [isCannotModalVisible, setIsCannotModalVisible] = useState(false);
@@ -152,6 +156,7 @@ const Weekly = () => {
               keyword: response.keyword,
             });
             console.log("create default daily report finished");
+            setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
           });
           setIsLodingModalVisible(false);
           setIsLodingFinishModalVisible(true);
