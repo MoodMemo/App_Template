@@ -91,8 +91,11 @@ const Weekly = () => {
   // 1. 오늘 날짜 & 2. 스탬프리스트
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
   const handleTodayChange = (date: dayjs.Dayjs) => { 
-    setToday(date); amplitude.changeToday();
-    setTodayReport(repository.getDailyReportsByField("date", date.format('YYYY-MM-DD')))
+    if (isEditMode) setIsWarningModalVisible(true)
+    else {
+      setToday(date); amplitude.changeToday();
+      setTodayReport(repository.getDailyReportsByField("date", date.format('YYYY-MM-DD')))
+    }
   };
 
   const [selectedYear, setSelectedYear] = useState<number>(today.year());
@@ -121,6 +124,7 @@ const Weekly = () => {
   const [isLodingModalVisible, setIsLodingModalVisible] = useState(false);
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
   const [isCannotModalVisible, setIsCannotModalVisible] = useState(false);
+  const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
@@ -592,6 +596,43 @@ const Weekly = () => {
                         
             </View>
           </Modal>
+          {/* 4-4. 일기 수정 중 이동 시 경고 모달 */}
+          <Modal 
+            isVisible={isWarningModalVisible}
+            animationIn={"fadeIn"}
+            animationOut={"fadeOut"}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={diaryStyles.finishLodingModal}>
+              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>수정을 취소하겠냐</Text>
+                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
+              </View>
+              <View style={{alignItems: 'center',}}>
+                <Text style={{ color: '#475467', fontSize: 14, }}>작업 중인 내용이 저장되지 않는다무.</Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
+                  <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningModalVisible(false); amplitude.cancelCancelEditingDiary();}}>
+                    <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelButton(); setIsWarningModalVisible(false); amplitude.confirmCancelEditingDiary();}}>
+                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                        
+            </View>
+          </Modal>
 
           {/* 5. 업로드된 사진 (이미지 컴포넌트로 띄워줄 수 있음)
           <View style={styles.uploadedImage}>
@@ -840,6 +881,17 @@ const diaryStyles = StyleSheet.create({
     padding: 10,
     marginBottom: 16,
     backgroundColor: '#72D193', 
+    borderRadius: 8,
+    flex: 1,
+  },
+  cancelOut2EditBtn: {
+    borderColor: '#D0D5DD', borderWidth: 1,
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: '#ffffff', 
     borderRadius: 8,
     flex: 1,
   },

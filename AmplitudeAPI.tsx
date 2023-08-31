@@ -137,6 +137,12 @@ export function editTitle() {
 export function editBodyText() {
   amplitude.track('weekly: edit body text');
 }
+export function confirmCancelEditingDiary() {
+  amplitude.track('weekly: confirm cancel editing diary');           
+}
+export function cancelCancelEditingDiary() {
+  amplitude.track('weekly: cancel cancel editing diary');           
+}
 
 export function tryGenerateAIDiary_cannot() {
   amplitude.track('weekly: into - generate AI diary (cannot)');
