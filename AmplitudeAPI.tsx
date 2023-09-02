@@ -22,14 +22,14 @@ export function moveToWeekly() {
   amplitude.track('weekly:');           
 }
 export function moveToSetting() {
-  amplitude.track('setting:');           
+  amplitude.track('setting:'); // @이준하 -> 로깅 안되는 부분 해결해주세요 ! + 시작할 때 뜨는 것도 확인바람!
 }
 export function moveToStatistics() {
   amplitude.track('statistics:');           
 }
 
 
-/* AnimatedViewBirthDay view */
+/* AnimatedViewBirthDay view */ // TODO - 밑에 있는 친구들 싹 확인한 뒤에 마지막으로 체크할 것
 export function userRegiStart() {
   amplitude.track('intro: submit start');
 }
@@ -70,7 +70,7 @@ export function cancelAddCustomStamp() {
 export function exitCustomStampList() {
   amplitude.track('stamp: exit - custom stamp list');
 }
-export function pushStamp(stampName: String) {
+export function pushStamp(stampName: String) { // TODO - 여기부터 다시!
   // tODO -> 스탬프 이름 받자
   amplitude.track('stamp: push stamp', { stampName });       
 }
@@ -97,67 +97,73 @@ export function cancelStamp() {
 
 /* weekly view */
 export function changeToday() {
-  amplitude.track('weekly: click another day');           
+  amplitude.track('weekly: click another day', {view: 'weekly'});           
 }
 export function clickDropDown() {
-  amplitude.track('weekly: click drop down');
+  amplitude.track('weekly: click drop down', {view: 'weekly'});
 }
 export function changeYear() {
-  amplitude.track('weekly: change year');           
+  amplitude.track('weekly: change year', {view: 'weekly'});
 }
 export function changeMonth() {
-  amplitude.track('weekly: change month');           
+  amplitude.track('weekly: change month', {view: 'weekly'});
 }
 export function changeWeek() {
-  amplitude.track('weekly: change week');           
+  amplitude.track('weekly: change week', {view: 'weekly'});
 }
 
 export function showDetailModal() {
-  amplitude.track('weekly: into - detail modal');           
+  amplitude.track('weekly: into - detail modal', {view: 'weekly'});   
 }
 export function backToWeeklyFromDetailModal() {
-  amplitude.track('weekly: exit - detail modal');
+  amplitude.track('weekly: exit - detail modal', {view: 'weekly'});
 }
 export function addNewStampInDetailModal() {
-  amplitude.track('weekly: push new stamp in detail modal');           
+  amplitude.track('weekly: push new stamp in detail modal', {view: 'weekly'});           
 }
 
 export function editAIDiary() {
-  amplitude.track('weekly: edit diary');           
+  amplitude.track('weekly: edit diary', {view: 'weekly'});
 }
 export function cancelToEditDiary() {
-  amplitude.track('weekly: cancel editing diary');           
+  amplitude.track('weekly: cancel editing diary', {view: 'weekly'});     
 }
 export function saveEditedDiary() {
-  amplitude.track('weekly: save edited diary');           
+  amplitude.track('weekly: save edited diary', {view: 'weekly'});
 }
 export function editTitle() {
-  amplitude.track('weekly: edit title');
+  amplitude.track('weekly: edit title', {view: 'weekly'});
 }
 export function editBodyText() {
-  amplitude.track('weekly: edit body text');
+  amplitude.track('weekly: edit body text', {view: 'weekly'});
 }
 export function confirmCancelEditingDiary() {
-  amplitude.track('weekly: confirm cancel editing diary');           
+  amplitude.track('weekly: confirm cancel editing diary', {view: 'weekly'});           
 }
 export function cancelCancelEditingDiary() {
-  amplitude.track('weekly: cancel cancel editing diary');           
+  amplitude.track('weekly: cancel cancel editing diary', {view: 'weekly'});
 }
 
 export function tryGenerateAIDiary_cannot() {
-  amplitude.track('weekly: into - generate AI diary (cannot)');
+  amplitude.track('weekly: into - generate AI diary (cannot)', {view: 'weekly'});
 }
 export function backToWeeklyFromCannotModal() {
-  amplitude.track('weekly: exit - cannot modal (fail to generate AI diary)');
+  amplitude.track('weekly: exit - cannot modal (fail to generate AI diary)', {view: 'weekly'});
 }
 export function tryGenerateAIDiary_can() {
-  amplitude.track('weekly: into - generate AI diary (can)'); 
+  amplitude.track('weekly: into - generate AI diary (can)', {view: 'weekly'}); 
 }
 export function waitingForAIDiary() {
-  amplitude.track('weekly: waiting for AI diary');
+  amplitude.track('weekly: waiting for AI diary', {view: 'weekly'});
 }
 export function backToWeeklyFromCanModal() {
-  amplitude.track('weekly: exit - can modal (finish generating AI diary)');
+  amplitude.track('weekly: exit - can modal (finish generating AI diary)', {view: 'weekly'});
+}
+export function cancel2move2AnotherDayWhileEditingDiary() {
+  amplitude.track('weekly: cancel to move to another day while editing diary', {view: 'weekly'});
+}
+export function move2AnotherDayWhileEditingDiary() {
+  amplitude.track('weekly: move to another day while editing diary', {view: 'weekly'});
 }
 
 
