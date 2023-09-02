@@ -93,7 +93,7 @@ const Weekly = () => {
   const [tryToChangeToday, setTryToChangeToday] = useState<dayjs.Dayjs>(today);
   const handleTodayChange = (date: dayjs.Dayjs) => { 
     if (isEditMode) {
-      setTryToChangeToday(date);
+      setTryToChangeToday(date); // 앰플리튜드 - 일기 수정 중 - 다른 날짜 클릭
       setIsWarningMove2AnotherDayModalVisible(true);
     }
     else {
@@ -671,10 +671,10 @@ const Weekly = () => {
               </View>
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
-                  <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningMove2AnotherDayModalVisible(false); amplitude.cancelCancelEditingDiary();}}>
+                  <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningMove2AnotherDayModalVisible(false); amplitude.cancel2move2AnotherDayWhileEditingDiary();}}>
                     <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false); amplitude.confirmCancelEditingDiary();}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false); amplitude.move2AnotherDayWhileEditingDiary();}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
