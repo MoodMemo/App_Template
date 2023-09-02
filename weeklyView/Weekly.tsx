@@ -90,8 +90,12 @@ const Dropdown: React.FC<DropdownProps> = ({
 const Weekly = () => {
   // 1. 오늘 날짜 & 2. 스탬프리스트
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
+  const [tryToChangeToday, setTryToChangeToday] = useState<dayjs.Dayjs>(today);
   const handleTodayChange = (date: dayjs.Dayjs) => { 
-    if (isEditMode) setIsWarningModalVisible(true)
+    if (isEditMode) {
+      setTryToChangeToday(date);
+      setIsWarningMove2AnotherDayModalVisible(true);
+    }
     else {
       setToday(date); amplitude.changeToday();
       setTodayReport(repository.getDailyReportsByField("date", date.format('YYYY-MM-DD')))
@@ -125,6 +129,7 @@ const Weekly = () => {
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
   const [isCannotModalVisible, setIsCannotModalVisible] = useState(false);
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
+  const [isWarningMove2AnotherDayModalVisible, setIsWarningMove2AnotherDayModalVisible] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
@@ -199,6 +204,13 @@ const Weekly = () => {
     setIsEditMode(false);
     setEditedTitle(tmpEditedTitle);
     setEditedBodytext(tmpEditedBodyText);
+  };
+  const handleCancelWhileMove2AnotherDayButton = (newDate: dayjs.Dayjs) => { 
+    setIsEditMode(false);
+    setEditedTitle(tmpEditedTitle);
+    setEditedBodytext(tmpEditedBodyText);
+    setToday(newDate); // 앰플리튜드 넣자
+    setTodayReport(repository.getDailyReportsByField("date", newDate.format('YYYY-MM-DD')))
   };
   const handleSaveButton = () => {
     realm.write(() => {
@@ -390,7 +402,7 @@ const Weekly = () => {
                   </TouchableOpacity>
                 ) : (
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={() => {handleCancelButton(); amplitude.cancelToEditDiary();}}>
+                    <TouchableOpacity onPress={() => {setIsWarningModalVisible(true); amplitude.cancelToEditDiary();}}>
                       <Text style={{ fontSize: 12, color: '#495057' }}>취소</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary();}}>
@@ -596,7 +608,7 @@ const Weekly = () => {
                         
             </View>
           </Modal>
-          {/* 4-4. 일기 수정 중 이동 시 경고 모달 */}
+          {/* 4-4. 일기 수정 중 취소 시 경고 모달 */}
           <Modal 
             isVisible={isWarningModalVisible}
             animationIn={"fadeIn"}
@@ -623,9 +635,46 @@ const Weekly = () => {
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
                   <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningModalVisible(false); amplitude.cancelCancelEditingDiary();}}>
-                    <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+                    <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>아냐 잠깐 ...</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelButton(); setIsWarningModalVisible(false); amplitude.confirmCancelEditingDiary();}}>
+                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>취소할래</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                        
+            </View>
+          </Modal>
+          {/* 4-5. 일기 수정 중 이동 시 경고 모달 */}
+          <Modal 
+            isVisible={isWarningMove2AnotherDayModalVisible}
+            animationIn={"fadeIn"}
+            animationOut={"fadeOut"}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={diaryStyles.finishLodingModal}>
+              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>다른 날짜로 이동하겠냐</Text>
+                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
+              </View>
+              <View style={{alignItems: 'center',}}>
+                <Text style={{ color: '#475467', fontSize: 14, }}>수정 중인 내용이 저장되지 않는다무.</Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
+                  <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningMove2AnotherDayModalVisible(false); amplitude.cancelCancelEditingDiary();}}>
+                    <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false); amplitude.confirmCancelEditingDiary();}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
