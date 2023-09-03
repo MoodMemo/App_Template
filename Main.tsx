@@ -252,15 +252,6 @@ function Main({username}:any) {
         <Tab.Screen
           name="Home"
           children={()=>HomeScreen(username)}//홈 화면
-          listeners={{
-            tabPress: e => {
-              setStatusBar('#FFFAF4');
-              // Prevent default action
-              // e.preventDefault();
-              // Do something with the `navigation` object
-              //navigation.navigate('Home');
-            },
-          }}
           options={{
             tabBarIcon: ({color, size}) => (
               <Octicons name="smiley" color={color} size={size} /> //하단 바 아이콘
