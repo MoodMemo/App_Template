@@ -4,12 +4,14 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Alert, StatusBar, Text, View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialAllIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 
 import Home from './Home';
 import Weekly from './weeklyView/Weekly';
 import Tmp from './weeklyView/tmp';
 import Settings from './Settings';
+import Statistics from './statisticsView/Statistics';
 
 import Amplify, {API, graphqlOperation} from 'aws-amplify';
 import * as queries from './src/graphql/queries'
@@ -41,6 +43,11 @@ function WeeklyScreen({ route, navigation }) {
       <Popup visible={showPopup} onClose={() => setShowPopup(false)} />
     </View>
   );
+}
+
+function StatisticsScreen() {
+  //amplitude.moveToSetting();
+  return <Statistics/>; //Home.tsx
 }
 
 function SettingsScreen() {
@@ -283,6 +290,25 @@ function Main({username}:any) {
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
+            ),
+            unmountOnBlur: true,
+          }}
+        />
+        <Tab.Screen
+          name="Statistics"
+          component={StatisticsScreen} //주간 화면
+          listeners={{
+            tabPress: e => {
+              setStatusBar('#FAFAFA');
+              // Prevent default action
+              // e.preventDefault();
+              // Do something with the `navigation` object
+              //navigation.navigate('Home');
+            },
+          }}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <MaterialAllIcons name="chart-bar" color={color} size={size} /> //하단 바 아이콘
             ),
             unmountOnBlur: true,
           }}
