@@ -47,11 +47,6 @@ import { create } from 'react-test-renderer';
 
 import * as Sentry from '@sentry/react-native';
 
-Sentry.init({ 
-  dsn: 'https://3554b53489972dd0d1159d97e9cc6eb7@o4505669151555584.ingest.sentry.io/4505669208375296', 
-});
-
-
 const Stack = createNativeStackNavigator();
 
 /**
@@ -83,8 +78,6 @@ function App(): JSX.Element {
 
   //initiailze(); //처음에는 주석 해제하고 실행해서 초기화 한 다음에 바로 껐다가, 주석 처리하고 다시 실행합시다!
 
-  Sentry.captureMessage('앱 시작');
-
   AsyncStorage.getItem('@UserInfo:isRegistered',(err,result)=>{
       if(result!==null) 
       {
@@ -101,6 +94,7 @@ function App(): JSX.Element {
   )();
 
   if (isRegistered) {
+    repository.updatePushedStampCount(); // db 4->5 migration
     console.log("isRegistered: " + isRegistered);
     return (
       <SafeAreaView style={styles.container}>

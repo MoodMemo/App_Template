@@ -1,5 +1,7 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse, CancelToken } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Amplify } from 'aws-amplify';
+import * as amplitude from '../AmplitudeAPI'
 
 // DailyReportDto.Response 타입 정의
 interface SendAI {
@@ -32,20 +34,27 @@ interface DailyReportResponse {
   bodytext: string;
   keyword: string[]
   time: string; // 없어도 됨!
-  // likeCnt: number; // 안할듯!
+  // likeCnt: number; // 안할듯!  -> 근데 이거는 서버에 저장할 용도로는 쓸수도 있음 ... 같이 얘기해봐용
 }
 
-async function sendDailyReport(toAI: DailyReportRequest): Promise<DailyReportResponse> {
+async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToken): Promise<DailyReportResponse> {
   const url = 'http://3.39.118.25:5000/dailyReport';
 
+  console.log('cancel : ', cancelToken);
   try {
-    const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI);
+    // TODO - 여기까지 들어오기는 하는데 그 다음이 안됨
+    const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI, { cancelToken });
+    // const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI);
 
     // 서버 응답 데이터를 반환합니다.
     return response.data;
   } catch (error) {
-    // 에러 처리를 해줍니다.
-    throw new Error('Failed to send daily report.');
+    amplitude.failToConnectAIServer(error);
+    if (axios.isCancel(error)) {
+      console.log('Request canceled');
+    } else {
+      throw new Error('Failed to send daily report.');
+    }
   }
 }
 

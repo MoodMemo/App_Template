@@ -2,7 +2,7 @@
  * @format
  */
 
-import {AppRegistry} from 'react-native';
+import {AppRegistry, Text, TextInput} from 'react-native';
 import App from './App';
 import {name as appName} from './app.json';
 import {Amplify} from 'aws-amplify';
@@ -10,6 +10,9 @@ import config from './src/aws-exports';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from "react-native-push-notification";
 import messaging from '@react-native-firebase/messaging';
+import * as amplitude from './AmplitudeAPI';
+import AmplitudeInit from './AmplitudeAPI';
+import * as Sentry from '@sentry/react-native';
 
 Amplify.configure(config);
 /*
@@ -44,6 +47,19 @@ PushNotification.createChannel(
     channelName: "MoodMemo"
   }
 )
+
+Sentry.init({ 
+  dsn: 'https://3554b53489972dd0d1159d97e9cc6eb7@o4505669151555584.ingest.sentry.io/4505669208375296', 
+});
+
+AmplitudeInit();
+amplitude.beginSession(); // 앱 시작
+
+Text.defaultProps = Text.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
+
+TextInput.defaultProps = TextInput.defaultProps || {};
+TextInput.defaultProps.allowFontScaling = false;
 
 AppRegistry.registerComponent(appName, () => App);
 

@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Text} from 'react-native';
+import {Alert, StatusBar, Text, View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -16,18 +16,35 @@ import * as queries from './src/graphql/queries'
 import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Popup from './Popup';
+import * as amplitude from './AmplitudeAPI';
 
 const Tab = createBottomTabNavigator();
 
-function HomeScreen() {
-  return <Home/>; //Home.tsx
+function HomeScreen(username:any) {
+  amplitude.moveToHome();;
+  return <Home name={username}/>; //Home.tsx
 }
 
-function WeeklyScreen() {
-  return <Weekly/>; //Home.tsx
+function WeeklyScreen({ route, navigation }) {
+  const [showPopup, setShowPopup] = useState(route.params?.showPopup || false);
+  useEffect(() => {
+    if (route.params?.showPopup) {      
+      // 다음 번에 Weekly 화면을 방문했을 때 팝업이 다시 뜨지 않도록 파라미터를 초기화
+      navigation.setParams({ showPopup: false });
+    }
+  }, [route.params?.showPopup]);
+  amplitude.moveToWeekly();
+  return (
+    <View style={{ flex: 1 }}>
+      <Weekly/>
+      <Popup visible={showPopup} onClose={() => setShowPopup(false)} />
+    </View>
+  );
 }
 
 function SettingsScreen() {
+  amplitude.moveToSetting();
   return <Settings/>; //Home.tsx
 }
 
@@ -203,18 +220,24 @@ async function test_realm_ver4_RUD() { // 테스트 완료 ! 지워도 됩니다
 /** asyncstorage 테스트용 함수
  */
 
-function Main() {
+function Main({username}:any) {
+  const [statusBar, setStatusBar] = useState('#FFFAF4');
+  console.log('bbb',username)
   //test_realm_ver4();
   return (
     /*
-    하단 바와 함께 그에 맞는 탭이 렌더링됩니다.
-    각 탭은 컴포넌트로 관리하며,
-    Home -> HomeScreen
-    Weekly -> WeeklyScreen
-    Settings -> SettingsScreen입니다.
+      하단 바와 함께 그에 맞는 탭이 렌더링됩니다.
+      각 탭은 컴포넌트로 관리하며,
+      Home -> HomeScreen
+      Weekly -> WeeklyScreen
+      Settings -> SettingsScreen입니다.
     */
-    //TODO : css 분리 작업, 불필요한 반복 줄이기
+    /* //TODO : css 분리 작업, 불필요한 반복 줄이기 */
     <NavigationContainer>
+      <StatusBar
+        backgroundColor={statusBar}
+        barStyle={'dark-content'}
+      />
       {/*
         Navigator와 관련된 컴포넌트들은 NavigationContainer 안에 넣어줘야 했습니다.
       */}
@@ -228,16 +251,35 @@ function Main() {
         }}>
         <Tab.Screen
           name="Home"
-          component={HomeScreen} //홈 화면
+          children={()=>HomeScreen(username)}//홈 화면
+          listeners={{
+            tabPress: e => {
+              setStatusBar('#FFFAF4');
+              // Prevent default action
+              // e.preventDefault();
+              // Do something with the `navigation` object
+              //navigation.navigate('Home');
+            },
+          }}
           options={{
             tabBarIcon: ({color, size}) => (
               <Octicons name="smiley" color={color} size={size} /> //하단 바 아이콘
             ),
+            unmountOnBlur: true,
           }}
         />
         <Tab.Screen
-          name="Search"
-          component={WeeklyScreen} //위클리 화면
+          name="Weekly"
+          component={WeeklyScreen} //주간 화면
+          listeners={{
+            tabPress: e => {
+              setStatusBar('#FFFFFF');
+              // Prevent default action
+              // e.preventDefault();
+              // Do something with the `navigation` object
+              //navigation.navigate('Home');
+            },
+          }}
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
@@ -248,11 +290,20 @@ function Main() {
         <Tab.Screen
           name="설정"
           component={SettingsScreen} //설정 화면
+          listeners={{
+            tabPress: e => {
+              setStatusBar('#FFFFFF');
+              // Prevent default action
+              // e.preventDefault();
+              // Do something with the `navigation` object
+              //navigation.navigate('Home');
+            },
+          }}
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialIcons name="settings" color={color} size={size} /> //하단 바 아이콘
             ),
-            lazy:false
+            lazy:false,
           }}
         />
       </Tab.Navigator>

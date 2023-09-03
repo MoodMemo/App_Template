@@ -14,7 +14,7 @@ const Dropdown = ({ options, onSelectOption }) => {
       {/* 드롭다운 버튼 */}
       <TouchableOpacity style={styles.orderButton} onPress={() => setOptionsVisible(!isOptionsVisible)}>
         <Text style={styles.orderText}>최근 생성 순</Text>
-        <Image style={styles.orderImg} source={require('./assets/arrow-drop-down.png')} />
+        {/* <Image style={styles.orderImg} source={require('./assets/arrow-drop-down.png')} /> */}
       </TouchableOpacity>
 
       {/* 선택지 영역 */}

@@ -8,6 +8,8 @@ import * as repository from './src/localDB/document';
 import DatePicker from 'react-native-date-picker';
 import PushNotification from "react-native-push-notification";
 
+import * as amplitude from './AmplitudeAPI';
+
 const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
 
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -19,6 +21,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
     return (
         <View>
             <TouchableOpacity onPress={() => {
+                    amplitude.intoAddNewNoti();
                     setIsModalVisible(!isModalVisible);
                 }}>
                 <View style={{
@@ -37,6 +40,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                 animationOut={"fadeOut"}
                 animationOutTiming={200}
                 onBackdropPress={() => {
+                    amplitude.cancelNewNoti();
                     setIsModalVisible(!isModalVisible);
                 }}
                 backdropColor='#CCCCCC'//'#FAFAFA'
@@ -46,8 +50,8 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                 }}>
                     <View style={{
                         backgroundColor:"#FFFFFF",
-                        width:'90%',
-                        height:'47%',
+                        width:340,
+                        height:340,
                         paddingHorizontal: 20,
                         paddingBottom: 20,
                         paddingTop: 20,
@@ -77,6 +81,9 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                             }}>
                                 <TouchableOpacity onPress={()=>{
                                     const notificationTime=String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
+                                    console.log(notificationTime);
+                                    console.log("**********");
+                                    amplitude.saveNewNoti(notificationTime);
                                     if(repository.getNotificationsByField("time",notificationTime)===undefined){
                                         realm.write(() => {repository.createNotification({
                                             day: [true, true, true, true, true, false, false],
@@ -87,6 +94,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                                         if(date.getTime()<=(new Date(Date.now())).getTime()) date.setDate(date.getDate()+1);
                                         PushNotification.localNotificationSchedule({
                                             channelId: "MoodMemo_ID",
+                                            smallIcon: "ic_notification",
                                             message: notificationTime+' 알림',
                                             date: date, //입력 받은 시간으로 알림 설정
                                             visibility: "public",
@@ -106,6 +114,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                                     <Text style={{fontSize: 17}}>저장</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={()=>{
+                                    amplitude.cancelNewNoti();
                                     setIsModalVisible(!isModalVisible);
                                 }}>
                                     <Text style={{fontSize: 17}}>취소</Text>
@@ -119,6 +128,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                 animationOut={"fadeOut"}
                 animationOutTiming={200}
                 onBackdropPress={() => {
+                    amplitude.saveDuplicatedNoti();
                     setIsModalNoticeVisible(!isModalNoticeVisible);
                 }}
                 backdropColor='#CCCCCC'//'#FAFAFA'

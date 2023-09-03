@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, Image, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator} from 'react-native';
+import { View, Button, Image, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -9,6 +9,7 @@ import FeatherIcon from 'react-native-vector-icons/Feather';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as repository from '../src/localDB/document';
 import realm from '../src/localDB/document';
+import * as amplitude from '../AmplitudeAPI';
 
 import dayjs from 'dayjs';
 const weekOfYear = require("dayjs/plugin/weekOfYear");
@@ -48,6 +49,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
+    amplitude.clickDropDown();
     setIsOpen(!isOpen);
   };
 
@@ -58,6 +60,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <View style={dropDownStyles.dropdownContainer}>
+      
       <TouchableOpacity onPress={toggleDropdown} style={dropDownStyles.dropdownButton}>
         <View>
           <Text style={dropDownStyles.dropdownButtonText}>
@@ -66,6 +69,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           <FontAwesomeIcon name='sort-down' size={16} color="#737373" style={{position: 'absolute', right: 7, top: 5}}/>
         </View>
       </TouchableOpacity>
+
       {isOpen && (
         <View style={dropDownStyles.dropdownOptions}>
           {options.map((option) => (
@@ -86,7 +90,17 @@ const Dropdown: React.FC<DropdownProps> = ({
 const Weekly = () => {
   // 1. 오늘 날짜 & 2. 스탬프리스트
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
-  const handleTodayChange = (date: dayjs.Dayjs) => { setToday(date); };
+  const [tryToChangeToday, setTryToChangeToday] = useState<dayjs.Dayjs>(today);
+  const handleTodayChange = (date: dayjs.Dayjs) => { 
+    if (isEditMode) {
+      setTryToChangeToday(date); // 앰플리튜드 - 일기 수정 중 - 다른 날짜 클릭
+      setIsWarningMove2AnotherDayModalVisible(true);
+    }
+    else {
+      setToday(date); amplitude.changeToday();
+      setTodayReport(repository.getDailyReportsByField("date", date.format('YYYY-MM-DD')))
+    }
+  };
 
   const [selectedYear, setSelectedYear] = useState<number>(today.year());
   const [selectedMonth, setSelectedMonth] = useState<number>(today.month() + 1); // 1월이 0이라서 +1 해줘야 함
@@ -94,9 +108,9 @@ const Weekly = () => {
     const weekOfMonth = date.week() - dayjs(date).startOf('month').week() + 1;
     return weekOfMonth;
   }; const [selectedWeek, setSelectedWeek] = useState<number>(getWeekOfMonth(today));
-  const handleYearChange = (year: number) => { setSelectedYear(year); };
-  const handleMonthChange = (month: number) => { setSelectedMonth(month); };
-  const handleWeekChange = (week: number) => { setSelectedWeek(week); };
+  const handleYearChange = (year: number) => { setSelectedYear(year); amplitude.changeYear(); };
+  const handleMonthChange = (month: number) => { setSelectedMonth(month); amplitude.changeMonth(); };
+  const handleWeekChange = (week: number) => { setSelectedWeek(week); amplitude.changeWeek();};
 
   const getDatesForWeek = () => {
     var tmpDate = null;
@@ -109,18 +123,23 @@ const Weekly = () => {
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
 
   // 4. AI 일기 생성 버튼
-  const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
+  // const todayReport = repository.getDailyReportsByField("date", today.format('YYYY-MM-DD'));
+  const [todayReport, setTodayReport] = useState<repository.IDailyReport | null>(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')));
   const [isLodingModalVisible, setIsLodingModalVisible] = useState(false);
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
+  const [isCannotModalVisible, setIsCannotModalVisible] = useState(false);
+  const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
+  const [isWarningMove2AnotherDayModalVisible, setIsWarningMove2AnotherDayModalVisible] = useState(false);
+  const [isCanceled, setIsCanceled] = useState(false);
+  let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
-    Sentry.captureMessage('[일기 생성] 사용자가 일기 생성 버튼을 눌렀습니다!');
 
     setIsLodingModalVisible(true);
 
-    const todatStampList = [];
+    const todayStampList = [];
     getStamp(today).forEach((stamp) => {
       console.log("stamp.dateTime: ", stamp.dateTime);
-      todatStampList.push({
+      todayStampList.push({
         dateTime: stamp.dateTime,
         stampName: stamp.stampName,
         memo: stamp.memo,
@@ -128,47 +147,71 @@ const Weekly = () => {
     });
     const request = {
       userDto: getUserAsync(), // from async storage
-      todayStampList: todatStampList,
+      todayStampList: todayStampList,
     }
 
     console.log('ai 서버와의 통신 시작합니다');
-    sendDailyReport(request)
+    sendDailyReport(request, cancelTokenSource.token)
       .then((response) => {
-        console.log('date: ', response.date);
-        realm.write(() => {
-          console.log('title: ', response.title);
-          repository.createDailyReport({
-            // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
-            date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
-            title: response.title,
-            bodytext: response.bodytext,
-            keyword: response.keyword,
+        if (!isCanceled) {
+          console.log('date: ', response.date);
+          realm.write(() => {
+            console.log('title: ', response.title);
+            repository.createDailyReport({
+              // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
+              date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
+              title: response.title,
+              bodytext: response.bodytext,
+              keyword: response.keyword,
+            });
+            console.log("create default daily report finished");
+            setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
           });
-          console.log("create default daily report finished");
-        });
-        setIsLodingModalVisible(false);
-        setIsLodingFinishModalVisible(true);
+          setIsLodingModalVisible(false);
+          setIsLodingFinishModalVisible(true);
+        }
       })
       .catch((error) => {
-        console.log('Error', error.message);
-        setIsLodingModalVisible(false);
-        // todo - 에러 처리 해야함
-    });
+        if (axios.isCancel(error)) {
+          console.log('Request canceled', error.message);
+        } else {
+          console.log('Error', error.message);
+          setIsLodingModalVisible(false);
+          // todo - 에러 처리 해야함
+      }});
   };
-  useEffect(() => {
-    if (todayReport) {
-      setEditedTitle(todayReport.title);
-      setEditedBodytext(todayReport.bodytext);
-    }
-  }, [todayReport]);
+  const cancelRequest = () => {
+    setIsCanceled(true);
+    cancelTokenSource.cancel('Request canceled by the user');
+  };
+  // useEffect(() => {
+  //   if (todayReport) {
+  //     setEditedTitle(todayReport.title);
+  //     setEditedBodytext(todayReport.bodytext);
+  //   }
+  // }, [todayReport]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
+  const [tmpEditedTitle, setTmpEditedTitle] = useState(editedTitle);
   const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
+  const [tmpEditedBodyText, setTmpEditedBodyText] = useState(editedBodytext);
   const handleEditButton = () => { 
-    Sentry.captureMessage('[일기 수정] 사용자가 일기 수정 버튼을 눌렀습니다!');
-    setIsEditMode(true); 
+    setIsEditMode(true);
+    setEditedTitle(todayReport ? todayReport.title : '');
+    setEditedBodytext(todayReport ? todayReport.bodytext : '');
   };
-  const handleCancelButton = () => { setIsEditMode(false); };
+  const handleCancelButton = () => { 
+    setIsEditMode(false);
+    setEditedTitle(tmpEditedTitle);
+    setEditedBodytext(tmpEditedBodyText);
+  };
+  const handleCancelWhileMove2AnotherDayButton = (newDate: dayjs.Dayjs) => { 
+    setIsEditMode(false);
+    setEditedTitle(tmpEditedTitle);
+    setEditedBodytext(tmpEditedBodyText);
+    setToday(newDate); // 앰플리튜드 넣자
+    setTodayReport(repository.getDailyReportsByField("date", newDate.format('YYYY-MM-DD')))
+  };
   const handleSaveButton = () => {
     realm.write(() => {
       const reportToUpdate = realm.objects('DailyReport').filtered('date = $0', todayReport.date)[0];
@@ -178,6 +221,15 @@ const Weekly = () => {
       }
     });
     setIsEditMode(false);
+    setTmpEditedTitle(editedTitle);
+    setTmpEditedBodyText(editedBodytext);
+  };
+  const handleEditedTitleChange = (text) => {
+     setEditedTitle(text);
+  };
+
+  const handleEditedBodyTextChange = (text) => {
+    setEditedBodytext(text);
   };
 
   // tmp_createDummyData(); 
@@ -188,7 +240,10 @@ const Weekly = () => {
   return (
     
     <View style={{backgroundColor: '#FAFAFA', flex:1}}>
-
+      {/* <StatusBar
+        backgroundColor="#FFFFFF"
+        barStyle={'dark-content'}
+      /> */}
 
       {/* 1 & 2 */}
       <View style={{backgroundColor: 'white', zIndex: 1,}}>
@@ -198,7 +253,6 @@ const Weekly = () => {
           <Dropdown
             label="년"
             options={[
-              { label: '2022년', value: 2022 },
               { label: '2023년', value: 2023 },
               { label: '2024년', value: 2024 },
               // 이하 생략
@@ -209,7 +263,6 @@ const Weekly = () => {
           <Dropdown
             label="월"
             options={[
-              { label: '7월', value: 7 },
               { label: '8월', value: 8 },
               { label: '9월', value: 9 },
               { label: '10월', value: 10 },
@@ -239,8 +292,7 @@ const Weekly = () => {
         <View style={styles.emojisContainer}>
           {/* TODO - 스탬프가 7개 이상일 경우 +n 등을 띄워야 함 */}
           {getDatesBetween(startDate).map((date) => (
-            <TouchableOpacity key={date.format('YYYYMMDD')} onPress={() => 
-            handleTodayChange(date)}>
+            <TouchableOpacity key={date.format('YYYYMMDD')} onPress={() => handleTodayChange(date)}>
               <View style={[styles.day, date.isSame(today, 'day') && styles.day_today]}>
                 <Text style={[
                   styles.dayText,
@@ -279,7 +331,7 @@ const Weekly = () => {
             <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
             <TouchableOpacity onPress={() => {
               setIsDetailModalVisible(!isDetailModalVisible),
-              Sentry.captureMessage('[스탬프리스트] 사용자가 자세히 보기 버튼을 눌렀습니다!');
+              amplitude.showDetailModal();
               }}>
               <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
               {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
@@ -290,7 +342,7 @@ const Weekly = () => {
                 animationInTiming={200}
                 animationOut={"fadeOut"}
                 animationOutTiming={200}
-                onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}
+                onBackdropPress={() => {setIsDetailModalVisible(!isDetailModalVisible); amplitude.backToWeeklyFromDetailModal();}}
                 backdropColor='#CCCCCC' 
                 backdropOpacity={0.9}
                 style={{ alignItems:'center' }}
@@ -307,7 +359,7 @@ const Weekly = () => {
                 <View style={{flexDirection: 'row'}}>
                 <View style={{backgroundColor: 'white', borderRadius: 15, flex: 1, padding: 20, height: 500}}>
                   <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                    <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible);}}>
+                    <TouchableOpacity onPress={() => {setIsDetailModalVisible(!isDetailModalVisible); amplitude.backToWeeklyFromDetailModal();}}>
                       <FeatherIcon name='x' color="#737373" style={{ fontWeight: 'bold', fontSize: 20}}/>
                     </TouchableOpacity>
                     <Text style={{color: '#212429', fontSize: 16}}>스탬프 상세 히스토리</Text>
@@ -342,7 +394,7 @@ const Weekly = () => {
               <View style={[styles.title, {marginTop: 0,}]}>
                 <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>오늘의 일기</Text>
                 {!isEditMode ? (
-                  <TouchableOpacity onPress={handleEditButton}>
+                  <TouchableOpacity onPress={ () => {handleEditButton(); amplitude.editAIDiary();}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                       <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
                       <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
@@ -350,10 +402,10 @@ const Weekly = () => {
                   </TouchableOpacity>
                 ) : (
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={handleCancelButton}>
+                    <TouchableOpacity onPress={() => {setIsWarningModalVisible(true); amplitude.cancelToEditDiary();}}>
                       <Text style={{ fontSize: 12, color: '#495057' }}>취소</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleSaveButton}>
+                    <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary();}}>
                       <Text style={{ fontSize: 12, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
                     </TouchableOpacity>
                   </View>
@@ -379,7 +431,8 @@ const Weekly = () => {
                     <TextInput
                       style={diaryStyles.editDiary}
                       value={editedTitle}
-                      onChangeText={setEditedTitle}
+                      onChangeText={handleEditedTitleChange}
+                      onFocus={() => {amplitude.editTitle();}}
                     />
                   ) : (
                     <Text style={{ fontSize: 16, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
@@ -395,7 +448,8 @@ const Weekly = () => {
                     <TextInput
                       style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
                       value={editedBodytext}
-                      onChangeText={setEditedBodytext}
+                      onChangeText={handleEditedBodyTextChange}
+                      onFocus={() => {amplitude.editBodyText();}}
                       multiline
                     />
                   ) : (
@@ -420,19 +474,24 @@ const Weekly = () => {
               </View>
             </View>
           ) : ( getStamp(today).length < 2 ? (
-            <View style={diaryStyles.generateButton}>
+            <TouchableOpacity 
+              onPress={() => {setIsCannotModalVisible(true); amplitude.tryGenerateAIDiary_cannot();}} 
+              style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text>
+                {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
+                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>Moo에게 일기 작성을 요청해 봐요</Text>
               </View>
               <Image 
                 source={require('../assets/colorMooMini.png')}
                 style={{ width: 37, height: (39 * 37) / 37 , position: 'relative', bottom: 21.5, left: 122, overflow: 'hidden'}}></Image>
-              {/* <Text style={[diaryStyles.generateButtonText, { fontSize: 14 }]}> 스탬프가 2개 이상일 때 일기를 만들 수 있어요!</Text> */}
-            </View>
+            </TouchableOpacity>
           ) : (
-            <TouchableOpacity onPress={handleGenerateDiary} style={diaryStyles.generateButton}>
+            <TouchableOpacity 
+                onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can();}} 
+                style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text>
+                {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
+                <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>Moo에게 일기 작성을 요청해 봐요</Text>
               </View>
               <Image 
                 source={require('../assets/colorMooMini.png')}
@@ -455,20 +514,26 @@ const Weekly = () => {
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
                 source={require('../assets/colorMooMini.png')}
-                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
-              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중이다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
               </View>
               <View style={{alignItems: 'center',}}>
-                <Text style={{ color: '#475467', fontSize: 14, }}>AI 일기가 발행되고 있으니, 화면을 벗어나지 말라 무.</Text>
+                <Text style={{ color: '#475467', fontSize: 14, }}>AI 일기가 발행되고 있으니, 화면을 벗어나지 말라무.</Text>
                 <Text style={{ color: '#475467', fontSize: 14, }}>발행 중 이탈 시, 발행이 취소된다무...</Text>
               </View>
-              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.cancelBtn} onPress={() => setIsLodingModalVisible(false)}>
-                    <Text style={{ color: '#72D193', fontSize: 16, fontWeight: '600',}}>발행 취소</Text>
+                  <TouchableOpacity style={diaryStyles.cancelBtn} 
+                  onPress={() => {amplitude.waitingForAIDiary();}}
+                  // onPress={() => {
+                  //   cancelRequest();
+                  //   setIsLodingModalVisible(false);
+                  // }}
+                  >
+                    <Text style={{ color: '#72D193', fontSize: 14, fontWeight: '600',}}>조금만 기다려달라무 ...✏️💦</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -490,8 +555,8 @@ const Weekly = () => {
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
                 source={require('../assets/colorMooMini.png')}
-                style={{ width: 64, height: (67 * 64) / 64 , marginTop: 40,}}></Image>
-              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 20, }}>
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기가 발행됐다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
@@ -499,9 +564,117 @@ const Weekly = () => {
               <View style={{alignItems: 'center',}}>
                 <Text style={{ color: '#475467', fontSize: 14, }}>내가 멋지게 만든 일기를 확인해 봐라무!</Text>
               </View>
-              <View style={{ flexDirection: 'row', marginTop: 24 }}>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => setIsLodingFinishModalVisible(false)}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false); amplitude.backToWeeklyFromCanModal();}}>
+                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                        
+            </View>
+          </Modal>
+          {/* 4-3. 일기 생성 불가 모달 */}
+          <Modal 
+            isVisible={isCannotModalVisible}
+            animationIn={"fadeIn"}
+            animationOut={"fadeOut"}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={diaryStyles.finishLodingModal}>
+              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>일기를 만들 재료가 부족하다</Text>
+                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>...</Text>
+              </View>
+              <View style={{alignItems: 'center',}}>
+                <Text style={{ color: '#475467', fontSize: 14, }}>감정을 두 개 이상 주면 만들 수 있다무!</Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', flex: 1,}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsCannotModalVisible(false); amplitude.backToWeeklyFromCannotModal();}}>
+                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                        
+            </View>
+          </Modal>
+          {/* 4-4. 일기 수정 중 취소 시 경고 모달 */}
+          <Modal 
+            isVisible={isWarningModalVisible}
+            animationIn={"fadeIn"}
+            animationOut={"fadeOut"}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={diaryStyles.finishLodingModal}>
+              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>수정을 취소하겠냐</Text>
+                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
+              </View>
+              <View style={{alignItems: 'center',}}>
+                <Text style={{ color: '#475467', fontSize: 14, }}>작업 중인 내용이 저장되지 않는다무.</Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
+                  <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningModalVisible(false); amplitude.cancelCancelEditingDiary();}}>
+                    <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>아냐 잠깐 ...</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelButton(); setIsWarningModalVisible(false); amplitude.confirmCancelEditingDiary();}}>
+                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>취소할래</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                        
+            </View>
+          </Modal>
+          {/* 4-5. 일기 수정 중 이동 시 경고 모달 */}
+          <Modal 
+            isVisible={isWarningMove2AnotherDayModalVisible}
+            animationIn={"fadeIn"}
+            animationOut={"fadeOut"}
+            backdropColor='#CCCCCC' 
+            backdropOpacity={0.9}
+            style={{ alignItems:'center' }}
+            backdropTransitionInTiming={0} // Disable default backdrop animation
+            backdropTransitionOutTiming={0} // Disable default backdrop animation
+          >
+            <View style={diaryStyles.finishLodingModal}>
+              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+              <Image 
+                source={require('../assets/colorMooMini.png')}
+                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>다른 날짜로 이동하겠냐</Text>
+                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
+              </View>
+              <View style={{alignItems: 'center',}}>
+                <Text style={{ color: '#475467', fontSize: 14, }}>수정 중인 내용이 저장되지 않는다무.</Text>
+              </View>
+              <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
+                  <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningMove2AnotherDayModalVisible(false); amplitude.cancel2move2AnotherDayWhileEditingDiary();}}>
+                    <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false); amplitude.move2AnotherDayWhileEditingDiary();}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
@@ -719,6 +892,7 @@ const diaryStyles = StyleSheet.create({
     paddingHorizontal: 16,
     width: 343, 
     height: 302,
+    // height: 218,
     shadowColor: 'black',
     shadowRadius: 50,           // 그림자 블러 반경
     elevation: 5, 
@@ -756,6 +930,17 @@ const diaryStyles = StyleSheet.create({
     padding: 10,
     marginBottom: 16,
     backgroundColor: '#72D193', 
+    borderRadius: 8,
+    flex: 1,
+  },
+  cancelOut2EditBtn: {
+    borderColor: '#D0D5DD', borderWidth: 1,
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: '#ffffff', 
     borderRadius: 8,
     flex: 1,
   },
