@@ -53,7 +53,6 @@ Sentry.init({
 });
 
 AmplitudeInit();
-amplitude.beginSession(); // 앱 시작
 
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;

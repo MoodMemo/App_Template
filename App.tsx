@@ -49,6 +49,7 @@ import { create } from 'react-test-renderer';
 //import {requestUserPermission, notificationListener} from "./src/utils/PushNotification";
 
 import * as Sentry from '@sentry/react-native';
+import * as amplitude from './AmplitudeAPI';
 
 const Stack = createNativeStackNavigator();
 
@@ -120,7 +121,6 @@ function App(): JSX.Element {
       }
   });
 
-
   (async () => { 
     // Do something before delay
     await new Promise(f => setTimeout(f, 600));
@@ -130,6 +130,8 @@ function App(): JSX.Element {
     }
   )();
 
+  amplitude.beginSession(); // 앱 시작
+  
   if (isRegistered) {
     repository.updatePushedStampCount(); // db 4->5 migration
     console.log("isRegistered: " + isRegistered);
