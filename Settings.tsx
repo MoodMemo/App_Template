@@ -47,7 +47,7 @@ const Settings = () => {
             // comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback);
-        amplitude.test11(userFeedback.comments)
+        amplitude.send2sentry(userFeedback.comments);
         /*
         const userFeedback2: UserFeedback = {
             event_id: sentryId,
@@ -299,6 +299,7 @@ const Settings = () => {
                 <TouchableOpacity disabled={!isNotificationEnabled}
                 onPress={async () => {
                     setIsNotificationListModalVisible(!isNotificationListModalVisible);
+                    amplitude.intoNotiList();
                     }}>
                     <View
                         style={{

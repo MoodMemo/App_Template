@@ -85,8 +85,8 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                             justifyContent: 'space-between'
                             }}>
                                 <TouchableOpacity onPress={()=>{
-                                    amplitude.saveRenewNoti();
                                     const notificationTime=String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
+                                    amplitude.saveRenewNoti(notificationTime);
                                     if(notificationTime===time){
                                         setIsModalVisible(!isModalVisible);
                                     }

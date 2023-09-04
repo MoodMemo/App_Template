@@ -16,31 +16,55 @@ export function beginSession() {
   amplitude.track('START');           
 }
 export function moveToHome() {
-  amplitude.track('stamp:');           
+  amplitude.track('stamp:',
+  {
+    view: 'stamp',});          
 }
 export function moveToWeekly() {
-  amplitude.track('weekly:');           
+  amplitude.track('weekly:', 
+  {
+    view: 'weekly',});           
 }
 export function moveToSetting() {
-  amplitude.track('setting:'); // @이준하 -> 로깅 안되는 부분 해결해주세요 ! + 시작할 때 뜨는 것도 확인바람!
+  amplitude.track('setting:',
+  {
+    view: 'setting',});
+    // @이준하 -> 로깅 안되는 부분 해결해주세요 ! + 시작할 때 뜨는 것도 확인바람!
 }
 export function moveToStatistics() {
-  amplitude.track('statistics:');           
+  amplitude.track('statistics:',
+  {
+    view: 'statistics',});           
 }
 
 
 /* AnimatedViewBirthDay view */ // TODO - 밑에 있는 친구들 싹 확인한 뒤에 마지막으로 체크할 것
 export function userRegiStart() {
-  amplitude.track('intro: submit start');
+  amplitude.track('intro: confirm, start',
+  {
+    view: 'intro',
+    action: 'confirm',});
 }
-export function userRegiName() {
-  amplitude.track('intro: submit name');        
+export function userRegiName(name: String) {
+  amplitude.track('intro: confirm, name',
+  {
+    view: 'intro',
+    action: 'confirm',
+    name});
 }
-export function userRegiBirthday() {
-  amplitude.track('intro: submit birthday');        
+export function userRegiBirthday(birthday: String) {
+  amplitude.track('intro: confirm, birthday',
+  {
+    view: 'intro',
+    action: 'confirm',
+    birthday});
 }
-export function userRegiJob_Fin() {
-  amplitude.track('intro: submit job');    
+export function userRegiJob_Fin(job: String) {
+  amplitude.track('intro: confirm, job',
+  {
+    view: 'intro',
+    action: 'confirm',
+    job});
 }
 /* AnimatedViewBirthDay view */
 export function userRegiFinish() {
@@ -50,203 +74,454 @@ export function userRegiFinish() {
 
 /* home(stamp) view */
 export function showCustomStampList() {
-  amplitude.track('stamp: into - custom stamp list');
+  amplitude.track('stamp: click, custom stamp list',
+  {
+    view: 'stamp',
+    action: 'click',});
 }
 export function deleteCustomStamp() {
-  amplitude.track('stamp: delete custom stamp');      
+  amplitude.track('stamp: confirm, delete, in custom stamp list',
+  {
+    view: 'stamp',
+    action: 'confirm',
+    secondView: 'custom stamp list',});
 }
 export function choiceDeleteCustomStampCandidate() {
-  amplitude.track('stamp: choice delete custom stamp candidate');
+  amplitude.track('stamp: click, candidate to delete, in custom stamp list',
+  {
+    view: 'stamp',
+    action: 'click',
+    secondView: 'custom stamp list',});
 }
 export function tryAddCustomStamp() {
-  amplitude.track('stamp: into - add custom stamp');
+  amplitude.track('stamp: click, add new, in custom stamp list',
+  {
+    view: 'stamp',
+    action: 'click',
+    secondView: 'custom stamp list',});
 }
 export function submitAddCustomStamp(stampName: String) {
-  amplitude.track('stamp: submit - add custom stamp', { stampName });
+  amplitude.track('stamp: comfirm, add new, in custom stamp list', 
+  { 
+    view: 'stamp',
+    action: 'confirm',
+    secondView: 'custom stamp list',
+    stampName });
 }
 export function cancelAddCustomStamp() {
-  amplitude.track('stamp: cancel - add custom stamp');
+  amplitude.track('stamp: cancel, add new, in custom stamp list',
+  {
+    view: 'stamp',
+    action: 'cancel',
+    secondView: 'custom stamp list',});
 }
 export function exitCustomStampList() {
-  amplitude.track('stamp: exit - custom stamp list');
+  amplitude.track('stamp: cancel, custom stamp list, back to stamp',
+  {
+    view: 'stamp',
+    action: 'cancel',});
 }
-export function pushStamp(stampName: String) { // TODO - 여기부터 다시!
-  // tODO -> 스탬프 이름 받자
-  amplitude.track('stamp: push stamp', { stampName });       
+export function pushStamp(stampName: String) {
+  amplitude.track('stamp: click, stamp', 
+  { 
+    view: 'stamp',
+    action: 'click',
+    stampName });    
 }
 export function tryChangeStampTime() {
-  amplitude.track('stamp: try to change stamp time');
+  amplitude.track('stamp: click, time, in push stamp',
+  {
+    view: 'stamp',
+    action: 'click',
+    secondView: 'push stamp',});
 }
 export function submitChangeStampTime() {
-  amplitude.track('stamp: submit change stamp time');     
+  amplitude.track('stamp: confirm, time, in push stamp',
+  {
+    view: 'stamp',
+    action: 'confirm',
+    secondView: 'push stamp',});     
 }
 export function cancelChangeStampTime() {
-  amplitude.track('stamp: cancel change stamp time');     
+  amplitude.track('stamp: cancel, time, in push stamp',
+  {
+    view: 'stamp',
+    action: 'cancel',
+    secondView: 'push stamp',});     
 }
 export function editStampMemo() {
-  amplitude.track('stamp: edit stamp memo');     
+  amplitude.track('stamp: click, memo, in push stamp',
+  {
+    view: 'stamp',
+    action: 'click',
+    secondView: 'push stamp',});
 }
-export function submitStamp() {
-  amplitude.track('stamp: submit stamp');
+export function submitStamp() { // 나중에는 여기도 스탬프 이름 받기
+  amplitude.track('stamp: confirm, stamp',
+  {
+    view: 'stamp',
+    action: 'confirm',});
 }
 export function cancelStamp() {
-  amplitude.track('stamp: cancel stamp');
+  amplitude.track('stamp: cancel, stamp',
+  {
+    view: 'stamp',
+    action: 'cancel',});
+}
+export function confirmPushedStampFinModal() {
+  amplitude.track('stamp: confirm, stamp, in finish modal',
+  {
+    view: 'stamp',
+    action: 'confirm',
+    secondView: 'finish modal',});
 }
 // TODO - 정렬 방식 변경은 추후 업데이트에 포함될 예정
 
 
 /* weekly view */
-export function changeToday() {
-  amplitude.track('weekly: click another day', {view: 'weekly'});           
+export function changeToday(today: String) {
+  amplitude.track('weekly: confirm, today', 
+  {
+    view: 'weekly',
+    action: 'confirm',
+    today});           
 }
 export function clickDropDown() {
-  amplitude.track('weekly: click drop down', {view: 'weekly'});
+  amplitude.track('weekly: click, dropdown', 
+  {
+    view: 'weekly',
+    action: 'click'});
 }
 export function changeYear() {
-  amplitude.track('weekly: change year', {view: 'weekly'});
+  amplitude.track('weekly: confirm, year', 
+  {
+    view: 'weekly',
+    action: 'confirm',
+  });
 }
 export function changeMonth() {
-  amplitude.track('weekly: change month', {view: 'weekly'});
+  amplitude.track('weekly: confirm, month', 
+  {
+    view: 'weekly',
+    action: 'confirm',
+  });
 }
 export function changeWeek() {
-  amplitude.track('weekly: change week', {view: 'weekly'});
+  amplitude.track('weekly: confirm, week', 
+  {
+    view: 'weekly',
+    action: 'confirm',
+  });
 }
-
-export function showDetailModal() {
-  amplitude.track('weekly: into - detail modal', {view: 'weekly'});   
+export function showDetailModal(today: String) {
+  amplitude.track('weekly: click, detail modal', 
+  {
+    view: 'weekly',
+    action: 'click',
+    today});   
 }
 export function backToWeeklyFromDetailModal() {
-  amplitude.track('weekly: exit - detail modal', {view: 'weekly'});
+  amplitude.track('weekly: cancel, detail modal, back to weekly', 
+  {
+    view: 'weekly',
+    action: 'cancel',});
 }
-export function addNewStampInDetailModal() {
-  amplitude.track('weekly: push new stamp in detail modal', {view: 'weekly'});           
+export function addNewStampInDetailModal() { // developing yet
+  amplitude.track('weekly: click, new stamp, in detail modal', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'detail modal',});
 }
-
-export function editAIDiary() {
-  amplitude.track('weekly: edit diary', {view: 'weekly'});
+export function editAIDiary(today: String) {
+  amplitude.track('weekly: click, edit diary', 
+  {
+    view: 'weekly',
+    action: 'click',});
 }
 export function cancelToEditDiary() {
-  amplitude.track('weekly: cancel editing diary', {view: 'weekly'});     
+  amplitude.track('weekly: click, cancel to edit diary', 
+  {
+    view: 'weekly',
+    action: 'cancel',});     
 }
-export function saveEditedDiary() {
-  amplitude.track('weekly: save edited diary', {view: 'weekly'});
+export function saveEditedDiary(today: String) {
+  amplitude.track('weekly: confirm, edit diary', 
+  {
+    view: 'weekly',
+    action: 'confirm',});
 }
 export function editTitle() {
-  amplitude.track('weekly: edit title', {view: 'weekly'});
+  amplitude.track('weekly: click, title, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'edit diary',}); 
 }
 export function editBodyText() {
-  amplitude.track('weekly: edit body text', {view: 'weekly'});
+  amplitude.track('weekly: click, body text, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'edit diary',});
 }
-export function confirmCancelEditingDiary() {
-  amplitude.track('weekly: confirm cancel editing diary', {view: 'weekly'});           
+export function clickKeyword() {
+  amplitude.track('weekly: click, keyword, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'edit diary',
+    status: 'not yet'  });
+}
+export function confirmCancelEditingDiary(today: String) {
+  amplitude.track('weekly: confirm, cancel, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'confirm',
+    secondView: 'edit diary',});
 }
 export function cancelCancelEditingDiary() {
-  amplitude.track('weekly: cancel cancel editing diary', {view: 'weekly'});
+  amplitude.track('weekly: cancel, cancel, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'cancel',
+    secondView: 'edit diary',});
 }
-
-export function tryGenerateAIDiary_cannot() {
-  amplitude.track('weekly: into - generate AI diary (cannot)', {view: 'weekly'});
-}
-export function backToWeeklyFromCannotModal() {
-  amplitude.track('weekly: exit - cannot modal (fail to generate AI diary)', {view: 'weekly'});
-}
-export function tryGenerateAIDiary_can() {
-  amplitude.track('weekly: into - generate AI diary (can)', {view: 'weekly'}); 
-}
-export function waitingForAIDiary() {
-  amplitude.track('weekly: waiting for AI diary', {view: 'weekly'});
-}
-export function backToWeeklyFromCanModal() {
-  amplitude.track('weekly: exit - can modal (finish generating AI diary)', {view: 'weekly'});
+export function click2move2AnotherDayWhileEditingDiary(moveAnotherDay: String) {
+  amplitude.track('weekly: click, move another day, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'edit diary',
+    moveAnotherDay});
 }
 export function cancel2move2AnotherDayWhileEditingDiary() {
-  amplitude.track('weekly: cancel to move to another day while editing diary', {view: 'weekly'});
+  amplitude.track('weekly: cancel, move another day, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'cancel',
+    secondView: 'edit diary',});
 }
-export function move2AnotherDayWhileEditingDiary() {
-  amplitude.track('weekly: move to another day while editing diary', {view: 'weekly'});
+export function move2AnotherDayWhileEditingDiary(moveAnotherDay: String) {
+  amplitude.track('weekly: confirm, move another day, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'confirm',
+    secondView: 'edit diary',
+    moveAnotherDay});
+}
+export function tryGenerateAIDiary_cannot(today: String) {
+  amplitude.track('weekly: click, generate AI diary (cannot)', 
+  {
+    view: 'weekly',
+    action: 'click',
+    today});
+}
+export function backToWeeklyFromCannotModal() {
+  amplitude.track('weekly: cancel, fail to generate AI diary modal, back to weekly)', 
+  {
+    view: 'weekly',
+    action: 'cancel',});
+}
+export function tryGenerateAIDiary_can(today: String) {
+  amplitude.track('weekly: click, generate AI diary (can)', 
+  {
+    view: 'weekly',
+    action: 'click',
+    today}); 
+}
+export function waitingForAIDiary() {
+  // 여기에 날짜 받으면 에러나니까 절대 네버 넣지 말것 ...!
+  amplitude.track('weekly: click, wait for AI diary, in generate AI diary modal', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'generate AI diary modal',}); 
+}
+export function backToWeeklyFromCanModal(today: String) {
+  amplitude.track('weekly: confirm, finish to generate AI diary', 
+  {
+    view: 'weekly',
+    action: 'confirm',
+    today});
 }
 
 
 /* setting view */
 export function intoProfile() {
-  amplitude.track('setting: click profile');
+  amplitude.track('setting: click, profile',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function setProfileName() {
-  amplitude.track('setting: edit profile name');
+  amplitude.track('setting: click, name, in profile',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'profile',});
 }
 export function setProfileBirthday() {
-  amplitude.track('setting: edit profile birthday');  
+  amplitude.track('setting: click, birthday, in profile',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'profile',});  
 }
 export function setProfileJob() {
-  amplitude.track('setting: edit profile job');
+  amplitude.track('setting: click, job, profile',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'profile',});
 }
 export function saveNewProfile() {
-  amplitude.track('setting: save new profile');    
+  amplitude.track('setting: confirm, profile',
+  {
+    view: 'setting',
+    action: 'confirm',});    
 }
 export function cancelToChangeProfile() { // backdrop 역시 같음
-  amplitude.track('setting: cancel to change profile');  
+  amplitude.track('setting: cancel, profile',
+  {
+    view: 'setting',
+    action: 'cancel',});  
 }
 export function connectToKakaoChatBot() { // backdrop 역시 같음
-  amplitude.track('setting: try to kakao chat bot');
+  amplitude.track('setting: click, kakao chat bot',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function notiONtoOFF() { // backdrop 역시 같음
-  amplitude.track('setting: turn off notification');
+  amplitude.track('setting: click, noti off',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function notiOFFtoON() { // backdrop 역시 같음
-  amplitude.track('setting: turn on notification');
+  amplitude.track('setting: click, noti on',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function notiONwhenPermissionDenied() { // TODO - amplitude
-  amplitude.track('setting: turn on notification (permission denied)');
+  amplitude.track('setting: click, noti on (permission denied)',
+  {
+    view: 'setting',
+    action: 'click',
+    status: 'permission ERROR',});
 }
 export function intoNotiList() { // backdrop 역시 같음
-  amplitude.track('setting: click notification list');
+  amplitude.track('setting: click, notification',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function intoAddNewNoti() { // backdrop 역시 같음
-  amplitude.track('setting: try to add new notification');
+  amplitude.track('setting: click, add new, in notification',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'notification',});
 }
 export function saveNewNoti(notiTime: String) { // 알림 시각 받기
-  amplitude.track('setting: save new notification', { notiTime });
+  amplitude.track('setting: confirm, add new, in notification', {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'notification', 
+    notiTime });
 }
 export function saveDuplicatedNoti() { // TODO - amplitude
-  amplitude.track('setting: save duplicated notification');
+  amplitude.track('setting: confirm, duplicated, in notification',
+  {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'notification',
+    status: 'validate ERROR',});
 }
 export function cancelNewNoti() { // backdrop 역시 같음
-  amplitude.track('setting: cancel to add new notification');
+  amplitude.track('setting: cancel, add new, in notification',
+  {
+    view: 'setting',
+    action: 'cancel',
+    secondView: 'notification',});
 }
 export function intoRenewNoti() { // backdrop 역시 같음
-  amplitude.track('setting: try to edit notification');
+  amplitude.track('setting: click, edit, in notification');
 }
-export function saveRenewNoti() { // 알림 시각(기존, 이후) 받기
-  amplitude.track('setting: save edited notification');
+export function saveRenewNoti(notiTime: String) { // 알림 시각(기존, 이후) 받기
+  amplitude.track('setting: confirm, edit, in notification',
+  {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'notification',
+    notiTime,});
 }
 export function cancelRenewNoti() { // backdrop 역시 같음
-  amplitude.track('setting: cancel to edit notification');
+  amplitude.track('setting: cancel, edit, in notification',
+  {
+    view: 'setting',
+    action: 'cancel',
+    secondView: 'notification',});
 }
 export function deleteNoti() { // 알림 시각 받기
-  amplitude.track('setting: delete notification');
+  amplitude.track('setting: confirm, delete, in notification',
+  {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'notification',});
 }
 export function outToSettingFromNotiList() { // TODO - amplitude
-  amplitude.track('setting: close notification list');
+  amplitude.track('setting: cancel, notification, back to setting',
+  {
+    view: 'setting',
+    action: 'cancel',
+  });
 }
 export function intoGuide() {
-  amplitude.track('setting: click guide');
+  amplitude.track('setting: click, guide',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function outToSettingFromGuide() { 
-  amplitude.track('setting: close guide');        
+  amplitude.track('setting: cancel, guide, back to setting',
+  {
+    view: 'setting',
+    action: 'cancel',});        
 }
 export function intoServiceCenter() {
-  amplitude.track('setting: click service center');           
+  amplitude.track('setting: click, service center',
+  {
+    view: 'setting',
+    action: 'click',});           
+}
+export function send2sentry(memo: string) {
+  amplitude.track('setting: confirm, feedback, in service center', {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'service center',
+    memo});       
 }
 export function outToSettingFromServiceCenter() { 
-  amplitude.track('setting: close service center');
+  amplitude.track('setting: cancel, service center, back to setting',
+  {
+    view: 'setting',
+    action: 'cancel',});
 }
 export function intoCoffee() { 
-  amplitude.track('setting: click coffee');
+  amplitude.track('setting: click, coffee',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function outToSettingFromCoffee() { 
-  amplitude.track('setting: close coffee');       
+  amplitude.track('setting: cancel, coffee, back to setting',
+  {
+    view: 'setting',
+    action: 'cancel',});       
 }
-
 
 
 export function test1() { 
@@ -281,7 +556,5 @@ export function test10() {
   amplitude.track('**} else {');       
 }
 
-export function test11(memo: string) {
-  amplitude.track('** realm.write(() => {', {memo});       
-}
+
 

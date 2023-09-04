@@ -93,11 +93,12 @@ const Weekly = () => {
   const [tryToChangeToday, setTryToChangeToday] = useState<dayjs.Dayjs>(today);
   const handleTodayChange = (date: dayjs.Dayjs) => { 
     if (isEditMode) {
-      setTryToChangeToday(date); // 앰플리튜드 - 일기 수정 중 - 다른 날짜 클릭
+      setTryToChangeToday(date);
+      amplitude.click2move2AnotherDayWhileEditingDiary(date.format('YYYY-MM-DD'));
       setIsWarningMove2AnotherDayModalVisible(true);
     }
     else {
-      setToday(date); amplitude.changeToday();
+      setToday(date); amplitude.changeToday(date.format('YYYY-MM-DD'));
       setTodayReport(repository.getDailyReportsByField("date", date.format('YYYY-MM-DD')))
     }
   };
@@ -206,6 +207,7 @@ const Weekly = () => {
     setEditedBodytext(tmpEditedBodyText);
   };
   const handleCancelWhileMove2AnotherDayButton = (newDate: dayjs.Dayjs) => { 
+    amplitude.move2AnotherDayWhileEditingDiary(newDate.format('YYYY-MM-DD'));
     setIsEditMode(false);
     setEditedTitle(tmpEditedTitle);
     setEditedBodytext(tmpEditedBodyText);
@@ -331,7 +333,7 @@ const Weekly = () => {
             <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>감정 리스트</Text>
             <TouchableOpacity onPress={() => {
               setIsDetailModalVisible(!isDetailModalVisible),
-              amplitude.showDetailModal();
+              amplitude.showDetailModal(today.format('YYYY-MM-DD'));
               }}>
               <Text style={{fontSize: 12, color: '#495057'}}>자세히 보기</Text>
               {/* <Modal presentationStyle={"fullScreen pageSheet, formSheet"}/> */}
@@ -394,7 +396,7 @@ const Weekly = () => {
               <View style={[styles.title, {marginTop: 0,}]}>
                 <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>오늘의 일기</Text>
                 {!isEditMode ? (
-                  <TouchableOpacity onPress={ () => {handleEditButton(); amplitude.editAIDiary();}}>
+                  <TouchableOpacity onPress={ () => {handleEditButton(); amplitude.editAIDiary(today.format('YYYY-MM-DD'));}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                       <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
                       <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
@@ -405,7 +407,7 @@ const Weekly = () => {
                     <TouchableOpacity onPress={() => {setIsWarningModalVisible(true); amplitude.cancelToEditDiary();}}>
                       <Text style={{ fontSize: 12, color: '#495057' }}>취소</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary();}}>
+                    <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary(today.format('YYYY-MM-DD'));}}>
                       <Text style={{ fontSize: 12, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
                     </TouchableOpacity>
                   </View>
@@ -461,7 +463,10 @@ const Weekly = () => {
                 {isEditMode ? (
                   <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
                     {todayReport.keyword.map((keyword) => (
-                      <Text key={keyword} style={[diaryStyles.keyword, {color:'#DBDBDB'}]}>{keyword}</Text>
+                      <TouchableOpacity key={keyword} style={diaryStyles.keyword} onPress={() => {amplitude.clickKeyword();}} disabled={true}>
+                        <Text style={{color:'#DBDBDB'}}>{keyword}</Text>
+                      </TouchableOpacity>
+                      // <Text key={keyword} style={[diaryStyles.keyword, {color:'#DBDBDB'}]}>{keyword}</Text>
                     ))}
                   </View>
                 ) : (
@@ -475,7 +480,7 @@ const Weekly = () => {
             </View>
           ) : ( getStamp(today).length < 2 ? (
             <TouchableOpacity 
-              onPress={() => {setIsCannotModalVisible(true); amplitude.tryGenerateAIDiary_cannot();}} 
+              onPress={() => {setIsCannotModalVisible(true); amplitude.tryGenerateAIDiary_cannot(today.format('YYYY-MM-DD'));}} 
               style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                 {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
@@ -487,7 +492,7 @@ const Weekly = () => {
             </TouchableOpacity>
           ) : (
             <TouchableOpacity 
-                onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can();}} 
+                onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}} 
                 style={diaryStyles.generateButton}>
               <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                 {/* <Text style={[diaryStyles.generateButtonText, { color: 'white'}]}>무지니에게 일기 작성을 요청해 봐요</Text> */}
@@ -566,7 +571,7 @@ const Weekly = () => {
               </View>
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false); amplitude.backToWeeklyFromCanModal();}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false); amplitude.backToWeeklyFromCanModal(today.format('YYYY-MM-DD'));}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
@@ -637,7 +642,7 @@ const Weekly = () => {
                   <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningModalVisible(false); amplitude.cancelCancelEditingDiary();}}>
                     <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>아냐 잠깐 ...</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelButton(); setIsWarningModalVisible(false); amplitude.confirmCancelEditingDiary();}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelButton(); setIsWarningModalVisible(false); amplitude.confirmCancelEditingDiary(today.format('YYYY-MM-DD'));}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>취소할래</Text>
                   </TouchableOpacity>
                 </View>
@@ -674,7 +679,7 @@ const Weekly = () => {
                   <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningMove2AnotherDayModalVisible(false); amplitude.cancel2move2AnotherDayWhileEditingDiary();}}>
                     <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false); amplitude.move2AnotherDayWhileEditingDiary();}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false);}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
