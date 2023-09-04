@@ -239,6 +239,7 @@ const AnimatedViewBirthday = () => {
 
   const handleNext = async () => {
     if (section === 'start') {
+        // amplitude.userRegiStart();
         setSection('name');
     }
     else if (section === 'name') {
@@ -437,7 +438,7 @@ const AnimatedViewBirthday = () => {
               </View>}
               <TouchableOpacity style={styles.button} onPress={()=>{
                 handleNext();
-                amplitude.userRegiBirthday();
+                amplitude.userRegiBirthday(birthday.toDateString());
               }}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
@@ -482,7 +483,7 @@ const AnimatedViewBirthday = () => {
               </View>}
               <TouchableOpacity style={styles.button} onPress={()=>{
                 handleNext();
-                amplitude.userRegiJob_Fin();
+                amplitude.userRegiJob_Fin(job);
               }}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>
@@ -537,7 +538,7 @@ const AnimatedViewBirthday = () => {
               </View>}
               <TouchableOpacity style={styles.button} onPress={() => {
                 handleNext();
-                amplitude.userRegiName();
+                amplitude.userRegiName(name);
               }}>
                   <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
               </TouchableOpacity>

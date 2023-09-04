@@ -40,16 +40,31 @@ export function moveToStatistics() {
 
 /* AnimatedViewBirthDay view */ // TODO - 밑에 있는 친구들 싹 확인한 뒤에 마지막으로 체크할 것
 export function userRegiStart() {
-  amplitude.track('intro: submit start');
+  amplitude.track('intro: confirm, start',
+  {
+    view: 'intro',
+    action: 'confirm',});
 }
-export function userRegiName() {
-  amplitude.track('intro: submit name');        
+export function userRegiName(name: String) {
+  amplitude.track('intro: confirm, name',
+  {
+    view: 'intro',
+    action: 'confirm',
+    name});
 }
-export function userRegiBirthday() {
-  amplitude.track('intro: submit birthday');        
+export function userRegiBirthday(birthday: String) {
+  amplitude.track('intro: confirm, birthday',
+  {
+    view: 'intro',
+    action: 'confirm',
+    birthday});
 }
-export function userRegiJob_Fin() {
-  amplitude.track('intro: submit job');    
+export function userRegiJob_Fin(job: String) {
+  amplitude.track('intro: confirm, job',
+  {
+    view: 'intro',
+    action: 'confirm',
+    job});
 }
 /* AnimatedViewBirthDay view */
 export function userRegiFinish() {
