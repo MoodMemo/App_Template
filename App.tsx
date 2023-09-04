@@ -9,6 +9,8 @@ import React, {useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   Alert,
+  BackHandler,
+  Image,
   Linking,
   PermissionsAndroid,
   Platform,
@@ -17,6 +19,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
@@ -68,42 +71,10 @@ const initiailze = () => {
   });
 }
 
-const AppVersionCheck = async () => {
-
-  console.log("첫진입 시작");
-  let CurrentVersion = VersionCheck.getCurrentVersion();
-  let LatestVersion = await VersionCheck.getLatestVersion();
-  console.log(LatestVersion);
-  VersionCheck.needUpdate({
-    currentVersion: CurrentVersion,
-    latestVersion: LatestVersion,
-  }).then((res: any) => {
-    if (res.isNeeded) {
-      Alert.alert("필수 업데이트 사항이 있습니다.", "업데이트를 진행해주세요.", [
-        {
-          text: "업데이트",
-          onPress: () => {
-            if (Platform.OS == "android") {
-              Linking.openURL('https://play.google.com/store/apps/details?id=com.moodmemo');
-            } else {
-              Linking.openURL('a');
-            }
-          },
-        },
-        {
-          text: "취소",
-          onPress: () => {
-            console.log('업데이트 안 하신답니다');
-          },
-        },
-      ]);
-    }
-  });
-};
-
 function App(): JSX.Element {
 
   const [isRegistered, setIsRegistered] = useState(false);
+  const [isUpdateNeeded, setIsUpdateNeeded] = useState(false);
 
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -111,6 +82,18 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const AppVersionCheck = async () => {
+    let CurrentVersion = VersionCheck.getCurrentVersion();
+    let LatestVersion = await VersionCheck.getLatestVersion();
+    VersionCheck.needUpdate({
+      currentVersion: CurrentVersion,
+      latestVersion: LatestVersion,
+    }).then((res: any) => {
+      if (res.isNeeded) {
+        setIsUpdateNeeded(true);
+      }
+    });
+  };
 
   //initiailze(); //처음에는 주석 해제하고 실행해서 초기화 한 다음에 바로 껐다가, 주석 처리하고 다시 실행합시다!
 
@@ -131,8 +114,70 @@ function App(): JSX.Element {
   )();
 
   amplitude.beginSession(); // 앱 시작
-  
-  if (isRegistered) {
+
+  if (isUpdateNeeded) {
+    console.log('update needed');
+    return (
+      <SafeAreaView style={{backgroundColor:'#55B275',flex:1,justifyContent:'center',alignItems:'center',}}>
+        <View style={{
+          backgroundColor:"#FFFAF4",
+          width:330,
+          height:280,
+          justifyContent:'center',
+          alignItems:'center',
+          borderRadius:15
+        }}>
+          <Image 
+                source={require('./assets/colorMooMini.png')}
+                style={{width:74*0.8,height:78*0.8,position: 'relative', overflow: 'hidden',marginBottom:20,marginTop:10}}></Image>
+          <Text style={{fontSize:18,fontWeight:'bold',color:'#101828'}}>업데이트가 필요하다<Text style={{fontSize:18,fontWeight:'bold',color:'#FFCC4D'}}>무</Text></Text>
+          <Text style={{color:'#475467',marginTop:10}}>더 새로워진 무드메모 앱으로</Text>
+          <Text style={{color:'#475467',marginBottom:24}}>업데이트해달라무~</Text>
+          <View style={{flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        width:'90%'}}>
+            <TouchableOpacity onPress={()=>{
+              BackHandler.exitApp();
+            }}>
+              <View style={{
+                backgroundColor:"#FFFFFF",
+                width:140,
+                height:44,
+                justifyContent:'center',
+                alignItems:'center',
+                borderRadius:8,
+                borderColor:'#72D193',
+                borderWidth:1,
+              }}>
+                <Text style={{fontSize:16,fontWeight:'bold',color:'#72D193'}}>앱 종료</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>{
+              if (Platform.OS == "android") {
+                Linking.openURL('https://play.google.com/store/apps/details?id=com.moodmemo');
+              } else {
+                Linking.openURL('a');
+              }
+            }}>
+              <View style={{
+                  backgroundColor:"#72D193",
+                  width:140,
+                  height:44,
+                  justifyContent:'center',
+                  alignItems:'center',
+                  borderRadius:8,
+                  borderColor:'#72D193',
+                  borderWidth:1,
+              }}>
+                <Text style={{fontSize:16,fontWeight:'bold',color:'#FFFFFF'}}>업데이트 하기</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    )
+  }
+  else if (isRegistered) {
     repository.updatePushedStampCount(); // db 4->5 migration
     console.log("isRegistered: " + isRegistered);
     return (
