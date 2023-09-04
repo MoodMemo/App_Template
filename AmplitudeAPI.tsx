@@ -16,16 +16,25 @@ export function beginSession() {
   amplitude.track('START');           
 }
 export function moveToHome() {
-  amplitude.track('stamp:');           
+  amplitude.track('stamp:',
+  {
+    view: 'stamp',});          
 }
 export function moveToWeekly() {
-  amplitude.track('weekly:');           
+  amplitude.track('weekly:', 
+  {
+    view: 'weekly',});           
 }
 export function moveToSetting() {
-  amplitude.track('setting:'); // @이준하 -> 로깅 안되는 부분 해결해주세요 ! + 시작할 때 뜨는 것도 확인바람!
+  amplitude.track('setting:',
+  {
+    view: 'setting',});
+    // @이준하 -> 로깅 안되는 부분 해결해주세요 ! + 시작할 때 뜨는 것도 확인바람!
 }
 export function moveToStatistics() {
-  amplitude.track('statistics:');           
+  amplitude.track('statistics:',
+  {
+    view: 'statistics',});           
 }
 
 
@@ -96,11 +105,12 @@ export function cancelStamp() {
 
 
 /* weekly view */
-export function changeToday() {
+export function changeToday(today: String) {
   amplitude.track('weekly: confirm, today', 
   {
     view: 'weekly',
-    action: 'confirm'});           
+    action: 'confirm',
+    today});           
 }
 export function clickDropDown() {
   amplitude.track('weekly: click, dropdown', 
@@ -113,7 +123,6 @@ export function changeYear() {
   {
     view: 'weekly',
     action: 'confirm',
-
   });
 }
 export function changeMonth() {
@@ -130,11 +139,12 @@ export function changeWeek() {
     action: 'confirm',
   });
 }
-export function showDetailModal() {
+export function showDetailModal(today: String) {
   amplitude.track('weekly: click, detail modal', 
   {
     view: 'weekly',
-    action: 'click',});   
+    action: 'click',
+    today});   
 }
 export function backToWeeklyFromDetailModal() {
   amplitude.track('weekly: cancel, detail modal, back to weekly', 
@@ -149,19 +159,19 @@ export function addNewStampInDetailModal() { // developing yet
     action: 'click',
     secondView: 'detail modal',});
 }
-export function editAIDiary() {
+export function editAIDiary(today: String) {
   amplitude.track('weekly: click, edit diary', 
   {
     view: 'weekly',
     action: 'click',});
 }
 export function cancelToEditDiary() {
-  amplitude.track('weekly: cancel, edit diary', 
+  amplitude.track('weekly: click, cancel to edit diary', 
   {
     view: 'weekly',
     action: 'cancel',});     
 }
-export function saveEditedDiary() {
+export function saveEditedDiary(today: String) {
   amplitude.track('weekly: confirm, edit diary', 
   {
     view: 'weekly',
@@ -181,39 +191,57 @@ export function editBodyText() {
     action: 'click',
     secondView: 'edit diary',});
 }
-export function confirmCancelEditingDiary() {
-  amplitude.track('weekly: confirm, to cancel, in edit diary', 
+export function clickKeyword() {
+  amplitude.track('weekly: click, keyword, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'edit diary',
+    status: 'not yet'  });
+}
+export function confirmCancelEditingDiary(today: String) {
+  amplitude.track('weekly: confirm, cancel, in edit diary', 
   {
     view: 'weekly',
     action: 'confirm',
-    secondView: 'edit diary',});           
+    secondView: 'edit diary',});
 }
 export function cancelCancelEditingDiary() {
-  amplitude.track('weekly: cancel, to cancel, in edit diary', 
+  amplitude.track('weekly: cancel, cancel, in edit diary', 
   {
     view: 'weekly',
     action: 'cancel',
     secondView: 'edit diary',});
+}
+export function click2move2AnotherDayWhileEditingDiary(moveAnotherDay: String) {
+  amplitude.track('weekly: click, move another day, in edit diary', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'edit diary',
+    moveAnotherDay});
 }
 export function cancel2move2AnotherDayWhileEditingDiary() {
-  amplitude.track('weekly: cancel, to move another day, in edit diary', 
+  amplitude.track('weekly: cancel, move another day, in edit diary', 
   {
     view: 'weekly',
     action: 'cancel',
     secondView: 'edit diary',});
 }
-export function move2AnotherDayWhileEditingDiary() {
-  amplitude.track('weekly: confirm, to move another day, in edit diary', 
+export function move2AnotherDayWhileEditingDiary(moveAnotherDay: String) {
+  amplitude.track('weekly: confirm, move another day, in edit diary', 
   {
     view: 'weekly',
     action: 'confirm',
-    secondView: 'edit diary',});
+    secondView: 'edit diary',
+    moveAnotherDay});
 }
-export function tryGenerateAIDiary_cannot() {
+export function tryGenerateAIDiary_cannot(today: String) {
   amplitude.track('weekly: click, generate AI diary (cannot)', 
   {
     view: 'weekly',
-    action: 'click',});
+    action: 'click',
+    today});
 }
 export function backToWeeklyFromCannotModal() {
   amplitude.track('weekly: cancel, fail to generate AI diary modal, back to weekly)', 
@@ -221,24 +249,27 @@ export function backToWeeklyFromCannotModal() {
     view: 'weekly',
     action: 'cancel',});
 }
-export function tryGenerateAIDiary_can() {
+export function tryGenerateAIDiary_can(today: String) {
   amplitude.track('weekly: click, generate AI diary (can)', 
   {
     view: 'weekly',
-    action: 'click',}); 
+    action: 'click',
+    today}); 
 }
 export function waitingForAIDiary() {
+  // 여기에 날짜 받으면 에러나니까 절대 네버 넣지 말것 ...!
   amplitude.track('weekly: click, wait for AI diary, in generate AI diary modal', 
   {
     view: 'weekly',
     action: 'click',
-    secondView: 'generate AI diary modal',});
+    secondView: 'generate AI diary modal',}); 
 }
-export function backToWeeklyFromCanModal() {
+export function backToWeeklyFromCanModal(today: String) {
   amplitude.track('weekly: confirm, finish to generate AI diary', 
   {
     view: 'weekly',
-    action: 'confirm',});
+    action: 'confirm',
+    today});
 }
 
 
