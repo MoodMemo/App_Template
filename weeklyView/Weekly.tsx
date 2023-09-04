@@ -98,6 +98,7 @@ const Weekly = () => {
       setIsWarningMove2AnotherDayModalVisible(true);
     }
     else {
+      console.log("isEditMode: ", isEditMode);
       setToday(date); amplitude.changeToday(date.format('YYYY-MM-DD'));
       setTodayReport(repository.getDailyReportsByField("date", date.format('YYYY-MM-DD')))
     }
@@ -141,7 +142,7 @@ const Weekly = () => {
     getStamp(today).forEach((stamp) => {
       console.log("stamp.dateTime: ", stamp.dateTime);
       todayStampList.push({
-        dateTime: stamp.dateTime,
+        dateTime: new Date(stamp.dateTime.getTime() + 9 * 60 * 60 * 1000),
         stampName: stamp.stampName,
         memo: stamp.memo,
       });
@@ -166,6 +167,8 @@ const Weekly = () => {
               keyword: response.keyword,
             });
             console.log("create default daily report finished");
+            console.log("response.date: ", response.date);
+            console.log("today.format('YYYY-MM-DD'): ", today.format('YYYY-MM-DD'));
             setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
           });
           setIsLodingModalVisible(false);
