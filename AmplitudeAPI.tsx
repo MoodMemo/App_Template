@@ -275,84 +275,179 @@ export function backToWeeklyFromCanModal(today: String) {
 
 /* setting view */
 export function intoProfile() {
-  amplitude.track('setting: click profile');
+  amplitude.track('setting: click, profile',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function setProfileName() {
-  amplitude.track('setting: edit profile name');
+  amplitude.track('setting: click, name, in profile',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'profile',});
 }
 export function setProfileBirthday() {
-  amplitude.track('setting: edit profile birthday');  
+  amplitude.track('setting: click, birthday, in profile',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'profile',});  
 }
 export function setProfileJob() {
-  amplitude.track('setting: edit profile job');
+  amplitude.track('setting: click, job, profile',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'profile',});
 }
 export function saveNewProfile() {
-  amplitude.track('setting: save new profile');    
+  amplitude.track('setting: confirm, profile',
+  {
+    view: 'setting',
+    action: 'confirm',});    
 }
 export function cancelToChangeProfile() { // backdrop 역시 같음
-  amplitude.track('setting: cancel to change profile');  
+  amplitude.track('setting: cancel, profile',
+  {
+    view: 'setting',
+    action: 'cancel',});  
 }
 export function connectToKakaoChatBot() { // backdrop 역시 같음
-  amplitude.track('setting: try to kakao chat bot');
+  amplitude.track('setting: click, kakao chat bot',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function notiONtoOFF() { // backdrop 역시 같음
-  amplitude.track('setting: turn off notification');
+  amplitude.track('setting: click, noti off',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function notiOFFtoON() { // backdrop 역시 같음
-  amplitude.track('setting: turn on notification');
+  amplitude.track('setting: click, noti on',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function notiONwhenPermissionDenied() { // TODO - amplitude
-  amplitude.track('setting: turn on notification (permission denied)');
+  amplitude.track('setting: click, noti on (permission denied)',
+  {
+    view: 'setting',
+    action: 'click',
+    status: 'permission ERROR',});
 }
 export function intoNotiList() { // backdrop 역시 같음
-  amplitude.track('setting: click notification list');
+  amplitude.track('setting: click, notification',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function intoAddNewNoti() { // backdrop 역시 같음
-  amplitude.track('setting: try to add new notification');
+  amplitude.track('setting: click, add new, in notification',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'notification',});
 }
 export function saveNewNoti(notiTime: String) { // 알림 시각 받기
-  amplitude.track('setting: save new notification', { notiTime });
+  amplitude.track('setting: confirm, add new, in notification', {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'notification', 
+    notiTime });
 }
 export function saveDuplicatedNoti() { // TODO - amplitude
-  amplitude.track('setting: save duplicated notification');
+  amplitude.track('setting: confirm, duplicated, in notification',
+  {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'notification',
+    status: 'validate ERROR',});
 }
 export function cancelNewNoti() { // backdrop 역시 같음
-  amplitude.track('setting: cancel to add new notification');
+  amplitude.track('setting: cancel, add new, in notification',
+  {
+    view: 'setting',
+    action: 'cancel',
+    secondView: 'notification',});
 }
 export function intoRenewNoti() { // backdrop 역시 같음
-  amplitude.track('setting: try to edit notification');
+  amplitude.track('setting: click, edit, in notification');
 }
-export function saveRenewNoti() { // 알림 시각(기존, 이후) 받기
-  amplitude.track('setting: save edited notification');
+export function saveRenewNoti(notiTime: String) { // 알림 시각(기존, 이후) 받기
+  amplitude.track('setting: confirm, edit, in notification',
+  {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'notification',
+    notiTime,});
 }
 export function cancelRenewNoti() { // backdrop 역시 같음
-  amplitude.track('setting: cancel to edit notification');
+  amplitude.track('setting: cancel, edit, in notification',
+  {
+    view: 'setting',
+    action: 'cancel',
+    secondView: 'notification',});
 }
 export function deleteNoti() { // 알림 시각 받기
-  amplitude.track('setting: delete notification');
+  amplitude.track('setting: confirm, delete, in notification',
+  {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'notification',});
 }
 export function outToSettingFromNotiList() { // TODO - amplitude
-  amplitude.track('setting: close notification list');
+  amplitude.track('setting: cancel, notification, back to setting',
+  {
+    view: 'setting',
+    action: 'cancel',
+  });
 }
 export function intoGuide() {
-  amplitude.track('setting: click guide');
+  amplitude.track('setting: click, guide',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function outToSettingFromGuide() { 
-  amplitude.track('setting: close guide');        
+  amplitude.track('setting: cancel, guide, back to setting',
+  {
+    view: 'setting',
+    action: 'cancel',});        
 }
 export function intoServiceCenter() {
-  amplitude.track('setting: click service center');           
+  amplitude.track('setting: click, service center',
+  {
+    view: 'setting',
+    action: 'click',});           
+}
+export function send2sentry(memo: string) {
+  amplitude.track('setting: confirm, feedback, in service center', {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'service center',
+    memo});       
 }
 export function outToSettingFromServiceCenter() { 
-  amplitude.track('setting: close service center');
+  amplitude.track('setting: cancel, service center, back to setting',
+  {
+    view: 'setting',
+    action: 'cancel',});
 }
 export function intoCoffee() { 
-  amplitude.track('setting: click coffee');
+  amplitude.track('setting: click, coffee',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 export function outToSettingFromCoffee() { 
-  amplitude.track('setting: close coffee');       
+  amplitude.track('setting: cancel, coffee, back to setting',
+  {
+    view: 'setting',
+    action: 'cancel',});       
 }
-
 
 
 export function test1() { 
@@ -387,7 +482,5 @@ export function test10() {
   amplitude.track('**} else {');       
 }
 
-export function test11(memo: string) {
-  amplitude.track('** realm.write(() => {', {memo});       
-}
+
 
