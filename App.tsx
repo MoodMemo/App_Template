@@ -9,7 +9,9 @@ import React, {useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   Alert,
+  Linking,
   PermissionsAndroid,
+  Platform,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -39,6 +41,7 @@ import * as repository from './src/localDB/document';
 
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from "react-native-push-notification";
+import VersionCheck from 'react-native-version-check';
 
 import Main from './Main'
 import { create } from 'react-test-renderer';
@@ -64,6 +67,38 @@ const initiailze = () => {
   });
 }
 
+const AppVersionCheck = async () => {
+
+  console.log("첫진입 시작");
+  let CurrentVersion = VersionCheck.getCurrentVersion();
+  let LatestVersion = await VersionCheck.getLatestVersion();
+  console.log(LatestVersion);
+  VersionCheck.needUpdate({
+    currentVersion: CurrentVersion,
+    latestVersion: LatestVersion,
+  }).then((res: any) => {
+    if (res.isNeeded) {
+      Alert.alert("필수 업데이트 사항이 있습니다.", "업데이트를 진행해주세요.", [
+        {
+          text: "업데이트",
+          onPress: () => {
+            if (Platform.OS == "android") {
+              Linking.openURL('https://play.google.com/store/apps/details?id=com.moodmemo');
+            } else {
+              Linking.openURL('a');
+            }
+          },
+        },
+        {
+          text: "취소",
+          onPress: () => {
+            console.log('업데이트 안 하신답니다');
+          },
+        },
+      ]);
+    }
+  });
+};
 
 function App(): JSX.Element {
 
@@ -85,9 +120,11 @@ function App(): JSX.Element {
       }
   });
 
+
   (async () => { 
     // Do something before delay
-    await new Promise(f => setTimeout(f, 300));
+    await new Promise(f => setTimeout(f, 600));
+    await AppVersionCheck();
     SplashScreen.hide();
     // Do something after
     }
