@@ -43,10 +43,10 @@ const Home = ({name}:any) => {
   console.log('aa',name);
   return (
     <View style={styles.view}>
-      {/* <StatusBar
+      <StatusBar
         backgroundColor="#FFFAF4"
         barStyle={'dark-content'}
-      /> */}
+      />
       <View style={styles.titleContainer}>
         {/* 드롭다운 컴포넌트 */}
         <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
