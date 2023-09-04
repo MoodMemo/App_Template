@@ -22,7 +22,6 @@ import * as amplitude from './AmplitudeAPI';
 const Tab = createBottomTabNavigator();
 
 function HomeScreen(username:any) {
-  amplitude.moveToHome();;
   return <Home name={username}/>; //Home.tsx
 }
 
@@ -34,7 +33,6 @@ function WeeklyScreen({ route, navigation }) {
       navigation.setParams({ showPopup: false });
     }
   }, [route.params?.showPopup]);
-  amplitude.moveToWeekly();
   return (
     <View style={{ flex: 1 }}>
       <Weekly/>
@@ -44,7 +42,6 @@ function WeeklyScreen({ route, navigation }) {
 }
 
 function SettingsScreen() {
-  amplitude.moveToSetting();
   return <Settings/>; //Home.tsx
 }
 
@@ -252,6 +249,15 @@ function Main({username}:any) {
         <Tab.Screen
           name="Home"
           children={()=>HomeScreen(username)}//홈 화면
+          listeners={{
+            tabPress: e => {
+              amplitude.moveToHome();
+              // Prevent default action
+              // e.preventDefault();
+              // Do something with the `navigation` object
+              //navigation.navigate('Home');
+            },
+          }}
           options={{
             tabBarIcon: ({color, size}) => (
               <Octicons name="smiley" color={color} size={size} /> //하단 바 아이콘
@@ -265,6 +271,7 @@ function Main({username}:any) {
           listeners={{
             tabPress: e => {
               setStatusBar('#FFFFFF');
+              amplitude.moveToWeekly();
               // Prevent default action
               // e.preventDefault();
               // Do something with the `navigation` object
@@ -284,6 +291,7 @@ function Main({username}:any) {
           listeners={{
             tabPress: e => {
               setStatusBar('#FFFFFF');
+              amplitude.moveToSetting();
               // Prevent default action
               // e.preventDefault();
               // Do something with the `navigation` object

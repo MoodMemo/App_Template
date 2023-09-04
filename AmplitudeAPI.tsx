@@ -13,7 +13,8 @@ export default AmplitudeInit;
 
 /* navigator */
 export function beginSession() {
-  amplitude.track('START');           
+  amplitude.track('START');
+  console.log('aaaaa');           
 }
 export function moveToHome() {
   amplitude.track('stamp:',

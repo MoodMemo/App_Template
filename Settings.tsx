@@ -7,6 +7,7 @@ import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import VersionCheck from 'react-native-version-check';
 
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
@@ -133,8 +134,6 @@ const Settings = () => {
         console.log('notificationallowed',result);
     });
   })();
-   
-  
 
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
@@ -414,7 +413,7 @@ const Settings = () => {
                               justifyContent: 'space-between'
                           }}>
                           <Text style={{fontSize: 17, color:"#495057"}}>버전</Text>
-                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.6</Text>
+                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver {VersionCheck.getCurrentVersion()}</Text>
                       </View>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
