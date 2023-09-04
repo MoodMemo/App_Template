@@ -132,11 +132,11 @@ function App(): JSX.Element {
                 style={{width:74*0.8,height:78*0.8,position: 'relative', overflow: 'hidden',marginBottom:20,marginTop:10}}></Image>
           <Text style={{fontSize:18,fontWeight:'bold',color:'#101828'}}>업데이트가 필요하다<Text style={{fontSize:18,fontWeight:'bold',color:'#FFCC4D'}}>무</Text></Text>
           <Text style={{color:'#475467',marginTop:10}}>더 새로워진 무드메모 앱으로</Text>
-          <Text style={{color:'#475467',marginBottom:24}}>업데이트해달라무~</Text>
+          <Text style={{color:'#475467',marginBottom:24}}>업데이트해달라무 !!</Text>
           <View style={{flexDirection: 'row',
                         justifyContent: 'space-between',
                         width:'90%'}}>
-            <TouchableOpacity onPress={()=>{
+            {/* <TouchableOpacity onPress={()=>{
               BackHandler.exitApp();
             }}>
               <View style={{
@@ -151,7 +151,7 @@ function App(): JSX.Element {
               }}>
                 <Text style={{fontSize:16,fontWeight:'bold',color:'#72D193'}}>앱 종료</Text>
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             <TouchableOpacity onPress={()=>{
               if (Platform.OS == "android") {
                 Linking.openURL('https://play.google.com/store/apps/details?id=com.moodmemo');
@@ -161,7 +161,7 @@ function App(): JSX.Element {
             }}>
               <View style={{
                   backgroundColor:"#72D193",
-                  width:140,
+                  width:300,
                   height:44,
                   justifyContent:'center',
                   alignItems:'center',
