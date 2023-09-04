@@ -74,47 +74,106 @@ export function userRegiFinish() {
 
 /* home(stamp) view */
 export function showCustomStampList() {
-  amplitude.track('stamp: into - custom stamp list');
+  amplitude.track('stamp: click, custom stamp list',
+  {
+    view: 'stamp',
+    action: 'click',});
 }
 export function deleteCustomStamp() {
-  amplitude.track('stamp: delete custom stamp');      
+  amplitude.track('stamp: confirm, delete, in custom stamp list',
+  {
+    view: 'stamp',
+    action: 'confirm',
+    secondView: 'custom stamp list',});
 }
 export function choiceDeleteCustomStampCandidate() {
-  amplitude.track('stamp: choice delete custom stamp candidate');
+  amplitude.track('stamp: click, candidate to delete, in custom stamp list',
+  {
+    view: 'stamp',
+    action: 'click',
+    secondView: 'custom stamp list',});
 }
 export function tryAddCustomStamp() {
-  amplitude.track('stamp: into - add custom stamp');
+  amplitude.track('stamp: click, add new, in custom stamp list',
+  {
+    view: 'stamp',
+    action: 'click',
+    secondView: 'custom stamp list',});
 }
 export function submitAddCustomStamp(stampName: String) {
-  amplitude.track('stamp: submit - add custom stamp', { stampName });
+  amplitude.track('stamp: comfirm, add new, in custom stamp list', 
+  { 
+    view: 'stamp',
+    action: 'confirm',
+    secondView: 'custom stamp list',
+    stampName });
 }
 export function cancelAddCustomStamp() {
-  amplitude.track('stamp: cancel - add custom stamp');
+  amplitude.track('stamp: cancel, add new, in custom stamp list',
+  {
+    view: 'stamp',
+    action: 'cancel',
+    secondView: 'custom stamp list',});
 }
 export function exitCustomStampList() {
-  amplitude.track('stamp: exit - custom stamp list');
+  amplitude.track('stamp: cancel, custom stamp list, back to stamp',
+  {
+    view: 'stamp',
+    action: 'cancel',});
 }
-export function pushStamp(stampName: String) { // TODO - 여기부터 다시!
-  // tODO -> 스탬프 이름 받자
-  amplitude.track('stamp: push stamp', { stampName });       
+export function pushStamp(stampName: String) {
+  amplitude.track('stamp: click, stamp', 
+  { 
+    view: 'stamp',
+    action: 'click',
+    stampName });    
 }
 export function tryChangeStampTime() {
-  amplitude.track('stamp: try to change stamp time');
+  amplitude.track('stamp: click, time, in push stamp',
+  {
+    view: 'stamp',
+    action: 'click',
+    secondView: 'push stamp',});
 }
 export function submitChangeStampTime() {
-  amplitude.track('stamp: submit change stamp time');     
+  amplitude.track('stamp: confirm, time, in push stamp',
+  {
+    view: 'stamp',
+    action: 'confirm',
+    secondView: 'push stamp',});     
 }
 export function cancelChangeStampTime() {
-  amplitude.track('stamp: cancel change stamp time');     
+  amplitude.track('stamp: cancel, time, in push stamp',
+  {
+    view: 'stamp',
+    action: 'cancel',
+    secondView: 'push stamp',});     
 }
 export function editStampMemo() {
-  amplitude.track('stamp: edit stamp memo');     
+  amplitude.track('stamp: click, memo, in push stamp',
+  {
+    view: 'stamp',
+    action: 'click',
+    secondView: 'push stamp',});
 }
-export function submitStamp() {
-  amplitude.track('stamp: submit stamp');
+export function submitStamp() { // 나중에는 여기도 스탬프 이름 받기
+  amplitude.track('stamp: confirm, stamp',
+  {
+    view: 'stamp',
+    action: 'confirm',});
 }
 export function cancelStamp() {
-  amplitude.track('stamp: cancel stamp');
+  amplitude.track('stamp: cancel, stamp',
+  {
+    view: 'stamp',
+    action: 'cancel',});
+}
+export function confirmPushedStampFinModal() {
+  amplitude.track('stamp: confirm, stamp, in finish modal',
+  {
+    view: 'stamp',
+    action: 'confirm',
+    secondView: 'finish modal',});
 }
 // TODO - 정렬 방식 변경은 추후 업데이트에 포함될 예정
 

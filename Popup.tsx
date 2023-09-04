@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import * as amplitude from './AmplitudeAPI';
 
 const Popup = ({ visible, onClose }) => {
   return (
@@ -16,7 +17,7 @@ const Popup = ({ visible, onClose }) => {
             <Text style={styles.popUpText}>스탬프 등록 완료!</Text>
           </View>
           <View style={styles.downArea}>
-            <TouchableOpacity style={styles.button} onPress={onClose}>
+            <TouchableOpacity style={styles.button} onPress={() => {onClose(); amplitude.confirmPushedStampFinModal();} }>
               <Text style={styles.buttonText}>확인</Text>
             </TouchableOpacity>
           </View>
