@@ -161,7 +161,7 @@ const Settings = () => {
                 <ChangeProfile/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity onPress={() => {
+                {/* <TouchableOpacity onPress={() => {
                     amplitude.connectToKakaoChatBot();
                     setIsKakaoModalVisible(!isKakaoModalVisible);
                     }}>
@@ -200,7 +200,7 @@ const Settings = () => {
                             </View>
                         </View>
                     </Modal>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <Divider style={{backgroundColor:"#DDDDDD"}}/>
                 <Divider style={{backgroundColor:"#DDDDDD"}}/>
                 <View
@@ -421,7 +421,7 @@ const Settings = () => {
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity onPress={() => {
+                {/* <TouchableOpacity onPress={() => {
                     amplitude.intoGuide();
                     setIsNoticeModalVisible(!isNoticeModalVisible);
                     }}>
@@ -463,7 +463,7 @@ const Settings = () => {
                     </Modal>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/> */}
                 <TouchableOpacity onPress={() => {
                     amplitude.intoServiceCenter();
                     setIsReportModalVisible(!isReportModalVisible);
