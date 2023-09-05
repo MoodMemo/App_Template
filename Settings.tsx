@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
+import { useWindowDimensions, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -18,6 +18,8 @@ import * as amplitude from './AmplitudeAPI';
 import * as Sentry from "@sentry/react-native";
 import { UserFeedback } from "@sentry/react-native";
 import { useFocusEffect } from '@react-navigation/native';
+
+import {default as Text} from "./CustomText"
 
 
 const test = () => {

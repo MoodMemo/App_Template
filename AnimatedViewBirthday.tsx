@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dimensions, Image, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet} from 'react-native';
+import { Dimensions, Image, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet} from 'react-native';
 import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,6 +11,8 @@ import { Divider } from 'react-native-paper';
 import Main from './Main'
 
 import * as amplitude from './AmplitudeAPI';
+
+import {default as Text} from "./CustomText"
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;

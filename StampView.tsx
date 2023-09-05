@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
 import Weekly from './weeklyView/Weekly'
 import { useNavigation } from '@react-navigation/native';
 import * as amplitude from './AmplitudeAPI';
+import {default as Text} from "./CustomText"
 
 // 화면의 가로 크기
 const screenWidth = Dimensions.get('window').width;

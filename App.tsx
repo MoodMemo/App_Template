@@ -18,7 +18,6 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
   TouchableOpacity,
   useColorScheme,
   View,
@@ -49,6 +48,7 @@ import VersionCheck from 'react-native-version-check';
 import Main from './Main'
 import { create } from 'react-test-renderer';
 
+import {default as Text} from "./CustomText"
 //import {requestUserPermission, notificationListener} from "./src/utils/PushNotification";
 
 import * as Sentry from '@sentry/react-native';

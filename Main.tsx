@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Alert, StatusBar, Text, View} from 'react-native';
+import {Alert, StatusBar, View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -18,6 +18,8 @@ import * as repository from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Popup from './Popup';
 import * as amplitude from './AmplitudeAPI';
+
+import {default as Text} from "./CustomText"
 
 const Tab = createBottomTabNavigator();
 

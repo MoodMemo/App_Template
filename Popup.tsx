@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { Modal, View, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import * as amplitude from './AmplitudeAPI';
+
+import {default as Text} from "./CustomText"
 
 const Popup = ({ visible, onClose }) => {
   return (

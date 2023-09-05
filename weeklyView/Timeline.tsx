@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 
 import * as repository from '../src/localDB/document';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import StampClick from '../StampClick';
 import Modal from "react-native-modal";
+import {default as Text} from "../CustomText"
 
 interface TimelineProps {
   data: repository.IPushedStamp[];

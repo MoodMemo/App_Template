@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Image } from 'react-native';
+
+import {default as Text} from "./CustomText"
 
 const Dropdown = ({ options, onSelectOption }) => {
   const [isOptionsVisible, setOptionsVisible] = useState(false);
