@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, Image, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
+import { View, Button, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -30,6 +30,7 @@ import axios, { CancelToken } from 'axios';
 import { Card } from 'react-native-paper';
 import StampClick from '../StampClick';
 import StampView from '../StampView';
+import {default as Text} from "../CustomText"
 
 import * as Sentry from '@sentry/react-native';
 

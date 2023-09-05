@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet} from 'react-native';
 
 import Modal from "react-native-modal";
+import {default as Text} from "./CustomText"
 
 
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
+import { useWindowDimensions, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -18,6 +18,8 @@ import * as amplitude from './AmplitudeAPI';
 import * as Sentry from "@sentry/react-native";
 import { UserFeedback } from "@sentry/react-native";
 import { useFocusEffect } from '@react-navigation/native';
+
+import {default as Text} from "./CustomText"
 
 
 const test = () => {
@@ -159,7 +161,7 @@ const Settings = () => {
                 <ChangeProfile/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity onPress={() => {
+                {/* <TouchableOpacity onPress={() => {
                     amplitude.connectToKakaoChatBot();
                     setIsKakaoModalVisible(!isKakaoModalVisible);
                     }}>
@@ -198,7 +200,7 @@ const Settings = () => {
                             </View>
                         </View>
                     </Modal>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <Divider style={{backgroundColor:"#DDDDDD"}}/>
                 <Divider style={{backgroundColor:"#DDDDDD"}}/>
                 <View
@@ -419,7 +421,7 @@ const Settings = () => {
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity onPress={() => {
+                {/* <TouchableOpacity onPress={() => {
                     amplitude.intoGuide();
                     setIsNoticeModalVisible(!isNoticeModalVisible);
                     }}>
@@ -461,7 +463,7 @@ const Settings = () => {
                     </Modal>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/> */}
                 <TouchableOpacity onPress={() => {
                     amplitude.intoServiceCenter();
                     setIsReportModalVisible(!isReportModalVisible);

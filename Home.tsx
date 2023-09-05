@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar } from 'react-native';
+import { View, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar } from 'react-native';
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
@@ -7,6 +7,8 @@ import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {StatusBarStyle} from 'react-native';
+
+import {default as Text} from "./CustomText"
 
 const Home = ({name}:any) => {
   const [selectedOption, setSelectedOption] = useState(null);

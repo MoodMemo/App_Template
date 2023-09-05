@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
+import { useWindowDimensions, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -9,6 +9,8 @@ import DatePicker from 'react-native-date-picker';
 import PushNotification from "react-native-push-notification";
 
 import * as amplitude from './AmplitudeAPI';
+
+import {default as Text} from "./CustomText"
 
 function getRandomInt(min:any, max:any) {
     min = Math.ceil(min);
