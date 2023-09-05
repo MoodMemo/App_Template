@@ -142,12 +142,15 @@ const Weekly = () => {
     getStamp(today).forEach((stamp) => {
       console.log("stamp.dateTime: ", stamp.dateTime);
       todayStampList.push({
-        dateTime: new Date(stamp.dateTime.getTime() + 9 * 60 * 60 * 1000),
+        // dateTime: new Date(stamp.dateTime.getTime() + 9 * 60 * 60 * 1000),
+        dateTime: stamp.dateTime,
         stampName: stamp.stampName,
         memo: stamp.memo,
       });
     });
+    console.log("***", today);
     const request = {
+      today: today.format('YYYY-MM-DD'),
       userDto: getUserAsync(), // from async storage
       todayStampList: todayStampList,
     }
