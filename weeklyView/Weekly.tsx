@@ -322,7 +322,7 @@ const Weekly = () => {
         </View>
 
       </View>
-
+      
       {/* 3 & 4 & 5 */}
       {getEmoji(getStamp(today)).length === 0 ? (
         <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -334,6 +334,15 @@ const Weekly = () => {
         </View>
       ) : (
         <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }}>
+
+          <View style={diaryStyles.twotypebtn}>
+            <View style={diaryStyles.activeType}>
+              <Text style={{fontSize: 14, color: '#72D193', fontWeight:'600'}}>스탬프 기록</Text>
+            </View>
+            <View style={diaryStyles.deactiveType}>
+              <Text style={{fontSize: 14, color: '#B7B7B7', fontWeight:'400'}}>AI 일기</Text>
+            </View>
+          </View>
           
           {/* 3. 오늘의 감정 리스트 */}
           <View style={styles.title}>
@@ -384,11 +393,6 @@ const Weekly = () => {
                   </View></View>
                 </Modal>
             </TouchableOpacity>
-
-            {/* sentry test*/}
-            {/* <Button title='Try!' onPress={ () => { Sentry.captureException(new Error('First error')) }}/> */}
-
-            {/* </TouchableOpacity> */}
           </View>
           {/* 3-1. 감정 리스트 */}
           <View style={styles.todayEmotionList}>
@@ -875,6 +879,33 @@ const diaryStyles = StyleSheet.create({
     paddingVertical: 12,
     marginHorizontal: 20,
     borderRadius: 6,
+  },
+  twotypebtn: {
+    alignSelf: 'center',
+    height: 36,
+    width: 304,
+    justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+    flexDirection: 'row',
+    backgroundColor: '#F3F3F3',
+    marginTop: 7,
+    padding: 2,
+    borderRadius: 8,
+  },
+  activeType: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    alignItems: 'center',
+    borderRadius: 8,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  deactiveType: {
+    flex: 1,
+    backgroundColor: '#F3F3F3',
+    alignItems: 'center',
+    borderRadius: 8,
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   buttonText: {
     fontSize: 18,
