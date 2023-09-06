@@ -70,6 +70,7 @@ def enableProguardInReleaseBuilds = false
 def jscFlavor = 'org.webkit:android-jsc:+'
 
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -102,15 +103,20 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            resValue "string", "CodePushDeploymentKey", '""'
+        }
+        releaseStaging {
+            resValue "string", "CodePushDeploymentKey", '4vowpxmGF4viHJr1ozcKr8qM4cy-t5Ng3mzjR'
+            matchingFallbacks = ['release']
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
             minifyEnabled true
+            resValue "string", "CodePushDeploymentKey", 'jEopgfzmb1A9ePp9F2f_Ei6U8XAsdGe_QO-OP'
         }
     }
 }

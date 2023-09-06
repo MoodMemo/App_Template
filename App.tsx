@@ -45,6 +45,8 @@ import messaging from '@react-native-firebase/messaging';
 import PushNotification from "react-native-push-notification";
 import VersionCheck from 'react-native-version-check';
 
+import codePush from "react-native-code-push";
+
 import Main from './Main'
 import { create } from 'react-test-renderer';
 
@@ -220,4 +222,4 @@ const styles = StyleSheet.create({
 });
 
 // export default App;
-export default Sentry.wrap(App);
+export default codePush(Sentry.wrap(App));

@@ -1,4 +1,7 @@
 {
   "name": "MoodMemo",
-  "displayName": "MoodMemo"
+  "displayName": "MoodMemo",
+  "BUNDLE_ID": "com.moodmemo",
+  "APP_VERSION": "1.1.1",
+  "DIST": "v2"
 }
