@@ -45,7 +45,7 @@ import messaging from '@react-native-firebase/messaging';
 import PushNotification from "react-native-push-notification";
 import VersionCheck from 'react-native-version-check';
 
-import codePush from "react-native-code-push";
+import codePush , {CodePushOptions} from "react-native-code-push";
 
 import Main from './Main'
 import { create } from 'react-test-renderer';
@@ -57,6 +57,8 @@ import * as Sentry from '@sentry/react-native';
 import * as amplitude from './AmplitudeAPI';
 
 const Stack = createNativeStackNavigator();
+
+
 
 /**
  * AsyncStorage, Realm 초기화
@@ -73,10 +75,17 @@ const initiailze = () => {
   });
 }
 
+const codePushOptions: CodePushOptions = {
+  checkFrequency: codePush.CheckFrequency.MANUAL,
+  installMode: codePush.InstallMode.ON_NEXT_RESTART,
+  mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+};
+
 function App(): JSX.Element {
 
   const [isRegistered, setIsRegistered] = useState(false);
   const [isUpdateNeeded, setIsUpdateNeeded] = useState(false);
+  const [isCodePushUpdateNeeded, setIsCodePushUpdateNeeded] = useState(false);
 
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -97,6 +106,23 @@ function App(): JSX.Element {
     });
   };
 
+  // const codePushVersionCheck = async () => {
+  //   try{
+  //     console.log('whywhywhy');
+  //     const update = await codePush.checkForUpdate();
+  //     console.log('app started',update);
+  //     if(update){
+  //       setIsCodePushUpdateNeeded(true);
+  //     }
+  //     else{
+  //       console.log('no update');
+  //     }
+  //   }
+  //   catch(error){
+  //     console.error(error);
+  //   }
+  // }
+
   //initiailze(); //처음에는 주석 해제하고 실행해서 초기화 한 다음에 바로 껐다가, 주석 처리하고 다시 실행합시다!
 
   AsyncStorage.getItem('@UserInfo:isRegistered',(err,result)=>{
@@ -110,11 +136,11 @@ function App(): JSX.Element {
     // Do something before delay
     await new Promise(f => setTimeout(f, 600));
     await AppVersionCheck();
+    //await codePushVersionCheck();
     SplashScreen.hide();
     // Do something after
     }
   )();
-
   amplitude.beginSession(); // 앱 시작
 
   if (isUpdateNeeded) {
@@ -179,6 +205,12 @@ function App(): JSX.Element {
       </SafeAreaView>
     )
   }
+  // else if (isCodePushUpdateNeeded) {
+  //   return (
+  //     <SafeAreaView style={{backgroundColor:'#55B275',flex:1,justifyContent:'center',alignItems:'center',}}>
+  //     <Text>업데이트 필요해</Text>
+  //   </SafeAreaView>);
+  // }
   else if (isRegistered) {
     repository.updatePushedStampCount(); // db 4->5 migration
     console.log("isRegistered: " + isRegistered);
@@ -222,4 +254,4 @@ const styles = StyleSheet.create({
 });
 
 // export default App;
-export default codePush(Sentry.wrap(App));
+export default codePush(codePushOptions)(Sentry.wrap(App));
