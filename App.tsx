@@ -75,12 +75,6 @@ const initiailze = () => {
   });
 }
 
-const codePushOptions: CodePushOptions = {
-  checkFrequency: codePush.CheckFrequency.MANUAL,
-  installMode: codePush.InstallMode.ON_NEXT_RESTART,
-  mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
-};
-
 function App(): JSX.Element {
 
   const [isRegistered, setIsRegistered] = useState(false);
@@ -254,4 +248,4 @@ const styles = StyleSheet.create({
 });
 
 // export default App;
-export default codePush(codePushOptions)(Sentry.wrap(App));
+export default codePush(Sentry.wrap(App));

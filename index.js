@@ -50,7 +50,7 @@ PushNotification.createChannel(
 
 Sentry.init({ 
   dsn: 'https://3554b53489972dd0d1159d97e9cc6eb7@o4505669151555584.ingest.sentry.io/4505669208375296',
-  release: `${BUNDLE_ID}@${APP_VERSION}+codepush:${DIST}`,        
+  release: `${BUNDLE_ID}@${APP_VERSION}+codepush:${DIST}`,
 });
 
 AmplitudeInit();
