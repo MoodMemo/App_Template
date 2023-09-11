@@ -15,11 +15,14 @@ import AmplitudeInit from './AmplitudeAPI';
 import * as Sentry from '@sentry/react-native';
 
 Amplify.configure(config);
-/*
+
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('Message handled in the background!', remoteMessage);
 });
-
+messaging().onMessage(async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
+});
+/*
 messaging().getInitialNotification(async remoteMessage => {
   console.log('Message handled in the kill state!', remoteMessage);
 });
