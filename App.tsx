@@ -54,6 +54,19 @@ import {default as Text} from "./CustomText"
 import * as Sentry from '@sentry/react-native';
 import * as amplitude from './AmplitudeAPI';
 
+const getToken = async() => {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+  if (enabled) {
+    const token = await messaging().getToken();
+    console.log('fcm token :',token);
+    console.log('Authorization status:', authStatus);
+  }
+}
+
 const Stack = createNativeStackNavigator();
 
 /**
@@ -108,6 +121,7 @@ function App(): JSX.Element {
     // Do something before delay
     await new Promise(f => setTimeout(f, 600));
     await AppVersionCheck();
+    await getToken();
     SplashScreen.hide();
     // Do something after
     }
