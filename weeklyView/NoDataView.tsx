@@ -84,7 +84,8 @@ export const TellMeYourDayView = () => {
         <Text style={{fontSize: 14, color: '#dbdbdb', }}>심심하다무...</Text>
         <Text style={{fontSize: 14, color: '#dbdbdb', }}>무슨 일이 있었는지 들려달라무!</Text>
 
-        <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} onPress={handleRecordEmotion}>
+        <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} 
+          onPress={() => {handleRecordEmotion(); amplitude.pushStampInTellMeYourDayView();}}>
           <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
         </TouchableOpacity>
       </View>
@@ -112,7 +113,8 @@ export const PleaseOneMoreStampView = () => {
           <Text style={{fontSize: 14, color: '#495057', }}> 찍으면, 일기를 만들 수 있다무!</Text>
         </View>
 
-        <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} onPress={handleRecordEmotion}>
+        <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} 
+          onPress={() => {handleRecordEmotion(); amplitude.pushStampInPleaseOneMoreStampView();}}>
           <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
         </TouchableOpacity>
       </View>

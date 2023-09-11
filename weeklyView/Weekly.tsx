@@ -373,10 +373,10 @@ const Weekly = () => {
       {/* 3 & 4 & 5 */}
       {stampORdiary ? (
         <View style={typeChangeBtnStyles.twotypebtn}>
-          <TouchableOpacity style={typeChangeBtnStyles.activeType}>
+          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickStampSwitchInStampView()}}>
             <Text style={typeChangeBtnStyles.activeFont}>스탬프 기록</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {setStampORdiary(false); amplitude.test2();}} style={typeChangeBtnStyles.deactiveType}>
+          <TouchableOpacity onPress={() => {setStampORdiary(false); amplitude.clickDiarySwitchInStampView();}} style={typeChangeBtnStyles.deactiveType}>
             {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
               <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
             ) : (<View></View>)}
@@ -385,10 +385,10 @@ const Weekly = () => {
         </View>
       ) : (
         <View style={typeChangeBtnStyles.twotypebtn}>
-          <TouchableOpacity onPress={() => {setStampORdiary(true); amplitude.test2();}} style={typeChangeBtnStyles.deactiveType}>
+          <TouchableOpacity onPress={() => {setStampORdiary(true); amplitude.clickStampSwitchInDiaryView();}} style={typeChangeBtnStyles.deactiveType}>
             <Text style={typeChangeBtnStyles.deactiveFont}>스탬프 기록</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={typeChangeBtnStyles.activeType}>
+          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickDiarySwitchInDiaryView()}}>
             <Text style={typeChangeBtnStyles.activeFont}>AI 일기</Text>
             {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
               <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>

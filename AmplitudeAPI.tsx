@@ -5,8 +5,8 @@ import * as amplitude from '@amplitude/analytics-react-native';
 
 /* splash */
 function AmplitudeInit() {
-  // amplitude.init('71c6aec47b758215ad5b07a0241099c8'); // real key
-  amplitude.init('31330863767122049d66767a71e34f09'); // fake key
+  amplitude.init('71c6aec47b758215ad5b07a0241099c8'); // 테스트용 key
+  // amplitude.init('31330863767122049d66767a71e34f09'); // real key
 }
 export default AmplitudeInit;
 
@@ -345,6 +345,48 @@ export function backToWeeklyFromCanModal(today: String) {
     view: 'weekly',
     action: 'confirm',
     today});
+}
+export function clickStampSwitchInStampView() {
+  amplitude.track('weekly: click, stamp switch, in stamp view', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'stamp view',}); 
+}
+export function clickDiarySwitchInStampView() {
+  amplitude.track('weekly: click, diary switch, in stamp view', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'stamp view',}); 
+}
+export function clickStampSwitchInDiaryView() {
+  amplitude.track('weekly: click, stamp switch, in diary view', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'diary view',}); 
+}
+export function clickDiarySwitchInDiaryView() {
+  amplitude.track('weekly: click, diary switch, in diary view', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'diary view',}); 
+}
+export function pushStampInTellMeYourDayView() {
+  amplitude.track('weekly: click, stamp, in tell me your day view',
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'tell me your day view',});
+}
+export function pushStampInPleaseOneMoreStampView() {
+  amplitude.track('weekly: click, stamp, in please one more stamp view',
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'please one more stamp view',});
 }
 
 
