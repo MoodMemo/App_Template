@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 
 import * as repository from '../src/localDB/document';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import StampClick from '../StampClick';
 import Modal from "react-native-modal";
 import {default as Text} from "../CustomText"
+import realm from '../src/localDB/document';
+import * as amplitude from '../AmplitudeAPI';
 
 interface TimelineProps {
   data: repository.IPushedStamp[];
@@ -20,42 +22,115 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
     hour: "numeric", minute: "numeric" ,
   };
 
-  const [stampClickModalVisible, setStampClickModalVisible] = useState(false);
+  const [dropdownButtonVisible, setDropdownButtonVisible] = useState(false);
 
+  const [stampClickModalVisible, setStampClickModalVisible] = useState(false);
   const closeStampClickModal = () => {
     setStampClickModalVisible(false);
   };
 
-
+  const [isDeletingStamp, setIsDeletingStamp] = useState(false);
+  const [tmpDeleteStamp, setTmpDeleteStamp] = useState(null);
+  const handleDeleteButton = (deleteStamp: repository.IPushedStamp) => {
+    amplitude.test1();
+    realm.write(() => {
+      repository.deletePushedStamp(deleteStamp);
+    });
+  }
   return (
     <View style={styles.container}>
 
       {data.map((item, index) => (
         <View key={index} style={styles.timelineItem}>
-          {/* 이모지 */}
           
+          {/* 이모지 */}       
           <View style={styles.emojiContainer}>
-
             <Text style={{fontSize: 24, color: 'black',}}>{item.emoji}</Text>
             {index < data.length - 1 && <View style={styles.line2} />}
           </View>
 
+          {/* 텍스트 */}
           <View style={styles.block}>
 
             <View style={styles.title}>
               <Text style={{fontSize: 12, color: '#212429'}}>{item.stampName}</Text>
               <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
                 <Text style={{ fontSize: 12, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
-                <TouchableOpacity
-                  // onPress={() => setStampClickModalVisible(true)}
+                {/* 수정 & 삭제 */}
+                <View>
+                  <TouchableOpacity onPress={() => setDropdownButtonVisible(true)}>
+                    <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
+                  </TouchableOpacity>
+                  {/* 1. 스탬프 수정 삭제 드롭다운 */}
+                  <Modal 
+                      isVisible={dropdownButtonVisible}
+                      animationIn={"fadeIn"}
+                      animationOut={"fadeOut"}
+                      backdropOpacity={0}
+                      onBackdropPress={() => setDropdownButtonVisible(false)}
+                      style={{
+                        position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
+                        right: 3,
+                        // bottom: 0, // Y 좌표를 버튼 아래에 위치 + 버튼의 높이
+                        // alignItems: 'center',
+                        // justifyContent: 'flex-end',
+                        // margin: 0,
+                      }}
+                      backdropTransitionInTiming={0} // Disable default backdrop animation
+                      backdropTransitionOutTiming={0} // Disable default backdrop animation
+                    >
+                      <View style={dropDownStyles.dropdownContainer}>
+                        <TouchableOpacity style={dropDownStyles.dropdownButton}>
+                          <View style={dropDownStyles.dropdownButtonOption}>
+                            <Text style={dropDownStyles.dropdownButtonText}>수정</Text>
+                            <Text style={dropDownStyles.dropdownButtonText}>삭제</Text>
+                          </View>
+                        </TouchableOpacity>
+                      </View>
+                  </Modal>
+                </View>
+                {/* 2. 스탬프 삭제 경고 모달 */}
+                <Modal 
+                  isVisible={isDeletingStamp}
+                  animationIn={"fadeIn"}
+                  animationOut={"fadeOut"}
+                  backdropColor='#CCCCCC' 
+                  backdropOpacity={0.9}
+                  style={{ alignItems:'center' }}
+                  backdropTransitionInTiming={0} // Disable default backdrop animation
+                  backdropTransitionOutTiming={0} // Disable default backdrop animation
                 >
-                  {/* 스탬프 수정! */}
-                  <EntypoIcon name='dots-three-horizontal' color="#fafafa" style={{ fontWeight: 'bold', fontSize: 10}}/>
-                </TouchableOpacity>
+                  <View style={diaryStyles.finishLodingModal}>
+                    {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+                    <Image 
+                      source={require('../assets/colorMooMini.png')}
+                      style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+                    <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                      <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>정말로 기록한 스탬프를 삭제하겠냐</Text>
+                      <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                      <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
+                    </View>
+                    <View style={{alignItems: 'center',}}>
+                      <Text style={{ color: '#475467', fontSize: 14, }}>되돌릴 수 없다무..!</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                      <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
+                        <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.test1();}}>
+                          <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleDeleteButton(tmpDeleteStamp); setIsDeletingStamp(false);}}>
+                          <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                              
+                  </View>
+                </Modal>
               </View>
-              <Modal isVisible={stampClickModalVisible}>
+              {/* <Modal isVisible={stampClickModalVisible}> -> 여기를 풀면 스탬프 클릭 모달이 뜬다 ...?
                 <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
-              </Modal>
+              </Modal> */} 
+              
             </View>
 
             <View style={styles.line}></View>
@@ -70,30 +145,14 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
 
 
       
+
+
+      
       
     </View>
   );
 };
 
-// {data.map((item, index) => (
-//   <View key={index} style={styles.timelineItem}>
-//     {/* 이모지 */}
-//     <View>
-//       <Text>{item.emoji}</Text>
-//     </View>
-
-//     {/* 블럭 */}
-//     <View style={styles.block}>
-//       <Text>{item.memo}</Text>
-//       <Text>{item.time}</Text>
-//     </View>
-
-//     {/* 선 */}
-//     {index < data.length - 1 && (
-//       <View style={styles.line} />
-//     )}
-//   </View>
-// ))}
 const styles = StyleSheet.create({
   container: {
     flex: 1, // 양쪽 확장
@@ -141,6 +200,173 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     marginRight: 10,
   },
+});
+const dropDownStyles = StyleSheet.create({
+  dropdownContainer: {
+    // position: 'relative',
+    marginBottom: 10,
+  },
+  dropdownButton: {
+    paddingTop: 15,
+    paddingLeft: 15,
+  },
+  dropdownButtonOption: {
+    fontSize: 14,
+    color: '#212429',
+    backgroundColor: '#ffffff',
+    paddingVertical: 5,
+    paddingRight: 17,
+    borderRadius: 4,
+    fontWeight: 'bold',
+    shadowColor: '#909090',
+    shadowOpacity: 1,        // 그림자 투명도
+    shadowRadius: 50,           // 그림자 블러 반경
+    elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
+  },
+  dropdownButtonText: {
+    fontSize: 14,
+    color: '#212429',
+    paddingVertical: 5,
+    paddingRight: 22,
+    marginLeft: 15,
+  },
+});
+const diaryStyles = StyleSheet.create({
+  diaryContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+    alignItems: 'baseline', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+    marginBottom: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    fontSize: 18,
+    color: '#212429',
+    padding: 10,
+    paddingHorizontal: 15,
+    borderRadius: 7,
+    borderWidth: 2,
+    borderColor: '#f0f0f0',
+    backgroundColor: '#ffffff',
+  },
+  keyword: {
+    fontSize: 12,
+    color: '#212429',
+    marginBottom: 10,
+    marginRight: 10,
+    padding: 5,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    backgroundColor: '#fafafa',
+  },
+  line: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0', // 선의 색상을 원하는 값으로 변경하세요.
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  generateButton: {
+    color: '#495057',
+    height: 46,
+    alignItems: 'center',
+    backgroundColor: '#72D193',
+    paddingVertical: 12,
+    marginHorizontal: 20,
+    borderRadius: 6,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  generateButtonText: {
+    color: '#495057',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  uploadedImage: {
+    alignItems: 'center',
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+  },
+  lodingModal: {
+    backgroundColor: '#FFFAF4', 
+    justifyContent: 'space-between', // 상하로 딱 붙이기
+    // justifyContent: 'space-around', 
+    // alignItems: 'flex-start', 
+    alignItems: 'center', // 가운데 정렬
+    flexDirection: 'column',
+    borderRadius: 12, 
+    paddingHorizontal: 16,
+    width: 343, 
+    height: 302,
+    // height: 218,
+    shadowColor: 'black',
+    shadowRadius: 50,           // 그림자 블러 반경
+    elevation: 5, 
+  },
+  cancelBtn: {
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    color: '#344054', 
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: 'white', 
+    borderColor: '#72D193',
+    borderWidth:1,
+    borderRadius: 8,
+    flex: 1,
+  },
+  finishLodingModal: {
+    backgroundColor: '#FFFAF4', 
+    justifyContent: 'space-between', // 상하로 딱 붙이기
+    alignItems: 'center', // 가운데 정렬
+    flexDirection: 'column',
+    borderRadius: 12, 
+    paddingHorizontal: 16,
+    width: 343, 
+    height: 284,
+    shadowColor: 'black',
+    shadowRadius: 50,           // 그림자 블러 반경
+    elevation: 5, 
+  },
+  confirmBtn: {
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: '#72D193', 
+    borderRadius: 8,
+    flex: 1,
+  },
+  cancelOut2EditBtn: {
+    borderColor: '#D0D5DD', borderWidth: 1,
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: '#ffffff', 
+    borderRadius: 8,
+    flex: 1,
+  },
+  editDiary: {
+    fontSize: 16, 
+    color: '#212429', 
+    margin: 0, 
+    marginBottom:7, 
+    paddingVertical: 5, 
+    paddingLeft: 15, 
+    paddingRight: 15, 
+    borderColor: '#F0F0F0', 
+    borderWidth:1, 
+    borderRadius: 5, 
+    paddingHorizontal:10, 
+    flex:1
+  }
 });
 
 export default Timeline;
