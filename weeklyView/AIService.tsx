@@ -22,6 +22,7 @@ interface Stamps {
 }
 
 interface DailyReportRequest {
+  today: string; // '2023-08-06' 으로 보내는 중
   userDto: SendAI;
   todayStampList: Stamps[];
 }

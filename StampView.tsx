@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import { View, ScrollView, TouchableOpacity, Text, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
 import Weekly from './weeklyView/Weekly'
 import { useNavigation } from '@react-navigation/native';
 import * as amplitude from './AmplitudeAPI';
+import {default as Text} from "./CustomText"
 
 // 화면의 가로 크기
 const screenWidth = Dimensions.get('window').width;
@@ -190,20 +191,22 @@ const StampView = () => {
       </Modal>
 
       <Modal visible={timeModalVisible} animationType="fade" transparent onRequestClose={handleCloseTimeModal}>
-        <TouchableWithoutFeedback onPress={handleCloseTimeModal}>
+        <TouchableWithoutFeedback onPressOut={handleCloseTimeModal}>
           <View style={styles.timeModalWrapper}>
-            <View style={styles.timeModalContainer}>
-              <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
-              <DatePicker date={tempDate} onDateChange={setTempDate} mode="datetime" theme="light"/>
-              <View style={styles.timeButtons}>
-                <TouchableOpacity onPress={handleCancleTimeModal}>
-                  <Text>취소</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleSubmitTimeModal}>
-                  <Text>확인</Text>
-                </TouchableOpacity>
+            <TouchableWithoutFeedback onPressIn={(e) => e.stopPropagation()}>
+              <View style={styles.timeModalContainer}>
+                <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
+                <DatePicker date={tempDate} onDateChange={setTempDate} mode="datetime" theme="light"/>
+                <View style={styles.timeButtons}>
+                  <TouchableOpacity onPress={handleCancleTimeModal}>
+                    <Text>취소</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 10, right: 20}} onPress={handleSubmitTimeModal}>
+                    <Text>확인</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
+            </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -450,6 +453,12 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginRight: 40,
     marginBottom: 20,
+  },
+  // submitButton 영역 확장
+  submitButton: {
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

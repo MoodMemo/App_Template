@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, TextInput } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Image, ScrollView, TextInput } from 'react-native';
+import {default as Text} from "./CustomText"
 // import Modal from 'react-native-modal';
 
 const StampClick = ({visible, onClose}) => {

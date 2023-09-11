@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar } from 'react-native';
+import { View, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar } from 'react-native';
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
@@ -7,6 +7,8 @@ import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {StatusBarStyle} from 'react-native';
+
+import {default as Text} from "./CustomText"
 
 const Home = ({name}:any) => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -43,10 +45,10 @@ const Home = ({name}:any) => {
   console.log('aa',name);
   return (
     <View style={styles.view}>
-      {/* <StatusBar
+      <StatusBar
         backgroundColor="#FFFAF4"
         barStyle={'dark-content'}
-      /> */}
+      />
       <View style={styles.titleContainer}>
         {/* 드롭다운 컴포넌트 */}
         <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>

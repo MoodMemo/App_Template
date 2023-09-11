@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 
 import * as repository from '../src/localDB/document';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import StampClick from '../StampClick';
 import Modal from "react-native-modal";
+import {default as Text} from "../CustomText"
 
 interface TimelineProps {
   data: repository.IPushedStamp[];
@@ -35,14 +36,14 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
           
           <View style={styles.emojiContainer}>
 
-            <Text style={{fontSize: 24, color: 'black'}}>{item.emoji}</Text>
+            <Text style={{fontSize: 24, color: 'black',}}>{item.emoji}</Text>
             {index < data.length - 1 && <View style={styles.line2} />}
           </View>
 
           <View style={styles.block}>
 
             <View style={styles.title}>
-              <Text style={{ fontSize: 12, color: '#212429'}}>{item.stampName}</Text>
+              <Text style={{fontSize: 12, color: '#212429'}}>{item.stampName}</Text>
               <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
                 <Text style={{ fontSize: 12, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
                 <TouchableOpacity
@@ -108,9 +109,10 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#212429',
     marginBottom: 10,
-    borderRadius: 10,
-    backgroundColor: '#fafafa',
-    paddingBottom: 9
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#F0F0F0',
+    borderWidth: 1
   },
   title: {
     flexDirection: 'row',
@@ -138,7 +140,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     // alignItems: 'center',
     marginRight: 10,
-    
   },
 });
 

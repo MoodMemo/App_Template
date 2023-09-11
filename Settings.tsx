@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
+import { useWindowDimensions, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -7,6 +7,7 @@ import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import VersionCheck from 'react-native-version-check';
 
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
@@ -18,9 +19,17 @@ import * as Sentry from "@sentry/react-native";
 import { UserFeedback } from "@sentry/react-native";
 import { useFocusEffect } from '@react-navigation/native';
 
+import {default as Text} from "./CustomText"
+
 
 const test = () => {
   console.log('hello');
+}
+
+function getRandomInt(min:any, max:any) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min; //최댓값은 제외, 최솟값은 포함
 }
 
 const Settings = () => {
@@ -47,7 +56,7 @@ const Settings = () => {
             // comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback);
-        amplitude.test11(userFeedback.comments)
+        amplitude.send2sentry(userFeedback.comments);
         /*
         const userFeedback2: UserFeedback = {
             event_id: sentryId,
@@ -64,6 +73,32 @@ const Settings = () => {
         setIsReportModalVisible(!isReportModalVisible);
     }
 
+    const generateNotificationMessage = (notificationTime:Date) => {
+        const notificationHour=notificationTime.getHours();
+        if(0<=notificationHour && notificationHour<8){
+            const messageList=['안 자고 모하냐무👀','잠은 안 오냐무? 나는 슬슬 졸리다무💤', '새벽까지 할 게 많냐무...!? 화이팅이다무💪'];
+            return messageList[getRandomInt(0,3)];
+        }
+        else if(8<=notificationHour && notificationHour<12){
+            const messageList=['굿모닝이다무☀ 날씨를 보니 기분이 어떻냐무?!', '굿모닝이다무☀ 잠은 잘 자고 일어났냐무?'];
+            return messageList[getRandomInt(0,2)];
+        }
+        else if (12<=notificationHour && notificationHour<14){
+            return '점심은 맛있게 먹었는지 궁금하다무! 누구랑 뭘 먹었냐무?🍚';
+        }
+        else if(14<=notificationHour && notificationHour<18){
+            return '오늘 하루가 곧 끝나간다무! 지금 뭘 하고 있는지 들려달라무🌈';
+        }
+        else if(18<=notificationHour && notificationHour<20){
+            return '맛있는 저녁밥 먹었냐무? 배고프다무🍽';
+        }
+        else if(20<=notificationHour && notificationHour<22){
+            return '오늘은 어떤 하루였는지 궁금하다무🌙';
+        }
+        else{
+            return '일기를 만들어주겠다무🕶 어서 들어와보라무!';
+        }
+    }
     // const handleOpenLink = async () => {
     //     const url = 'http://pf.kakao.com/_xhGnxgxj'; // 원하는 웹 링크
     
@@ -101,8 +136,6 @@ const Settings = () => {
         console.log('notificationallowed',result);
     });
   })();
-   
-  
 
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
@@ -128,7 +161,7 @@ const Settings = () => {
                 <ChangeProfile/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity onPress={() => {
+                {/* <TouchableOpacity onPress={() => {
                     amplitude.connectToKakaoChatBot();
                     setIsKakaoModalVisible(!isKakaoModalVisible);
                     }}>
@@ -167,7 +200,7 @@ const Settings = () => {
                             </View>
                         </View>
                     </Modal>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <Divider style={{backgroundColor:"#DDDDDD"}}/>
                 <Divider style={{backgroundColor:"#DDDDDD"}}/>
                 <View
@@ -212,7 +245,7 @@ const Settings = () => {
                                                 PushNotification.localNotificationSchedule({
                                                     channelId: "MoodMemo_ID",
                                                     smallIcon: "ic_notification",
-                                                    message: notification.time + ' 알림',
+                                                    message: generateNotificationMessage(notificationTime),
                                                     date: new Date(notificationTime), // 1 second from now
                                                     visibility: "public",
                                                     playSound: false,
@@ -299,6 +332,7 @@ const Settings = () => {
                 <TouchableOpacity disabled={!isNotificationEnabled}
                 onPress={async () => {
                     setIsNotificationListModalVisible(!isNotificationListModalVisible);
+                    amplitude.intoNotiList();
                     }}>
                     <View
                         style={{
@@ -381,13 +415,13 @@ const Settings = () => {
                               justifyContent: 'space-between'
                           }}>
                           <Text style={{fontSize: 17, color:"#495057"}}>버전</Text>
-                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver 1.0.6</Text>
+                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver {VersionCheck.getCurrentVersion()}</Text>
                       </View>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity onPress={() => {
+                {/* <TouchableOpacity onPress={() => {
                     amplitude.intoGuide();
                     setIsNoticeModalVisible(!isNoticeModalVisible);
                     }}>
@@ -429,7 +463,7 @@ const Settings = () => {
                     </Modal>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/> */}
                 <TouchableOpacity onPress={() => {
                     amplitude.intoServiceCenter();
                     setIsReportModalVisible(!isReportModalVisible);
