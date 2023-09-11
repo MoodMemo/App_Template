@@ -140,6 +140,7 @@ const Weekly = () => {
   const [isCannotModalVisible, setIsCannotModalVisible] = useState(false);
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
   const [isWarningMove2AnotherDayModalVisible, setIsWarningMove2AnotherDayModalVisible] = useState(false);
+  const [isDeletingStamp, setIsDeletingStamp] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
@@ -208,6 +209,7 @@ const Weekly = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
   const [tmpEditedTitle, setTmpEditedTitle] = useState(editedTitle);
+  const [tmpDeleteStamp, setTmpDeleteStamp] = useState(null);
   const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
   const [tmpEditedBodyText, setTmpEditedBodyText] = useState(editedBodytext);
   const handleEditButton = () => { 
@@ -243,10 +245,15 @@ const Weekly = () => {
   const handleEditedTitleChange = (text) => {
      setEditedTitle(text);
   };
-
   const handleEditedBodyTextChange = (text) => {
     setEditedBodytext(text);
   };
+  const handleDeleteButton = (deleteStamp: repository.IPushedStamp) => {
+    amplitude.test1();
+    realm.write(() => {
+      repository.deletePushedStamp(deleteStamp);
+    });
+  }
 
   const [stampORdiary, setStampORdiary] = useState(true); // true = stamp, false = diary
   const ReadyToGenerateDiary = () => {
@@ -677,6 +684,43 @@ const Weekly = () => {
                 <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
               </TouchableOpacity>
               <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false);}}>
+                <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+                    
+        </View>
+      </Modal>
+      {/* 4-6. 스탬프 삭제 경고 모달 */}
+      <Modal 
+        isVisible={isDeletingStamp}
+        animationIn={"fadeIn"}
+        animationOut={"fadeOut"}
+        backdropColor='#CCCCCC' 
+        backdropOpacity={0.9}
+        style={{ alignItems:'center' }}
+        backdropTransitionInTiming={0} // Disable default backdrop animation
+        backdropTransitionOutTiming={0} // Disable default backdrop animation
+      >
+        <View style={diaryStyles.finishLodingModal}>
+          {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+          <Image 
+            source={require('../assets/colorMooMini.png')}
+            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+          <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>정말로 기록한 스탬프를 삭제하겠냐</Text>
+            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
+          </View>
+          <View style={{alignItems: 'center',}}>
+            <Text style={{ color: '#475467', fontSize: 14, }}>되돌릴 수 없다무..!</Text>
+          </View>
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
+              <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.test1();}}>
+                <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleDeleteButton(tmpDeleteStamp); setIsDeletingStamp(false);}}>
                 <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
               </TouchableOpacity>
             </View>
