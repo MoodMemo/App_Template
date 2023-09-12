@@ -322,15 +322,19 @@ const Weekly = () => {
   const boxRef = useRef();
   const [buttonX, setButtonX] = useState(0);
   const [buttonY, setButtonY] = useState(0);
-  const getBoxMeasure = () => {
-    boxRef.current.measureInWindow((x, y, width, height)=> {
-        console.log("measureInWindow ==")
+  const buttonRefs = useRef([]);
+  const getBoxMessure = (index) => {
+    if (buttonRefs.current[index]) {
+      buttonRefs.current[index].measureInWindow((x, y, width, height) => {
+        console.log("tmp ==")
         console.log("x : ", x); setButtonX(x);
         console.log("y : ", y); setButtonY(y);
         console.log("width : ", width);
         console.log("height : ", height);
-    });
+      });
+    }
   };
+  
 
   // tmp_createDummyData(); 
 
@@ -443,7 +447,7 @@ const Weekly = () => {
 
       {stampORdiary ? ( // 스탬프 기록
         getEmoji(getStamp(today)).length !== 0 ? ( // 스탬프 exists
-          <View style={{flexDirection: 'row', marginTop: 16, marginHorizontal: 16 }}>
+          <View style={{ flexDirection: 'row', marginTop: 16, marginHorizontal: 16, marginBottom: 230 }}>
             <ScrollView>
               <View style={Timelinestyles.container}>
                 {timelineData.map((item, index) => (
@@ -463,8 +467,11 @@ const Weekly = () => {
                         <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
                           <Text style={{ fontSize: 12, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
                           {/* 수정 & 삭제 */}
-                          <View onLayout={(event)=>{ getBoxMeasure()}} ref={boxRef}>
-                            <TouchableOpacity onPress={() => setDropdownButtonVisible(true)}>
+                          <View>
+                            <TouchableOpacity
+                              onPress={() => {setDropdownButtonVisible(true), getBoxMessure(index); amplitude.test10();}}
+                              ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
+                            >
                               <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
                             </TouchableOpacity>
                             {/* 1. 스탬프 수정 삭제 드롭다운 */}
@@ -477,7 +484,7 @@ const Weekly = () => {
                                 style={{
                                   position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
                                   left: buttonX - 79,
-                                  top: buttonY-3, // Y 좌표를 버튼 아래에 위치 + 버튼의 높이
+                                  top: buttonY - 3,
                                   // alignItems: 'center',
                                   // justifyContent: 'flex-end',
                                   // margin: 0,
