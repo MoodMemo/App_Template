@@ -488,7 +488,7 @@ const Weekly = () => {
                               >
                                 <View style={TimelineDropDownStyles.dropdownContainer}>
                                     <View style={TimelineDropDownStyles.dropdownButtonOption}>
-                                      <TouchableOpacity>
+                                      <TouchableOpacity onPress={() => {setDropdownButtonVisible(false); setStampClickModalVisible(true)}}>
                                         <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
                                       </TouchableOpacity>
                                       <TouchableOpacity onPress={() => {handleDeleteButton(item);}}>
@@ -535,10 +535,12 @@ const Weekly = () => {
                                         
                             </View>
                           </Modal>
+                          {/* 3. 스탬프 수정 팝업 온 */}
+                          <Modal isVisible={stampClickModalVisible}>
+                            <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
+                          </Modal>
                         </View>
-                        {/* <Modal isVisible={stampClickModalVisible}> -> 여기를 풀면 스탬프 클릭 모달이 뜬다 ...?
-                          <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
-                        </Modal> */} 
+                        
                         
                       </View>
 
