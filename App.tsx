@@ -47,6 +47,8 @@ import VersionCheck from 'react-native-version-check';
 
 import codePush , {CodePushOptions} from "react-native-code-push";
 
+import * as Progress from 'react-native-progress';
+
 import Main from './Main'
 import { create } from 'react-test-renderer';
 
@@ -58,7 +60,11 @@ import * as amplitude from './AmplitudeAPI';
 
 const Stack = createNativeStackNavigator();
 
-
+const codePushOptions: CodePushOptions = {
+  checkFrequency: codePush.CheckFrequency.MANUAL,
+  installMode: codePush.InstallMode.ON_NEXT_RESTART,
+  mandatoryInstallMode: codePush.InstallMode.ON_NEXT_RESTART,
+};
 
 /**
  * AsyncStorage, Realm 초기화
@@ -80,7 +86,8 @@ function App(): JSX.Element {
   const [isRegistered, setIsRegistered] = useState(false);
   const [isUpdateNeeded, setIsUpdateNeeded] = useState(false);
   const [isCodePushUpdateNeeded, setIsCodePushUpdateNeeded] = useState(false);
-
+  const [showCodePushUpdate,setShowCodePushUpdate]=useState(false);
+  const [progress,setProgress] = useState(0);
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -100,22 +107,22 @@ function App(): JSX.Element {
     });
   };
 
-  // const codePushVersionCheck = async () => {
-  //   try{
-  //     console.log('whywhywhy');
-  //     const update = await codePush.checkForUpdate();
-  //     console.log('app started',update);
-  //     if(update){
-  //       setIsCodePushUpdateNeeded(true);
-  //     }
-  //     else{
-  //       console.log('no update');
-  //     }
-  //   }
-  //   catch(error){
-  //     console.error(error);
-  //   }
-  // }
+  const codePushVersionCheck = async () => {
+    try{
+      console.log('whywhywhy');
+      const update = await codePush.checkForUpdate();
+      console.log('app started',update);
+      if(update){
+        setIsCodePushUpdateNeeded(true);
+      }
+      else{
+        console.log('no update');
+      }
+    }
+    catch(error){
+      console.error(error);
+    }
+  }
 
   //initiailze(); //처음에는 주석 해제하고 실행해서 초기화 한 다음에 바로 껐다가, 주석 처리하고 다시 실행합시다!
 
@@ -130,9 +137,32 @@ function App(): JSX.Element {
     // Do something before delay
     await new Promise(f => setTimeout(f, 600));
     await AppVersionCheck();
-    //await codePushVersionCheck();
+    //setShowCodePushUpdate(true);
+    await codePushVersionCheck();
     SplashScreen.hide();
     // Do something after
+    if(isCodePushUpdateNeeded){
+      codePush.sync({
+        installMode:codePush.InstallMode.IMMEDIATE,
+        mandatoryInstallMode:codePush.InstallMode.IMMEDIATE
+      },
+      (status) => {
+        switch (status) {
+            case codePush.SyncStatus.DOWNLOADING_PACKAGE:
+                // Show "downloading" modal
+                setShowCodePushUpdate(true);
+                break;
+            case codePush.SyncStatus.INSTALLING_UPDATE:
+                // Hide "downloading" modal
+                //setShowCodePushUpdate(false);
+                break;
+        }
+      },
+      ({ receivedBytes, totalBytes, }) => {
+        /* Update download modal progress */
+        setProgress(receivedBytes/totalBytes);
+      })
+    }
     }
   )();
   amplitude.beginSession(); // 앱 시작
@@ -199,12 +229,23 @@ function App(): JSX.Element {
       </SafeAreaView>
     )
   }
-  // else if (isCodePushUpdateNeeded) {
-  //   return (
-  //     <SafeAreaView style={{backgroundColor:'#55B275',flex:1,justifyContent:'center',alignItems:'center',}}>
-  //     <Text>업데이트 필요해</Text>
-  //   </SafeAreaView>);
-  // }
+  else if (showCodePushUpdate) {
+    return (
+    <SafeAreaView style={{backgroundColor:'#75D295',flex:1,justifyContent:'center',alignItems:'center',}}>
+      <Image 
+                source={require('./assets/analyze_0904.png')}
+                style={{width:1065*0.07,height:1317*0.07,position: 'relative', overflow: 'hidden',marginBottom:20,marginTop:10}}></Image>
+      <Text style={{fontSize:18,fontWeight:'bold',color:'#FFFFFF'}}>업데이트 중이다<Text style={{fontSize:18,fontWeight:'bold',color:'#FFF3E3'}}>무</Text>...</Text>
+      <Text style={{color:'#475467',marginTop:10}}>무드메모의 필수 요소들을</Text>
+      <Text style={{color:'#475467',marginBottom:50}}>열심히 가져오고 있다무!!</Text>
+      <Progress.Bar
+        progress={progress}
+        borderColor='#FFF3E3'
+        color='#FFF3E3'
+        width={200}
+      />
+    </SafeAreaView>);
+  }
   else if (isRegistered) {
     repository.updatePushedStampCount(); // db 4->5 migration
     console.log("isRegistered: " + isRegistered);
@@ -248,4 +289,4 @@ const styles = StyleSheet.create({
 });
 
 // export default App;
-export default codePush(Sentry.wrap(App));
+export default codePush(codePushOptions)(Sentry.wrap(App));
