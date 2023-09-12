@@ -8,13 +8,29 @@ import Modal from "react-native-modal";
 import {default as Text} from "../CustomText"
 import realm from '../src/localDB/document';
 import * as amplitude from '../AmplitudeAPI';
+import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
+import { Weekly } from './Weekly';
+
+import dayjs from 'dayjs';
+const weekOfYear = require("dayjs/plugin/weekOfYear");
+var isSameOrBefore = require('dayjs/plugin/isSameOrBefore')
+import "dayjs/locale/ko"; //한국어
+dayjs.locale("ko");
+dayjs.extend(weekOfYear);
+dayjs.extend(isSameOrBefore);
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface TimelineProps {
   data: repository.IPushedStamp[];
 }
 
-
 const Timeline: React.FC<TimelineProps> = ({ data }) => {
+
+  const [data_, setData] = useState(data);
+
 
   const dateFormat = {
     // ko-KR
@@ -32,27 +48,36 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
   const [isDeletingStamp, setIsDeletingStamp] = useState(false);
   const [tmpDeleteStamp, setTmpDeleteStamp] = useState(null);
   const handleDeleteButton = (deleteStamp: repository.IPushedStamp) => {
+    console.log('deleteStamp: ', deleteStamp.emoji);
+    setTmpDeleteStamp(deleteStamp);
+    setDropdownButtonVisible(false);
+    setIsDeletingStamp(true);
+  }
+  const handleDeleteConfirm = (deleteStamp: repository.IPushedStamp) => {
+    const today = dayjs(deleteStamp.dateTime);
     amplitude.test1();
     realm.write(() => {
       repository.deletePushedStamp(deleteStamp);
     });
+    // 스탬프가 삭제되면 상태(state)에서도 삭제해야 합니다.
+    setData(getStamp(today));
   }
   return (
-    <View style={styles.container}>
+    <View style={Timelinestyles.container}>
 
-      {data.map((item, index) => (
-        <View key={index} style={styles.timelineItem}>
+      {data_.map((item, index) => (
+        <View key={index} style={Timelinestyles.timelineItem}>
           
           {/* 이모지 */}       
-          <View style={styles.emojiContainer}>
+          <View style={Timelinestyles.emojiContainer}>
             <Text style={{fontSize: 24, color: 'black',}}>{item.emoji}</Text>
-            {index < data.length - 1 && <View style={styles.line2} />}
+            {index < data_.length - 1 && <View style={Timelinestyles.line2} />}
           </View>
 
           {/* 텍스트 */}
-          <View style={styles.block}>
+          <View style={Timelinestyles.block}>
 
-            <View style={styles.title}>
+            <View style={Timelinestyles.title}>
               <Text style={{fontSize: 12, color: '#212429'}}>{item.stampName}</Text>
               <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
                 <Text style={{ fontSize: 12, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
@@ -70,8 +95,8 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
                       onBackdropPress={() => setDropdownButtonVisible(false)}
                       style={{
                         position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
-                        right: 3,
-                        // bottom: 0, // Y 좌표를 버튼 아래에 위치 + 버튼의 높이
+                        right: 6,
+                        top: 255, // Y 좌표를 버튼 아래에 위치 + 버튼의 높이
                         // alignItems: 'center',
                         // justifyContent: 'flex-end',
                         // margin: 0,
@@ -79,13 +104,15 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
                       backdropTransitionInTiming={0} // Disable default backdrop animation
                       backdropTransitionOutTiming={0} // Disable default backdrop animation
                     >
-                      <View style={dropDownStyles.dropdownContainer}>
-                        <TouchableOpacity style={dropDownStyles.dropdownButton}>
-                          <View style={dropDownStyles.dropdownButtonOption}>
-                            <Text style={dropDownStyles.dropdownButtonText}>수정</Text>
-                            <Text style={dropDownStyles.dropdownButtonText}>삭제</Text>
+                      <View style={TimelineDropDownStyles.dropdownContainer}>
+                          <View style={TimelineDropDownStyles.dropdownButtonOption}>
+                            <TouchableOpacity>
+                              <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => {handleDeleteButton(item);}}>
+                              <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
+                            </TouchableOpacity>
                           </View>
-                        </TouchableOpacity>
                       </View>
                   </Modal>
                 </View>
@@ -100,7 +127,7 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
                   backdropTransitionInTiming={0} // Disable default backdrop animation
                   backdropTransitionOutTiming={0} // Disable default backdrop animation
                 >
-                  <View style={diaryStyles.finishLodingModal}>
+                  <View style={TimelineDiaryStyles.finishLodingModal}>
                     {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
                     <Image 
                       source={require('../assets/colorMooMini.png')}
@@ -115,10 +142,10 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 20 }}>
                       <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
-                        <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.test1();}}>
+                        <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.test1();}}>
                           <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleDeleteButton(tmpDeleteStamp); setIsDeletingStamp(false);}}>
+                        <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpDeleteStamp); setIsDeletingStamp(false);}}>
                           <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                         </TouchableOpacity>
                       </View>
@@ -133,27 +160,19 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
               
             </View>
 
-            <View style={styles.line}></View>
+            <View style={Timelinestyles.line}></View>
 
-            <Text style={styles.title}>{item.memo}</Text>
+            <Text style={Timelinestyles.title}>{item.memo}</Text>
             {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
 
           </View>
         </View>
       ))}
-          
-
-
-      
-
-
-      
-      
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const Timelinestyles = StyleSheet.create({
   container: {
     flex: 1, // 양쪽 확장
     alignItems: 'center',
@@ -201,9 +220,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 });
-const dropDownStyles = StyleSheet.create({
+const TimelineDropDownStyles = StyleSheet.create({
   dropdownContainer: {
-    // position: 'relative',
     marginBottom: 10,
   },
   dropdownButton: {
@@ -215,10 +233,9 @@ const dropDownStyles = StyleSheet.create({
     color: '#212429',
     backgroundColor: '#ffffff',
     paddingVertical: 5,
-    paddingRight: 17,
     borderRadius: 4,
     fontWeight: 'bold',
-    shadowColor: '#909090',
+    shadowColor: 'black',
     shadowOpacity: 1,        // 그림자 투명도
     shadowRadius: 50,           // 그림자 블러 반경
     elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
@@ -227,11 +244,11 @@ const dropDownStyles = StyleSheet.create({
     fontSize: 14,
     color: '#212429',
     paddingVertical: 5,
-    paddingRight: 22,
-    marginLeft: 15,
+    paddingRight: 30,
+    paddingLeft: 15,
   },
 });
-const diaryStyles = StyleSheet.create({
+const TimelineDiaryStyles = StyleSheet.create({
   diaryContainer: {
     flexDirection: 'column',
     justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
