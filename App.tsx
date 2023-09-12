@@ -137,6 +137,7 @@ function App(): JSX.Element {
     // Do something before delay
     await new Promise(f => setTimeout(f, 600));
     await AppVersionCheck();
+    //setShowCodePushUpdate(true);
     await codePushVersionCheck();
     SplashScreen.hide();
     // Do something after
@@ -229,12 +230,19 @@ function App(): JSX.Element {
     )
   }
   else if (showCodePushUpdate) {
-    
     return (
-    <SafeAreaView style={{backgroundColor:'#55B275',flex:1,justifyContent:'center',alignItems:'center',}}>
-      <Text>업데이트 필요해</Text>
+    <SafeAreaView style={{backgroundColor:'#75D295',flex:1,justifyContent:'center',alignItems:'center',}}>
+      <Image 
+                source={require('./assets/analyze_0904.png')}
+                style={{width:1065*0.07,height:1317*0.07,position: 'relative', overflow: 'hidden',marginBottom:20,marginTop:10}}></Image>
+      <Text style={{fontSize:18,fontWeight:'bold',color:'#FFFFFF'}}>업데이트 중이다<Text style={{fontSize:18,fontWeight:'bold',color:'#FFF3E3'}}>무</Text>...</Text>
+      <Text style={{color:'#475467',marginTop:10}}>무드메모의 필수 요소들을</Text>
+      <Text style={{color:'#475467',marginBottom:50}}>열심히 가져오고 있다무!!</Text>
       <Progress.Bar
         progress={progress}
+        borderColor='#FFF3E3'
+        color='#FFF3E3'
+        width={200}
       />
     </SafeAreaView>);
   }
