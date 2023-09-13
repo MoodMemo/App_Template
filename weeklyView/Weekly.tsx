@@ -140,7 +140,7 @@ const Weekly = () => {
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
   const [isCannotModalVisible, setIsCannotModalVisible] = useState(false);
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
-  const [isWarningMove2AnotherDayModalVisible, setIsWarningMove2AnotherDayModalVisible] = useState(false);
+  const [isWarningMove2AnotherDayModalVisible, setIsWarningMove2AnotherDayModalVisible] = useState(true);
 
   const [isCanceled, setIsCanceled] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
@@ -675,8 +675,8 @@ const Weekly = () => {
             <View style={diaryStyles.lodingModal}>
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
-                source={require('../assets/colorMooMini.png')}
-                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+                source={require('../assets/write_0904.png')}
+                style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
               <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중이다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
@@ -716,8 +716,8 @@ const Weekly = () => {
         <View style={diaryStyles.finishLodingModal}>
           {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
           <Image 
-            source={require('../assets/colorMooMini.png')}
-            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+            source={require('../assets/finish_0904.png')}
+            style={{ width: 100, height: (80 * 100) / 100 , marginTop: 50,}}></Image>
           <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
             <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기가 발행됐다</Text>
             <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
@@ -784,8 +784,8 @@ const Weekly = () => {
         <View style={diaryStyles.finishLodingModal}>
           {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
           <Image 
-            source={require('../assets/colorMooMini.png')}
-            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+            source={require('../assets/write_0904.png')}
+            style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
           <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
             <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>수정을 취소하겠냐</Text>
             <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
@@ -821,8 +821,8 @@ const Weekly = () => {
         <View style={diaryStyles.finishLodingModal}>
           {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
           <Image 
-            source={require('../assets/colorMooMini.png')}
-            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+            source={require('../assets/write_0904.png')}
+            style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
           <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
             <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>다른 날짜로 이동하겠냐</Text>
             <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
@@ -834,7 +834,7 @@ const Weekly = () => {
           <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
               <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningMove2AnotherDayModalVisible(false); amplitude.cancel2move2AnotherDayWhileEditingDiary();}}>
-                <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+                <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>닫기</Text>
               </TouchableOpacity>
               <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false);}}>
                 <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
