@@ -140,7 +140,7 @@ const Weekly = () => {
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
   const [isCannotModalVisible, setIsCannotModalVisible] = useState(false);
   const [isWarningModalVisible, setIsWarningModalVisible] = useState(false);
-  const [isWarningMove2AnotherDayModalVisible, setIsWarningMove2AnotherDayModalVisible] = useState(true);
+  const [isWarningMove2AnotherDayModalVisible, setIsWarningMove2AnotherDayModalVisible] = useState(false);
 
   const [isCanceled, setIsCanceled] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
