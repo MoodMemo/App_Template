@@ -543,9 +543,9 @@ const Weekly = () => {
                             </View>
                           </Modal>
                           {/* 3. 스탬프 수정 팝업 온 */}
-                          <Modal isVisible={stampClickModalVisible}>
+                          {/* <Modal isVisible={stampClickModalVisible}> */}
                             <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
-                          </Modal>
+                          {/* </Modal> */}
                         </View>
                         
                         

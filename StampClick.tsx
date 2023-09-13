@@ -1,12 +1,28 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Image, ScrollView, TextInput } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Modal, Image, ScrollView, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import {default as Text} from "./CustomText"
+import DatePicker from 'react-native-date-picker';
 // import Modal from 'react-native-modal';
+
+// 화면의 가로 크기
+const screenWidth = Dimensions.get('window').width;
+// screenWidth가 500보다 크면 500으로, 작으면 screenWidth로 설정
+const width = screenWidth > 500 ? 500 : screenWidth;
+
+// 4개의 버튼과 각 버튼 사이의 간격을 위한 값
+const buttonWidth = (width - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
+
+// 기본 디자인에서의 버튼 너비
+const defaultButtonWidth = 69;
+
+// 비율 계산
+const scale = buttonWidth / defaultButtonWidth
 
 const StampClick = ({visible, onClose}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [date, setDate] = useState(new Date());
+  const [tempDate, setTempDate] = useState(date);
   const [memo, setMemo] = useState('');
   const [numberOfLines, setNumberOfLines] = useState(1);
   const [images, setImages] = useState([]);
@@ -18,102 +34,189 @@ const StampClick = ({visible, onClose}) => {
     setNumberOfLines(text.split('\n').length);
   };
 
+  const handleCloseTimeModal = () => {
+    setTempDate(date);
+    setTimeModalVisible(false);
+  }
+
+  const handleCancleTimeModal = () => {
+    // amplitude.cancelChangeStampTime();
+    setTempDate(date);
+    handleCloseTimeModal();
+  }
+  
+  const handleSubmitTimeModal = () => {
+    // amplitude.submitChangeStampTime();
+    setDate(tempDate);
+    handleCloseTimeModal();
+  }
+
   return (
-    <View style={styles.modalContainer}>
-      {/* 모달 내용 */}
-      <View style={styles.modalTitleContainer}>
-        <TouchableOpacity onPress={() => onClose()}>
-          <Image source={require('./assets/close.png')} />
-        </TouchableOpacity>
-        <Text style={styles.modalTitle}>감정 기록</Text>
-        <TouchableOpacity onPress={() => onClose()}>
-          <Image source={require('./assets/check.png')} />
-        </TouchableOpacity>
-      </View>
-      <ScrollView horizontal={false}>
-      <View style={styles.stampContainer}>
-        <Text style={styles.modalText}>찍은 스탬프</Text>
-        <View style={styles.stampContent}>
-          <Text style={styles.stampText}>🥲</Text>
-          <Text style={styles.stampText}>여기어떻게할지논의해야함</Text>
+    <View>
+    <Modal visible={visible} animationType="slide" transparent>
+      <View style={styles.modalContainer}>
+        {/* 모달 내용 */}
+        <View style={styles.modalTitleContainer}>
+          <TouchableOpacity onPress={() => onClose()}>
+            <Image source={require('./assets/close.png')} />
+          </TouchableOpacity>
+          <Text style={styles.modalTitle}>감정 수정</Text>
+          <TouchableOpacity onPress={() => onClose()}>
+            <Image source={require('./assets/check.png')} />
+          </TouchableOpacity>
         </View>
-      </View>
-      <View style={styles.timeContainer}>
-        <Text style={styles.modalText}>기록 시간</Text>
-        <TouchableOpacity onPress={() => setTimeModalVisible(true)}>
-          <Text style={styles.timeText}>
-            {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes()}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.horizontalLine} />
-      <View style={styles.memoContainer}>
-        <Text style={styles.modalText}>메모 남기기</Text>
-        <View style={styles.memoContent}>
-          <TextInput
-            style={styles.memoText}
-            placeholder="메모 작성하기 (추후 작성 가능)"
-            multiline={true}
-            maxLength={500}
-            onChangeText={handleMemoChange}
-            value={memo}
-            numberOfLines={numberOfLines}
-          />
-          <Text style={styles.maxLength}>{memo.length}/500</Text>
+        <ScrollView horizontal={false}>
+        <View style={styles.stampContainer}>
+          <Text style={styles.modalText}>찍은 스탬프</Text>
+          <View style={styles.stampContent}>
+            <Text style={styles.stampText}>🥲</Text>
+            <Text style={styles.stampText}>여기어떻게할지논의해야함</Text>
+          </View>
         </View>
-      </View>
-      {/* <View style={styles.imgContainer}>
-        <Text style={styles.modalText}>사진 추가</Text>
-        <TouchableOpacity style={styles.imgButton} onPress={() => {
-          setNotDevelopedModalVisible(true);
-        }}>
-          <Image source={require('./assets/add-circle.png')} />
-          <Text style={styles.imgText}>사진 추가{"\n"}{images.length}/3</Text>
-        </TouchableOpacity>
-      </View> */}
-      {/* <Modal isVisible={notDevelopedModalVisible}
-        animationIn={"fadeIn"}
-        animationInTiming={200}
-        animationOut={"fadeOut"}
-        animationOutTiming={200}
-        onBackdropPress={() => {
-            setNotDevelopedModalVisible(!notDevelopedModalVisible);
-        }}
-        backdropColor='#CCCCCC'//'#FAFAFA'
-        backdropOpacity={0.8}
-        style={{
-            alignItems:'center'
-        }}>
-          <View style={{
-            backgroundColor:"#FFFFFF",
-            width:'80%',
-            height:'20%',
-            justifyContent:'center',
-            alignItems:'center',
-            borderRadius:10
+        <View style={styles.timeContainer}>
+          <Text style={styles.modalText}>기록 시간</Text>
+            <TouchableOpacity onPress={() => {
+              // amplitude.tryChangeStampTime();
+              setTimeModalVisible(true);
+            }}>
+            <Text style={styles.timeText}>
+              {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes()}
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.horizontalLine} />
+        <View style={styles.memoContainer}>
+          <Text style={styles.modalText}>메모 남기기</Text>
+          <View style={styles.memoContent}>
+            <TextInput
+              style={styles.memoText}
+              placeholder="메모 작성하기 (추후 작성 가능)"
+              multiline={true}
+              maxLength={500}
+              onChangeText={handleMemoChange}
+              value={memo}
+              numberOfLines={numberOfLines}
+            />
+            <Text style={styles.maxLength}>{memo.length}/500</Text>
+          </View>
+        </View>
+        {/* <View style={styles.imgContainer}>
+          <Text style={styles.modalText}>사진 추가</Text>
+          <TouchableOpacity style={styles.imgButton} onPress={() => {
+            setNotDevelopedModalVisible(true);
+          }}>
+            <Image source={require('./assets/add-circle.png')} />
+            <Text style={styles.imgText}>사진 추가{"\n"}{images.length}/3</Text>
+          </TouchableOpacity>
+        </View> */}
+        {/* <Modal isVisible={notDevelopedModalVisible}
+          animationIn={"fadeIn"}
+          animationInTiming={200}
+          animationOut={"fadeOut"}
+          animationOutTiming={200}
+          onBackdropPress={() => {
+              setNotDevelopedModalVisible(!notDevelopedModalVisible);
+          }}
+          backdropColor='#CCCCCC'//'#FAFAFA'
+          backdropOpacity={0.8}
+          style={{
+              alignItems:'center'
           }}>
             <View style={{
-              }}>
-                <Text style={{fontSize: 17, color:"#495057"}}>사진 업로드는 개발 중!</Text>
+              backgroundColor:"#FFFFFF",
+              width:'80%',
+              height:'20%',
+              justifyContent:'center',
+              alignItems:'center',
+              borderRadius:10
+            }}>
+              <View style={{
+                }}>
+                  <Text style={{fontSize: 17, color:"#495057"}}>사진 업로드는 개발 중!</Text>
+              </View>
+            </View>
+          </Modal> */}
+        </ScrollView>
+      </View>
+    </Modal>
+
+    <Modal visible={timeModalVisible} animationType="fade" transparent onRequestClose={handleCloseTimeModal}>
+    <TouchableWithoutFeedback onPressOut={handleCloseTimeModal}>
+      <View style={styles.timeModalWrapper}>
+        <TouchableWithoutFeedback onPressIn={(e) => e.stopPropagation()}>
+          <View style={styles.timeModalContainer}>
+            <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
+            <DatePicker date={tempDate} onDateChange={setTempDate} mode="datetime" theme="light"/>
+            <View style={styles.timeButtons}>
+              <TouchableOpacity onPress={handleCancleTimeModal}>
+                <Text>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 10, right: 20}} onPress={handleSubmitTimeModal}>
+                <Text>확인</Text>
+              </TouchableOpacity>
             </View>
           </View>
-        </Modal> */}
-      </ScrollView>
+        </TouchableWithoutFeedback>
+      </View>
+    </TouchableWithoutFeedback>
+    </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 19,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stampView: {
+    top: 0,
+    alignContent: 'center',
+    flexDirection: 'row', // 버튼들을 가로로 배열
+    flexWrap: 'wrap', // 가로로 공간이 부족하면 다음 줄로 넘어감
+    justifyContent: 'space-between', // 버튼들 사이의 간격을 동일하게 분배
+    height: 'auto',
+    marginLeft: 28,
+    marginRight: 28,
+    maxWidth: 500, // stampView의 최대 너비 설정
+    alignSelf: 'center', // 화면의 중앙에 위치하도록 설정
+    columnGap: 20,
+  },
+  stampButton: {
+    width: buttonWidth, 
+    height: 84 * scale, // 기본 높이에 비율을 곱함
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: '#7CD0B2',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12 * scale, // 기본 borderRadius에 비율을 곱함
+    marginBottom: 20 * scale, // 기본 marginBottom에 비율을 곱함
+    gap: 10,
+  },
+  buttonEmotion: {
+    fontSize: 24 * scale, // 기본 fontSize에 비율을 곱함
+  },
+  buttonText: {
+    fontSize: 12 * scale, // 기본 fontSize에 비율을 곱함
+    fontWeight: '400',
+    color: '#212429',
+    textAlign: 'center',
+    fontFamily: 'Pretendard',
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-start',
-    alignItems: 'center',
+    // alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    width: 'auto',
-    height: 785,
+    width: '100%',
+    height: '100%',
     flexShrink: 0,
     borderRadius: 16,
-    marginTop: 67,
   },
   modalTitleContainer: {
     flexDirection: 'row',
@@ -143,9 +246,10 @@ const styles = StyleSheet.create({
   },
   stampContainer: {
     flexDirection: 'row',
-    width: 393,
+    width: '100%',
     height: 60,
     paddingLeft: 16,
+    // justifyContent 종류: flex-start, flex-end, center, space-between, space-around, space-evenly
     justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 20,
@@ -155,7 +259,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     paddingTop: 8,
     paddingBottom: 8,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 8,
   },
@@ -168,7 +272,7 @@ const styles = StyleSheet.create({
   },
   timeContainer: {
     flexDirection: 'row',
-    width: 393,
+    width: '100%',
     height: 60,
     paddingLeft: 16,
     justifyContent: 'flex-start',
@@ -183,13 +287,16 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   horizontalLine: {
-    width: 358,
+    // width: '100%',
     height: 0.7,
     backgroundColor: '#F0F0F0',
-    margin: 16,
+    marginLeft: 16,
+    marginRight: 19,
+    marginTop: 27,
+    marginBottom: 27,
   },
   memoContainer: {
-    width: 393,
+    width: '100%',
     padding: 16,
     justifyContent: 'flex-start',
     gap: 7,
@@ -197,7 +304,7 @@ const styles = StyleSheet.create({
   memoContent: {
     flexDirection: 'column',
     display: 'flex',
-    width: 320,
+    width: '100%',
     paddingHorizontal: 16,
     paddingVertical: 10,
     gap: 6,
@@ -226,7 +333,7 @@ const styles = StyleSheet.create({
   },
   imgContainer: {
     flexDirection: 'column',
-    width: 393,
+    width: '100%',
     padding: 16,
     justifyContent: 'flex-start',
     gap: 10,
@@ -258,12 +365,20 @@ const styles = StyleSheet.create({
     fontStyle: 'normal',
     lineHeight: 10,
   },
+  timeModalWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end', // 이 부분이 모달을 하단으로 밀어줍니다.
+  },
   timeModalContainer: {
-    width: 393,
-    height: 335,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: '50%',
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    marginTop: 517,
+    // 아래의 marginTop 제거 또는 조절
+    // marginTop: 517,
     shadowColor: '#000000',
     shadowOffset: {
       width: 0,
@@ -272,10 +387,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.30,
     shadowRadius: 6,
     elevation: 30,
-    alignItems: 'center',
     paddingTop: 20,
     gap: 10,
   },
+  
   timeModalText: {
     fontFamily: 'Pretendard',
     fontSize: 16,
@@ -287,6 +402,13 @@ const styles = StyleSheet.create({
     gap: 26,
     alignSelf: 'flex-end',
     marginRight: 40,
+    marginBottom: 20,
+  },
+  // submitButton 영역 확장
+  submitButton: {
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
