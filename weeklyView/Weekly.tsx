@@ -397,7 +397,9 @@ const Weekly = () => {
           {/* TODO - 스탬프가 7개 이상일 경우 +n 등을 띄워야 함 */}
           {getDatesBetween(startDate).map((date) => (
             <TouchableOpacity key={date.format('YYYYMMDD')} onPress={() => handleTodayChange(date)}>
-              <View style={[styles.day, date.isSame(today, 'day') && styles.day_today]}>
+              <View style={[styles.day, 
+                            date.isSame(today, 'day') && styles.day_today,
+                            date.isSame(today, 'day') && today.isAfter(dayjs(), 'day') && styles.day_notYet_today,]}>
                 <Text style={[
                   styles.dayText,
                   date.day() === 0 && styles.dayText_sunday]}>{date.format('ddd')}</Text>
@@ -405,6 +407,7 @@ const Weekly = () => {
                   styles.dayText, 
                   date.day() === 0 && styles.dayText_sunday,
                   date.isSame(today, 'day') && styles.dayText_today,
+                  date.isSame(today, 'day') && today.isAfter(dayjs(), 'day') && styles.dayText_notYet_today,
                   date.isAfter(dayjs()) && styles.dayText_notYet]}>{date.format('DD')}</Text>
                 <Text style={[
                   styles.dayText,
@@ -675,8 +678,8 @@ const Weekly = () => {
             <View style={diaryStyles.lodingModal}>
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
-                source={require('../assets/colorMooMini.png')}
-                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+                source={require('../assets/write_0904.png')}
+                style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
               <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중이다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
@@ -716,8 +719,8 @@ const Weekly = () => {
         <View style={diaryStyles.finishLodingModal}>
           {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
           <Image 
-            source={require('../assets/colorMooMini.png')}
-            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+            source={require('../assets/finish_0904.png')}
+            style={{ width: 100, height: (80 * 100) / 100 , marginTop: 50,}}></Image>
           <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
             <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기가 발행됐다</Text>
             <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
@@ -784,8 +787,8 @@ const Weekly = () => {
         <View style={diaryStyles.finishLodingModal}>
           {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
           <Image 
-            source={require('../assets/colorMooMini.png')}
-            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+            source={require('../assets/write_0904.png')}
+            style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
           <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
             <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>수정을 취소하겠냐</Text>
             <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
@@ -821,8 +824,8 @@ const Weekly = () => {
         <View style={diaryStyles.finishLodingModal}>
           {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
           <Image 
-            source={require('../assets/colorMooMini.png')}
-            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+            source={require('../assets/write_0904.png')}
+            style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
           <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
             <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>다른 날짜로 이동하겠냐</Text>
             <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
@@ -834,7 +837,7 @@ const Weekly = () => {
           <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
               <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningMove2AnotherDayModalVisible(false); amplitude.cancel2move2AnotherDayWhileEditingDiary();}}>
-                <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+                <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>닫기</Text>
               </TouchableOpacity>
               <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false);}}>
                 <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
@@ -918,6 +921,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: '#72D193',
   },
+  day_notYet_today: {
+    borderBottomWidth: 2,
+    borderColor: '#B7B7B7',
+  },
   dayText: {
     color: '#212429',
     fontSize: 12,
@@ -938,6 +945,16 @@ const styles = StyleSheet.create({
     // flexDirection: 'column', 
     color: 'white',
     backgroundColor: '#72D193',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    lineHeight: 20,
+    overflow: 'hidden',
+  },
+  dayText_notYet_today: {
+    // flexDirection: 'column', 
+    color: 'white',
+    backgroundColor: '#B7B7B7',
     borderRadius: 10,
     width: 20,
     height: 20,
