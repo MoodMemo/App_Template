@@ -397,7 +397,9 @@ const Weekly = () => {
           {/* TODO - 스탬프가 7개 이상일 경우 +n 등을 띄워야 함 */}
           {getDatesBetween(startDate).map((date) => (
             <TouchableOpacity key={date.format('YYYYMMDD')} onPress={() => handleTodayChange(date)}>
-              <View style={[styles.day, date.isSame(today, 'day') && styles.day_today]}>
+              <View style={[styles.day, 
+                            date.isSame(today, 'day') && styles.day_today,
+                            date.isSame(today, 'day') && today.isAfter(dayjs(), 'day') && styles.day_notYet_today,]}>
                 <Text style={[
                   styles.dayText,
                   date.day() === 0 && styles.dayText_sunday]}>{date.format('ddd')}</Text>
@@ -405,6 +407,7 @@ const Weekly = () => {
                   styles.dayText, 
                   date.day() === 0 && styles.dayText_sunday,
                   date.isSame(today, 'day') && styles.dayText_today,
+                  date.isSame(today, 'day') && today.isAfter(dayjs(), 'day') && styles.dayText_notYet_today,
                   date.isAfter(dayjs()) && styles.dayText_notYet]}>{date.format('DD')}</Text>
                 <Text style={[
                   styles.dayText,
@@ -918,6 +921,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: '#72D193',
   },
+  day_notYet_today: {
+    borderBottomWidth: 2,
+    borderColor: '#B7B7B7',
+  },
   dayText: {
     color: '#212429',
     fontSize: 12,
@@ -938,6 +945,16 @@ const styles = StyleSheet.create({
     // flexDirection: 'column', 
     color: 'white',
     backgroundColor: '#72D193',
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    lineHeight: 20,
+    overflow: 'hidden',
+  },
+  dayText_notYet_today: {
+    // flexDirection: 'column', 
+    color: 'white',
+    backgroundColor: '#B7B7B7',
     borderRadius: 10,
     width: 20,
     height: 20,
