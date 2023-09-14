@@ -10,24 +10,134 @@ const Popup = ({ visible, onClose }) => {
       transparent={true}
       animationType="slide"
       visible={visible}
+      style={{ alignItems:'center', justifyContent: 'center', }}
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.popup}>
-          <View style={styles.upArea}>
-            <Image source={require('./assets/check-circle-featured.png')}></Image>
-            <Text style={styles.popUpText}>스탬프 등록 완료!</Text>
+        <View style={diaryStyles.lodingModal}>
+          <Image 
+            source={require('./assets/write_0904.png')}
+            style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
+          <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
+            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>!</Text>
           </View>
-          <View style={styles.downArea}>
-            <TouchableOpacity style={styles.button} onPress={() => {onClose(); amplitude.confirmPushedStampFinModal();} }>
-              <Text style={styles.buttonText}>확인</Text>
-            </TouchableOpacity>
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', flex: 1,}}>
+              <TouchableOpacity style={diaryStyles.cancelBtn} 
+              onPress={() => {onClose(); amplitude.confirmPushedStampFinModal();}}
+              >
+                <Text style={{ color: '#72D193', fontSize: 14, fontWeight: '600',}}>확인</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+                    
         </View>
       </View>
+
     </Modal>
   );
 }
+
+
+
+const diaryStyles = StyleSheet.create({
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  uploadedImage: {
+    alignItems: 'center',
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
+  },
+  lodingModal: {
+    // flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: 'rgba(0, 0, 0, 0.5)',  // 흐린 배경 설정
+    backgroundColor: '#FFFAF4', 
+    // justifyContent: 'space-between', // 상하로 딱 붙이기
+    // justifyContent: 'space-around', 
+    // alignItems: 'flex-start', 
+    // alignItems: 'center', // 가운데 정렬
+
+    flexDirection: 'column',
+    borderRadius: 12, 
+    paddingHorizontal: 16,
+    width: 343, 
+    height: 260,
+    shadowColor: 'black',
+    shadowRadius: 50,           // 그림자 블러 반경
+    elevation: 5, 
+  },
+  cancelBtn: {
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    color: '#344054', 
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: 'white', 
+    borderColor: '#72D193',
+    borderWidth:1,
+    borderRadius: 8,
+    flex: 1,
+  },
+  finishLodingModal: {
+    backgroundColor: '#FFFAF4', 
+    justifyContent: 'space-between', // 상하로 딱 붙이기
+    alignItems: 'center', // 가운데 정렬
+    flexDirection: 'column',
+    borderRadius: 12, 
+    paddingHorizontal: 16,
+    width: 343, 
+    height: 284,
+    shadowColor: 'black',
+    shadowRadius: 50,           // 그림자 블러 반경
+    elevation: 5, 
+  },
+  confirmBtn: {
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: '#72D193', 
+    borderRadius: 8,
+    flex: 1,
+  },
+  cancelOut2EditBtn: {
+    borderColor: '#D0D5DD', borderWidth: 1,
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: '#ffffff', 
+    borderRadius: 8,
+    flex: 1,
+  },
+  editDiary: {
+    fontSize: 16, 
+    color: '#212429', 
+    margin: 0, 
+    marginBottom:7, 
+    paddingVertical: 5, 
+    paddingLeft: 15, 
+    paddingRight: 15, 
+    borderColor: '#F0F0F0', 
+    borderWidth:1, 
+    borderRadius: 5, 
+    paddingHorizontal:10, 
+    flex:1
+  }
+});
+
 
 const styles = StyleSheet.create({
   overlay: {
