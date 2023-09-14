@@ -3,7 +3,7 @@ import { Dimensions, Image, View, Text, TextInput, TouchableOpacity, Permissions
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
-import realm from '../src/localDB/document';
+import realm, { IPushedStamp, IDailyReport, getPushedStampsAllByField, getPushedStampsByFieldBetween, getDailyReportsByFieldBetween } from '../src/localDB/document';
 import * as repository from '../src/localDB/document';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,6 +11,15 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import * as amplitude from '../AmplitudeAPI';
 
+const screenWidth = Dimensions.get('window').width;
+const width = screenWidth > 500 ? 500 : screenWidth;
+const buttonWidth = (width - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
+
+// 기본 디자인에서의 버튼 너비
+const defaultButtonWidth = 69;
+
+// 비율 계산
+const scale = buttonWidth / defaultButtonWidth
 
 const test = () => {
   console.log('hello');
@@ -37,6 +46,12 @@ const Statistics = () => {
     const [date,setDate]=useState(new Date());
     const [year,setYear]=useState(date.getFullYear());
     const [month,setMonth]=useState(date.getMonth()+1);
+    const [stampORdiary, setStampORdiary] = useState(true);
+    const [stamps,setStamps] = useState([]);
+    const [countStamps,setCountStamps] = useState(0);
+    const [countDiarys,setCountDiarys] = useState(0);
+    const [countLoggedDates,setCountLoggedDates] = useState(0);
+    const [countConsecutedLoggedDates,setConsecutedCountLoggedDates] = useState(0);
 
     useEffect(() => {
       // AsyncStorage에서 userName 값을 가져와서 설정
@@ -49,8 +64,108 @@ const Statistics = () => {
         .catch((error) => {
           console.error("Error fetching userName:", error);
         });
+      getStatistics(year,month);
     }, []);
-  
+
+    const incDate = () => {
+      if(month===12){
+        setMonth(1);
+        setYear(year+1);
+      }
+      else{
+        setMonth(month+1);
+      }
+      console.log(year,month+1);
+      getStatistics(year,month+1);
+    }
+
+    const decDate = () => {
+      if(month===1){
+        setMonth(12);
+        setYear(year-1);
+      }
+      else{
+        setMonth(month-1);
+      }
+      console.log(year,month-1);
+      getStatistics(year,month-1);
+    }
+
+    const dateFormat = (date:any) => {
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
+    
+      month = month >= 10 ? month : '0' + month;
+      day = day >= 10 ? day : '0' + day;
+    
+      return date.getFullYear() + '-' + month + '-' + day;
+    }
+
+    function getDaysInMonth(year:any, month:any) {
+      return new Date(year, month, 0).getDate();
+    }
+
+    const sortStamps = (a:any,b:any) => {
+      if(a[1] > b[1]) return -1;
+      else if(a[1] < b[1]) return 1;
+      else return 0;
+    }
+
+    const getStatistics = async (year:any,month:any) => {
+      var d=new Date(year,month-1);
+      d.setMonth(d.getMonth()+1);
+      var listOfStamps=await getPushedStampsByFieldBetween('dateTime', new Date(year,month-1), d);
+      var dateMap = [];
+      for(var i=0;i<getDaysInMonth(year,month);i++){
+        dateMap[i]=false;
+      }
+      // console.log(month);
+      // console.log(listOfStamps);
+      // console.log(listOfStamps.length);
+      setCountStamps(listOfStamps.length);
+      var loggedDates=0;
+      var count=0;
+      var ans=0;
+      var stamps=[];
+      if(listOfStamps.length>0)
+      {
+        for(var i=0;i<listOfStamps.length;i++){
+          if(!dateMap[listOfStamps[i].dateTime.getDate()]){
+            loggedDates+=1;
+            dateMap[listOfStamps[i].dateTime.getDate()]=true;
+          }
+        }
+        for(var i=0;i<listOfStamps.length;i++){
+          if(!dateMap[i]){
+            count=0
+          }
+          else{
+            count+=1;
+            if(ans>count){
+              ans=count;
+            }
+          }
+        }
+        for(var i=0;i<listOfStamps.length;i++){
+          var notInStamps=true;
+          for(var j=0;j<stamps.length;j++){
+            if(stamps[j][0].stampName===listOfStamps[i].stampName){
+              stamps[j][1]+=1;
+              notInStamps=false;
+            }
+          }
+          if(notInStamps){
+            console.log(listOfStamps[i]);
+            stamps.push([listOfStamps[i],1]);
+          }
+        }
+      }
+      setStamps(stamps);
+      setCountLoggedDates(loggedDates);
+      setConsecutedCountLoggedDates(ans);
+      var listOfDiarys=await getDailyReportsByFieldBetween('date', dateFormat(new Date(year,month-1)), dateFormat(d));
+      setCountDiarys(listOfDiarys.length);
+    }
 
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
@@ -61,19 +176,68 @@ const Statistics = () => {
         <View style={styles.titleContainer}>
         {/* 드롭다운 컴포넌트 */}
           <Text style={styles.title}>{userName}의{'\n'}감정을 분석해봤다무!</Text>
-          <View style={{flexDirection: 'row',}}>
-            <TouchableOpacity>
-                <MaterialIcons name="arrow-left" size={40} style={{marginTop:12}}/>
+          <View style={{flexDirection: 'row',marginTop:-80, marginLeft:20}}>
+            <TouchableOpacity onPress={decDate}>
+                <MaterialIcons name="arrow-left" size={30} style={{marginTop:0,color:'#212429'}}/>
             </TouchableOpacity>
-            <Text style={{fontSize:40}}>{year}년 {month}월</Text>
-            <TouchableOpacity>
-                <MaterialIcons name="arrow-right" size={40} style={{marginTop:12}}/>
+            <Text style={{fontSize:18,color:'#212429',marginTop:1.2}}> {year}년 {month>=10 ? '' : ' '}{month}월 </Text>
+            <TouchableOpacity onPress={incDate}>
+                <MaterialIcons name="arrow-right" size={30} style={{marginTop:0,color:'#212429'}}/>
             </TouchableOpacity>
           </View>
         </View>
         <Image 
                 source={require('../assets/magnifyingMoo.png')}
-                style={{ width: 154*0.5, height: (154 * 192)*0.5 / 154 , position: 'relative', bottom: 115, left: windowWidth-110, overflow: 'hidden'}}/>
+                style={{ width: 154*0.6, height: (154 * 192)*0.6 / 154 , position: 'relative', bottom: 145, left: windowWidth-130, overflow: 'hidden'}}/>
+        {/* {stampORdiary ? (
+        <View style={typeChangeBtnStyles.twotypebtn}>
+          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.test1()}}>
+            <Text style={typeChangeBtnStyles.activeFont}>요약</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {setStampORdiary(false); amplitude.test1();}} style={typeChangeBtnStyles.deactiveType}>
+            <Text style={typeChangeBtnStyles.deactiveFont}>상세</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={typeChangeBtnStyles.twotypebtn}>
+          <TouchableOpacity onPress={() => {setStampORdiary(true); amplitude.test1();}} style={typeChangeBtnStyles.deactiveType}>
+            <Text style={typeChangeBtnStyles.deactiveFont}>요약</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.test1()}}>
+            <Text style={typeChangeBtnStyles.activeFont}>상세</Text>
+          </TouchableOpacity>
+        </View>
+      )} */}
+        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:-80, marginBottom:35}}>
+          <View style={{alignItems:'center',marginRight:20}}>
+            <Text style={{fontSize:12,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
+            <Text style={{fontSize:20,color:'#72D193'}}>{countStamps}개</Text>
+          </View>
+          <View style={{alignItems:'center',marginRight:20}}>
+            <Text style={{fontSize:12,color:'#212429',marginBottom:5}}>AI 일기 발행</Text>
+            <Text style={{fontSize:20,color:'#72D193'}}>{countDiarys}개</Text>
+          </View>
+          <View style={{alignItems:'center',marginRight:20}}>
+            <Text style={{fontSize:12,color:'#212429',marginBottom:5}}>기록 일자</Text>
+            <Text style={{fontSize:20,color:'#212429'}}>{countLoggedDates}개</Text>
+          </View>
+          <View style={{alignItems:'center',marginRight:5}}>
+            <Text style={{fontSize:12,color:'#212429',marginBottom:5}}>연속 기록 일자</Text>
+            <Text style={{fontSize:20,color:'#212429'}}>{countConsecutedLoggedDates}개</Text>
+          </View>
+        </View>
+        <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+        <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+        <Text style={{fontSize:12,color:'#212429',marginLeft:20,marginTop:30}}>가장 많이 남긴 감정이다무!</Text>
+        <ScrollView contentContainerStyle={styles.stampView} horizontal={false} style={{marginTop:30}}>
+          {stamps.sort(sortStamps).map((stampButton:any) => (
+            <TouchableOpacity key={stampButton[0].id} style={styles.stampButton} disabled={true}>
+              <Text style={styles.buttonEmotion}>{stampButton[0].emoji}</Text>
+              <Text style={styles.buttonText}>{stampButton[0].stampName}</Text>
+              <Text style={{color: '#000000', fontSize: 12,}}>{stampButton[1]}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </View>
     );
 }
@@ -81,6 +245,35 @@ const Statistics = () => {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
+    },
+    stampView: {
+      top: 0,
+      alignContent: 'center',
+      flexDirection: 'row', // 버튼들을 가로로 배열
+      flexWrap: 'wrap', // 가로로 공간이 부족하면 다음 줄로 넘어감
+      justifyContent: 'space-between', // 버튼들 사이의 간격을 동일하게 분배
+      height: 'auto',
+      marginLeft: 28,
+      marginRight: 28,
+      maxWidth: 500, // stampView의 최대 너비 설정
+      alignSelf: 'center', // 화면의 중앙에 위치하도록 설정
+      columnGap: 20,
+    },
+    stampButton: {
+      width: buttonWidth, 
+      height: 100 * scale, // 기본 높이에 비율을 곱함
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderStyle: 'dashed',
+      borderColor: '#7CD0B2',
+      backgroundColor: '#FFFFFF',
+      borderRadius: 12 * scale, // 기본 borderRadius에 비율을 곱함
+      marginBottom: 20 * scale, // 기본 marginBottom에 비율을 곱함
+      gap: 10,
+    },
+    buttonEmotion: {
+      fontSize: 24 * scale, // 기본 fontSize에 비율을 곱함
     },
     titleContainer: {
         backgroundColor: '#FAFAFA',
@@ -101,11 +294,10 @@ const styles = StyleSheet.create({
       fontWeight: '400',
       width: '100%',
       height: '100%',
-      fontSize: 20,
+      fontSize: 22,
       marginTop: 28,
       marginLeft: 28,
       marginRight: 200,
-      marginBottom: 27, // title과 Dropdown 사이 간격 조절
     },
     input: {
       width: '80%',
@@ -153,6 +345,61 @@ const styles = StyleSheet.create({
         borderColor: '#F0F0F0',
         // borderRadius: 6,
       },
+  });
+
+  const typeChangeBtnStyles = StyleSheet.create({
+    nudgingBtn: {
+      alignSelf: 'center',
+      height: 46,
+      width: 156,
+      justifyContent: 'center', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#72D193',
+      marginTop: 40,
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+      borderRadius: 6,
+    },
+    twotypebtn: {
+      alignSelf: 'center',
+      height: 36,
+      width: 304,
+      justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+      flexDirection: 'row',
+      backgroundColor: '#F3F3F3',
+      marginTop: -90,
+      padding: 2,
+      borderRadius: 8,
+    },
+    activeType: {
+      flex: 1,
+      backgroundColor: '#ffffff',
+      alignItems: 'center',
+      borderRadius: 8,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      fontSize: 14, color: '#72D193', fontWeight:'600'
+    },
+    activeFont: {fontSize: 14, color: '#000000', fontWeight:'600'},
+    deactiveType: {
+      flex: 1,
+      backgroundColor: '#F3F3F3',
+      alignItems: 'center',
+      borderRadius: 8,
+      flexDirection: 'column',
+      justifyContent: 'center',
+    },
+    deactiveFont: {fontSize: 14, color: '#B7B7B7', fontWeight:'400'},
+    canGenerateDiaryDot: {
+      width: 4,
+      height: 4,
+      top: 6,
+      right: 50,
+      backgroundColor: '#FF7168', // 타원의 색상을 지정하세요
+      borderRadius: 4, // 절반의 크기로 borderRadius를 설정하여 타원 모양으로 만듭니다
+      position: 'absolute', // 원하는 위치에 배치하려면 position을 'absolute'로 설정합니다
+    }
   });
 
 export default Statistics;
