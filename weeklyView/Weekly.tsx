@@ -237,6 +237,7 @@ const Weekly = () => {
       if (reportToUpdate) {
         reportToUpdate.title = editedTitle;
         reportToUpdate.bodytext = editedBodytext;
+        reportToUpdate.updatedAt = new Date();
       }
     });
     setIsEditMode(false);

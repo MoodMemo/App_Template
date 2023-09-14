@@ -74,6 +74,7 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp}) => {
       if (stampToUpdate) {
         stampToUpdate.dateTime = date;
         stampToUpdate.memo = editedMemo;
+        stampToUpdate.updatedAt = new Date();
       }
     });
   };
