@@ -24,13 +24,6 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-import sendDailyReport from './AIService';
-import { getUserAsync, DailyReportRequest } from './AIService';
-import Timeline from './Timeline';
-import axios, { CancelToken } from 'axios';
-import { Card } from 'react-native-paper';
-import StampClick from '../StampClick';
-import StampView from '../StampView';
 import {default as Text} from "../CustomText"
 
 import * as Sentry from '@sentry/react-native';
