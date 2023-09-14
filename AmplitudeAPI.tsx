@@ -388,6 +388,13 @@ export function pushStampInPleaseOneMoreStampView() {
     action: 'click',
     secondView: 'please one more stamp view',});
 }
+export function pushStampInPleaseOneMoreStampViewInStampSwitch() {
+  amplitude.track('weekly: click, stamp, in weekly-stamp-one-stamp',
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'weekly-stamp-one-stamp',});
+}
 
 
 /* setting view */
