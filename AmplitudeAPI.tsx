@@ -36,6 +36,9 @@ export function moveToStatistics() {
   {
     view: 'statistics',});           
 }
+export function codePushUpdating() {
+  amplitude.track('codePush: updating');
+}
 
 
 /* AnimatedViewBirthDay view */ // TODO - 밑에 있는 친구들 싹 확인한 뒤에 마지막으로 체크할 것

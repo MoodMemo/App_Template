@@ -109,11 +109,11 @@ function App(): JSX.Element {
 
   const codePushVersionCheck = async () => {
     try{
-      console.log('whywhywhy');
       const update = await codePush.checkForUpdate();
       console.log('app started',update);
       if(update){
         setIsCodePushUpdateNeeded(true);
+        amplitude.codePushUpdating();
       }
       else{
         console.log('no update');
