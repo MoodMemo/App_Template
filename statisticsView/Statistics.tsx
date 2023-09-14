@@ -77,6 +77,7 @@ const Statistics = () => {
       }
       console.log(year,month+1);
       getStatistics(year,month+1);
+      amplitude.test1() //월 이동(증가)
     }
 
     const decDate = () => {
@@ -89,6 +90,7 @@ const Statistics = () => {
       }
       console.log(year,month-1);
       getStatistics(year,month-1);
+      amplitude.test1() //월 이동(감소)
     }
 
     const dateFormat = (date:any) => {

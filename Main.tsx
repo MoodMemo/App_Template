@@ -46,7 +46,7 @@ function WeeklyScreen({ route, navigation }) {
 }
 
 function StatisticsScreen() {
-  //amplitude.moveToSetting();
+  amplitude.test1(); //통계 뷰로 이동
   return <Statistics/>; //Home.tsx
 }
 
