@@ -271,10 +271,35 @@ const Weekly = () => {
       </View>
     );
   }
+  const ReadyToGenerateDiary_forPast = () => {
+    return (
+      <View style={{flex: 1, alignItems: 'center', }}>
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+          <Image 
+            source={require('../assets/colorMooMedium.png')}
+            style={{ width: 104, height: (110 * 104) / 104 , marginBottom: 16}} // 비율을 유지하며 height 자동 조절
+          />
+          <Text style={{fontSize: 14, color: '#495057', }}>일기를 만들 준비가 됐다무!!</Text>
+  
+          <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} 
+            onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can_forPast(today.format('YYYY-MM-DD'));}} >
+            <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
+          </TouchableOpacity>
+        </View>
+  
+      </View>
+    );
+  }
   const StampList_NoStamp = () => {
     if (today.isSame(dayjs(), 'day')) return <nodata.TellMeYourDayView/>; // today
-    else if (today.isBefore(dayjs(), 'day')) return <nodata.MooWasBoredView/>; // past
-    else return <nodata.FromFutureView/>; // future
+    else if (today.isBefore(dayjs(), 'day')) {
+      amplitude.clickPast_noStamp();
+      return <nodata.MooWasBoredView/>; // past 
+    }
+    else {
+      amplitude.clickFuture();
+      return <nodata.FromFutureView/>; // future
+    }
   }
   const AIDiary_NoDiary = () => {
     const stampCnt = getEmoji(getStamp(today)).length;
@@ -284,10 +309,16 @@ const Weekly = () => {
       else return <ReadyToGenerateDiary/>; // 스탬프가 2개 이상일 때 // 일기 만들 준비 됐다무 ! // 할차례
     }
     else if (today.isBefore(dayjs(), 'day')) {
-      if (stampCnt === 2) return <ReadyToGenerateDiary/>; // 스탬프가 2개일 때
-      else return <nodata.MooWasBoredView/>; // past
+      if (stampCnt === 2) return <ReadyToGenerateDiary_forPast/>; // 스탬프가 2개일 때
+      else {
+        amplitude.clickPast_noDiary();
+        return <nodata.MooWasBoredView/>; // past
+      }
     }
-    else return <nodata.FromFutureView/>; // future
+    else {
+      amplitude.clickFuture_Diary();
+      return <nodata.FromFutureView/>; // future
+    }
   }
   
 
@@ -317,23 +348,19 @@ const Weekly = () => {
   const [tmpChosenStamp, setTmpChosenStamp] = useState(tmpStamp);
   // const handleEditStampButton = (chosenStamp: repository.IPushedStamp) => {
   const handleEditStampButton = () => {
-    // console.log('chosenStamp: ', chosenStamp.emoji);
-    // setTmpChosenStamp(chosenStamp);
-    // console.log('tmpChosenStamp: ', tmpChosenStamp.emoji);
+    amplitude.clickEditButton();
     setDropdownButtonVisible(false);
     setStampClickModalVisible(true);
-    // setToday(today);
   }
   const handleDeleteButton = () => {
-    // console.log('deleteStamp: ', deleteStamp.emoji);
-    // setTmpChosenStamp(deleteStamp);
+    amplitude.clickDeleteButton();
     setDropdownButtonVisible(false);
     setIsDeletingStamp(true);
     setToday(today);
   }
   const handleDeleteConfirm = (deleteStamp: repository.IPushedStamp) => {
     const today = dayjs(deleteStamp.dateTime);
-    amplitude.test1();
+    amplitude.confirmToDeleteStamp();
     realm.write(() => {
       repository.deletePushedStamp(deleteStamp);
     });
@@ -495,7 +522,7 @@ const Weekly = () => {
                             {/* 수정 & 삭제 */}
                             <View>
                               <TouchableOpacity
-                                onPress={() => {setDropdownButtonVisible(true), getBoxMessure(index); setTmpChosenStamp(item); amplitude.test10();}}
+                                onPress={() => {setDropdownButtonVisible(true), getBoxMessure(index); setTmpChosenStamp(item); amplitude.clickStampDotButton();}}
                                 ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
                               >
                                 <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
@@ -525,7 +552,7 @@ const Weekly = () => {
                                           <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
                                         </TouchableOpacity>
                                         {/* <TouchableOpacity onPress={() => {console.log(index);handleDeleteButton(timelineData[index]);}}> */}
-                                        <TouchableOpacity onPress={() => {console.log("###", index); console.log(tmpChosenStamp.memo); handleDeleteButton();}}>
+                                        <TouchableOpacity onPress={() => {handleDeleteButton();}}>
                                           <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
                                         </TouchableOpacity>
                                       </View>
@@ -558,7 +585,7 @@ const Weekly = () => {
                                 </View>
                                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
                                   <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
-                                    <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.test1();}}>
+                                    <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.cancelToDeleteStamp();}}>
                                       <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStamp(false);}}>
