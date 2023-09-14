@@ -4,12 +4,14 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Alert, StatusBar, View} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialAllIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 
 import Home from './Home';
 import Weekly from './weeklyView/Weekly';
 import Tmp from './weeklyView/tmp';
 import Settings from './Settings';
+import Statistics from './statisticsView/Statistics';
 
 import Amplify, {API, graphqlOperation} from 'aws-amplify';
 import * as queries from './src/graphql/queries'
@@ -41,6 +43,11 @@ function WeeklyScreen({ route, navigation }) {
       <Popup visible={showPopup} onClose={() => setShowPopup(false)} />
     </View>
   );
+}
+
+function StatisticsScreen() {
+  amplitude.test1(); //통계 뷰로 이동
+  return <Statistics/>; //Home.tsx
 }
 
 function SettingsScreen() {
@@ -246,7 +253,9 @@ function Main({username}:any) {
         tabBarShowLabel: false, //이게 true면 하단 바 아이콘 밑에 label도 같이 렌더링됩니다.
         headerShown: false, //이게 true면 각 탭의 상단에 해당 Tab의 label이 렌더링됩니다. 매우 보기 싫습니다.
         tabBarActiveTintColor:"#72D193",
-        tabBarInactiveTintColor:"#484C524D"
+        tabBarInactiveTintColor:"#484C524D",
+        tabBarStyle:{height:60,
+          elevation: 0,}
         }}>
         <Tab.Screen
           name="Home"
@@ -283,6 +292,25 @@ function Main({username}:any) {
           options={{
             tabBarIcon: ({color, size}) => (
               <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
+            ),
+            unmountOnBlur: true,
+          }}
+        />
+        <Tab.Screen
+          name="Statistics"
+          component={StatisticsScreen} //주간 화면
+          listeners={{
+            tabPress: e => {
+              setStatusBar('#FAFAFA');
+              // Prevent default action
+              // e.preventDefault();
+              // Do something with the `navigation` object
+              //navigation.navigate('Home');
+            },
+          }}
+          options={{
+            tabBarIcon: ({color, size}) => (
+              <MaterialAllIcons name="chart-bar" color={color} size={size} /> //하단 바 아이콘
             ),
             unmountOnBlur: true,
           }}
