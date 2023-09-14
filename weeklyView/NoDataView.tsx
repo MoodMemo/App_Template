@@ -115,6 +115,35 @@ export const PleaseOneMoreStampView = () => {
     </View>
   );
 }
+export const PleaseOneMoreStampMini = () => {
+  const navigation = useNavigation();
+  const handleRecordEmotion = () => {
+    // [감정 스탬프 기록하기] 버튼을 눌렀을 때 실행되는 함수
+    // Home 뷰로 이동하도록 설정
+    navigation.navigate('Home');
+  };
+  return (
+    <View style={{flex: 1, alignItems: 'center', }}>
+      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+        <Image 
+          source={require('../assets/emptyMoo.png')}
+          style={{ width: 104, height: (107 * 104) / 104 , marginBottom: 16}} // 비율을 유지하며 height 자동 조절
+        />
+        <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+          <Text style={{fontSize: 14, color: '#495057', }}>스탬프 </Text>
+          <Text style={{fontSize: 14, color: '#495057', fontWeight: '700'}}>한 개만 더</Text>
+          <Text style={{fontSize: 14, color: '#495057', }}> 찍으면, 일기를 만들 수 있다무!</Text>
+        </View>
+
+        <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} 
+          onPress={() => {handleRecordEmotion(); amplitude.pushStampInPleaseOneMoreStampViewInStampSwitch();}}>
+          <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
+        </TouchableOpacity>
+      </View>
+
+    </View>
+  );
+}
 
 
 

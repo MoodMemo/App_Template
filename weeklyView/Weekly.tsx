@@ -472,121 +472,128 @@ const Weekly = () => {
 
       {stampORdiary ? ( // 스탬프 기록
         getEmoji(getStamp(today)).length !== 0 ? ( // 스탬프 exists
-          <View style={{ flexDirection: 'row', marginTop: 16, marginHorizontal: 16, marginBottom: 230 }}>
-            <ScrollView>
-              <View style={Timelinestyles.container}>
-                {timelineData.map((item, index) => (
-                  <View key={index} style={Timelinestyles.timelineItem}>
-                    
-                    {/* 이모지 */}       
-                    <View style={Timelinestyles.emojiContainer}>
-                      <Text style={{fontSize: 24, color: 'black',}}>{item.emoji}</Text>
-                      {index < timelineData.length - 1 && <View style={Timelinestyles.line2} />}
-                    </View>
-
-                    {/* 텍스트 */}
-                    <View style={Timelinestyles.block}>
-
-                      <View style={Timelinestyles.title}>
-                        <Text style={{fontSize: 12, color: '#212429'}}>{item.stampName}</Text>
-                        <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
-                          <Text style={{ fontSize: 12, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
-                          {/* 수정 & 삭제 */}
-                          <View>
-                            <TouchableOpacity
-                              onPress={() => {setDropdownButtonVisible(true), getBoxMessure(index); setTmpChosenStamp(item); amplitude.test10();}}
-                              ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
-                            >
-                              <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
-                            </TouchableOpacity>
-                            {/* 1. 스탬프 수정 삭제 드롭다운 */}
-                            <Modal 
-                                isVisible={dropdownButtonVisible}
-                                animationIn={"fadeIn"}
-                                animationOut={"fadeOut"}
-                                backdropOpacity={0}
-                                onBackdropPress={() => setDropdownButtonVisible(false)}
-                                style={{
-                                  position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
-                                  left: buttonX - 79,
-                                  top: buttonY - 3,
-                                  // alignItems: 'center',
-                                  // justifyContent: 'flex-end',
-                                  // margin: 0,
-                                  width: 75,
-                                }}
-                                backdropTransitionInTiming={0} // Disable default backdrop animation
-                                backdropTransitionOutTiming={0} // Disable default backdrop animation
-                              >
-                                <View style={TimelineDropDownStyles.dropdownContainer}>
-                                    <View style={TimelineDropDownStyles.dropdownButtonOption}>
-                                      <TouchableOpacity onPress={() => {handleEditStampButton();}}>
-                                        <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
-                                      </TouchableOpacity>
-                                      {/* <TouchableOpacity onPress={() => {console.log(index);handleDeleteButton(timelineData[index]);}}> */}
-                                      <TouchableOpacity onPress={() => {console.log("###", index); console.log(tmpChosenStamp.memo); handleDeleteButton();}}>
-                                        <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
-                                      </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </Modal>
-                          </View>
-                          {/* 2. 스탬프 삭제 경고 모달 */}
-                          <Modal 
-                            isVisible={isDeletingStamp}
-                            animationIn={"fadeIn"}
-                            animationOut={"fadeOut"}
-                            backdropColor='#CCCCCC' 
-                            backdropOpacity={0.9}
-                            style={{ alignItems:'center' }}
-                            backdropTransitionInTiming={0} // Disable default backdrop animation
-                            backdropTransitionOutTiming={0} // Disable default backdrop animation
-                          >
-                            <View style={TimelineDiaryStyles.finishLodingModal}>
-                              {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
-                              <Image 
-                                source={require('../assets/colorMooMini.png')}
-                                style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
-                              <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-                                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>정말로 기록한 스탬프를 삭제하겠냐</Text>
-                                <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
-                                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
-                              </View>
-                              <View style={{alignItems: 'center',}}>
-                                <Text style={{ color: '#475467', fontSize: 14, }}>되돌릴 수 없다무..!</Text>
-                              </View>
-                              <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                                <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
-                                  <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.test1();}}>
-                                    <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
-                                  </TouchableOpacity>
-                                  <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStamp(false);}}>
-                                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
-                                  </TouchableOpacity>
-                                </View>
-                              </View>
-                                        
-                            </View>
-                          </Modal>
-                          {/* 3. 스탬프 수정 팝업 온 */}
-                          {/* <Modal isVisible={stampClickModalVisible}> */}
-                            <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal} stamp={tmpChosenStamp}/>
-                          {/* </Modal> */}
-                        </View>
-                        
-                        
+          <View style={{ alignItems: 'center', flex: 1, }}>
+            <View style={{ flexDirection: 'row', marginTop: 16, marginHorizontal: 16, }}>
+              <ScrollView>
+                <View style={Timelinestyles.container}>
+                  {timelineData.map((item, index) => (
+                    <View key={index} style={Timelinestyles.timelineItem}>
+                      
+                      {/* 이모지 */}       
+                      <View style={Timelinestyles.emojiContainer}>
+                        <Text style={{fontSize: 24, color: 'black',}}>{item.emoji}</Text>
+                        {index < timelineData.length - 1 && <View style={Timelinestyles.line2} />}
                       </View>
 
-                      <View style={Timelinestyles.line}></View>
+                      {/* 텍스트 */}
+                      <View style={Timelinestyles.block}>
 
-                      <Text style={Timelinestyles.title}>{item.memo}</Text>
-                      {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
+                        <View style={Timelinestyles.title}>
+                          <Text style={{fontSize: 12, color: '#212429'}}>{item.stampName}</Text>
+                          <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
+                            <Text style={{ fontSize: 12, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
+                            {/* 수정 & 삭제 */}
+                            <View>
+                              <TouchableOpacity
+                                onPress={() => {setDropdownButtonVisible(true), getBoxMessure(index); setTmpChosenStamp(item); amplitude.test10();}}
+                                ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
+                              >
+                                <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
+                              </TouchableOpacity>
+                              {/* 1. 스탬프 수정 삭제 드롭다운 */}
+                              <Modal 
+                                  isVisible={dropdownButtonVisible}
+                                  animationIn={"fadeIn"}
+                                  animationOut={"fadeOut"}
+                                  backdropOpacity={0}
+                                  onBackdropPress={() => setDropdownButtonVisible(false)}
+                                  style={{
+                                    position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
+                                    left: buttonX - 79,
+                                    top: buttonY - 3,
+                                    // alignItems: 'center',
+                                    // justifyContent: 'flex-end',
+                                    // margin: 0,
+                                    width: 75,
+                                  }}
+                                  backdropTransitionInTiming={0} // Disable default backdrop animation
+                                  backdropTransitionOutTiming={0} // Disable default backdrop animation
+                                >
+                                  <View style={TimelineDropDownStyles.dropdownContainer}>
+                                      <View style={TimelineDropDownStyles.dropdownButtonOption}>
+                                        <TouchableOpacity onPress={() => {handleEditStampButton();}}>
+                                          <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
+                                        </TouchableOpacity>
+                                        {/* <TouchableOpacity onPress={() => {console.log(index);handleDeleteButton(timelineData[index]);}}> */}
+                                        <TouchableOpacity onPress={() => {console.log("###", index); console.log(tmpChosenStamp.memo); handleDeleteButton();}}>
+                                          <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
+                                        </TouchableOpacity>
+                                      </View>
+                                  </View>
+                              </Modal>
+                            </View>
+                            {/* 2. 스탬프 삭제 경고 모달 */}
+                            <Modal 
+                              isVisible={isDeletingStamp}
+                              animationIn={"fadeIn"}
+                              animationOut={"fadeOut"}
+                              backdropColor='#CCCCCC' 
+                              backdropOpacity={0.9}
+                              style={{ alignItems:'center' }}
+                              backdropTransitionInTiming={0} // Disable default backdrop animation
+                              backdropTransitionOutTiming={0} // Disable default backdrop animation
+                            >
+                              <View style={TimelineDiaryStyles.finishLodingModal}>
+                                {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+                                <Image 
+                                  source={require('../assets/colorMooMini.png')}
+                                  style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+                                <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                                  <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>정말로 기록한 스탬프를 삭제하겠냐</Text>
+                                  <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                                  <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
+                                </View>
+                                <View style={{alignItems: 'center',}}>
+                                  <Text style={{ color: '#475467', fontSize: 14, }}>되돌릴 수 없다무..!</Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                                  <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
+                                    <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.test1();}}>
+                                      <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStamp(false);}}>
+                                      <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                                    </TouchableOpacity>
+                                  </View>
+                                </View>
+                                          
+                              </View>
+                            </Modal>
+                            {/* 3. 스탬프 수정 팝업 온 */}
+                            {/* <Modal isVisible={stampClickModalVisible}> */}
+                              <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal} stamp={tmpChosenStamp}/>
+                            {/* </Modal> */}
+                          </View>
+                          
+                          
+                        </View>
 
+                        <View style={Timelinestyles.line}></View>
+
+                        <Text style={Timelinestyles.title}>{item.memo}</Text>
+                        {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
+
+                      </View>
                     </View>
+                  ))}
+                </View>
+                {getEmoji(getStamp(today)).length === 1 && today.isSame(dayjs(), 'day')? (
+                  <View style={{ alignItems: 'center', height: 260, marginTop: 30}}>
+                    <nodata.PleaseOneMoreStampMini/>
                   </View>
-                ))}
-              </View>
-            </ScrollView>
+                  ) : (<View></View>)}
+              </ScrollView>
+            </View>
           </View>
         ) : ( // 스탬프가 없을 때, 날짜에 따라 다름
           <StampList_NoStamp/>
