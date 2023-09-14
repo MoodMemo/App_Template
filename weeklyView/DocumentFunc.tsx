@@ -36,7 +36,6 @@ export function getStamp(date: dayjs.Dayjs): repository.IPushedStamp[] {
   // console.log("dateToCompareBegin: ", dateToCompareBegin);
   const dateToCompareEnd = date.add(1, 'day').toDate();
   // console.log("dateToCompareEnd: ", dateToCompareEnd);
-  // repository.getPushedStampsByFieldBetween(dateToCompareBegin, dateToCompareEnd).forEach((pushedStamp) => {
   repository.getPushedStampsByFieldBetween(
     "dateTime", 
     date.startOf('day').toDate(), 
@@ -44,6 +43,7 @@ export function getStamp(date: dayjs.Dayjs): repository.IPushedStamp[] {
       stampList.push(pushedStamp);
       // console.log("pushedStamp.emoji: ", pushedStamp.emoji);
   });
+  stampList.sort((a,b) => a.dateTime.getTime() - b.dateTime.getTime());
   return stampList;
 }
 
