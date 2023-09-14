@@ -104,6 +104,7 @@ const Home = ({name}:any) => {
                 // Do something before delay
                 await AsyncStorage.setItem('@UserInfo:firstStamp','false');
                 setIsFirstStamp(false);
+                amplitude.test1() //스탬프 첫 입력 유도
                 }
               )}>
                   <Text style={styles.buttonText}>감정 스탬프 남기러 가기!</Text>
