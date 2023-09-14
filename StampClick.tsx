@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, Modal, Image, ScrollView, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import {default as Text} from "./CustomText"
 import DatePicker from 'react-native-date-picker';
+import * as repository from './src/localDB/document';
 // import Modal from 'react-native-modal';
 
 // 화면의 가로 크기
@@ -18,14 +19,23 @@ const defaultButtonWidth = 69;
 // 비율 계산
 const scale = buttonWidth / defaultButtonWidth
 
-const StampClick = ({visible, onClose}) => {
+interface StampClickProps {
+  visible: boolean;
+  onClose: () => void;
+  stamp: repository.IPushedStamp | null; // IPushedStamp 타입으로 선언합니다.
+}
+
+const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp}) => {
+  const editingStamp = stamp;
+  // console.log(editingStamp.emoji);
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
-  const [date, setDate] = useState(new Date());
-  const [tempDate, setTempDate] = useState(date);
+  const [date, setDate] = useState(editingStamp?.dateTime);
+  const [tempDate, setTempDate] = useState(editingStamp?.dateTime);
   const [memo, setMemo] = useState('');
   const [numberOfLines, setNumberOfLines] = useState(1);
   const [images, setImages] = useState([]);
+  const [editedMemo, setEditedMemo] = useState(editingStamp?.memo || "메모 작성하기 (추후 작성 가능)");
 
   // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
 
@@ -69,8 +79,9 @@ const StampClick = ({visible, onClose}) => {
         <View style={styles.stampContainer}>
           <Text style={styles.modalText}>찍은 스탬프</Text>
           <View style={styles.stampContent}>
-            <Text style={styles.stampText}>🥲</Text>
-            <Text style={styles.stampText}>여기어떻게할지논의해야함</Text>
+            {/* <Text style={styles.stampText}>😭</Text> */}
+            <Text style={styles.stampText}>{editingStamp.emoji}</Text>
+            <Text style={styles.stampText}>{editingStamp.stampName}</Text>
           </View>
         </View>
         <View style={styles.timeContainer}>
@@ -90,11 +101,12 @@ const StampClick = ({visible, onClose}) => {
           <View style={styles.memoContent}>
             <TextInput
               style={styles.memoText}
-              placeholder="메모 작성하기 (추후 작성 가능)"
+              // placeholder={editingStamp?.memo || "메모 작성하기 (추후 작성 가능)"}
+              value={editedMemo}
               multiline={true}
               maxLength={500}
               onChangeText={handleMemoChange}
-              value={memo}
+              // value={memo}
               numberOfLines={numberOfLines}
             />
             <Text style={styles.maxLength}>{memo.length}/500</Text>

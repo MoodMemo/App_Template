@@ -104,6 +104,7 @@ const Weekly = () => {
       console.log("isEditMode: ", isEditMode);
       setToday(date); amplitude.changeToday(date.format('YYYY-MM-DD'));
       setAndCheckTodayReport(date);
+      setTimelineData(getStamp(date));
     }
   };
 
@@ -302,10 +303,23 @@ const Weekly = () => {
     setStampClickModalVisible(false);
   };
   const [isDeletingStamp, setIsDeletingStamp] = useState(false);
-  const [tmpDeleteStamp, setTmpDeleteStamp] = useState(null);
+  const tmpStamp = {
+    dateTime: new Date(),
+    stampName: '기쁨',
+    emoji: '😆',
+    memo: '사실 무도 스탬프 남기고 싶다무',
+  }
+  const [tmpChosenStamp, setTmpChosenStamp] = useState(tmpStamp);
+  const handleEditStampButton = (chosenStamp: repository.IPushedStamp) => {
+    console.log('chosenStamp: ', chosenStamp.emoji);
+    setTmpChosenStamp(chosenStamp);
+    setDropdownButtonVisible(false);
+    setStampClickModalVisible(true);
+    // setToday(today);
+  }
   const handleDeleteButton = (deleteStamp: repository.IPushedStamp) => {
     console.log('deleteStamp: ', deleteStamp.emoji);
-    setTmpDeleteStamp(deleteStamp);
+    setTmpChosenStamp(deleteStamp);
     setDropdownButtonVisible(false);
     setIsDeletingStamp(true);
     setToday(today);
@@ -498,7 +512,7 @@ const Weekly = () => {
                               >
                                 <View style={TimelineDropDownStyles.dropdownContainer}>
                                     <View style={TimelineDropDownStyles.dropdownButtonOption}>
-                                      <TouchableOpacity onPress={() => {setDropdownButtonVisible(false); setStampClickModalVisible(true)}}>
+                                      <TouchableOpacity onPress={() => {handleEditStampButton(item);}}>
                                         <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
                                       </TouchableOpacity>
                                       <TouchableOpacity onPress={() => {handleDeleteButton(item);}}>
@@ -537,7 +551,7 @@ const Weekly = () => {
                                   <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.test1();}}>
                                     <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
                                   </TouchableOpacity>
-                                  <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpDeleteStamp); setIsDeletingStamp(false);}}>
+                                  <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStamp(false);}}>
                                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                                   </TouchableOpacity>
                                 </View>
@@ -547,7 +561,7 @@ const Weekly = () => {
                           </Modal>
                           {/* 3. 스탬프 수정 팝업 온 */}
                           {/* <Modal isVisible={stampClickModalVisible}> */}
-                            <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal}/>
+                            <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal} stamp={tmpChosenStamp}/>
                           {/* </Modal> */}
                         </View>
                         
