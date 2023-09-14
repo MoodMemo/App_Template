@@ -124,7 +124,7 @@ const typeChangeBtnStyles = StyleSheet.create({
   nudgingBtn: {
     alignSelf: 'center',
     height: 46,
-    width: 156,
+    width: 165,
     justifyContent: 'center', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
     flexDirection: 'row',
     alignItems: 'center',
