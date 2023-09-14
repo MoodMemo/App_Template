@@ -5,8 +5,8 @@ import * as amplitude from '@amplitude/analytics-react-native';
 
 /* splash */
 function AmplitudeInit() {
-  amplitude.init('71c6aec47b758215ad5b07a0241099c8'); // 테스트용 key
-  // amplitude.init('31330863767122049d66767a71e34f09'); // real key
+  amplitude.init('71c6aec47b758215ad5b07a0241099c8'); // real MoodMemo
+  // amplitude.init('31330863767122049d66767a71e34f09'); // demo Key
 }
 export default AmplitudeInit;
 
@@ -66,6 +66,12 @@ export function userRegiJob_Fin(job: String) {
     view: 'intro',
     action: 'confirm',
     job});
+}
+export function userRegiFin_andStampGo() {
+  amplitude.track('intro: confirm, first stamp',
+  {
+    view: 'intro',
+    action: 'confirm',});
 }
 /* AnimatedViewBirthDay view */
 export function userRegiFinish() {
@@ -331,6 +337,13 @@ export function tryGenerateAIDiary_can(today: String) {
     action: 'click',
     today}); 
 }
+export function tryGenerateAIDiary_can_forPast(today: String) {
+  amplitude.track('weekly: click, generate AI diary (can)', 
+  {
+    view: 'weekly',
+    action: 'click',
+    today}); 
+}
 export function waitingForAIDiary() {
   // 여기에 날짜 받으면 에러나니까 절대 네버 넣지 말것 ...!
   amplitude.track('weekly: click, wait for AI diary, in generate AI diary modal', 
@@ -394,6 +407,80 @@ export function pushStampInPleaseOneMoreStampViewInStampSwitch() {
     view: 'weekly',
     action: 'click',
     secondView: 'weekly-stamp-one-stamp',});
+}
+export function editMemo() {
+  amplitude.track('weekly: click, memo, in edit stamp', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'edit stamp',});
+}
+export function backToWeeklyFromStampEditModal(){
+  amplitude.track('weekly: cancel, edit stamp, back to weekly', 
+  {
+    view: 'weekly',
+    action: 'cancel',});
+}
+export function confirmToEditStamp() {
+  amplitude.track('weekly: confirm, edit stamp, in edit stamp modal',
+  {
+    view: 'weekly',
+    action: 'confirm',
+    secondView: 'edit stamp modal',});
+}
+export function confirmToDeleteStamp() {
+  amplitude.track('weekly: confirm, delete stamp',
+  {
+    view: 'weekly',
+    action: 'confirm',});
+}
+export function cancelToDeleteStamp() {
+  amplitude.track('weekly: cancel, delete stamp',
+  {
+    view: 'weekly',
+    action: 'cancel',});
+}
+export function clickFuture() {
+  amplitude.track('weekly: click, future date',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickPast_noStamp() {
+  amplitude.track('weekly: click, past date (no stamp)',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickPast_noDiary() {
+  amplitude.track('weekly: click, past date (no diary)',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickFuture_Diary() {
+  amplitude.track('weekly: click, future date (diary)',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickStampDotButton() {
+  amplitude.track('weekly: click, stamp dot button',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickEditButton() {
+  amplitude.track('weekly: click, edit button',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickDeleteButton() {
+  amplitude.track('weekly: click, delete button',
+  {
+    view: 'weekly',
+    action: 'click',});
 }
 
 
