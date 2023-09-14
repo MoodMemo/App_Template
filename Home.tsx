@@ -15,6 +15,7 @@ const Home = ({name}:any) => {
   const options = ['최근 생성 순'];
   const [fixModalVisible, setFixModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
+  const [isFirstStamp,setIsFirstStamp]=useState(false);
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
@@ -27,6 +28,15 @@ const Home = ({name}:any) => {
       .catch((error) => {
         console.error("Error fetching userName:", error);
       });
+    AsyncStorage.getItem('@UserInfo:firstStamp')
+    .then((value) => {
+      if (value==='true') {
+        setIsFirstStamp(true);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching firstStamp:", error);
+    });
   }, []);
 
   const handleOptionSelect = (option) => {
@@ -44,27 +54,63 @@ const Home = ({name}:any) => {
   };
   console.log('aa',name);
   return (
-    <View style={styles.view}>
-      <StatusBar
-        backgroundColor="#FFFAF4"
-        barStyle={'dark-content'}
-      />
-      <View style={styles.titleContainer}>
-        {/* 드롭다운 컴포넌트 */}
-        <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
-      </View>
-      <Image source={require('./assets/image16.png')} style={styles.mooImage}/>
-      <View style={styles.options}>
-        <Dropdown options={options} onSelectOption={handleOptionSelect} />
-        <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
-          <Image source={require('./assets/edit.png')} />
-        </TouchableOpacity>
-      </View>
-      {/* 감정 스탬프 뷰 */}
-      <StampView />
-      {/* 스탬프 설정 모달 */}
-      <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
+    <>
+    <StatusBar
+      backgroundColor="#FFFAF4"
+      barStyle={'dark-content'}
+    />
+    {isFirstStamp===false ? (<View style={styles.view}>
+    <View style={styles.titleContainer}>
+      {/* 드롭다운 컴포넌트 */}
+      <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
     </View>
+    <Image source={require('./assets/image16.png')} style={styles.mooImage}/>
+    <View style={styles.options}>
+      <Dropdown options={options} onSelectOption={handleOptionSelect} />
+      <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
+        <Image source={require('./assets/edit.png')} />
+      </TouchableOpacity>
+    </View>
+    {/* 감정 스탬프 뷰 */}
+    <StampView />
+    {/* 스탬프 설정 모달 */}
+    <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
+  </View>) : (<View style={{justifyContent: 'center',
+            flex:1,
+            backgroundColor:'#FFFAF4'}}>
+              <Image 
+                source={require('./assets/colorMooMedium.png')}
+                style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '6%', alignSelf:'center', overflow: 'hidden', transform:[{rotate:'11.91deg'}]}}></Image>
+              <View style={{
+                position:'relative'
+              }}>
+                <Text style={{
+                  fontSize: 24,
+                  color:"#212429",
+                  marginLeft: '5%'
+                }}>지금의 감정은 어떠냐무~?</Text>
+                <Text style={{
+                  fontSize: 24,
+                  color:"#212429",
+                  marginLeft: '5%'
+                }}>{userName}의</Text>
+                <Text style={{
+                  fontSize: 24,
+                  color:"#212429",
+                  marginLeft: '5%'
+                }}>감정을 남겨보지 않겠냐무?</Text>
+              </View>
+              <TouchableOpacity style={styles.button} onPress={(async () => { 
+                // Do something before delay
+                await AsyncStorage.setItem('@UserInfo:firstStamp','false');
+                setIsFirstStamp(false);
+                amplitude.test1() //스탬프 첫 입력 유도
+                }
+              )}>
+                  <Text style={styles.buttonText}>감정 스탬프 남기러 가기!</Text>
+              </TouchableOpacity>
+            </View>)}
+  </>
   );
 }
 
@@ -112,6 +158,22 @@ const styles = StyleSheet.create({
     fixButton: {
       width: 20,
       height: 20,
+    },
+    button: {
+      position: 'absolute',
+      bottom: '18%',
+      width: '90%',
+      height: 60,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#72D193',
+      borderRadius: 7,
+      marginHorizontal:'5%'
+    },
+    buttonText: {
+      color: '#FFFFFF',
+      fontSize: 16,
+      fontWeight: 'bold'
     },
   });
 

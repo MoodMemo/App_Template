@@ -28,6 +28,8 @@ messaging().getInitialNotification(async remoteMessage => {
 });
 */
 
+AmplitudeInit();
+
 PushNotification.configure({
 
   onRegister: function (token) {
@@ -37,6 +39,7 @@ PushNotification.configure({
   //알림을 클릭하면 실행됨
   onNotification: function (notification) {
     console.log("NOTIFICATION:", notification);
+    amplitude.test1(); //알림 클릭 앰플리튜드
   },
 
   popInitialNotification: true,
@@ -55,7 +58,7 @@ Sentry.init({
   dsn: 'https://3554b53489972dd0d1159d97e9cc6eb7@o4505669151555584.ingest.sentry.io/4505669208375296', 
 });
 
-AmplitudeInit();
+
 
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
