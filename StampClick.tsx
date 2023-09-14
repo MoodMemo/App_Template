@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, Modal, Image, ScrollView, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
 import {default as Text} from "./CustomText"
 import DatePicker from 'react-native-date-picker';
 import * as repository from './src/localDB/document';
+import * as amplitude from './AmplitudeAPI';
+import realm from './src/localDB/document';
 // import Modal from 'react-native-modal';
 
 // 화면의 가로 크기
@@ -26,21 +28,26 @@ interface StampClickProps {
 }
 
 const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp}) => {
+  
   const editingStamp = stamp;
-  // console.log(editingStamp.emoji);
+  const startDate = stamp?.dateTime;
+  const startMemo = stamp?.memo;
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
-  const [date, setDate] = useState(editingStamp?.dateTime);
-  const [tempDate, setTempDate] = useState(editingStamp?.dateTime);
-  const [memo, setMemo] = useState('');
+  const [date, setDate] = useState(startDate);
+  const [tempDate, setTempDate] = useState(startDate);
   const [numberOfLines, setNumberOfLines] = useState(1);
   const [images, setImages] = useState([]);
-  const [editedMemo, setEditedMemo] = useState(editingStamp?.memo || "메모 작성하기 (추후 작성 가능)");
-
+  const [editedMemo, setEditedMemo] = useState(startMemo);
+  useEffect(() => {
+    setEditedMemo(stamp?.memo);
+    setDate(stamp?.dateTime || new Date());
+    setTempDate(stamp?.dateTime || new Date());
+  }, [stamp]);  
   // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
 
   const handleMemoChange = (text) => {
-    setMemo(text);
+    setEditedMemo(text);
     setNumberOfLines(text.split('\n').length);
   };
 
@@ -61,17 +68,27 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp}) => {
     handleCloseTimeModal();
   }
 
+  const handleSaveButton = () => {
+    realm.write(() => {
+      const stampToUpdate = editingStamp;
+      if (stampToUpdate) {
+        stampToUpdate.dateTime = date;
+        stampToUpdate.memo = editedMemo;
+      }
+    });
+  };
+
   return (
     <View>
     <Modal visible={visible} animationType="slide" transparent>
       <View style={styles.modalContainer}>
         {/* 모달 내용 */}
         <View style={styles.modalTitleContainer}>
-          <TouchableOpacity onPress={() => onClose()}>
+          <TouchableOpacity onPress={() => {onClose(); amplitude.test1();}}>
             <Image source={require('./assets/close.png')} />
           </TouchableOpacity>
           <Text style={styles.modalTitle}>감정 수정</Text>
-          <TouchableOpacity onPress={() => onClose()}>
+          <TouchableOpacity onPress={() => {onClose();handleSaveButton(); amplitude.test1();}}>
             <Image source={require('./assets/check.png')} />
           </TouchableOpacity>
         </View>
@@ -79,7 +96,6 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp}) => {
         <View style={styles.stampContainer}>
           <Text style={styles.modalText}>찍은 스탬프</Text>
           <View style={styles.stampContent}>
-            {/* <Text style={styles.stampText}>😭</Text> */}
             <Text style={styles.stampText}>{editingStamp.emoji}</Text>
             <Text style={styles.stampText}>{editingStamp.stampName}</Text>
           </View>
@@ -101,15 +117,16 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp}) => {
           <View style={styles.memoContent}>
             <TextInput
               style={styles.memoText}
-              // placeholder={editingStamp?.memo || "메모 작성하기 (추후 작성 가능)"}
+              placeholder={editedMemo || "메모 작성하기 (추후 작성 가능)"}
               value={editedMemo}
               multiline={true}
               maxLength={500}
               onChangeText={handleMemoChange}
               // value={memo}
               numberOfLines={numberOfLines}
+              onFocus={() => {amplitude.test1();}}
             />
-            <Text style={styles.maxLength}>{memo.length}/500</Text>
+            <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
           </View>
         </View>
         {/* <View style={styles.imgContainer}>

@@ -303,23 +303,29 @@ const Weekly = () => {
     setStampClickModalVisible(false);
   };
   const [isDeletingStamp, setIsDeletingStamp] = useState(false);
-  const tmpStamp = {
+  const tmpStamp: repository.IPushedStamp = {
+    id: '-1',
     dateTime: new Date(),
     stampName: '기쁨',
     emoji: '😆',
-    memo: '사실 무도 스탬프 남기고 싶다무',
+    memo: null,
+    imageUrl: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   }
   const [tmpChosenStamp, setTmpChosenStamp] = useState(tmpStamp);
-  const handleEditStampButton = (chosenStamp: repository.IPushedStamp) => {
-    console.log('chosenStamp: ', chosenStamp.emoji);
-    setTmpChosenStamp(chosenStamp);
+  // const handleEditStampButton = (chosenStamp: repository.IPushedStamp) => {
+  const handleEditStampButton = () => {
+    // console.log('chosenStamp: ', chosenStamp.emoji);
+    // setTmpChosenStamp(chosenStamp);
+    // console.log('tmpChosenStamp: ', tmpChosenStamp.emoji);
     setDropdownButtonVisible(false);
     setStampClickModalVisible(true);
     // setToday(today);
   }
-  const handleDeleteButton = (deleteStamp: repository.IPushedStamp) => {
-    console.log('deleteStamp: ', deleteStamp.emoji);
-    setTmpChosenStamp(deleteStamp);
+  const handleDeleteButton = () => {
+    // console.log('deleteStamp: ', deleteStamp.emoji);
+    // setTmpChosenStamp(deleteStamp);
     setDropdownButtonVisible(false);
     setIsDeletingStamp(true);
     setToday(today);
@@ -332,6 +338,7 @@ const Weekly = () => {
     });
     // 스탬프가 삭제되면 상태(state)에서도 삭제해야 합니다.
     setTimelineData(getStamp(today));
+    setTmpChosenStamp(tmpStamp);
   }
   const boxRef = useRef();
   const [buttonX, setButtonX] = useState(0);
@@ -486,7 +493,7 @@ const Weekly = () => {
                           {/* 수정 & 삭제 */}
                           <View>
                             <TouchableOpacity
-                              onPress={() => {setDropdownButtonVisible(true), getBoxMessure(index); amplitude.test10();}}
+                              onPress={() => {setDropdownButtonVisible(true), getBoxMessure(index); setTmpChosenStamp(item); amplitude.test10();}}
                               ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
                             >
                               <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
@@ -512,10 +519,11 @@ const Weekly = () => {
                               >
                                 <View style={TimelineDropDownStyles.dropdownContainer}>
                                     <View style={TimelineDropDownStyles.dropdownButtonOption}>
-                                      <TouchableOpacity onPress={() => {handleEditStampButton(item);}}>
+                                      <TouchableOpacity onPress={() => {handleEditStampButton();}}>
                                         <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
                                       </TouchableOpacity>
-                                      <TouchableOpacity onPress={() => {handleDeleteButton(item);}}>
+                                      {/* <TouchableOpacity onPress={() => {console.log(index);handleDeleteButton(timelineData[index]);}}> */}
+                                      <TouchableOpacity onPress={() => {console.log("###", index); console.log(tmpChosenStamp.memo); handleDeleteButton();}}>
                                         <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
                                       </TouchableOpacity>
                                     </View>
