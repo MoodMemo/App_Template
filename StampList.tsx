@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import { View, Modal, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
+import { View, Modal as ModalRN, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import realm, { ICustomStamp, createCustomStamp, deleteCustomStamp, getAllCustomStamps } from './src/localDB/document';
 import * as amplitude from './AmplitudeAPI';
 import {default as Text} from "./CustomText"
+import Modal from "react-native-modal";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StampList = ({visible, closeModal}) => {
   // 각 스탬프의 상태를 관리하는 배열, 모두 기본값은 false로 초기화
@@ -32,6 +34,10 @@ const StampList = ({visible, closeModal}) => {
 
   const [addStampModalVisible, setAddStampModalVisible] = useState(false);
   const [addStampButtonDisabled, setAddStampButtonDisabled] = useState(true);
+
+  const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
+
+  const [userName, setUserName] = useState('');
 
   const handleRadioButtonPress = (index) => {
     amplitude.choiceDeleteCustomStampCandidate();
@@ -86,7 +92,6 @@ const StampList = ({visible, closeModal}) => {
     realm.write(() => {
       newStamp = createCustomStamp(newStampData);
     });
-  
     // 상태 업데이트: 새 스탬프를 customStamps에 추가
     const updatedCustomStamps = [...customStamps, newStamp];
     setCustomStamps(updatedCustomStamps);
@@ -94,12 +99,26 @@ const StampList = ({visible, closeModal}) => {
     // 모달과 버튼 상태 초기화
     setAddStampModalVisible(false);
     setAddStampButtonDisabled(true);
+    setIsLodingFinishModalVisible(true);
     console.log("스탬프 추가");
   };
-    
+
+  (() => {
+    // AsyncStorage에서 userName 값을 가져와서 설정
+    AsyncStorage.getItem('@UserInfo:userName')
+      .then((value) => {
+        if (value) {
+          console.log(value);
+          setUserName(value);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching userName:", error);
+      });
+  })()
 
   return (
-    <Modal visible={visible} animationType='slide' transparent>
+    <ModalRN visible={visible} animationType='slide' transparent>
       <View style={styles.fixModalContainer}>
         <View style={styles.fixModalTitleContainer}>
           <View style={styles.fixModalTitleContent}>
@@ -142,7 +161,7 @@ const StampList = ({visible, closeModal}) => {
       {addStampModalVisible && (
         <View style={styles.overlay} />
       )}
-      <Modal visible={addStampModalVisible} animationType='slide' transparent>
+      <ModalRN visible={addStampModalVisible} animationType='slide' transparent>
         <View style={styles.addStampModalContainer}>
           <View style={styles.addStampModalTitleContainer}>
             <TouchableOpacity onPress={() => {
@@ -187,12 +206,54 @@ const StampList = ({visible, closeModal}) => {
             </View>
           </View>
         </View>
+      </ModalRN>
+      <Modal 
+        isVisible={isLodingFinishModalVisible}
+        animationIn={"fadeIn"}
+        animationOut={"fadeOut"}
+        backdropColor='#CCCCCC' 
+        backdropOpacity={0.9}
+        style={{ alignItems:'center' }}
+        backdropTransitionInTiming={0} // Disable default backdrop animation
+        backdropTransitionOutTiming={0} // Disable default backdrop animation
+      >
+        <View style={styles.finishLodingModal}>
+          {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+          <Image 
+            source={require('./assets/colorMooMini.png')}
+            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+          <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
+            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>!~</Text>
+          </View>
+          <View style={{alignItems: 'center',}}>
+            <Text style={{ color: '#475467', fontSize: 14, }}>{userName}의 새로운 감정을 환영한다무~</Text>
+          </View>
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', flex: 1,}}>
+              <TouchableOpacity style={styles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false);}}>
+                <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>       
+        </View>
       </Modal>
-    </Modal>
+    </ModalRN>
   );
 };
 
 const styles = StyleSheet.create({
+  confirmBtn: {
+    alignSelf: 'center',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    padding: 10,
+    marginBottom: 16,
+    backgroundColor: '#72D193', 
+    borderRadius: 8,
+    flex: 1,
+  },
   fixModalContainer: {
     backgroundColor: 'white',
     width: '100%',
@@ -258,6 +319,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontStyle: 'normal',
     lineHeight: 20,
+  },
+  finishLodingModal: {
+    backgroundColor: '#FFFAF4', 
+    justifyContent: 'space-between', // 상하로 딱 붙이기
+    alignItems: 'center', // 가운데 정렬
+    flexDirection: 'column',
+    borderRadius: 12, 
+    paddingHorizontal: 16,
+    width: 343, 
+    height: 284,
+    shadowColor: 'black',
+    shadowRadius: 50,           // 그림자 블러 반경
+    elevation: 5, 
   },
   fixModalButton: {
     // position: 'absolute',

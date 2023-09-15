@@ -81,7 +81,7 @@ const StampView = () => {
   }
 
   const onClose = () => {
-    amplitude.cancelStamp();
+    // amplitude.cancelStamp();
     setModalVisible(false);
     setMemo('');
   }
@@ -131,7 +131,7 @@ const StampView = () => {
         <View style={styles.modalContainer}>
           {/* 모달 내용 */}
           <View style={styles.modalTitleContainer}>
-            <TouchableOpacity onPress={onClose}>
+            <TouchableOpacity onPress={() => {onClose; amplitude.cancelStamp();}}>
               <Image source={require('./assets/close.png')} />
             </TouchableOpacity>
             <Text style={styles.modalTitle}>감정 기록</Text>

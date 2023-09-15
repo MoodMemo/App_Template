@@ -368,6 +368,11 @@ export function getDailyReportsByField(fieldName: keyof IDailyReport, value: any
   const dailyReport = realm.objects<IDailyReport>("DailyReport").filtered(`${fieldName} = $0`, value);
   return dailyReport.length > 0 ? dailyReport[0] : null;
 }
+export function getDailyReportsByFieldBetween(
+  fieldName: keyof IDailyReport, value1: any, value2: any): IDailyReport[] {
+    const dailyReport = realm.objects<IDailyReport>("DailyReport").filtered(`${fieldName} >= $0 AND ${fieldName} < $1`, value1, value2);
+  return dailyReport.map((dailyReport) => dailyReport);
+}
 export function deleteDailyReport(dailyReport: IDailyReport) {
   realm.delete(dailyReport);
 }
