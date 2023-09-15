@@ -3,7 +3,7 @@ import { View, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar 
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
-import PushNotification from "react-native-push-notification";
+// import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {StatusBarStyle} from 'react-native';
