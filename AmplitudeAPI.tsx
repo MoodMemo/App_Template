@@ -5,16 +5,15 @@ import * as amplitude from '@amplitude/analytics-react-native';
 
 /* splash */
 function AmplitudeInit() {
-  // amplitude.init('71c6aec47b758215ad5b07a0241099c8'); // real MoodMemo
-  amplitude.init('31330863767122049d66767a71e34f09'); // demo Key
+  amplitude.init('71c6aec47b758215ad5b07a0241099c8'); // real key
+  //amplitude.init('31330863767122049d66767a71e34f09'); // fake key
 }
 export default AmplitudeInit;
 
 
 /* navigator */
 export function beginSession() {
-  amplitude.track('START');
-  console.log('aaaaa');           
+  amplitude.track('START');        
 }
 export function moveToHome() {
   amplitude.track('stamp:',
@@ -37,11 +36,16 @@ export function moveToStatistics() {
   {
     view: 'statistics',});           
 }
+
 export function clickTopBarNoti() {
   amplitude.track('click, top bar noti',
   {
     view: 'top bar',
     action: 'click',});
+}
+
+export function codePushUpdating() {
+  amplitude.track('codePush: updating');
 }
 
 
