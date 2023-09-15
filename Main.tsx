@@ -228,6 +228,10 @@ async function test_realm_ver4_RUD() { // 테스트 완료 ! 지워도 됩니다
 
 function Main({username}:any) {
   const [statusBar, setStatusBar] = useState('#FFFAF4');
+  const [name, setName] = useState('');
+  useEffect(() => {
+    setName(username);
+  }, []);
   console.log('bbb',username)
   //test_realm_ver4();
   return (
