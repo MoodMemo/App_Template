@@ -33,10 +33,15 @@ const Home = ({name}:any) => {
       if (value==='true') {
         setIsFirstStamp(true);
       }
+      else{
+        setIsFirstStamp(false);
+      }
     })
     .catch((error) => {
       console.error("Error fetching firstStamp:", error);
     });
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
+    console.log(isFirstStamp);
   }, []);
 
   const handleOptionSelect = (option) => {

@@ -115,6 +115,9 @@ function App(): JSX.Element {
       {
         setIsRegistered(true);
       }
+      else{
+        AsyncStorage.setItem('@UserInfo:firstStamp','true');
+      }
   });
 
   (async () => { 

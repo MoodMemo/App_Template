@@ -27,7 +27,6 @@ async function saveUserInfo_toAsyncStorage(userName:any, birthday:any, job:any) 
       await AsyncStorage.setItem('@UserInfo:job', job);
       //await AsyncStorage.setItem('@UserInfo:notificationAllow', 'true');
       await AsyncStorage.setItem('@UserInfo:registerDate', new Date().toString());
-      await AsyncStorage.setItem('@UserInfo:firstStamp','true');
       // await AsyncStorage.setItem('@UserInfo:progressedDate', progressedDate); -> 얘는 나중에 스탬프 찍으면 업데이트
       console.log("create user finished");
     } catch (e) {
