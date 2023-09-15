@@ -5,8 +5,8 @@ import * as amplitude from '@amplitude/analytics-react-native';
 
 /* splash */
 function AmplitudeInit() {
-  amplitude.init('71c6aec47b758215ad5b07a0241099c8'); // real MoodMemo
-  // amplitude.init('31330863767122049d66767a71e34f09'); // demo Key
+  // amplitude.init('71c6aec47b758215ad5b07a0241099c8'); // real MoodMemo
+  amplitude.init('31330863767122049d66767a71e34f09'); // demo Key
 }
 export default AmplitudeInit;
 
@@ -36,6 +36,12 @@ export function moveToStatistics() {
   amplitude.track('statistics:',
   {
     view: 'statistics',});           
+}
+export function clickTopBarNoti() {
+  amplitude.track('click, top bar noti',
+  {
+    view: 'top bar',
+    action: 'click',});
 }
 
 
@@ -694,4 +700,16 @@ export function test10() {
 }
 
 
-
+/* statistics view */
+export function moveToPastMonth() {
+  amplitude.track('statistics: click, past month',
+  {
+    view: 'statistics',
+    action: 'click',});
+}
+export function moveToNextMonth() {
+  amplitude.track('statistics: click, next month',
+  {
+    view: 'statistics',
+    action: 'click',});
+}

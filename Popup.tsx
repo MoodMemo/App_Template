@@ -69,8 +69,8 @@ const diaryStyles = StyleSheet.create({
     flexDirection: 'column',
     borderRadius: 12, 
     paddingHorizontal: 16,
-    width: 343, 
-    height: 260,
+    width: 270, 
+    height: 250,
     shadowColor: 'black',
     shadowRadius: 50,           // 그림자 블러 반경
     elevation: 5, 

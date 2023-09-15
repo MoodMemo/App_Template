@@ -66,7 +66,7 @@ const Settings = () => {
             comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback2);
-        amplitude.test11(userFeedback2.comments);
+        amplitude.test99999(userFeedback2.comments);
         */
         
         setMemo('');
