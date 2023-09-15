@@ -15,15 +15,20 @@ import AmplitudeInit from './AmplitudeAPI';
 import * as Sentry from '@sentry/react-native';
 
 Amplify.configure(config);
-/*
+
 messaging().setBackgroundMessageHandler(async remoteMessage => {
   console.log('Message handled in the background!', remoteMessage);
 });
-
+messaging().onMessage(async remoteMessage => {
+  console.log('Message handled in the background!', remoteMessage);
+});
+/*
 messaging().getInitialNotification(async remoteMessage => {
   console.log('Message handled in the kill state!', remoteMessage);
 });
 */
+
+AmplitudeInit();
 
 PushNotification.configure({
 
@@ -34,6 +39,7 @@ PushNotification.configure({
   //알림을 클릭하면 실행됨
   onNotification: function (notification) {
     console.log("NOTIFICATION:", notification);
+    amplitude.clickTopBarNoti(); //알림 클릭 앰플리튜드
   },
 
   popInitialNotification: true,
@@ -53,7 +59,7 @@ Sentry.init({
   release: `${BUNDLE_ID}@${APP_VERSION}+codepush:${DIST}`,
 });
 
-AmplitudeInit();
+
 
 Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;

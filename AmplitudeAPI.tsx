@@ -36,6 +36,14 @@ export function moveToStatistics() {
   {
     view: 'statistics',});           
 }
+
+export function clickTopBarNoti() {
+  amplitude.track('click, top bar noti',
+  {
+    view: 'top bar',
+    action: 'click',});
+}
+
 export function codePushUpdating() {
   amplitude.track('codePush: updating');
 }
@@ -68,6 +76,12 @@ export function userRegiJob_Fin(job: String) {
     view: 'intro',
     action: 'confirm',
     job});
+}
+export function userRegiFin_andStampGo() {
+  amplitude.track('intro: confirm, first stamp',
+  {
+    view: 'intro',
+    action: 'confirm',});
 }
 /* AnimatedViewBirthDay view */
 export function userRegiFinish() {
@@ -333,6 +347,13 @@ export function tryGenerateAIDiary_can(today: String) {
     action: 'click',
     today}); 
 }
+export function tryGenerateAIDiary_can_forPast(today: String) {
+  amplitude.track('weekly: click, generate AI diary (can)', 
+  {
+    view: 'weekly',
+    action: 'click',
+    today}); 
+}
 export function waitingForAIDiary() {
   // 여기에 날짜 받으면 에러나니까 절대 네버 넣지 말것 ...!
   amplitude.track('weekly: click, wait for AI diary, in generate AI diary modal', 
@@ -347,6 +368,129 @@ export function backToWeeklyFromCanModal(today: String) {
     view: 'weekly',
     action: 'confirm',
     today});
+}
+export function clickStampSwitchInStampView() {
+  amplitude.track('weekly: click, stamp switch, in stamp view', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'stamp view',}); 
+}
+export function clickDiarySwitchInStampView() {
+  amplitude.track('weekly: click, diary switch, in stamp view', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'stamp view',}); 
+}
+export function clickStampSwitchInDiaryView() {
+  amplitude.track('weekly: click, stamp switch, in diary view', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'diary view',}); 
+}
+export function clickDiarySwitchInDiaryView() {
+  amplitude.track('weekly: click, diary switch, in diary view', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'diary view',}); 
+}
+export function pushStampInTellMeYourDayView() {
+  amplitude.track('weekly: click, stamp, in tell me your day view',
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'tell me your day view',});
+}
+export function pushStampInPleaseOneMoreStampView() {
+  amplitude.track('weekly: click, stamp, in please one more stamp view',
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'please one more stamp view',});
+}
+export function pushStampInPleaseOneMoreStampViewInStampSwitch() {
+  amplitude.track('weekly: click, stamp, in weekly-stamp-one-stamp',
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'weekly-stamp-one-stamp',});
+}
+export function editMemo() {
+  amplitude.track('weekly: click, memo, in edit stamp', 
+  {
+    view: 'weekly',
+    action: 'click',
+    secondView: 'edit stamp',});
+}
+export function backToWeeklyFromStampEditModal(){
+  amplitude.track('weekly: cancel, edit stamp, back to weekly', 
+  {
+    view: 'weekly',
+    action: 'cancel',});
+}
+export function confirmToEditStamp() {
+  amplitude.track('weekly: confirm, edit stamp, in edit stamp modal',
+  {
+    view: 'weekly',
+    action: 'confirm',
+    secondView: 'edit stamp modal',});
+}
+export function confirmToDeleteStamp() {
+  amplitude.track('weekly: confirm, delete stamp',
+  {
+    view: 'weekly',
+    action: 'confirm',});
+}
+export function cancelToDeleteStamp() {
+  amplitude.track('weekly: cancel, delete stamp',
+  {
+    view: 'weekly',
+    action: 'cancel',});
+}
+export function clickFuture() {
+  amplitude.track('weekly: click, future date',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickPast_noStamp() {
+  amplitude.track('weekly: click, past date (no stamp)',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickPast_noDiary() {
+  amplitude.track('weekly: click, past date (no diary)',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickFuture_Diary() {
+  amplitude.track('weekly: click, future date (diary)',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickStampDotButton() {
+  amplitude.track('weekly: click, stamp dot button',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickEditButton() {
+  amplitude.track('weekly: click, edit button',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function clickDeleteButton() {
+  amplitude.track('weekly: click, delete button',
+  {
+    view: 'weekly',
+    action: 'click',});
 }
 
 
@@ -560,4 +704,16 @@ export function test10() {
 }
 
 
-
+/* statistics view */
+export function moveToPastMonth() {
+  amplitude.track('statistics: click, past month',
+  {
+    view: 'statistics',
+    action: 'click',});
+}
+export function moveToNextMonth() {
+  amplitude.track('statistics: click, next month',
+  {
+    view: 'statistics',
+    action: 'click',});
+}
