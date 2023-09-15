@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dimensions, Image, View, Text, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
+import { Dimensions, Image, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -11,6 +11,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import * as amplitude from '../AmplitudeAPI';
 
+import {default as Text} from "../CustomText"
 const screenWidth = Dimensions.get('window').width;
 const width = screenWidth > 500 ? 500 : screenWidth;
 const buttonWidth = (width - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
@@ -182,7 +183,7 @@ const Statistics = () => {
             <TouchableOpacity onPress={decDate}>
                 <MaterialIcons name="arrow-left" size={30} style={{marginTop:0,color:'#212429'}}/>
             </TouchableOpacity>
-            <Text style={{fontSize:18,color:'#212429',marginTop:1.2}}> {year}년 {month>=10 ? '' : ' '}{month}월 </Text>
+            <Text style={{fontSize:18,color:'#212429',marginTop:2}}> {year}년 {month>=10 ? '' : ' '}{month}월 </Text>
             <TouchableOpacity onPress={incDate}>
                 <MaterialIcons name="arrow-right" size={30} style={{marginTop:0,color:'#212429'}}/>
             </TouchableOpacity>
