@@ -39,7 +39,7 @@ PushNotification.configure({
   //알림을 클릭하면 실행됨
   onNotification: function (notification) {
     console.log("NOTIFICATION:", notification);
-    amplitude.test1(); //알림 클릭 앰플리튜드
+    amplitude.clickTopBarNoti(); //알림 클릭 앰플리튜드
   },
 
   popInitialNotification: true,

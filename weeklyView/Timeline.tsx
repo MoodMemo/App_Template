@@ -55,7 +55,7 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
   }
   const handleDeleteConfirm = (deleteStamp: repository.IPushedStamp) => {
     const today = dayjs(deleteStamp.dateTime);
-    amplitude.test1();
+    // amplitude.test99999();
     realm.write(() => {
       repository.deletePushedStamp(deleteStamp);
     });
@@ -142,7 +142,7 @@ const Timeline: React.FC<TimelineProps> = ({ data }) => {
                     </View>
                     <View style={{ flexDirection: 'row', marginTop: 20 }}>
                       <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
-                        <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.test1();}}>
+                        <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); }}>
                           <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpDeleteStamp); setIsDeletingStamp(false);}}>
