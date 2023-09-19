@@ -94,11 +94,11 @@ const Home = ({name}:any) => {
                   color:"#212429",
                   marginLeft: '5%'
                 }}>지금의 감정은 어떠냐무~?</Text>
-                <Text style={{
+                {/* <Text style={{
                   fontSize: 24,
                   color:"#212429",
                   marginLeft: '5%'
-                }}>{userName}의</Text>
+                }}>{userName}의</Text> */}
                 <Text style={{
                   fontSize: 24,
                   color:"#212429",
