@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>393580669948-igfm8f7im85730fsuo59mr08u398sct9.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDDV7G1jP3eLyUt9uft9TImRQqwulcuTYo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>393580669948</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.MoodMemo</string>
+	<key>PROJECT_ID</key>
+	<string>moodmemo-a8715</string>
+	<key>STORAGE_BUCKET</key>
+	<string>moodmemo-a8715.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:393580669948:ios:5677e077e3e403eb042079</string>
+</dict>
+</plist>
