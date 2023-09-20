@@ -4,6 +4,7 @@ import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PushNotification from "react-native-push-notification";
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import DatePicker from 'react-native-date-picker';
 import Modal from "react-native-modal";
 import { Divider } from 'react-native-paper';
@@ -296,35 +297,52 @@ const AnimatedViewBirthday = () => {
         console.log('Selected birthday:', birthday);
         setSection('job');
       }
-    } else {
+    }
+    else {
       if(job===''){
         setIsWarningVisible(true);
       }
-      else{
-      if (Platform.OS === 'android') {
-            try {
-                  const granted = await PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-                  );
-                  if(granted===PermissionsAndroid.RESULTS.GRANTED){
-                    AsyncStorage.setItem('@UserInfo:notificationAllow','true');
-                    console.log(1);
-                    connectRealmNotification();
-                  }
-                  else{
-                    AsyncStorage.setItem('@UserInfo:notificationAllow','false');
-                  }
-                  console.log(granted);
-                  saveUserInfo_toAsyncStorage(name, showingBirthday, job);
-                  test_realm_ver4();
-                } catch (error) {
-                }
+      else {
+        if (Platform.OS === 'android') {
+          try {
+            const granted = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+            );
+            if(granted===PermissionsAndroid.RESULTS.GRANTED){
+              AsyncStorage.setItem('@UserInfo:notificationAllow','true');
+              console.log(1);
+              connectRealmNotification();
+            }
+            else{
+              AsyncStorage.setItem('@UserInfo:notificationAllow','false');
+            }
+            console.log(granted);
+            saveUserInfo_toAsyncStorage(name, showingBirthday, job);
+            test_realm_ver4();
+          }
+          catch (error) {
+          }
+        }
+        else if (Platform.OS === 'ios') {
+          PushNotificationIOS.requestPermissions().then(data => {
+            if (data.alert || data.badge || data.sound) {
+              AsyncStorage.setItem('@UserInfo:notificationAllow', 'true');
+            } else {
+              AsyncStorage.setItem('@UserInfo:notificationAllow', 'false');
+            }
+            // 다른 iOS 관련 코드 (예: 사용자 정보 저장)
+            saveUserInfo_toAsyncStorage(name, showingBirthday, job);
+            // test_realm_ver4();
+          }).catch(error => {
+            console.error('Notification permission error:', error);
+            AsyncStorage.setItem('@UserInfo:notificationAllow', 'false');
+          });
+        }
         console.log('Selected job:', job);
         setSection('main');
       }
     };
-  };
-};
+  }
 
   return (
     <>
