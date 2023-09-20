@@ -11,6 +11,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		4B5418612ABADE09009123B6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4B5418602ABADE09009123B6 /* GoogleService-Info.plist */; };
 		6CEEFE2AA87D38E6FC67C7A8 /* libPods-MoodMemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F562FE07C05F901A4CE68D6B /* libPods-MoodMemo.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		C26B8E40D4B0953D43E332C0 /* libPods-MoodMemo-MoodMemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CB8E42E5B9E800646702F1F /* libPods-MoodMemo-MoodMemoTests.a */; };
@@ -37,6 +38,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MoodMemo/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MoodMemo/main.m; sourceTree = "<group>"; };
 		1963938312573D907702CFDA /* Pods-MoodMemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MoodMemo.release.xcconfig"; path = "Target Support Files/Pods-MoodMemo/Pods-MoodMemo.release.xcconfig"; sourceTree = "<group>"; };
+		4B5418602ABADE09009123B6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		72ACAB862AB01DD5000542BE /* MoodMemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = MoodMemo.entitlements; path = MoodMemo/MoodMemo.entitlements; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = MoodMemo/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9CB8E42E5B9E800646702F1F /* libPods-MoodMemo-MoodMemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MoodMemo-MoodMemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -87,6 +89,7 @@
 		13B07FAE1A68108700A75B9A /* MoodMemo */ = {
 			isa = PBXGroup;
 			children = (
+				4B5418602ABADE09009123B6 /* GoogleService-Info.plist */,
 				72ACAB862AB01DD5000542BE /* MoodMemo.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -162,6 +165,7 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				473A98846DB58244A5668DAE /* [CP] Copy Pods Resources */,
+				59839F4EE3BFC8AAB1D0EBCA /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -186,6 +190,7 @@
 				5C3F1DD3C1BB41AA99184925 /* Upload Debug Symbols to Sentry */,
 				388D336F09F7A068AD144142 /* [CP] Copy Pods Resources */,
 				EB55D4D972CAFAFB3BA8C622 /* [CP-User] [RNFB] Core Configuration */,
+				1763A8E1DE6FC76D32798396 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -244,6 +249,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4B5418612ABADE09009123B6 /* GoogleService-Info.plist in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
@@ -267,6 +273,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "export SENTRY_PROPERTIES=sentry.properties\nexport EXTRA_PACKAGER_ARGS=\"--sourcemap-output $DERIVED_FILE_DIR/main.jsbundle.map\"\nset -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT \\\"../node_modules/@sentry/cli/bin/sentry-cli react-native xcode $REACT_NATIVE_XCODE\\\"\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT ../node_modules/@sentry/react-native/scripts/collect-modules.sh\"\n";
+		};
+		1763A8E1DE6FC76D32798396 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MoodMemo/Pods-MoodMemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MoodMemo/Pods-MoodMemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MoodMemo/Pods-MoodMemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		388D336F09F7A068AD144142 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -300,6 +323,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MoodMemo-MoodMemoTests/Pods-MoodMemo-MoodMemoTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		59839F4EE3BFC8AAB1D0EBCA /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MoodMemo-MoodMemoTests/Pods-MoodMemo-MoodMemoTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-MoodMemo-MoodMemoTests/Pods-MoodMemo-MoodMemoTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MoodMemo-MoodMemoTests/Pods-MoodMemo-MoodMemoTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5C3F1DD3C1BB41AA99184925 /* Upload Debug Symbols to Sentry */ = {
