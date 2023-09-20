@@ -35,6 +35,7 @@
 		FF0D3B7C2ABB7B3100B698DC /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF0D3B692ABB7B3100B698DC /* SimpleLineIcons.ttf */; };
 		FF0D3B7D2ABB7B3100B698DC /* FontAwesome6_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF0D3B6A2ABB7B3100B698DC /* FontAwesome6_Brands.ttf */; };
 		FF0D3B7E2ABB7B3100B698DC /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF0D3B6B2ABB7B3100B698DC /* Foundation.ttf */; };
+		FF0D3B822ABB80C200B698DC /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF0D3B812ABB80C200B698DC /* Pretendard-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +88,7 @@
 		FF0D3B692ABB7B3100B698DC /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		FF0D3B6A2ABB7B3100B698DC /* FontAwesome6_Brands.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome6_Brands.ttf; sourceTree = "<group>"; };
 		FF0D3B6B2ABB7B3100B698DC /* Foundation.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Foundation.ttf; sourceTree = "<group>"; };
+		FF0D3B812ABB80C200B698DC /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +200,7 @@
 		FF0D3B582ABB7A8800B698DC /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				FF0D3B812ABB80C200B698DC /* Pretendard-Medium.ttf */,
 				FF0D3B602ABB7B3100B698DC /* AntDesign.ttf */,
 				FF0D3B652ABB7B3100B698DC /* Entypo.ttf */,
 				FF0D3B5A2ABB7B3100B698DC /* EvilIcons.ttf */,
@@ -325,6 +328,7 @@
 				FF0D3B7C2ABB7B3100B698DC /* SimpleLineIcons.ttf in Resources */,
 				FF0D3B7E2ABB7B3100B698DC /* Foundation.ttf in Resources */,
 				FF0D3B762ABB7B3100B698DC /* Ionicons.ttf in Resources */,
+				FF0D3B822ABB80C200B698DC /* Pretendard-Medium.ttf in Resources */,
 				FF0D3B7A2ABB7B3100B698DC /* FontAwesome5_Brands.ttf in Resources */,
 				FF0D3B6C2ABB7B3100B698DC /* FontAwesome6_Regular.ttf in Resources */,
 				FF0D3B572ABADAB300B698DC /* GoogleService-Info.plist in Resources */,
