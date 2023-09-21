@@ -23,6 +23,8 @@ DerivedData
 ios/.xcode.env.local
 # sentry property - Auth Token
 ios/sentry.properties
+# google service info
+ios/GoogleService-Info.plist
 
 # Android/IntelliJ
 #
@@ -36,6 +38,8 @@ local.properties
 *.keystore
 !debug.keystore
 google-services.json
+# facebook property - Auth Token
+android/app/src/main/res/values/strings.xml
 
 # node.js
 #
