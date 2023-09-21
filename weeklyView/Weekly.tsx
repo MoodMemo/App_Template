@@ -65,8 +65,8 @@ const Dropdown: React.FC<DropdownProps> = ({
     <View style={dropDownStyles.dropdownContainer}>
       
       <TouchableOpacity onPress={toggleDropdown} style={dropDownStyles.dropdownButton}>
-        <View>
-          <Text style={dropDownStyles.dropdownButtonText}>
+        <View style={dropDownStyles.dropdownButtonText}>
+          <Text style={{fontWeight: 'bold', color: '#212429',}}>
             {selectedValue}{label}
           </Text>
           <FontAwesomeIcon name='sort-down' size={16} color="#737373" style={{position: 'absolute', right: 7, top: 5}}/>
@@ -700,7 +700,9 @@ const Weekly = () => {
                 ) : (
                   <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
                     {todayReport.keyword.map((keyword) => (
-                      <Text key={keyword} style={diaryStyles.keyword}>{keyword}</Text>
+                      <View style={diaryStyles.keyword}>
+                        <Text key={keyword} >{keyword}</Text>
+                      </View>
                     ))}
                   </View>
                 )}
@@ -907,6 +909,7 @@ const dropDownStyles = StyleSheet.create({
   dropdownContainer: {
     position: 'relative',
     marginBottom: 10,
+    zIndex: 2,
   },
   dropdownButton: {
     paddingTop: 15,
@@ -914,31 +917,28 @@ const dropDownStyles = StyleSheet.create({
   },
   dropdownButtonText: {
     fontSize: 14,
-    color: '#212429',
     backgroundColor: '#fafafa',
+    // backgroundColor: 'pink',
     padding: 5,
     paddingHorizontal: 12,
     paddingRight: 22,
     borderRadius: 6,
-    fontWeight: 'bold',
   },
   dropdownOptions: {
     backgroundColor: '#ffffff',
-    marginTop: 5,
-    padding: 3,
-    paddingRight: 20,
-    shadowColor: 'black',
-    borderRadius: 5,
-    shadowOpacity: 1,        // 그림자 투명도
-    shadowRadius: 50,           // 그림자 블러 반경
-    elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
-    marginLeft: 5,
+    marginTop: 5, marginLeft: 5,
+    padding: 3, paddingRight: 20,
     alignSelf: 'flex-start',
-    position: 'absolute',
-    left: 10,
-    top: 50,
-    zIndex: 1,
-    width: 100
+    position: 'absolute', left: 10, top: 50, width: 100,
+    borderRadius: 5,
+
+    shadowColor: '#000', // 그림자 색상 // change for ios
+    shadowOffset: { width: 0, height: 2 }, // 그림자 위치 // change for ios
+    shadowOpacity: 0.1, // 그림자 투명도 // change for ios
+    shadowRadius: 5,           // 그림자 블러 반경 // change for ios
+    elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
+
+    zIndex: 100,
   },
 });
 
