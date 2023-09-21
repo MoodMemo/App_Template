@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Button, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
+import { View, Button, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, Platform, ActivityIndicator, StatusBar} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -528,19 +528,14 @@ const Weekly = () => {
                                 <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
                               </TouchableOpacity>
                               {/* 1. 스탬프 수정 삭제 드롭다운 */}
-                              <Modal 
-                                  isVisible={dropdownButtonVisible}
-                                  animationIn={"fadeIn"}
-                                  animationOut={"fadeOut"}
+                              <Modal isVisible={dropdownButtonVisible}
+                                  animationIn={"fadeIn"} animationOut={"fadeOut"}
                                   backdropOpacity={0}
                                   onBackdropPress={() => setDropdownButtonVisible(false)}
                                   style={{
                                     position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
                                     left: buttonX - 79,
                                     top: buttonY - 3,
-                                    // alignItems: 'center',
-                                    // justifyContent: 'flex-end',
-                                    // margin: 0,
                                     width: 75,
                                   }}
                                   backdropTransitionInTiming={0} // Disable default backdrop animation
@@ -560,15 +555,12 @@ const Weekly = () => {
                               </Modal>
                             </View>
                             {/* 2. 스탬프 삭제 경고 모달 */}
-                            <Modal 
-                              isVisible={isDeletingStamp}
-                              animationIn={"fadeIn"}
-                              animationOut={"fadeOut"}
-                              backdropColor='#CCCCCC' 
-                              backdropOpacity={0.9}
+                            <Modal isVisible={isDeletingStamp}
+                              animationIn={"fadeIn"} animationOut={"fadeOut"}
+                              backdropColor='#CCCCCC' backdropOpacity={0.9}
                               style={{ alignItems:'center' }}
-                              backdropTransitionInTiming={0} // Disable default backdrop animation
-                              backdropTransitionOutTiming={0} // Disable default backdrop animation
+                              // backdropTransitionInTiming={0} // Disable default backdrop animation
+                              // backdropTransitionOutTiming={0} // Disable default backdrop animation
                             >
                               <View style={TimelineDiaryStyles.finishLodingModal}>
                                 {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
@@ -927,7 +919,7 @@ const dropDownStyles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 12,
     paddingRight: 22,
-    borderRadius: 8,
+    borderRadius: 6,
     fontWeight: 'bold',
   },
   dropdownOptions: {
@@ -1315,9 +1307,10 @@ const TimelineDropDownStyles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 4,
     fontWeight: 'bold',
-    shadowColor: 'black',
-    shadowOpacity: 1,        // 그림자 투명도
-    shadowRadius: 50,           // 그림자 블러 반경
+    shadowColor: '#000', // 그림자 색상 // change for ios
+    shadowOffset: { width: 0, height: 2 }, // 그림자 위치 // change for ios
+    shadowOpacity: 0.1, // 그림자 투명도 // change for ios
+    shadowRadius: 5,           // 그림자 블러 반경 // change for ios
     elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
   },
   dropdownButtonText: {
