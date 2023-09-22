@@ -334,7 +334,7 @@ const Weekly = () => {
   const closeStampClickModal = () => {
     setStampClickModalVisible(false);
   };
-  const [isDeletingStamp, setIsDeletingStamp] = useState(false);
+  const [isDeletingStampModalVisible, setIsDeletingStampModalVisible] = useState(false);
   const tmpStamp: repository.IPushedStamp = {
     id: '-1',
     dateTime: new Date(),
@@ -355,7 +355,7 @@ const Weekly = () => {
   const handleDeleteButton = () => {
     amplitude.clickDeleteButton();
     setDropdownButtonVisible(false);
-    setIsDeletingStamp(true);
+    setIsDeletingStampModalVisible(true);
     setToday(today);
   }
   const handleDeleteConfirm = (deleteStamp: repository.IPushedStamp) => {
@@ -402,7 +402,7 @@ const Weekly = () => {
       <View style={{backgroundColor: 'white', zIndex: 1,}}>
 
         {/* 1. 년, 월, 주 선택 부분 */}
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', zIndex:3}}>
           <Dropdown
             label="년"
             options={[
@@ -547,7 +547,15 @@ const Weekly = () => {
                                           <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
                                         </TouchableOpacity>
                                         {/* <TouchableOpacity onPress={() => {console.log(index);handleDeleteButton(timelineData[index]);}}> */}
-                                        <TouchableOpacity onPress={() => {handleDeleteButton();}}>
+                                        <TouchableOpacity onPress={() => {
+                                            setDropdownButtonVisible(false);
+                                            amplitude.clickDeleteButton();
+                                            setToday(today);
+                                            setTimeout(() => {
+                                              // 모달 관련 로직
+                                            }, 100); // 100ms 딜레이
+                                            setIsDeletingStampModalVisible(true);
+                                            }}>
                                           <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
                                         </TouchableOpacity>
                                       </View>
@@ -555,12 +563,12 @@ const Weekly = () => {
                               </Modal>
                             </View>
                             {/* 2. 스탬프 삭제 경고 모달 */}
-                            <Modal isVisible={isDeletingStamp}
+                            <Modal isVisible={isDeletingStampModalVisible}
                               animationIn={"fadeIn"} animationOut={"fadeOut"}
                               backdropColor='#CCCCCC' backdropOpacity={0.9}
                               style={{ alignItems:'center' }}
-                              // backdropTransitionInTiming={0} // Disable default backdrop animation
-                              // backdropTransitionOutTiming={0} // Disable default backdrop animation
+                              backdropTransitionInTiming={0} // Disable default backdrop animation
+                              backdropTransitionOutTiming={0} // Disable default backdrop animation
                             >
                               <View style={TimelineDiaryStyles.finishLodingModal}>
                                 {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
@@ -577,10 +585,10 @@ const Weekly = () => {
                                 </View>
                                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
                                   <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
-                                    <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.cancelToDeleteStamp();}}>
+                                    <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStampModalVisible(false); amplitude.cancelToDeleteStamp();}}>
                                       <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStamp(false);}}>
+                                    <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStampModalVisible(false);}}>
                                       <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                                     </TouchableOpacity>
                                   </View>
@@ -827,10 +835,8 @@ const Weekly = () => {
       {/* 4-4. 일기 수정 중 취소 시 경고 모달 */}
       <Modal 
         isVisible={isWarningModalVisible}
-        animationIn={"fadeIn"}
-        animationOut={"fadeOut"}
-        backdropColor='#CCCCCC' 
-        backdropOpacity={0.9}
+        animationIn={"fadeIn"} animationOut={"fadeOut"}
+        backdropColor='#CCCCCC' backdropOpacity={0.9}
         style={{ alignItems:'center' }}
         backdropTransitionInTiming={0} // Disable default backdrop animation
         backdropTransitionOutTiming={0} // Disable default backdrop animation
@@ -909,7 +915,7 @@ const dropDownStyles = StyleSheet.create({
   dropdownContainer: {
     position: 'relative',
     marginBottom: 10,
-    zIndex: 2,
+    zIndex: 50,
   },
   dropdownButton: {
     paddingTop: 15,
@@ -931,13 +937,11 @@ const dropDownStyles = StyleSheet.create({
     alignSelf: 'flex-start',
     position: 'absolute', left: 10, top: 50, width: 100,
     borderRadius: 5,
-
     shadowColor: '#000', // 그림자 색상 // change for ios
     shadowOffset: { width: 0, height: 2 }, // 그림자 위치 // change for ios
     shadowOpacity: 0.1, // 그림자 투명도 // change for ios
     shadowRadius: 5,           // 그림자 블러 반경 // change for ios
     elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
-
     zIndex: 100,
   },
 });
