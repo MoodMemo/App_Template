@@ -371,15 +371,34 @@ const Weekly = () => {
   const boxRef = useRef();
   const [buttonX, setButtonX] = useState(0);
   const [buttonY, setButtonY] = useState(0);
+  const [firstButtonX, setFirstButtonX] = useState(0);
+  const [firstBbuttonY, setFirstButtonY] = useState(0);
   const buttonRefs = useRef([]);
+  const firstRef = useRef([]);
   const getBoxMessure = (index) => {
     if (buttonRefs.current[index]) {
       buttonRefs.current[index].measureInWindow((x, y, width, height) => {
+      // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
         console.log("tmp ==")
         console.log("x : ", x); setButtonX(x);
         console.log("y : ", y); setButtonY(y);
         console.log("width : ", width);
         console.log("height : ", height);
+        // console.log("pageX : ", pageX);
+        // console.log("pageY : ", pageY);
+      });
+    }
+
+    if (firstRef) {
+      firstRef.current.measureInWindow((x, y, width, height) => {
+      // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
+        console.log("getFirstBoxMessure ==")
+        console.log("x : ", x); setFirstButtonX(x);
+        console.log("y : ", y); setFirstButtonY(y);
+        console.log("width : ", width);
+        console.log("height : ", height);
+        // console.log("pageX : ", pageX);
+        // console.log("pageY : ", pageY);
       });
     }
   };
@@ -392,7 +411,7 @@ const Weekly = () => {
   // console.log(repository.getAllCustomStamps()[0].pushedCnt);
   return (
     
-    <View style={{backgroundColor: '#FAFAFA', flex:1}}>
+    <View style={{backgroundColor: '#FAFAFA', flex:1}} ref={firstRef}>
       {/* <StatusBar
         backgroundColor="#FFFFFF"
         barStyle={'dark-content'}
@@ -408,11 +427,18 @@ const Weekly = () => {
       {dropdownButtonVisible && (
         <View style={[{
           position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
-          left: buttonX-60,
-          top: buttonY+15,
+          left: buttonX-firstButtonX-60,
+          // left: 0,
+          top: buttonY-firstBbuttonY+15,
+          // top: 258,
+          // top: 278,
           width: 75,
           zIndex: 300,
-        }, Platform.OS==='ios' && {top: buttonY-6}]}>
+        }, Platform.OS==='ios' && {
+          // top: buttonY-6
+          // top: 249
+          // top: 265
+          }]}>
           <View style={TimelineDropDownStyles.dropdownContainer}>
               <View style={TimelineDropDownStyles.dropdownButtonOption}>
                 <TouchableOpacity onPress={() => {handleEditStampButton();}}>
