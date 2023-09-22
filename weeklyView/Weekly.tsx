@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Button, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
+import { View, Button, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, Platform, ActivityIndicator, StatusBar} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -65,8 +65,8 @@ const Dropdown: React.FC<DropdownProps> = ({
     <View style={dropDownStyles.dropdownContainer}>
       
       <TouchableOpacity onPress={toggleDropdown} style={dropDownStyles.dropdownButton}>
-        <View>
-          <Text style={dropDownStyles.dropdownButtonText}>
+        <View style={dropDownStyles.dropdownButtonText}>
+          <Text style={{fontWeight: 'bold', color: '#212429',}}>
             {selectedValue}{label}
           </Text>
           <FontAwesomeIcon name='sort-down' size={16} color="#737373" style={{position: 'absolute', right: 7, top: 5}}/>
@@ -262,9 +262,9 @@ const Weekly = () => {
           />
           <Text style={{fontSize: 14, color: '#495057', }}>일기를 만들 준비가 됐다무!!</Text>
   
-          <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} 
+          <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn, {width: 184}]} 
             onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}} >
-            <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
+            <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>무에게 일기 작성 요청하기</Text>
           </TouchableOpacity>
         </View>
   
@@ -281,9 +281,9 @@ const Weekly = () => {
           />
           <Text style={{fontSize: 14, color: '#495057', }}>일기를 만들 준비가 됐다무!!</Text>
   
-          <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} 
+          <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn, {width: 184}]}
             onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can_forPast(today.format('YYYY-MM-DD'));}} >
-            <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
+            <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>무에게 일기 작성 요청하기</Text>
           </TouchableOpacity>
         </View>
   
@@ -334,7 +334,7 @@ const Weekly = () => {
   const closeStampClickModal = () => {
     setStampClickModalVisible(false);
   };
-  const [isDeletingStamp, setIsDeletingStamp] = useState(false);
+  const [isDeletingStampModalVisible, setIsDeletingStampModalVisible] = useState(false);
   const tmpStamp: repository.IPushedStamp = {
     id: '-1',
     dateTime: new Date(),
@@ -355,7 +355,7 @@ const Weekly = () => {
   const handleDeleteButton = () => {
     amplitude.clickDeleteButton();
     setDropdownButtonVisible(false);
-    setIsDeletingStamp(true);
+    setIsDeletingStampModalVisible(true);
     setToday(today);
   }
   const handleDeleteConfirm = (deleteStamp: repository.IPushedStamp) => {
@@ -397,12 +397,46 @@ const Weekly = () => {
         backgroundColor="#FFFFFF"
         barStyle={'dark-content'}
       /> */}
+      {/* <View style={[{backgroundColor: 'red', width: 10, height: 10,
+                    position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
+                    // left: buttonX,
+                    // top: buttonY,
+                    zIndex: 1000
+                  }, ]}></View> */}
+
+
+      {dropdownButtonVisible && (
+        <View style={[{
+          position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
+          left: buttonX-60,
+          top: buttonY+15,
+          width: 75,
+          zIndex: 300,
+        }, Platform.OS==='ios' && {top: buttonY-6}]}>
+          <View style={TimelineDropDownStyles.dropdownContainer}>
+              <View style={TimelineDropDownStyles.dropdownButtonOption}>
+                <TouchableOpacity onPress={() => {handleEditStampButton();}}>
+                  <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
+                </TouchableOpacity>
+                {/* <TouchableOpacity onPress={() => {console.log(index);handleDeleteButton(timelineData[index]);}}> */}
+                <TouchableOpacity onPress={() => {
+                    setDropdownButtonVisible(false);
+                    amplitude.clickDeleteButton();
+                    setToday(today);
+                    setIsDeletingStampModalVisible(true);
+                    }}>
+                  <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+          </View>
+        </View>
+      )}
 
       {/* 1 & 2 */}
       <View style={{backgroundColor: 'white', zIndex: 1,}}>
 
         {/* 1. 년, 월, 주 선택 부분 */}
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', zIndex:3}}>
           <Dropdown
             label="년"
             options={[
@@ -499,7 +533,7 @@ const Weekly = () => {
 
       {stampORdiary ? ( // 스탬프 기록
         getEmoji(getStamp(today)).length !== 0 ? ( // 스탬프 exists
-          <View style={{ alignItems: 'center', flex: 1, }}>
+          <View style={{ alignItems: 'center', flex: 1,}}>
             <View style={{ flexDirection: 'row', marginTop: 16, marginHorizontal: 16, }}>
               <ScrollView>
                 <View style={Timelinestyles.container}>
@@ -522,50 +556,16 @@ const Weekly = () => {
                             {/* 수정 & 삭제 */}
                             <View>
                               <TouchableOpacity
-                                onPress={() => {setDropdownButtonVisible(true), getBoxMessure(index); setTmpChosenStamp(item); amplitude.clickStampDotButton();}}
+                                onPress={() => {setDropdownButtonVisible(!dropdownButtonVisible), getBoxMessure(index); setTmpChosenStamp(item); amplitude.clickStampDotButton();}}
                                 ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
                               >
                                 <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
                               </TouchableOpacity>
-                              {/* 1. 스탬프 수정 삭제 드롭다운 */}
-                              <Modal 
-                                  isVisible={dropdownButtonVisible}
-                                  animationIn={"fadeIn"}
-                                  animationOut={"fadeOut"}
-                                  backdropOpacity={0}
-                                  onBackdropPress={() => setDropdownButtonVisible(false)}
-                                  style={{
-                                    position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
-                                    left: buttonX - 79,
-                                    top: buttonY - 3,
-                                    // alignItems: 'center',
-                                    // justifyContent: 'flex-end',
-                                    // margin: 0,
-                                    width: 75,
-                                  }}
-                                  backdropTransitionInTiming={0} // Disable default backdrop animation
-                                  backdropTransitionOutTiming={0} // Disable default backdrop animation
-                                >
-                                  <View style={TimelineDropDownStyles.dropdownContainer}>
-                                      <View style={TimelineDropDownStyles.dropdownButtonOption}>
-                                        <TouchableOpacity onPress={() => {handleEditStampButton();}}>
-                                          <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
-                                        </TouchableOpacity>
-                                        {/* <TouchableOpacity onPress={() => {console.log(index);handleDeleteButton(timelineData[index]);}}> */}
-                                        <TouchableOpacity onPress={() => {handleDeleteButton();}}>
-                                          <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
-                                        </TouchableOpacity>
-                                      </View>
-                                  </View>
-                              </Modal>
                             </View>
                             {/* 2. 스탬프 삭제 경고 모달 */}
-                            <Modal 
-                              isVisible={isDeletingStamp}
-                              animationIn={"fadeIn"}
-                              animationOut={"fadeOut"}
-                              backdropColor='#CCCCCC' 
-                              backdropOpacity={0.9}
+                            <Modal isVisible={isDeletingStampModalVisible}
+                              animationIn={"fadeIn"} animationOut={"fadeOut"}
+                              backdropColor='#CCCCCC' backdropOpacity={0.9}
                               style={{ alignItems:'center' }}
                               backdropTransitionInTiming={0} // Disable default backdrop animation
                               backdropTransitionOutTiming={0} // Disable default backdrop animation
@@ -585,10 +585,10 @@ const Weekly = () => {
                                 </View>
                                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
                                   <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
-                                    <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStamp(false); amplitude.cancelToDeleteStamp();}}>
+                                    <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStampModalVisible(false); amplitude.cancelToDeleteStamp();}}>
                                       <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStamp(false);}}>
+                                    <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStampModalVisible(false);}}>
                                       <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                                     </TouchableOpacity>
                                   </View>
@@ -597,16 +597,11 @@ const Weekly = () => {
                               </View>
                             </Modal>
                             {/* 3. 스탬프 수정 팝업 온 */}
-                            {/* <Modal isVisible={stampClickModalVisible}> */}
-                              <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal} stamp={tmpChosenStamp}/>
-                            {/* </Modal> */}
+                            <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal} stamp={tmpChosenStamp}/>
                           </View>
-                          
-                          
                         </View>
 
                         <View style={Timelinestyles.line}></View>
-
                         <Text style={Timelinestyles.title}>{item.memo}</Text>
                         {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
 
@@ -619,8 +614,11 @@ const Weekly = () => {
                     <nodata.PleaseOneMoreStampMini/>
                   </View>
                   ) : (<View></View>)}
+                  
               </ScrollView>
+              
             </View>
+            
           </View>
         ) : ( // 스탬프가 없을 때, 날짜에 따라 다름
           <StampList_NoStamp/>
@@ -708,7 +706,9 @@ const Weekly = () => {
                 ) : (
                   <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
                     {todayReport.keyword.map((keyword) => (
-                      <Text key={keyword} style={diaryStyles.keyword}>{keyword}</Text>
+                      <View style={diaryStyles.keyword}>
+                        <Text key={keyword} >{keyword}</Text>
+                      </View>
                     ))}
                   </View>
                 )}
@@ -833,10 +833,8 @@ const Weekly = () => {
       {/* 4-4. 일기 수정 중 취소 시 경고 모달 */}
       <Modal 
         isVisible={isWarningModalVisible}
-        animationIn={"fadeIn"}
-        animationOut={"fadeOut"}
-        backdropColor='#CCCCCC' 
-        backdropOpacity={0.9}
+        animationIn={"fadeIn"} animationOut={"fadeOut"}
+        backdropColor='#CCCCCC' backdropOpacity={0.9}
         style={{ alignItems:'center' }}
         backdropTransitionInTiming={0} // Disable default backdrop animation
         backdropTransitionOutTiming={0} // Disable default backdrop animation
@@ -915,6 +913,7 @@ const dropDownStyles = StyleSheet.create({
   dropdownContainer: {
     position: 'relative',
     marginBottom: 10,
+    zIndex: 50,
   },
   dropdownButton: {
     paddingTop: 15,
@@ -922,31 +921,26 @@ const dropDownStyles = StyleSheet.create({
   },
   dropdownButtonText: {
     fontSize: 14,
-    color: '#212429',
     backgroundColor: '#fafafa',
+    // backgroundColor: 'pink',
     padding: 5,
     paddingHorizontal: 12,
     paddingRight: 22,
-    borderRadius: 8,
-    fontWeight: 'bold',
+    borderRadius: 6,
   },
   dropdownOptions: {
     backgroundColor: '#ffffff',
-    marginTop: 5,
-    padding: 3,
-    paddingRight: 20,
-    shadowColor: 'black',
-    borderRadius: 5,
-    shadowOpacity: 1,        // 그림자 투명도
-    shadowRadius: 50,           // 그림자 블러 반경
-    elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
-    marginLeft: 5,
+    marginTop: 5, marginLeft: 5,
+    padding: 3, paddingRight: 20,
     alignSelf: 'flex-start',
-    position: 'absolute',
-    left: 10,
-    top: 50,
-    zIndex: 1,
-    width: 100
+    position: 'absolute', left: 10, top: 50, width: 100,
+    borderRadius: 5,
+    shadowColor: '#000', // 그림자 색상 // change for ios
+    shadowOffset: { width: 0, height: 2 }, // 그림자 위치 // change for ios
+    shadowOpacity: 0.1, // 그림자 투명도 // change for ios
+    shadowRadius: 5,           // 그림자 블러 반경 // change for ios
+    elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
+    zIndex: 100,
   },
 });
 
@@ -1315,9 +1309,10 @@ const TimelineDropDownStyles = StyleSheet.create({
     paddingVertical: 5,
     borderRadius: 4,
     fontWeight: 'bold',
-    shadowColor: 'black',
-    shadowOpacity: 1,        // 그림자 투명도
-    shadowRadius: 50,           // 그림자 블러 반경
+    shadowColor: '#000', // 그림자 색상 // change for ios
+    shadowOffset: { width: 0, height: 2 }, // 그림자 위치 // change for ios
+    shadowOpacity: 0.1, // 그림자 투명도 // change for ios
+    shadowRadius: 5,           // 그림자 블러 반경 // change for ios
     elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
   },
   dropdownButtonText: {
