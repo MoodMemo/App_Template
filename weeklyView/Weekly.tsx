@@ -397,6 +397,40 @@ const Weekly = () => {
         backgroundColor="#FFFFFF"
         barStyle={'dark-content'}
       /> */}
+      {/* <View style={[{backgroundColor: 'red', width: 10, height: 10,
+                    position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
+                    // left: buttonX,
+                    // top: buttonY,
+                    zIndex: 1000
+                  }, ]}></View> */}
+
+
+      {dropdownButtonVisible && (
+        <View style={[{
+          position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
+          left: buttonX-60,
+          top: buttonY+15,
+          width: 75,
+          zIndex: 300,
+        }, Platform.OS==='ios' && {top: buttonY-6}]}>
+          <View style={TimelineDropDownStyles.dropdownContainer}>
+              <View style={TimelineDropDownStyles.dropdownButtonOption}>
+                <TouchableOpacity onPress={() => {handleEditStampButton();}}>
+                  <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
+                </TouchableOpacity>
+                {/* <TouchableOpacity onPress={() => {console.log(index);handleDeleteButton(timelineData[index]);}}> */}
+                <TouchableOpacity onPress={() => {
+                    setDropdownButtonVisible(false);
+                    amplitude.clickDeleteButton();
+                    setToday(today);
+                    setIsDeletingStampModalVisible(true);
+                    }}>
+                  <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+          </View>
+        </View>
+      )}
 
       {/* 1 & 2 */}
       <View style={{backgroundColor: 'white', zIndex: 1,}}>
@@ -499,7 +533,7 @@ const Weekly = () => {
 
       {stampORdiary ? ( // 스탬프 기록
         getEmoji(getStamp(today)).length !== 0 ? ( // 스탬프 exists
-          <View style={{ alignItems: 'center', flex: 1, }}>
+          <View style={{ alignItems: 'center', flex: 1,}}>
             <View style={{ flexDirection: 'row', marginTop: 16, marginHorizontal: 16, }}>
               <ScrollView>
                 <View style={Timelinestyles.container}>
@@ -522,45 +556,11 @@ const Weekly = () => {
                             {/* 수정 & 삭제 */}
                             <View>
                               <TouchableOpacity
-                                onPress={() => {setDropdownButtonVisible(true), getBoxMessure(index); setTmpChosenStamp(item); amplitude.clickStampDotButton();}}
+                                onPress={() => {setDropdownButtonVisible(!dropdownButtonVisible), getBoxMessure(index); setTmpChosenStamp(item); amplitude.clickStampDotButton();}}
                                 ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
                               >
                                 <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
                               </TouchableOpacity>
-                              {/* 1. 스탬프 수정 삭제 드롭다운 */}
-                              <Modal isVisible={dropdownButtonVisible}
-                                  animationIn={"fadeIn"} animationOut={"fadeOut"}
-                                  backdropOpacity={0}
-                                  onBackdropPress={() => setDropdownButtonVisible(false)}
-                                  style={{
-                                    position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
-                                    left: buttonX - 79,
-                                    top: buttonY - 3,
-                                    width: 75,
-                                  }}
-                                  backdropTransitionInTiming={0} // Disable default backdrop animation
-                                  backdropTransitionOutTiming={0} // Disable default backdrop animation
-                                >
-                                  <View style={TimelineDropDownStyles.dropdownContainer}>
-                                      <View style={TimelineDropDownStyles.dropdownButtonOption}>
-                                        <TouchableOpacity onPress={() => {handleEditStampButton();}}>
-                                          <Text style={TimelineDropDownStyles.dropdownButtonText}>수정</Text>
-                                        </TouchableOpacity>
-                                        {/* <TouchableOpacity onPress={() => {console.log(index);handleDeleteButton(timelineData[index]);}}> */}
-                                        <TouchableOpacity onPress={() => {
-                                            setDropdownButtonVisible(false);
-                                            amplitude.clickDeleteButton();
-                                            setToday(today);
-                                            setTimeout(() => {
-                                              // 모달 관련 로직
-                                            }, 100); // 100ms 딜레이
-                                            setIsDeletingStampModalVisible(true);
-                                            }}>
-                                          <Text style={TimelineDropDownStyles.dropdownButtonText}>삭제</Text>
-                                        </TouchableOpacity>
-                                      </View>
-                                  </View>
-                              </Modal>
                             </View>
                             {/* 2. 스탬프 삭제 경고 모달 */}
                             <Modal isVisible={isDeletingStampModalVisible}
@@ -597,16 +597,11 @@ const Weekly = () => {
                               </View>
                             </Modal>
                             {/* 3. 스탬프 수정 팝업 온 */}
-                            {/* <Modal isVisible={stampClickModalVisible}> */}
-                              <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal} stamp={tmpChosenStamp}/>
-                            {/* </Modal> */}
+                            <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal} stamp={tmpChosenStamp}/>
                           </View>
-                          
-                          
                         </View>
 
                         <View style={Timelinestyles.line}></View>
-
                         <Text style={Timelinestyles.title}>{item.memo}</Text>
                         {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
 
@@ -619,8 +614,11 @@ const Weekly = () => {
                     <nodata.PleaseOneMoreStampMini/>
                   </View>
                   ) : (<View></View>)}
+                  
               </ScrollView>
+              
             </View>
+            
           </View>
         ) : ( // 스탬프가 없을 때, 날짜에 따라 다름
           <StampList_NoStamp/>
