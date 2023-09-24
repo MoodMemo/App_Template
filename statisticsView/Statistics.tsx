@@ -181,11 +181,23 @@ const Statistics = () => {
           <Text style={styles.title}>{userName}의{'\n'}감정을 분석해봤다무!</Text>
           <View style={{flexDirection: 'row',marginTop:-80, marginLeft:20}}>
             <TouchableOpacity onPress={decDate}>
-                <MaterialIcons name="arrow-left" size={30} style={{marginTop:0,color:'#212429'}}/>
+                {
+                  Platform.OS === 'android' ? (
+                    <MaterialIcons name="arrow-left" size={30} style={{marginTop:0,color:'#212429'}}/>
+                  ) : (
+                    <MaterialIcons name="arrow-left" size={30} style={{marginTop:-2,color:'#212429'}}/>
+                  )
+                }
             </TouchableOpacity>
             <Text style={{fontSize:18,color:'#212429',marginTop:2}}> {year}년 {month>=10 ? '' : ' '}{month}월 </Text>
             <TouchableOpacity onPress={incDate}>
-                <MaterialIcons name="arrow-right" size={30} style={{marginTop:0,color:'#212429'}}/>
+            {
+                  Platform.OS === 'android' ? (
+                    <MaterialIcons name="arrow-right" size={30} style={{marginTop:0,color:'#212429'}}/>
+                  ) : (
+                    <MaterialIcons name="arrow-right" size={30} style={{marginTop:-2,color:'#212429'}}/>
+                  )
+                }
             </TouchableOpacity>
           </View>
         </View>

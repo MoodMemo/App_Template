@@ -4,6 +4,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
+#import "RNSplashScreen.h"
 
 @implementation AppDelegate
 
@@ -48,8 +49,10 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   // Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
-
-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+  
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
+  [RNSplashScreen show];
+  return YES;
 }
 
 //Called when a notification is delivered to a foreground app.

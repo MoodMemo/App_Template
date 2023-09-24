@@ -1,13 +1,22 @@
-# Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+def node_require(script)
+  # Resolve script with node to allow for hoisting
+  require Pod::Executable.execute_command('node', ['-p',
+    "require.resolve(
+      '#{script}',
+      {paths: [process.argv[1]]},
+    )", __dir__]).strip
+end
+
+node_require('react-native/scripts/react_native_pods.rb')
+node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, min_ios_version_supported
 use_modular_headers!
 prepare_react_native_project!
+
+setup_permissions([
+  'Notifications'
+])
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
 # because `react-native-flipper` depends on (FlipperKit,...) that will be excluded
@@ -63,4 +72,8 @@ target 'MoodMemo' do
   post_install do |installer|
     react_native_post_install(installer)
   end
+
 end
+
+
+
