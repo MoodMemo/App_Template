@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   Alert,
@@ -137,52 +137,53 @@ function App(): JSX.Element {
     }
   }
 
+  useEffect(()=>{AsyncStorage.getItem('@UserInfo:isRegistered',(err,result)=>{
+    if(result!==null) 
+    {
+      setIsRegistered(true);
+    }
+    else{
+      AsyncStorage.setItem('@UserInfo:firstStamp','true');
+    }
+});
+
+(async () => { 
+  // Do something before delay
+  await new Promise(f => setTimeout(f, 600));
+  await AppVersionCheck();
+  //await getToken();
+  //setShowCodePushUpdate(true);
+  await codePushVersionCheck();
+  SplashScreen.hide();
+  // Do something after
+  if(isCodePushUpdateNeeded){
+    codePush.sync({
+      installMode:codePush.InstallMode.IMMEDIATE,
+      mandatoryInstallMode:codePush.InstallMode.IMMEDIATE
+    },
+    (status) => {
+      switch (status) {
+          case codePush.SyncStatus.DOWNLOADING_PACKAGE:
+              // Show "downloading" modal
+              setShowCodePushUpdate(true);
+              break;
+          case codePush.SyncStatus.INSTALLING_UPDATE:
+              // Hide "downloading" modal
+              //setShowCodePushUpdate(false);
+              break;
+      }
+    },
+    ({ receivedBytes, totalBytes, }) => {
+      /* Update download modal progress */
+      setProgress(receivedBytes/totalBytes);
+    })
+  }
+  }
+)();
+amplitude.beginSession();},[]);
   //initiailze(); //처음에는 주석 해제하고 실행해서 초기화 한 다음에 바로 껐다가, 주석 처리하고 다시 실행합시다!
 
-  AsyncStorage.getItem('@UserInfo:isRegistered',(err,result)=>{
-      if(result!==null) 
-      {
-        setIsRegistered(true);
-      }
-      else{
-        AsyncStorage.setItem('@UserInfo:firstStamp','true');
-      }
-  });
-
-  (async () => { 
-    // Do something before delay
-    await new Promise(f => setTimeout(f, 600));
-    await AppVersionCheck();
-    await getToken();
-    //setShowCodePushUpdate(true);
-    await codePushVersionCheck();
-    SplashScreen.hide();
-    // Do something after
-    if(isCodePushUpdateNeeded){
-      codePush.sync({
-        installMode:codePush.InstallMode.IMMEDIATE,
-        mandatoryInstallMode:codePush.InstallMode.IMMEDIATE
-      },
-      (status) => {
-        switch (status) {
-            case codePush.SyncStatus.DOWNLOADING_PACKAGE:
-                // Show "downloading" modal
-                setShowCodePushUpdate(true);
-                break;
-            case codePush.SyncStatus.INSTALLING_UPDATE:
-                // Hide "downloading" modal
-                //setShowCodePushUpdate(false);
-                break;
-        }
-      },
-      ({ receivedBytes, totalBytes, }) => {
-        /* Update download modal progress */
-        setProgress(receivedBytes/totalBytes);
-      })
-    }
-    }
-  )();
-  amplitude.beginSession(); // 앱 시작
+  
 
   if (isUpdateNeeded) {
     console.log('update needed');

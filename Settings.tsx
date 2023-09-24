@@ -8,6 +8,7 @@ import * as repository from './src/localDB/document';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import VersionCheck from 'react-native-version-check';
+import { PERMISSIONS, RESULTS, requestNotifications, checkNotifications} from "react-native-permissions";
 
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
@@ -159,8 +160,6 @@ const Settings = () => {
                   <Text>프로필</Text>
                 </View>
                 <ChangeProfile/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 {/* <TouchableOpacity onPress={() => {
                     amplitude.connectToKakaoChatBot();
                     setIsKakaoModalVisible(!isKakaoModalVisible);
@@ -274,6 +273,60 @@ const Settings = () => {
                                         setIsNotificationModalVisible(!isNotificationModalVisible);
                                         console.log(1,'denied');
                                     }
+                                  } catch (error) {
+                                    console.warn(error);
+                                  }
+                            }
+                            else{
+                                try {
+                                    await PushNotification.checkPermissions((result:any)=>{
+                                        console.log(result);
+                                        console.log(result.notificationCenter);
+                                        if(result.notificationCenter){
+                                            if(!isNotificationEnabled){
+                                                AsyncStorage.setItem('@UserInfo:notificationAllow','true');
+                                                setIsNotificationEnabled(!isNotificationEnabled);
+                                                repository.getAllNotifications().sort(sortNotificationByTime).map((notification)=>{
+                                                    console.log(4,notification.time);
+                                                    const notificationTime = new Date();
+                                                    const [hour,minute]=notification.time.split(':');
+                                                    notificationTime.setHours(Number(hour));
+                                                    notificationTime.setMinutes(Number(minute));
+                                                    notificationTime.setSeconds(0);
+                                                    if(notificationTime.getTime()<=(new Date(Date.now())).getTime()) notificationTime.setDate(notificationTime.getDate()+1);
+                                                    PushNotification.localNotificationSchedule({
+                                                        channelId: "MoodMemo_ID",
+                                                        smallIcon: "ic_notification",
+                                                        message: generateNotificationMessage(notificationTime),
+                                                        date: new Date(notificationTime), // 1 second from now
+                                                        visibility: "public",
+                                                        playSound: false,
+                                                        id: hour+minute,
+                                                        repeatType: "day",
+                                                        repeatTime: "1" //하루 단위로 반복
+                                                    });
+                                                });
+                                                amplitude.notiONtoOFF();
+                                                PushNotification.getScheduledLocalNotifications((result:any)=>{
+                                                    console.log(result);
+                                                });
+                                            }
+                                            else{
+                                                PushNotification.getScheduledLocalNotifications((result:any)=>{
+                                                    console.log(result);
+                                                });
+                                                AsyncStorage.setItem('@UserInfo:notificationAllow','false');
+                                                setIsNotificationEnabled(!isNotificationEnabled);
+                                                amplitude.notiONtoOFF();
+                                                PushNotification.cancelAllLocalNotifications();
+                                            }
+                                        }
+                                        else{
+                                            amplitude.notiONwhenPermissionDenied();
+                                            setIsNotificationModalVisible(!isNotificationModalVisible);
+                                            console.log(1,'denied');
+                                        }
+                                    })
                                   } catch (error) {
                                     console.warn(error);
                                   }

@@ -312,34 +312,38 @@ const AnimatedViewBirthday = () => {
               AsyncStorage.setItem('@UserInfo:notificationAllow','true');
               console.log(1);
               connectRealmNotification();
+              setSection('main');
             }
             else{
               AsyncStorage.setItem('@UserInfo:notificationAllow','false');
+              setSection('main');
             }
             console.log(granted);
             saveUserInfo_toAsyncStorage(name, showingBirthday, job);
             test_realm_ver4();
           }
           catch (error) {
+            setSection('main');
           }
         }
         else if (Platform.OS === 'ios') {
           PushNotificationIOS.requestPermissions().then(data => {
             if (data.alert || data.badge || data.sound) {
               AsyncStorage.setItem('@UserInfo:notificationAllow', 'true');
+              connectRealmNotification();
             } else {
               AsyncStorage.setItem('@UserInfo:notificationAllow', 'false');
             }
             // 다른 iOS 관련 코드 (예: 사용자 정보 저장)
             saveUserInfo_toAsyncStorage(name, showingBirthday, job);
-            // test_realm_ver4();
+            test_realm_ver4();
+            setSection('main');
           }).catch(error => {
             console.error('Notification permission error:', error);
-            AsyncStorage.setItem('@UserInfo:notificationAllow', 'false');
+            setSection('main');
           });
         }
         console.log('Selected job:', job);
-        setSection('main');
       }
     };
   }
