@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar } from 'react-native';
 import Dropdown from './Dropdown';
 import StampView from './StampView';
@@ -16,6 +16,8 @@ const Home = ({name}:any) => {
   const [fixModalVisible, setFixModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
   const [isFirstStamp,setIsFirstStamp]=useState(false);
+  
+  const firstRef = useRef([]);
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
@@ -64,7 +66,7 @@ const Home = ({name}:any) => {
       backgroundColor="#FFFAF4"
       barStyle={'dark-content'}
     />
-    {isFirstStamp===false ? (<View style={styles.view}>
+    {isFirstStamp===false ? (<View style={styles.view} ref={firstRef}>
     <View style={styles.titleContainer}>
       {/* 드롭다운 컴포넌트 */}
       <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
@@ -77,7 +79,7 @@ const Home = ({name}:any) => {
       </TouchableOpacity>
     </View>
     {/* 감정 스탬프 뷰 */}
-    <StampView />
+    <StampView firstRef={firstRef}/>
     {/* 스탬프 설정 모달 */}
     <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
   </View>) : (<View style={{justifyContent: 'center',
