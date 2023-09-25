@@ -80,7 +80,7 @@ const StampView = ({firstRef}) => {
   // 4개의 버튼과 각 버튼 사이의 간격을 위한 값
   const iOSButtonWidth = (iOSwidth - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
 
-  const handleCreatePushedStamp = () => {
+  const handleCreatePushedStamp = async () => {
     amplitude.submitStamp();
     console.log("체크 버튼 누름!");
     // 기록 시간 설정
@@ -100,13 +100,13 @@ const StampView = ({firstRef}) => {
 
     updateCustomStampPushedCountById(selectedEmotionId, 1);
     // 모달 닫기
-    onClose();
+    await onClose();
 
     // Weekly.tsx 뷰로 이동
     navigation.navigate('Weekly', { showPopup: true });
   }
 
-  const onClose = () => {
+  const onClose = async () => {
     // amplitude.cancelStamp();
     setModalVisible(false);
     setMemo('');
