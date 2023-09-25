@@ -8,6 +8,7 @@ import * as repository from '../src/localDB/document';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {PieChart} from 'react-native-gifted-charts';
 
 import * as amplitude from '../AmplitudeAPI';
 
@@ -29,6 +30,8 @@ const test = () => {
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
+const chartColor=[['#9BE300','#FFFFFF'],['#FF7DB8','#FFFFFF'],['#5BC4FF','#FFFFFF'],['#DFAAFF','#FFFFFF'],['#FFA887','#FFFFFF'],['#57EDD4','#FFFFFF']]
+
 const Statistics = () => {
 
     // const handleOpenLink = async () => {
@@ -47,7 +50,7 @@ const Statistics = () => {
     const [date,setDate]=useState(new Date());
     const [year,setYear]=useState(date.getFullYear());
     const [month,setMonth]=useState(date.getMonth()+1);
-    const [stampORdiary, setStampORdiary] = useState(true);
+    const [summaryOrDetail, setSummaryOrDetail] = useState(true);
     const [stamps,setStamps] = useState([]);
     const [countStamps,setCountStamps] = useState(0);
     const [countDiarys,setCountDiarys] = useState(0);
@@ -130,6 +133,7 @@ const Statistics = () => {
       var count=0;
       var ans=0;
       var stamps=[];
+      var color=0;
       if(listOfStamps.length>0)
       {
         for(var i=0;i<listOfStamps.length;i++){
@@ -159,7 +163,7 @@ const Statistics = () => {
           }
           if(notInStamps){
             console.log(listOfStamps[i]);
-            stamps.push([listOfStamps[i],1]);
+            stamps.push([listOfStamps[i],1,chartColor[color++]]);
           }
         }
       }
@@ -204,26 +208,27 @@ const Statistics = () => {
         <Image 
                 source={require('../assets/magnifyingMoo.png')}
                 style={{ width: 154*0.6, height: (154 * 192)*0.6 / 154 , position: 'relative', bottom: 145, left: windowWidth-130, overflow: 'hidden'}}/>
-        {/* {stampORdiary ? (
+        {summaryOrDetail ? (
         <View style={typeChangeBtnStyles.twotypebtn}>
           <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.test1()}}>
             <Text style={typeChangeBtnStyles.activeFont}>요약</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {setStampORdiary(false); amplitude.test1();}} style={typeChangeBtnStyles.deactiveType}>
+          <TouchableOpacity onPress={() => {setSummaryOrDetail(false); amplitude.test1();}} style={typeChangeBtnStyles.deactiveType}>
             <Text style={typeChangeBtnStyles.deactiveFont}>상세</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={typeChangeBtnStyles.twotypebtn}>
-          <TouchableOpacity onPress={() => {setStampORdiary(true); amplitude.test1();}} style={typeChangeBtnStyles.deactiveType}>
+          <TouchableOpacity onPress={() => {setSummaryOrDetail(true); amplitude.test1();}} style={typeChangeBtnStyles.deactiveType}>
             <Text style={typeChangeBtnStyles.deactiveFont}>요약</Text>
           </TouchableOpacity>
           <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.test1()}}>
             <Text style={typeChangeBtnStyles.activeFont}>상세</Text>
           </TouchableOpacity>
         </View>
-      )} */}
-        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:-80, marginBottom:35}}>
+      )}
+      {summaryOrDetail ? (<View>
+        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:40, marginBottom:35}}>
           <View style={{alignItems:'center',marginRight:20}}>
             <Text style={{fontSize:12,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
             <Text style={{fontSize:20,color:'#72D193'}}>{countStamps}개</Text>
@@ -253,6 +258,44 @@ const Statistics = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
+        </View>) : 
+        (<View style={{marginTop:20, marginBottom:35}}>
+          <ScrollView>
+            <View style={{marginLeft:25,alignItems:'center',}}>
+              <PieChart data={stamps.map((stamp:any) => ({
+                value: stamp[1],
+                color: stamp[2][0],
+                text: `${Math.round(stamp[1]*100/countStamps)}%`,
+                textColor: stamp[2][1],
+                shiftTextX:-5,
+                shiftTextY:3,
+                textSize:13
+              }))}
+                donut={true}
+                showText={true}
+                innerRadius={40}
+                radius={90}
+              />
+            </View>
+            <View style={{flexDirection: 'row',
+                            justifyContent: 'space-between'}}>
+              <Text style={{marginLeft:20}}>전체</Text>
+              <Text style={{marginRight:20}}>{countStamps}개</Text>
+            </View>
+            <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:20,marginTop:10,marginBottom:5}}/>
+            {stamps.sort(sortStamps).map((stampButton:any) => (
+              <TouchableOpacity key={stampButton[0].id} style={{marginHorizontal:20,flexDirection:'row',justifyContent:'space-between',marginBottom:10}} disabled={true}>
+                <View style={{flexDirection: 'row'}}>
+                  <View style={{width:10,height:10,backgroundColor:stampButton[2][0],borderRadius:5,marginTop:9,marginRight:7}}/>
+                  <Text style={{marginRight:7,fontSize:18}}>{stampButton[0].emoji}</Text>
+                  <Text style={{marginRight:7,marginTop:4}}>{stampButton[0].stampName}</Text>
+                  <Text style={{marginTop:4}}>{`${Math.round(stampButton[1]*100/countStamps)}%`}</Text>
+                </View>
+                <Text style={{color: '#000000',}}>{stampButton[1]}개</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>)}
       </View>
     );
 }
