@@ -255,8 +255,10 @@ const AnimatedViewBirthday = () => {
             message: generateNotificationMessage(notificationTime),
             date: new Date(notificationTime), // 1 second from now
             visibility: "public",
+            priority: "high",
             playSound: false,
             id: hour+minute,
+            allowWhileIdle: true,
             repeatType: "day",
             repeatTime: "1" //하루 단위로 반복
         });

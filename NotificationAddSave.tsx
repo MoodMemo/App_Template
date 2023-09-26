@@ -66,9 +66,11 @@ const NotificationAddSave = ({date,notificationAdded,checkNotificationAdded,isMo
                         PushNotification.localNotificationSchedule({
                             channelId: "MoodMemo_ID",
                             smallIcon: "ic_notification",
+                            priority: "high",
                             message: generateNotificationMessage(date),
                             date: date, //입력 받은 시간으로 알림 설정
                             visibility: "public",
+                            allowWhileIdle: true,
                             playSound: false,
                             id: String(date.getHours()).padStart(2,'0')+String(date.getMinutes()).padStart(2,'0'), //알림의 id는 0000 형식, 앞의 두 개는 시간, 뒤의 두 개는 분임, 시간이 겹치는 알림은 존재하지 않도록 알림 생성 이전에 처리함.
                             repeatType: "day",
