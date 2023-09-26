@@ -6,6 +6,10 @@
 #import <RNCPushNotificationIOS.h>
 #import "RNSplashScreen.h"
 #import <CodePush/CodePush.h>
+#import <AuthenticationServices/AuthenticationServices.h>
+#import <SafariServices/SafariServices.h>
+#import <FBSDKCoreKit/FBSDKCoreKit-swift.h>
+
 
 @implementation AppDelegate
 
@@ -50,6 +54,9 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   // Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
+  
+  [[FBSDKApplicationDelegate sharedInstance] application:application
+                         didFinishLaunchingWithOptions:launchOptions];
   
   [super application:application didFinishLaunchingWithOptions:launchOptions];
   [RNSplashScreen show];
