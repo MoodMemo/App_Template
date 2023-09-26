@@ -85,10 +85,10 @@ const StampList = ({firstRef, visible, closeModal}) => {
       (stamp, index) => !selectedIndexes.includes(index)
     );
 
-    // realm에서 선택된 스탬프들을 삭제
-    selectedIndexes.forEach(index => {
-      deleteCustomStamp(customStamps[index]);
-    });
+    // // realm에서 선택된 스탬프들을 삭제
+    // selectedIndexes.forEach(index => {
+    //   deleteCustomStamp(customStamps[index]);
+    // });
 
     // 선택된 스탬프들의 체크 상태 초기화
     const newCheckedStates = checkedStates.map((_, index) =>
@@ -98,6 +98,10 @@ const StampList = ({firstRef, visible, closeModal}) => {
     // 변경된 데이터와 상태 적용
     setCustomStamps(newCustomStamps);
     setCheckedStates(newCheckedStates);
+
+    selectedIndexes.forEach(index => {
+      deleteCustomStamp(customStamps[index]);
+   });
     console.log("스탬프 삭제");
   };
 
