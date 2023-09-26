@@ -247,7 +247,9 @@ const Settings = () => {
                                                     message: generateNotificationMessage(notificationTime),
                                                     date: new Date(notificationTime), // 1 second from now
                                                     visibility: "public",
+                                                    priority: "high",
                                                     playSound: false,
+                                                    allowWhileIdle: true,
                                                     id: hour+minute,
                                                     repeatType: "day",
                                                     repeatTime: "1" //하루 단위로 반복
