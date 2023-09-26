@@ -81,7 +81,7 @@ const Home = ({name}:any) => {
     {/* 감정 스탬프 뷰 */}
     <StampView firstRef={firstRef}/>
     {/* 스탬프 설정 모달 */}
-    <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
+    <StampList firstRef={firstRef} visible={fixModalVisible} closeModal={handleFixModalClose}/>
   </View>) : (<View style={{justifyContent: 'center',
             flex:1,
             backgroundColor:'#FFFAF4'}}>
