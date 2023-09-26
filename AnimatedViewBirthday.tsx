@@ -456,7 +456,7 @@ const AnimatedViewBirthday = () => {
                   <View style={{
                         backgroundColor:"#FFFFFF",
                         width:340,
-                        height:340,
+                        height:(Platform.OS==='android' ? 340 : 370),
                         paddingHorizontal: 20,
                         paddingBottom: 20,
                         paddingTop: 20,

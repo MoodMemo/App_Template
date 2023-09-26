@@ -13,6 +13,8 @@ import * as amplitude from './AmplitudeAPI';
 
 import {default as Text} from "./CustomText"
 
+import ChangeDate from './ChangeDate';
+
 
 const ChangeProfile = () => {
     const {height,width}=useWindowDimensions();
@@ -25,19 +27,11 @@ const ChangeProfile = () => {
     const [showingBirthday,setShowingBirthday] = useState('');
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
-    const formatDate = (rawDate:Date) => {
-        let date = new Date(rawDate);
-        return `${date.getFullYear()}/${String(date.getMonth()+1).padStart(2,'0')}/${String(date.getDate()).padStart(2,'0')}`
-    }
-
     AsyncStorage.getItem('@UserInfo:job').then(data => {
         setJobDefault(String(data));
     })
     AsyncStorage.getItem('@UserInfo:userName').then(data => {
         setNameDefault(String(data));
-    })
-    AsyncStorage.getItem('@UserInfo:birthShow').then(data => {
-        setShowingBirthday(String(data));
     })
     return (
     <TouchableOpacity onPress={() => {
@@ -105,19 +99,7 @@ const ChangeProfile = () => {
                         }}>
                             <Text style={{fontSize: 17, color:'#666666'}}>생일</Text>
                     </View>
-                    <View style={{paddingBottom: 30,
-                        }}>
-                        <TouchableOpacity onPress={() => {
-                            amplitude.setProfileBirthday();
-                            setIsDatePickerVisible(!isDatePickerVisible);
-                        }}
-                        style={{paddingBottom:10}}>
-                            <Text style={{fontSize:20, paddingHorizontal:10, color: '#666666'}}>{showingBirthday}</Text>
-                        </TouchableOpacity>
-                        <Divider style={{backgroundColor:'#E2E2E2',width:'100%'}}/>
-                        <Divider style={{backgroundColor:'#E2E2E2',width:'100%'}}/>
-                        <Divider style={{backgroundColor:'#E2E2E2',width:'100%'}}/>
-                    </View>
+                    <ChangeDate/>
                     <View style={{paddingBottom: 10,
                     paddingTop:5
                         }}>
@@ -162,54 +144,6 @@ const ChangeProfile = () => {
                 </TouchableOpacity>
                 </View>
             </View>
-        </Modal>
-        <Modal isVisible={isDatePickerVisible}
-            animationIn={"fadeIn"}
-            animationInTiming={200}
-            animationOut={"fadeOut"}
-            animationOutTiming={200}
-            onBackdropPress={() => {
-                setIsDatePickerVisible(!isDatePickerVisible);
-            }}
-            backdropColor='#CCCCCC'//'#FAFAFA'
-            backdropOpacity={0.8}
-            style={{
-                alignItems:'center'
-            }}>
-            <View style={{
-                    backgroundColor:"#FFFFFF",
-                    width:340,
-                    height:340,
-                    paddingHorizontal: 20,
-                    paddingBottom: 20,
-                    paddingTop: 20,
-                    justifyContent:'space-between',
-                    //alignItems:'center',
-                    borderRadius:10
-                    }}>
-                <View style={{
-                    paddingBottom: 20,
-                    }}>
-                        <Text style={{fontSize: 17, color:"#495057"}}>생일 입력</Text>
-                </View>
-                <View style={{
-                    paddingBottom: 20,
-                    alignItems:'center',
-                    }}>
-                    <DatePicker date={birthday}
-                    onDateChange={(changedDate) => {
-                        setBirthday(changedDate);}}
-                    mode='date'
-                    theme='light'/>
-                </View>
-                <TouchableOpacity style={{alignItems:'center',}}
-                onPress={async ()=>{
-                    await AsyncStorage.setItem('@UserInfo:birthShow', formatDate(birthday));
-                    setIsDatePickerVisible(!isDatePickerVisible);
-                }}>
-                    <Text style={{paddingBottom: 20, fontSize: 17,}}>저장</Text>
-                </TouchableOpacity>  
-            </View>     
         </Modal>
     </TouchableOpacity>);
 }
