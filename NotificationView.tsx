@@ -12,6 +12,8 @@ import * as amplitude from './AmplitudeAPI';
 
 import {default as Text} from "./CustomText"
 
+import NotificationViewSave from './NotificationViewSave';
+
 function getRandomInt(min:any, max:any) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -92,7 +94,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                     <View style={{
                         backgroundColor:"#FFFFFF",
                         width:340,
-                        height:340,
+                        height:(Platform.OS==='android' ? 340 : 370),
                         paddingHorizontal: 20,
                         paddingBottom: 20,
                         paddingTop: 20,
@@ -120,7 +122,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                             }}>
-                                <TouchableOpacity onPress={()=>{
+                                {/* <TouchableOpacity onPress={()=>{
                                     const notificationTime=String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
                                     amplitude.saveRenewNoti(notificationTime);
                                     if(notificationTime===time){
@@ -156,7 +158,8 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                                     //console.log(repository.getAllNotifications());
                                     }}>
                                     <Text style={{fontSize: 17}}>저장</Text>
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
+                                <NotificationViewSave id={id} time={time} timeChangedProp={timeChangedProp} checkTimeChanged={checkTimeChanged} setIsModalVisible={setIsModalVisible} isModalVisible={isModalVisible}/>
                                 <TouchableOpacity onPress={()=>{
                                     amplitude.deleteNoti();
                                     realm.write(() => {repository.deleteNotification(repository.getNotificationsByField("id",id));});
@@ -170,32 +173,6 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                                     <Text style={{fontSize: 17, color:"#FF0000"}}>삭제</Text>
                                 </TouchableOpacity>
                         </View>
-                    </View>
-            </Modal>
-            <Modal isVisible={isModalNoticeVisible}
-                animationIn={"fadeIn"}
-                animationInTiming={200}
-                animationOut={"fadeOut"}
-                animationOutTiming={200}
-                onBackdropPress={() => {
-                    amplitude.saveDuplicatedNoti();
-                    setIsModalNoticeVisible(!isModalNoticeVisible);
-                }}
-                backdropColor='#CCCCCC'//'#FAFAFA'
-                backdropOpacity={0.5}
-                style={{
-                    alignItems:'center'
-                }}>
-                    <View style={{
-                        backgroundColor:"#FFFFFF",
-                        width:'50%',
-                        height:'20%',
-                        justifyContent:'center',
-                        alignItems:'center',
-                        borderRadius:10
-                        }}>
-                        <Text style={{fontSize: 17}}>이미 해당 시간에</Text>
-                        <Text style={{fontSize: 17}}>알림이 있어요!</Text>
                     </View>
             </Modal>
         </View>
