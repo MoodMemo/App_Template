@@ -7,7 +7,7 @@ import {default as Text} from "./CustomText"
 import Modal from "react-native-modal";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const StampList = ({visible, closeModal}) => {
+const StampList = ({firstRef, visible, closeModal}) => {
   // 각 스탬프의 상태를 관리하는 배열, 모두 기본값은 false로 초기화
   const [checkedStates, setCheckedStates] = useState(
     Array(20).fill(false)
@@ -16,13 +16,14 @@ const StampList = ({visible, closeModal}) => {
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
 
   useEffect(() => {
+    getBoxMessure();
     const fetchStamps = async () => {
       const fetchedCustomStamps = await getAllCustomStamps();
       setCustomStamps(fetchedCustomStamps);
     };
     
     fetchStamps();
-  }, []);
+  }, [firstRef.current]);
   
 
   const [addStampDataLabel, setAddStampDataLabel] = useState('');
@@ -38,6 +39,27 @@ const StampList = ({visible, closeModal}) => {
   const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
 
   const [userName, setUserName] = useState('');
+
+  const [firstButtonX, setFirstButtonX] = useState(0);
+  const [firstButtonY, setFirstButtonY] = useState(0);
+  const [firstWidth, setFirstWidth] = useState(0);
+  const [firstHeight, setFirstHeight] = useState(0);
+
+  const getBoxMessure = () => {
+
+    if (firstRef) {
+      firstRef.current.measureInWindow((x, y, width, height) => {
+      // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
+        console.log("getFirstBoxMessure ==")
+        console.log("x : ", x); setFirstButtonX(x);
+        console.log("y : ", y); setFirstButtonY(y);
+        console.log("width : ", width); setFirstWidth(width);
+        console.log("height : ", height); setFirstHeight(height);
+        // console.log("pageX : ", pageX);
+        // console.log("pageY : ", pageY);
+      });
+    }
+  };
 
   const handleRadioButtonPress = (index) => {
     amplitude.choiceDeleteCustomStampCandidate();
@@ -100,6 +122,7 @@ const StampList = ({visible, closeModal}) => {
     setAddStampModalVisible(false);
     setAddStampButtonDisabled(true);
     setIsLodingFinishModalVisible(true);
+    setAddStampDataLabel('');
     console.log("스탬프 추가");
   };
 
@@ -115,8 +138,193 @@ const StampList = ({visible, closeModal}) => {
       .catch((error) => {
         console.error("Error fetching userName:", error);
       });
-  })()
-
+  })
+  
+  const styles = StyleSheet.create({
+    confirmBtn: {
+      alignSelf: 'center',
+      alignItems: 'center', 
+      justifyContent: 'center',
+      padding: 10,
+      marginBottom: 16,
+      backgroundColor: '#72D193', 
+      borderRadius: 8,
+      flex: 1,
+    },
+    fixModalContainer: {
+      backgroundColor: 'white',
+      width: '100%',
+      height: '100%',
+      marginTop: firstButtonY,
+    },
+    fixModalTitleContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginHorizontal: 20,
+      marginVertical: 10,
+    },
+    fixModalTitleContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
+    fixModalTitle: {
+      color: '#212429',
+      fontFamily: 'Pretendard',
+      fontWeight: '400',
+      fontSize: 16,
+      fontStyle: 'normal',
+    },
+    fixModalMessageContainer: {
+      paddingHorizontal: 20,
+      paddingVertical: 10,
+    },
+    fixModalMessage: {
+      color: '#A8A8A8',
+      textAlign: 'left',
+      fontFamily: 'Pretendard',
+      fontWeight: '500',
+      fontSize: 12,
+      fontStyle: 'normal',
+    },
+    stampList: {
+      width: 393,
+      // paddingHorizontal: 20,
+      // marginTop: 132,
+      // marginBottom: 60,
+    },
+    stampListContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+      width: 393,
+      height: 60,
+      gap: 10,
+    },
+    moodInfo: {
+      flexDirection: 'row',
+      gap: 10,
+      alignItems: 'center',
+    },
+    moodEmotion: {
+      color: '#212429',
+      fontSize: 24,
+    },
+    moodText: {
+      color: '#212429',
+      fontFamily: 'Pretendard',
+      fontWeight: '400',
+      fontSize: 14,
+      fontStyle: 'normal',
+      lineHeight: 20,
+    },
+    finishLodingModal: {
+      backgroundColor: '#FFFAF4', 
+      justifyContent: 'space-between', // 상하로 딱 붙이기
+      alignItems: 'center', // 가운데 정렬
+      flexDirection: 'column',
+      borderRadius: 12, 
+      paddingHorizontal: 16,
+      width: 343, 
+      height: 284,
+      shadowColor: 'black',
+      shadowRadius: 50,           // 그림자 블러 반경
+      elevation: 5, 
+    },
+    fixModalButton: {
+      position: 'absolute',
+      marginTop: firstHeight,
+      width: '100%',
+      height: 60,
+      backgroundColor: '#FAFAFA',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    fixModalButtonText: {
+      color: '#000000',
+      fontFamily: 'Pretendard',
+      fontWeight: '600',
+      fontSize: 14,
+      fontStyle: 'normal',
+    },
+    keyboardAvoidingContainer: {
+      flex: 1,
+    },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.3)', // 반투명한 검정색 배경
+    },
+    addStampModalContainer: {
+      // flex: 1,
+      backgroundColor: 'white',
+      width: '80%',
+      height: 260,
+      alignSelf: 'center',
+      marginTop: 'auto',
+      marginBottom: 'auto',
+      borderRadius: 16,
+    },
+    addStampModalTitleContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 15,
+      marginHorizontal: 16,
+      marginBottom: 40,
+    },
+    addStampModalTitle: {
+      color: '#212429',
+      fontFamily: 'Pretendard',
+      fontWeight: '400',
+      fontSize: 16,
+    },
+    checkImage: {
+      // 기본 이미지 스타일
+      
+    },
+    disabledCheckImage: {
+      opacity: 0.2, // 비활성 시에 투명도 조절
+    },
+    addStampModalContent: {
+      // 가운데에 위치하도록
+      flex: 1,
+      justifyContent: 'space-between',
+      flexDirection: 'column',
+      alignItems: 'center',
+      // gap: 15,
+      marginBottom: 55,
+    },
+    addStampModalEmotionBox: {
+      width: 50,
+      height: 50,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#F0F0F0',
+      backgroundColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    addStampModalEmotion: {
+      fontSize: 24,
+    },
+    addStampModalLabelBox: {
+      width: '80%',
+      height: 50,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#F0F0F0',
+      backgroundColor: 'white',
+      paddingHorizontal: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    addStampModalLabel: {
+      fontSize: 16,
+    },
+  });
   return (
     <ModalRN visible={visible} animationType='slide' transparent>
       <View style={styles.fixModalContainer}>
@@ -145,7 +353,7 @@ const StampList = ({visible, closeModal}) => {
               status={checkedStates[index] ? 'checked' : 'unchecked'}
               onPress={() => handleRadioButtonPress(index)}
             />
-            <TouchableOpacity key={stamp.id} style={styles.moodInfo}>
+            <TouchableOpacity key={stamp.id} style={styles.moodInfo} onPress={() => handleRadioButtonPress(index)}>
               <Text style={styles.moodEmotion}>{stamp.emoji}</Text>
               <Text style={styles.moodText}>{stamp.stampName}</Text>
             </TouchableOpacity>
@@ -243,188 +451,6 @@ const StampList = ({visible, closeModal}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  confirmBtn: {
-    alignSelf: 'center',
-    alignItems: 'center', 
-    justifyContent: 'center',
-    padding: 10,
-    marginBottom: 16,
-    backgroundColor: '#72D193', 
-    borderRadius: 8,
-    flex: 1,
-  },
-  fixModalContainer: {
-    backgroundColor: 'white',
-    width: '100%',
-    height: '100%',
-  },
-  fixModalTitleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginHorizontal: 20,
-    marginVertical: 10,
-  },
-  fixModalTitleContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  fixModalTitle: {
-    color: '#212429',
-    fontFamily: 'Pretendard',
-    fontWeight: '400',
-    fontSize: 16,
-    fontStyle: 'normal',
-  },
-  fixModalMessageContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-  },
-  fixModalMessage: {
-    color: '#A8A8A8',
-    textAlign: 'left',
-    fontFamily: 'Pretendard',
-    fontWeight: '500',
-    fontSize: 12,
-    fontStyle: 'normal',
-  },
-  stampList: {
-    width: 393,
-    // paddingHorizontal: 20,
-    // marginTop: 132,
-    // marginBottom: 60,
-  },
-  stampListContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    width: 393,
-    height: 60,
-    gap: 10,
-  },
-  moodInfo: {
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
-  },
-  moodEmotion: {
-    color: '#212429',
-    fontSize: 24,
-  },
-  moodText: {
-    color: '#212429',
-    fontFamily: 'Pretendard',
-    fontWeight: '400',
-    fontSize: 14,
-    fontStyle: 'normal',
-    lineHeight: 20,
-  },
-  finishLodingModal: {
-    backgroundColor: '#FFFAF4', 
-    justifyContent: 'space-between', // 상하로 딱 붙이기
-    alignItems: 'center', // 가운데 정렬
-    flexDirection: 'column',
-    borderRadius: 12, 
-    paddingHorizontal: 16,
-    width: 343, 
-    height: 284,
-    shadowColor: 'black',
-    shadowRadius: 50,           // 그림자 블러 반경
-    elevation: 5, 
-  },
-  fixModalButton: {
-    // position: 'absolute',
-    // bottom: 0,
-    width: '100%',
-    height: 60,
-    marginBottom: 30,
-    backgroundColor: '#FAFAFA',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fixModalButtonText: {
-    color: '#000000',
-    fontFamily: 'Pretendard',
-    fontWeight: '600',
-    fontSize: 14,
-    fontStyle: 'normal',
-  },
-  keyboardAvoidingContainer: {
-    flex: 1,
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)', // 반투명한 검정색 배경
-  },
-  addStampModalContainer: {
-    // flex: 1,
-    backgroundColor: 'white',
-    width: '80%',
-    height: 260,
-    alignSelf: 'center',
-    marginTop: 'auto',
-    marginBottom: 'auto',
-    borderRadius: 16,
-  },
-  addStampModalTitleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 15,
-    marginHorizontal: 16,
-    marginBottom: 40,
-  },
-  addStampModalTitle: {
-    color: '#212429',
-    fontFamily: 'Pretendard',
-    fontWeight: '400',
-    fontSize: 16,
-  },
-  checkImage: {
-    // 기본 이미지 스타일
-    
-  },
-  disabledCheckImage: {
-    opacity: 0.2, // 비활성 시에 투명도 조절
-  },
-  addStampModalContent: {
-    // 가운데에 위치하도록
-    flex: 1,
-    justifyContent: 'space-between',
-    flexDirection: 'column',
-    alignItems: 'center',
-    // gap: 15,
-    marginBottom: 55,
-  },
-  addStampModalEmotionBox: {
-    width: 50,
-    height: 50,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  addStampModalEmotion: {
-    fontSize: 24,
-  },
-  addStampModalLabelBox: {
-    width: 296,
-    height: 50,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#F0F0F0',
-    backgroundColor: 'white',
-    paddingHorizontal: 10,
-  },
-  addStampModalLabel: {
-    fontSize: 16,
-  },
-});
+
 
 export default StampList;
