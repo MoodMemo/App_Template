@@ -9,6 +9,7 @@ import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import VersionCheck from 'react-native-version-check';
 import { PERMISSIONS, RESULTS, requestNotifications, checkNotifications} from "react-native-permissions";
+import RNRestart from 'react-native-restart';
 
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
@@ -33,8 +34,16 @@ function getRandomInt(min:any, max:any) {
     return Math.floor(Math.random() * (max - min)) + min; //최댓값은 제외, 최솟값은 포함
 }
 
-const Settings = () => {
+const clearAsyncStorage = async () => {
+    await AsyncStorage.clear();
+    return 0;
+}
 
+const restartApp = async () => {
+    RNRestart.restart();
+}
+
+const Settings = () => {
 
     const [memo, setMemo] = useState('');
     const handleMemoChange = (text) => {
@@ -120,6 +129,7 @@ const Settings = () => {
   const [isCoffeeModalVisible, setIsCoffeeModalVisible] = useState(false);
   const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
   const [isNotificationListModalVisible, setIsNotificationListModalVisible] = useState(false);
+  const [isClearDataModalVisible, setIsClearDataModalVisible] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
   const [isNotificationTimeChanged, setIsNotificationTimeChanged] = useState(false);
   const [isNotificationAdded, setIsNotificationAdded] = useState(false);
@@ -632,6 +642,81 @@ const Settings = () => {
                     </Modal>
                 </TouchableOpacity>
                 </>) : (<></>)}
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <TouchableOpacity onPress={() => {
+                    amplitude.test1(); //데이터 초기화하기 모달 켬
+                    setIsClearDataModalVisible(!isClearDataModalVisible);
+                    }}>
+                    <View
+                        style={{
+                            paddingHorizontal: 20,
+                            paddingBottom: 20,
+                            paddingTop: 20,
+                        }}>
+                        <Text style={{fontSize: 17, color:"#495057"}}>모든 데이터 초기화하기</Text>
+                    </View>
+                    <Modal isVisible={isClearDataModalVisible}
+                    animationIn={"fadeIn"}
+                    animationInTiming={200}
+                    animationOut={"fadeOut"}
+                    animationOutTiming={200}
+                    onBackdropPress={() => {
+                        amplitude.test1(); //데이터 초기화하기 모달 끔
+                        setIsClearDataModalVisible(!isClearDataModalVisible);
+                    }}
+                    backdropColor='#CCCCCC'//'#FAFAFA'
+                    backdropOpacity={0.8}
+                    style={{
+                        alignItems:'center'
+                    }}>
+                        <View style={{
+                            backgroundColor:"#FFFAF4",
+                            width:'85%',
+                            height:'40%',
+                            justifyContent:'center',
+                            alignItems:'center',
+                            borderRadius:10
+                        }}>
+                            <View style={{
+                                justifyContent:'center',
+                                alignItems:'center',
+                                marginTop:20,
+                                }}>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>작성한 일기, 스탬프를 포함한</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>모든 데이터를 초기화합니다.</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>초기화한 모든 데이터는</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>다시 복구할 수 없습니다.</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>초기화하시겠습니까?</Text>
+                            </View>
+                            <View style={{
+                                paddingHorizontal: "5%",
+                                marginTop:30,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                                }}>
+                                <TouchableOpacity onPress={async ()=>{
+                                    amplitude.test1(); //데이터 초기화하기 모달 끔
+                                    setIsClearDataModalVisible(!isClearDataModalVisible);
+                                    }}
+                                    style={styles.cancelBtn}>
+                                    <Text style={{fontSize: 17}}>취소</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={async ()=>{
+                                    amplitude.test1(); //데이터 초기화함
+                                    await clearAsyncStorage();
+                                    realm.write(()=>{
+                                        realm.deleteAll();
+                                    })
+                                    RNRestart.restart();
+                                }}
+                                style={styles.clearBtn}>
+                                    <Text style={{fontSize: 17}}>초기화</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+                </TouchableOpacity>
         </ScrollView>
       </View>
     );
@@ -698,6 +783,34 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#F0F0F0',
         // borderRadius: 6,
+      },
+      cancelBtn: {
+        alignSelf: 'center',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        color: '#344054', 
+        padding: 10,
+        marginBottom: 16,
+        backgroundColor: 'white', 
+        borderColor: '#72D193',
+        borderWidth:1,
+        borderRadius: 8,
+        flex: 1,
+        marginHorizontal:20,
+      },
+      clearBtn: {
+        alignSelf: 'center',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        color: '#FF0000', 
+        padding: 10,
+        marginBottom: 16,
+        backgroundColor: 'white', 
+        borderColor: '#FF0000',
+        borderWidth:1,
+        borderRadius: 8,
+        flex: 1,
+        marginHorizontal:20,
       },
   });
 

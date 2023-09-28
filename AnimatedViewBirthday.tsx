@@ -291,7 +291,7 @@ const AnimatedViewBirthday = () => {
       }
     }
     else if (section === 'birthday') {
-      if(showingBirthday==='NNNN/NN/NN'){
+      if(showingBirthday==='NNNN/NN/NN' && Platform.OS==='android'){
         setIsWarningVisible(true);
       }
       else{
@@ -301,7 +301,7 @@ const AnimatedViewBirthday = () => {
       }
     }
     else {
-      if(job===''){
+      if(job==='' && Platform.OS==='android'){
         setIsWarningVisible(true);
       }
       else {
