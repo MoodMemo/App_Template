@@ -140,10 +140,10 @@ const Settings = () => {
 
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
-        {/* <StatusBar
+        <StatusBar
             backgroundColor="#FFFFFF"
-            barStyle={'dark-content'}
-        /> */}
+            barStyle='dark-content'
+        />
         <ScrollView
         alwaysBounceHorizontal={false}
         alwaysBounceVertical={false}
@@ -583,6 +583,7 @@ const Settings = () => {
                         </View>
                     </Modal>
                 </TouchableOpacity>
+                {Platform.OS==='android' ? (<>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
@@ -630,6 +631,7 @@ const Settings = () => {
                         </View>
                     </Modal>
                 </TouchableOpacity>
+                </>) : (<></>)}
         </ScrollView>
       </View>
     );

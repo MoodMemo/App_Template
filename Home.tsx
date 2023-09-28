@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef} from 'react';
-import { View, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar } from 'react-native';
+import { View, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar, Platform } from 'react-native';
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
@@ -7,6 +7,7 @@ import StampList from './StampList';
 import * as amplitude from './AmplitudeAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {StatusBarStyle} from 'react-native';
+import { useSafeAreaFrame, useSafeAreaInsets, initialWindowMetrics} from 'react-native-safe-area-context';
 
 import {default as Text} from "./CustomText"
 
@@ -20,28 +21,7 @@ const Home = ({name}:any) => {
   const [firstButtonY, setFirstButtonY] = useState(0);
   const [firstWidth, setFirstWidth] = useState(0);
   const [firstHeight, setFirstHeight] = useState(0);
-
-  const firstRef=useRef([]);
-
-  const getBoxMessure = () => {
-
-    if (firstRef) {
-      firstRef.current.measureInWindow((x, y, width, height) => {
-      // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
-        console.log("getFirstBoxMessureOnHome ==")
-        console.log("x : ", x);
-        setFirstButtonX(x);
-        console.log("y : ", y);
-        setFirstButtonY(y);
-        console.log("width : ", width);
-        setFirstWidth(width);
-        console.log("height : ", height);
-        setFirstHeight(height);
-        // console.log("pageX : ", pageX);
-        // console.log("pageY : ", pageY);
-      });
-    }
-  };
+  const [{top,right,bottom,left},setSafeAreaInsets]= useState(initialWindowMetrics?.insets);
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
@@ -68,12 +48,6 @@ const Home = ({name}:any) => {
     });
     console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
     console.log(isFirstStamp);
-
-    (async () => {
-      await new Promise(f => setTimeout(f, 300));
-    })();
-
-    getBoxMessure();
   }, []);
 
   const handleOptionSelect = (option) => {
@@ -93,10 +67,10 @@ const Home = ({name}:any) => {
   return (
     <>
     <StatusBar
-      backgroundColor="#FFFAF4"
-      barStyle={'dark-content'}
-    />
-    {isFirstStamp===false ? (<View style={styles.view} ref={firstRef}>
+        backgroundColor="#FFFAF4"
+        barStyle='dark-content'
+      />
+    {isFirstStamp===false ? (<View style={styles.view}>
     <View style={styles.titleContainer}>
       {/* 드롭다운 컴포넌트 */}
       <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
@@ -109,9 +83,9 @@ const Home = ({name}:any) => {
       </TouchableOpacity>
     </View>
     {/* 감정 스탬프 뷰 */}
-    <StampView firstRef={firstRef}/>
+    <StampView/>
     {/* 스탬프 설정 모달 */}
-    <StampList firstRef={firstRef} visible={fixModalVisible} closeModal={handleFixModalClose}/>
+    <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
   </View>) : (<View style={{justifyContent: 'center',
             flex:1,
             backgroundColor:'#FFFAF4'}}>

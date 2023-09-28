@@ -176,10 +176,10 @@ const Statistics = () => {
 
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
-        {/* <StatusBar
-            backgroundColor="#FFFFFF"
-            barStyle={'dark-content'}
-        /> */}
+        <StatusBar
+            backgroundColor='#FAFAFA'
+            barStyle='dark-content'
+        />
         <View style={styles.titleContainer}>
         {/* 드롭다운 컴포넌트 */}
           <Text style={styles.title}>{userName}의{'\n'}감정을 분석해봤다무!</Text>
