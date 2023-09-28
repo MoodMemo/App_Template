@@ -49,6 +49,8 @@ import codePush , {CodePushOptions} from "react-native-code-push";
 
 import * as Progress from 'react-native-progress';
 
+import { useSafeAreaInsets, useSafeAreaFrame } from 'react-native-safe-area-context';
+
 import Main from './Main'
 import { create } from 'react-test-renderer';
 

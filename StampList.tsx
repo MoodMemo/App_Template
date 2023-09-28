@@ -1,29 +1,22 @@
 import React, {useEffect, useState} from 'react';
-import { View, Modal as ModalRN, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
+import { Dimensions, View, Modal as ModalRN, StyleSheet, Image, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TextInput } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import realm, { ICustomStamp, createCustomStamp, deleteCustomStamp, getAllCustomStamps } from './src/localDB/document';
 import * as amplitude from './AmplitudeAPI';
 import {default as Text} from "./CustomText"
 import Modal from "react-native-modal";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSafeAreaInsets, useSafeAreaFrame, initialWindowMetrics } from 'react-native-safe-area-context';
 
-const StampList = ({firstRef, visible, closeModal}) => {
+const screenHeight = Dimensions.get('window').height;
+
+const StampList = ({visible, closeModal}) => {
   // 각 스탬프의 상태를 관리하는 배열, 모두 기본값은 false로 초기화
   const [checkedStates, setCheckedStates] = useState(
     Array(20).fill(false)
   );
 
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
-
-  useEffect(() => {
-    getBoxMessure();
-    const fetchStamps = async () => {
-      const fetchedCustomStamps = await getAllCustomStamps();
-      setCustomStamps(fetchedCustomStamps);
-    };
-    
-    fetchStamps();
-  }, []);
   
 
   const [addStampDataLabel, setAddStampDataLabel] = useState('');
@@ -40,26 +33,24 @@ const StampList = ({firstRef, visible, closeModal}) => {
 
   const [userName, setUserName] = useState('');
 
-  const [firstButtonX, setFirstButtonX] = useState(0);
-  const [firstButtonY, setFirstButtonY] = useState(0);
-  const [firstWidth, setFirstWidth] = useState(0);
-  const [firstHeight, setFirstHeight] = useState(0);
+  const [{top,right,bottom,left},setSafeAreaInsets]= useState(initialWindowMetrics?.insets);
 
-  const getBoxMessure = () => {
-
-    if (firstRef) {
-      firstRef.current.measureInWindow((x, y, width, height) => {
-      // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
-        console.log("getFirstBoxMessure ==")
-        console.log("x : ", x); setFirstButtonX(x);
-        console.log("y : ", y); setFirstButtonY(y);
-        console.log("width : ", width); setFirstWidth(width);
-        console.log("height : ", height); setFirstHeight(height);
-        // console.log("pageX : ", pageX);
-        // console.log("pageY : ", pageY);
+  useEffect(() => {
+    const fetchStamps = async () => {
+      const fetchedCustomStamps = await getAllCustomStamps();
+      setCustomStamps(fetchedCustomStamps);
+    };
+    AsyncStorage.getItem('@UserInfo:userName')
+      .then((value) => {
+        if (value) {
+          setUserName(value);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching userName:", error);
       });
-    }
-  };
+    fetchStamps();
+  }, []);
 
   const handleRadioButtonPress = (index) => {
     amplitude.choiceDeleteCustomStampCandidate();
@@ -159,7 +150,7 @@ const StampList = ({firstRef, visible, closeModal}) => {
       backgroundColor: 'white',
       width: '100%',
       height: '100%',
-      marginTop: firstButtonY,
+      marginTop: (Platform.OS==='ios' ? top : 0),
     },
     fixModalTitleContainer: {
       flexDirection: 'row',
@@ -195,7 +186,7 @@ const StampList = ({firstRef, visible, closeModal}) => {
       width: 393,
       // paddingHorizontal: 20,
       // marginTop: 132,
-      // marginBottom: 60,
+      marginBottom:(Platform.OS==='ios' ? 120+bottom : 60), 
     },
     stampListContainer: {
       flexDirection: 'row',
@@ -237,12 +228,12 @@ const StampList = ({firstRef, visible, closeModal}) => {
     },
     fixModalButton: {
       position: 'absolute',
-      marginTop: firstHeight,
+      top: (Platform.OS==='ios' ? screenHeight-60*2-bottom : screenHeight-60), 
       width: '100%',
       height: 60,
       backgroundColor: '#FAFAFA',
       alignItems: 'center',
-      justifyContent: 'center',
+      justifyContent: 'center'
     },
     fixModalButtonText: {
       color: '#000000',
