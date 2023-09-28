@@ -616,6 +616,7 @@
 				CODE_SIGN_ENTITLEMENTS = MoodMemo/MoodMemo.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9K62B64FCG;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = MoodMemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -646,6 +647,7 @@
 				CODE_SIGN_ENTITLEMENTS = MoodMemo/MoodMemo.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9K62B64FCG;
 				INFOPLIST_FILE = MoodMemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -885,6 +887,7 @@
 				CODE_SIGN_ENTITLEMENTS = MoodMemo/MoodMemo.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 9K62B64FCG;
 				INFOPLIST_FILE = MoodMemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

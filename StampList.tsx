@@ -23,7 +23,7 @@ const StampList = ({firstRef, visible, closeModal}) => {
     };
     
     fetchStamps();
-  }, [firstRef.current]);
+  }, []);
   
 
   const [addStampDataLabel, setAddStampDataLabel] = useState('');

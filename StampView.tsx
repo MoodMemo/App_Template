@@ -36,7 +36,7 @@ const StampView = ({firstRef}) => {
     return () => {
       stampsCollection.removeListener(stampsListener);
     }
-  }, [firstRef.current]);  
+  }, []);  
 
   const [selectedEmotion, setSelectedEmotion] = useState(null);
   const [selectedEmotionLabel, setSelectedEmotionLabel] = useState(null);
@@ -63,11 +63,15 @@ const StampView = ({firstRef}) => {
     if (firstRef) {
       firstRef.current.measureInWindow((x, y, width, height) => {
       // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
-        console.log("getFirstBoxMessure ==")
-        console.log("x : ", x); setFirstButtonX(x);
-        console.log("y : ", y); setFirstButtonY(y);
-        console.log("width : ", width); setFirstWidth(width);
-        console.log("height : ", height); setFirstHeight(height);
+        //console.log("getFirstBoxMessure ==")
+        //console.log("x : ", x);
+        setFirstButtonX(x);
+        //console.log("y : ", y);
+        setFirstButtonY(y);
+        //console.log("width : ", width);
+        setFirstWidth(width);
+        //console.log("height : ", height);
+        setFirstHeight(height);
         // console.log("pageX : ", pageX);
         // console.log("pageY : ", pageY);
       });
@@ -75,10 +79,10 @@ const StampView = ({firstRef}) => {
   };
 
   // screenWidth가 500보다 크면 500으로, 작으면 screenWidth로 설정
-  const iOSwidth = firstWidth > 500 ? 500 : firstWidth;
+  //const iOSwidth = firstWidth > 500 ? 500 : firstWidth;
 
   // 4개의 버튼과 각 버튼 사이의 간격을 위한 값
-  const iOSButtonWidth = (iOSwidth - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
+  //const iOSButtonWidth = (iOSwidth - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
 
   const handleCreatePushedStamp = async () => {
     amplitude.submitStamp();
@@ -172,7 +176,7 @@ const StampView = ({firstRef}) => {
     stampButton: {
       ...Platform.select({
         ios : {
-          width: iOSButtonWidth,
+          width: buttonWidth,
         },
         android : {
           width: buttonWidth, 

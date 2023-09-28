@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef} from 'react';
 import { View, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar } from 'react-native';
 import Dropdown from './Dropdown';
 import StampView from './StampView';
@@ -16,8 +16,32 @@ const Home = ({name}:any) => {
   const [fixModalVisible, setFixModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
   const [isFirstStamp,setIsFirstStamp]=useState(false);
-  
-  const firstRef = useRef([]);
+  const [firstButtonX, setFirstButtonX] = useState(0);
+  const [firstButtonY, setFirstButtonY] = useState(0);
+  const [firstWidth, setFirstWidth] = useState(0);
+  const [firstHeight, setFirstHeight] = useState(0);
+
+  const firstRef=useRef([]);
+
+  const getBoxMessure = () => {
+
+    if (firstRef) {
+      firstRef.current.measureInWindow((x, y, width, height) => {
+      // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
+        console.log("getFirstBoxMessureOnHome ==")
+        console.log("x : ", x);
+        setFirstButtonX(x);
+        console.log("y : ", y);
+        setFirstButtonY(y);
+        console.log("width : ", width);
+        setFirstWidth(width);
+        console.log("height : ", height);
+        setFirstHeight(height);
+        // console.log("pageX : ", pageX);
+        // console.log("pageY : ", pageY);
+      });
+    }
+  };
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
@@ -44,6 +68,12 @@ const Home = ({name}:any) => {
     });
     console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
     console.log(isFirstStamp);
+
+    (async () => {
+      await new Promise(f => setTimeout(f, 300));
+    })();
+
+    getBoxMessure();
   }, []);
 
   const handleOptionSelect = (option) => {
