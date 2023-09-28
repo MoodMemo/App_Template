@@ -49,6 +49,8 @@ import codePush , {CodePushOptions} from "react-native-code-push";
 
 import * as Progress from 'react-native-progress';
 
+import { useSafeAreaInsets, useSafeAreaFrame } from 'react-native-safe-area-context';
+
 import Main from './Main'
 import { create } from 'react-test-renderer';
 
@@ -297,7 +299,7 @@ amplitude.beginSession();},[]);
               if (Platform.OS == "android") {
                 Linking.openURL('https://play.google.com/store/apps/details?id=com.moodmemo');
               } else {
-                Linking.openURL('a');
+                Linking.openURL('https://apps.apple.com/kr/app/%EB%AC%B4%EB%93%9C%EB%A9%94%EB%AA%A8/id6467786547');
               }
             }}>
               <View style={{

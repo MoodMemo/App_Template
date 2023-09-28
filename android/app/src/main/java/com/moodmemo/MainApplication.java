@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.microsoft.codepush.react.CodePush;
 
+//import com.reactnativerestart.RestartPackage;
 
 // for amplitude
 // import com.amplitude.android.Amplitude;

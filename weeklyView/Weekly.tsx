@@ -412,10 +412,10 @@ const Weekly = () => {
   return (
     
     <View style={{backgroundColor: '#FAFAFA', flex:1}} ref={firstRef}>
-      {/* <StatusBar
+      <StatusBar
         backgroundColor="#FFFFFF"
-        barStyle={'dark-content'}
-      /> */}
+        barStyle='dark-content'
+      />
       {/* <View style={[{backgroundColor: 'red', width: 10, height: 10,
                     position: 'absolute', // 모달의 위치를 조정하기 위해 절대 위치 지정
                     // left: buttonX,

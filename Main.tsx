@@ -6,6 +6,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialAllIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
+import { useSafeAreaInsets, useSafeAreaFrame, initialWindowMetrics } from 'react-native-safe-area-context';
 
 import Home from './Home';
 import Weekly from './weeklyView/Weekly';
@@ -244,10 +245,10 @@ function Main({username}:any) {
     */
     /* //TODO : css 분리 작업, 불필요한 반복 줄이기 */
     <NavigationContainer>
-      <StatusBar
+      {/* <StatusBar
         backgroundColor={statusBar}
         barStyle={'dark-content'}
-      />
+      /> */}
       {/*
         Navigator와 관련된 컴포넌트들은 NavigationContainer 안에 넣어줘야 했습니다.
       */}

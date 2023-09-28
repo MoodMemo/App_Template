@@ -6,6 +6,7 @@ import Weekly from './weeklyView/Weekly'
 import { useNavigation } from '@react-navigation/native';
 import * as amplitude from './AmplitudeAPI';
 import {default as Text} from "./CustomText"
+import { useSafeAreaInsets, useSafeAreaFrame, initialWindowMetrics } from 'react-native-safe-area-context';
 
 // 화면의 가로 크기
 const screenWidth = Dimensions.get('window').width;
@@ -21,22 +22,8 @@ const defaultButtonWidth = 69;
 // 비율 계산
 const scale = buttonWidth / defaultButtonWidth;
 
-const StampView = ({firstRef}) => {
+const StampView = () => {
   const [customStamps, setCustomStamps] = useState<ICustomStamp[]>([]);
-
-  useEffect(() => {
-    const stampsListener = (collection, changes) => {
-      setCustomStamps([...collection]);
-    };
-    getBoxMessure();
-  
-    const stampsCollection = realm.objects('CustomStamp');
-    stampsCollection.addListener(stampsListener);
-  
-    return () => {
-      stampsCollection.removeListener(stampsListener);
-    }
-  }, [firstRef.current]);  
 
   const [selectedEmotion, setSelectedEmotion] = useState(null);
   const [selectedEmotionLabel, setSelectedEmotionLabel] = useState(null);
@@ -51,34 +38,28 @@ const StampView = ({firstRef}) => {
 
   const [images, setImages] = useState([]);
 
+  const [{top,right,bottom,left},setSafeAreaInsets]= useState(initialWindowMetrics?.insets);
+
   const navigation = useNavigation();
 
-  const [firstButtonX, setFirstButtonX] = useState(0);
-  const [firstButtonY, setFirstButtonY] = useState(0);
-  const [firstWidth, setFirstWidth] = useState(0);
-  const [firstHeight, setFirstHeight] = useState(0);
-
-  const getBoxMessure = () => {
-
-    if (firstRef) {
-      firstRef.current.measureInWindow((x, y, width, height) => {
-      // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
-        console.log("getFirstBoxMessure ==")
-        console.log("x : ", x); setFirstButtonX(x);
-        console.log("y : ", y); setFirstButtonY(y);
-        console.log("width : ", width); setFirstWidth(width);
-        console.log("height : ", height); setFirstHeight(height);
-        // console.log("pageX : ", pageX);
-        // console.log("pageY : ", pageY);
-      });
-    }
-  };
-
   // screenWidth가 500보다 크면 500으로, 작으면 screenWidth로 설정
-  const iOSwidth = firstWidth > 500 ? 500 : firstWidth;
+  const iOSwidth = width > 500 ? 500 : width;
 
   // 4개의 버튼과 각 버튼 사이의 간격을 위한 값
   const iOSButtonWidth = (iOSwidth - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
+
+  useEffect(() => {
+    const stampsListener = (collection, changes) => {
+      setCustomStamps([...collection]);
+    };
+  
+    const stampsCollection = realm.objects('CustomStamp');
+    stampsCollection.addListener(stampsListener);
+  
+    return () => {
+      stampsCollection.removeListener(stampsListener);
+    }
+  }, []);  
 
   const handleCreatePushedStamp = async () => {
     amplitude.submitStamp();
@@ -208,7 +189,7 @@ const StampView = ({firstRef}) => {
       height: '100%',
       flexShrink: 0,
       borderRadius: 16,
-      marginTop: firstButtonY,
+      marginTop: (Platform.OS==='ios' ? top : 0),
     },
     modalTitleContainer: {
       flexDirection: 'row',
