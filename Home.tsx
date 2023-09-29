@@ -104,11 +104,6 @@ const Home = ({name}:any) => {
                   fontSize: 24,
                   color:"#212429",
                   marginLeft: '5%'
-                }}>{userName}의</Text>
-                <Text style={{
-                  fontSize: 24,
-                  color:"#212429",
-                  marginLeft: '5%'
                 }}>감정을 남겨보지 않겠냐무?</Text>
               </View>
               <TouchableOpacity style={styles.button} onPress={(async () => { 

@@ -262,7 +262,7 @@ const Weekly = () => {
           />
           <Text style={{fontSize: 14, color: '#495057', }}>일기를 만들 준비가 됐다무!!</Text>
   
-          <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn, {width: 184}]} 
+          <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn, {width: 200}]} 
             onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}} >
             <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>무에게 일기 작성 요청하기</Text>
           </TouchableOpacity>
@@ -281,7 +281,7 @@ const Weekly = () => {
           />
           <Text style={{fontSize: 14, color: '#495057', }}>일기를 만들 준비가 됐다무!!</Text>
   
-          <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn, {width: 184}]}
+          <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn, {width: 200}]}
             onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can_forPast(today.format('YYYY-MM-DD'));}} >
             <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>무에게 일기 작성 요청하기</Text>
           </TouchableOpacity>

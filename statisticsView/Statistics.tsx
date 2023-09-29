@@ -30,7 +30,7 @@ const test = () => {
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const chartColor=[['#9BE300','#FFFFFF'],['#FF7DB8','#FFFFFF'],['#5BC4FF','#FFFFFF'],['#DFAAFF','#FFFFFF'],['#FFA887','#FFFFFF'],['#57EDD4','#FFFFFF']]
+const chartColor=[['#9BE300','#FFFFFF'],['#FF7DB8','#FFFFFF'],['#5BC4FF','#FFFFFF'],['#DFAAFF','#FFFFFF'],['#FFA887','#FFFFFF'],['#AAAAAA','#FFFFFF']]
 
 const Statistics = () => {
 
@@ -52,6 +52,7 @@ const Statistics = () => {
     const [month,setMonth]=useState(date.getMonth()+1);
     const [summaryOrDetail, setSummaryOrDetail] = useState(true);
     const [stamps,setStamps] = useState([]);
+    const [stampsChart,setStampsChart] = useState([]);
     const [countStamps,setCountStamps] = useState(0);
     const [countDiarys,setCountDiarys] = useState(0);
     const [countLoggedDates,setCountLoggedDates] = useState(0);
@@ -133,6 +134,7 @@ const Statistics = () => {
       var count=0;
       var ans=0;
       var stamps=[];
+      var temporaryStampsChart=[];
       var color=0;
       if(listOfStamps.length>0)
       {
@@ -159,15 +161,27 @@ const Statistics = () => {
             if(stamps[j][0].stampName===listOfStamps[i].stampName){
               stamps[j][1]+=1;
               notInStamps=false;
+              break;
             }
           }
           if(notInStamps){
-            console.log(listOfStamps[i]);
-            stamps.push([listOfStamps[i],1,chartColor[color++]]);
+              stamps.push([listOfStamps[i],1,"aa"]);
+          }
+        }
+        stamps.sort(sortStamps);
+        for(var i=0;i<stamps.length;i++){
+          if(color<6){
+            stamps[i][2]=chartColor[color];
+            temporaryStampsChart.push([{},stamps[i][1],chartColor[color++]]);
+          }
+          else{
+            stamps[i][2]=chartColor[5];
+            temporaryStampsChart[5][1]++;
           }
         }
       }
       setStamps(stamps);
+      setStampsChart(temporaryStampsChart);
       setCountLoggedDates(loggedDates);
       setConsecutedCountLoggedDates(ans);
       var listOfDiarys=await getDailyReportsByFieldBetween('date', dateFormat(new Date(year,month-1)), dateFormat(d));
@@ -259,10 +273,10 @@ const Statistics = () => {
           ))}
         </ScrollView>
         </View>) : 
-        (<View style={{marginTop:20, marginBottom:35}}>
-          <ScrollView>
+        (
+          <ScrollView style={{marginTop:20}}>
             <View style={{marginLeft:25,alignItems:'center',}}>
-              <PieChart data={stamps.map((stamp:any) => ({
+              <PieChart data={stampsChart.map((stamp:any) => ({
                 value: stamp[1],
                 color: stamp[2][0],
                 text: `${Math.round(stamp[1]*100/countStamps)}%`,
@@ -294,8 +308,7 @@ const Statistics = () => {
                 <Text style={{color: '#000000',}}>{stampButton[1]}개</Text>
               </TouchableOpacity>
             ))}
-          </ScrollView>
-        </View>)}
+          </ScrollView>)}
       </View>
     );
 }
