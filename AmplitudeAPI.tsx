@@ -742,3 +742,15 @@ export function moveToNextMonth() {
     view: 'statistics',
     action: 'click',});
 }
+export function moveToSummary() {
+  amplitude.track('statistics: click, summary',
+  {
+    view: 'statistics',
+    action: 'click',});
+}
+export function moveToDetail() {
+  amplitude.track('statistics: click, detail',
+  {
+    view: 'statistics',
+    action: 'click',});
+}

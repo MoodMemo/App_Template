@@ -224,19 +224,19 @@ const Statistics = () => {
                 style={{ width: 154*0.6, height: (154 * 192)*0.6 / 154 , position: 'relative', bottom: 145, left: windowWidth-130, overflow: 'hidden'}}/>
         {summaryOrDetail ? (
         <View style={typeChangeBtnStyles.twotypebtn}>
-          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.test1()}}>
+          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.moveToSummary()}}>
             <Text style={typeChangeBtnStyles.activeFont}>요약</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {setSummaryOrDetail(false); amplitude.test1();}} style={typeChangeBtnStyles.deactiveType}>
+          <TouchableOpacity onPress={() => {setSummaryOrDetail(false); amplitude.moveToDetail();}} style={typeChangeBtnStyles.deactiveType}>
             <Text style={typeChangeBtnStyles.deactiveFont}>상세</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={typeChangeBtnStyles.twotypebtn}>
-          <TouchableOpacity onPress={() => {setSummaryOrDetail(true); amplitude.test1();}} style={typeChangeBtnStyles.deactiveType}>
+          <TouchableOpacity onPress={() => {setSummaryOrDetail(true); amplitude.moveToSummary();}} style={typeChangeBtnStyles.deactiveType}>
             <Text style={typeChangeBtnStyles.deactiveFont}>요약</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.test1()}}>
+          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.moveToDetail()}}>
             <Text style={typeChangeBtnStyles.activeFont}>상세</Text>
           </TouchableOpacity>
         </View>
