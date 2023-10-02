@@ -645,7 +645,7 @@ const Settings = () => {
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                 <TouchableOpacity onPress={() => {
-                    amplitude.test1(); //데이터 초기화하기 모달 켬
+                    amplitude.clickReset(); //데이터 초기화하기 모달 켬
                     setIsClearDataModalVisible(!isClearDataModalVisible);
                     }}>
                     <View
@@ -662,7 +662,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
-                        amplitude.test1(); //데이터 초기화하기 모달 끔
+                        amplitude.cancelResetWithBackDrop(); //데이터 초기화하기 모달 끔
                         setIsClearDataModalVisible(!isClearDataModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -696,14 +696,14 @@ const Settings = () => {
                                 justifyContent: 'space-between'
                                 }}>
                                 <TouchableOpacity onPress={async ()=>{
-                                    amplitude.test1(); //데이터 초기화하기 모달 끔
+                                    amplitude.cancelResetBtn(); //데이터 초기화하기 모달 끔
                                     setIsClearDataModalVisible(!isClearDataModalVisible);
                                     }}
                                     style={styles.cancelBtn}>
                                     <Text style={{fontSize: 17}}>취소</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={async ()=>{
-                                    amplitude.test1(); //데이터 초기화함
+                                    amplitude.confirmResetBtn(); //데이터 초기화함
                                     await clearAsyncStorage();
                                     realm.write(()=>{
                                         realm.deleteAll();

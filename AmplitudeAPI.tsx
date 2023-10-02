@@ -669,7 +669,32 @@ export function outToSettingFromCoffee() {
     view: 'setting',
     action: 'cancel',});       
 }
-
+export function clickReset() {
+  amplitude.track('setting: click, reset',
+  {
+    view: 'setting',
+    action: 'click',});
+}
+export function cancelResetWithBackDrop() {
+  amplitude.track('setting: cancel, reset, with backdrop',
+  {
+    view: 'setting',
+    action: 'cancel',});
+}
+export function cancelResetBtn() {
+  amplitude.track('setting: cancel, reset, in reset modal',
+  {
+    view: 'setting',
+    action: 'cancel',
+    secondView: 'reset modal',});
+}
+export function confirmResetBtn() {
+  amplitude.track('setting: confirm, reset, in reset modal',
+  {
+    view: 'setting',
+    action: 'confirm',
+    secondView: 'reset modal',});
+}
 
 export function test1() { 
   amplitude.track('** .then((response) => {');       
