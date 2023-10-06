@@ -234,60 +234,103 @@ const Settings = () => {
                           switchOn={isNotificationEnabled}
                           onPress={async () => {
                             if (Platform.OS === 'android') {
-                                try {
-                                    const granted = await PermissionsAndroid.request(
-                                      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-                                    );
-                                    if(granted==='granted'){
-                                        console.log(PermissionsAndroid.RESULTS.GRANTED);
-                                        if(!isNotificationEnabled){
-                                            AsyncStorage.setItem('@UserInfo:notificationAllow','true');
-                                            setIsNotificationEnabled(!isNotificationEnabled);
-                                            repository.getAllNotifications().sort(sortNotificationByTime).map((notification)=>{
-                                                console.log(4,notification.time);
-                                                const notificationTime = new Date();
-                                                const [hour,minute]=notification.time.split(':');
-                                                notificationTime.setHours(Number(hour));
-                                                notificationTime.setMinutes(Number(minute));
-                                                notificationTime.setSeconds(0);
-                                                if(notificationTime.getTime()<=(new Date(Date.now())).getTime()) notificationTime.setDate(notificationTime.getDate()+1);
-                                                PushNotification.localNotificationSchedule({
-                                                    channelId: "MoodMemo_ID",
-                                                    smallIcon: "ic_notification",
-                                                    message: generateNotificationMessage(notificationTime),
-                                                    date: new Date(notificationTime), // 1 second from now
-                                                    visibility: "public",
-                                                    priority: "high",
-                                                    playSound: false,
-                                                    allowWhileIdle: true,
-                                                    id: hour+minute,
-                                                    repeatType: "day",
-                                                    repeatTime: "1" //하루 단위로 반복
+                                if(Platform.Version<33){
+                                    if(!isNotificationEnabled){
+                                        AsyncStorage.setItem('@UserInfo:notificationAllow','true');
+                                        setIsNotificationEnabled(!isNotificationEnabled);
+                                        repository.getAllNotifications().sort(sortNotificationByTime).map((notification)=>{
+                                            console.log(4,notification.time);
+                                            const notificationTime = new Date();
+                                            const [hour,minute]=notification.time.split(':');
+                                            notificationTime.setHours(Number(hour));
+                                            notificationTime.setMinutes(Number(minute));
+                                            notificationTime.setSeconds(0);
+                                            if(notificationTime.getTime()<=(new Date(Date.now())).getTime()) notificationTime.setDate(notificationTime.getDate()+1);
+                                            PushNotification.localNotificationSchedule({
+                                                channelId: "MoodMemo_ID",
+                                                smallIcon: "ic_notification",
+                                                message: generateNotificationMessage(notificationTime),
+                                                date: new Date(notificationTime), // 1 second from now
+                                                visibility: "public",
+                                                priority: "high",
+                                                playSound: false,
+                                                allowWhileIdle: true,
+                                                id: hour+minute,
+                                                repeatType: "day",
+                                                repeatTime: "1" //하루 단위로 반복
+                                            });
+                                        });
+                                        amplitude.notiONtoOFF();
+                                        PushNotification.getScheduledLocalNotifications((result:any)=>{
+                                            console.log(result);
+                                        });
+                                    }
+                                    else{
+                                        PushNotification.getScheduledLocalNotifications((result:any)=>{
+                                            console.log(result);
+                                        });
+                                        AsyncStorage.setItem('@UserInfo:notificationAllow','false');
+                                        setIsNotificationEnabled(!isNotificationEnabled);
+                                        amplitude.notiONtoOFF();
+                                        PushNotification.cancelAllLocalNotifications();
+                                    }
+                                }
+                                else{
+                                    try {
+                                        const granted = await PermissionsAndroid.request(
+                                          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+                                        );
+                                        if(granted==='granted'){
+                                            console.log(PermissionsAndroid.RESULTS.GRANTED);
+                                            if(!isNotificationEnabled){
+                                                AsyncStorage.setItem('@UserInfo:notificationAllow','true');
+                                                setIsNotificationEnabled(!isNotificationEnabled);
+                                                repository.getAllNotifications().sort(sortNotificationByTime).map((notification)=>{
+                                                    console.log(4,notification.time);
+                                                    const notificationTime = new Date();
+                                                    const [hour,minute]=notification.time.split(':');
+                                                    notificationTime.setHours(Number(hour));
+                                                    notificationTime.setMinutes(Number(minute));
+                                                    notificationTime.setSeconds(0);
+                                                    if(notificationTime.getTime()<=(new Date(Date.now())).getTime()) notificationTime.setDate(notificationTime.getDate()+1);
+                                                    PushNotification.localNotificationSchedule({
+                                                        channelId: "MoodMemo_ID",
+                                                        smallIcon: "ic_notification",
+                                                        message: generateNotificationMessage(notificationTime),
+                                                        date: new Date(notificationTime), // 1 second from now
+                                                        visibility: "public",
+                                                        priority: "high",
+                                                        playSound: false,
+                                                        allowWhileIdle: true,
+                                                        id: hour+minute,
+                                                        repeatType: "day",
+                                                        repeatTime: "1" //하루 단위로 반복
+                                                    });
                                                 });
-                                            });
-                                            amplitude.notiONtoOFF();
-                                            PushNotification.getScheduledLocalNotifications((result:any)=>{
-                                                console.log(result);
-                                            });
+                                                amplitude.notiONtoOFF();
+                                                PushNotification.getScheduledLocalNotifications((result:any)=>{
+                                                    console.log(result);
+                                                });
+                                            }
+                                            else{
+                                                PushNotification.getScheduledLocalNotifications((result:any)=>{
+                                                    console.log(result);
+                                                });
+                                                AsyncStorage.setItem('@UserInfo:notificationAllow','false');
+                                                setIsNotificationEnabled(!isNotificationEnabled);
+                                                amplitude.notiONtoOFF();
+                                                PushNotification.cancelAllLocalNotifications();
+                                            }
                                         }
-                                        else{
-                                            PushNotification.getScheduledLocalNotifications((result:any)=>{
-                                                console.log(result);
-                                            });
-                                            AsyncStorage.setItem('@UserInfo:notificationAllow','false');
-                                            setIsNotificationEnabled(!isNotificationEnabled);
-                                            amplitude.notiONtoOFF();
-                                            PushNotification.cancelAllLocalNotifications();
+                                        else if(granted==='never_ask_again'){
+                                            amplitude.notiONwhenPermissionDenied();
+                                            setIsNotificationModalVisible(!isNotificationModalVisible);
+                                            console.log(1,'denied');
                                         }
-                                    }
-                                    else if(granted==='never_ask_again'){
-                                        amplitude.notiONwhenPermissionDenied();
-                                        setIsNotificationModalVisible(!isNotificationModalVisible);
-                                        console.log(1,'denied');
-                                    }
-                                  } catch (error) {
-                                    console.warn(error);
-                                  }
+                                      } catch (error) {
+                                        console.warn(error);
+                                      }
+                                }
                             }
                             else{
                                 try {

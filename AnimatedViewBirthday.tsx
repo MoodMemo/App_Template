@@ -306,26 +306,36 @@ const AnimatedViewBirthday = () => {
       }
       else {
         if (Platform.OS === 'android') {
-          try {
-            const granted = await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-            );
-            if(granted===PermissionsAndroid.RESULTS.GRANTED){
-              AsyncStorage.setItem('@UserInfo:notificationAllow','true');
-              console.log(1);
-              connectRealmNotification();
-              setSection('main');
-            }
-            else{
-              AsyncStorage.setItem('@UserInfo:notificationAllow','false');
-              setSection('main');
-            }
-            console.log(granted);
+          if(Platform.Version<33){
+            AsyncStorage.setItem('@UserInfo:notificationAllow','true');
+            console.log(1);
+            connectRealmNotification();
+            setSection('main');
             saveUserInfo_toAsyncStorage(name, showingBirthday, job);
             test_realm_ver4();
           }
-          catch (error) {
-            setSection('main');
+          else{
+            try {
+              const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+              );
+              if(granted===PermissionsAndroid.RESULTS.GRANTED){
+                AsyncStorage.setItem('@UserInfo:notificationAllow','true');
+                console.log(1);
+                connectRealmNotification();
+                setSection('main');
+              }
+              else{
+                AsyncStorage.setItem('@UserInfo:notificationAllow','false');
+                setSection('main');
+              }
+              console.log(granted);
+              saveUserInfo_toAsyncStorage(name, showingBirthday, job);
+              test_realm_ver4();
+            }
+            catch (error) {
+              setSection('main');
+            }
           }
         }
         else if (Platform.OS === 'ios') {
