@@ -370,6 +370,9 @@ const StampList = ({visible, closeModal}) => {
             <TouchableOpacity onPress={() => {
               amplitude.cancelAddCustomStamp();
               setAddStampModalVisible(false);
+              setAddStampDataEmotion('');
+              setAddStampDataLabel('');
+              setAddStampButtonDisabled(true);
             }}>
               <Image source={require('./assets/close.png')} />
             </TouchableOpacity>
@@ -388,6 +391,7 @@ const StampList = ({visible, closeModal}) => {
               <TextInput
                 style={styles.addStampModalEmotion}
                 placeholder='🔥'
+                placeholderTextColor='rgba(0, 0, 0, 0.2)'
                 maxLength={2}
                 onChangeText={(text) => {
                   setAddStampDataEmotion(text);

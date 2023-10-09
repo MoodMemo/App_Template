@@ -30,13 +30,15 @@ const StampView = () => {
   const [selectedEmotion, setSelectedEmotion] = useState(null);
   const [selectedEmotionLabel, setSelectedEmotionLabel] = useState(null);
   const [selectedEmotionId, setSelectedEmotionId] = useState('');
-  const [addStampModalVisible, setAddStampModalVisible] = useState(false);
-  const [addStampButtonDisabled, setAddStampButtonDisabled] = useState(true);
-  const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
-  const [userName, setUserName] = useState('');
 
   const [addStampDataLabel, setAddStampDataLabel] = useState('');
   const [addStampDataEmotion, setAddStampDataEmotion] = useState('');
+
+  const [addStampModalVisible, setAddStampModalVisible] = useState(false);
+  const [addStampButtonDisabled, setAddStampButtonDisabled] = useState(true);
+
+  const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
+  const [userName, setUserName] = useState('');
 
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
@@ -282,7 +284,7 @@ const StampView = () => {
       justifyContent: 'center',
     },
     addStampModalEmotion: {
-      fontSize: 24,
+      fontSize: 24 * scale,
     },
     addStampModalLabelBox: {
       width: '80%',
@@ -659,6 +661,9 @@ const StampView = () => {
             <TouchableOpacity onPress={() => {
               amplitude.cancelAddCustomStamp();
               setAddStampModalVisible(false);
+              setAddStampDataEmotion('');
+              setAddStampDataLabel('');
+              setAddStampButtonDisabled(true);
             }}>
               <Image source={require('./assets/close.png')} />
             </TouchableOpacity>
@@ -676,7 +681,8 @@ const StampView = () => {
             <View style={styles.addStampModalEmotionBox}>
               <TextInput
                 style={styles.addStampModalEmotion}
-                placeholder='🔥'
+                placeholder='😊'
+                placeholderTextColor='rgba(0, 0, 0, 0.2)'
                 maxLength={2}
                 onChangeText={(text) => {
                   setAddStampDataEmotion(text);
