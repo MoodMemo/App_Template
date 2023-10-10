@@ -128,6 +128,12 @@ function App(): JSX.Element {
     });
   };
 
+  // const setIsCodePushUpdateNeededAsync = async (value:any) => {
+  //   setIsCodePushUpdateNeeded(value);
+  //   await new Promise(f => setTimeout(f, 200));
+  //   console.log('async code push',isCodePushUpdateNeeded);
+  // }
+
   const codePushVersionCheck = async () => {
     try{
       const update = await codePush.checkForUpdate();
@@ -135,14 +141,17 @@ function App(): JSX.Element {
       if(update){
         setIsCodePushUpdateNeeded(true);
         amplitude.codePushUpdating();
+        return true;
       }
       else{
         console.log('no update');
+        return false;
       }
     }
     catch(error){
       console.log('codepush error');
       console.error(error);
+      return false;
     }
   }
 
@@ -225,11 +234,13 @@ const reloadNotification = async () => {
   await AppVersionCheck();
   //await getToken();
   //setShowCodePushUpdate(true);
-  await codePushVersionCheck();
-  await reloadNotification();
+  const codePushUpdateAvailable = await codePushVersionCheck();
+  // await reloadNotification();
   SplashScreen.hide();
   // Do something after
-  if(isCodePushUpdateNeeded){
+  console.log('codepush check :',codePushUpdateAvailable);
+  if(codePushUpdateAvailable){
+    console.log('codepush updating now');
     codePush.sync({
       installMode:codePush.InstallMode.IMMEDIATE,
       mandatoryInstallMode:codePush.InstallMode.IMMEDIATE
