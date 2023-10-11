@@ -68,7 +68,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                     flexDirection: 'row',
                     justifyContent: 'space-between'
                     }}>
-                        <Text style={{fontSize: 17}}>+ 알림 추가</Text>
+                        <Text style={{fontSize: 19}}>+ 알림 추가</Text>
                 </View>
             </TouchableOpacity>
             <Modal isVisible={isModalVisible}
@@ -99,7 +99,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                         <View style={{
                             paddingBottom: '10%',
                             }}>
-                                <Text style={{fontSize: 17, color:"#495057"}}>알림 추가</Text>
+                                <Text style={{fontSize: 19, color:"#495057"}}>알림 추가</Text>
                         </View>
                         <View style={{
                             paddingBottom: 10,
@@ -155,7 +155,7 @@ const NotificationAdd = ({notificationAdded,checkNotificationAdded}:any) => {
                                     amplitude.cancelNewNoti();
                                     setIsModalVisible(!isModalVisible);
                                 }}>
-                                    <Text style={{fontSize: 17}}>취소</Text>
+                                    <Text style={{fontSize: 19}}>취소</Text>
                                 </TouchableOpacity>
                         </View>
                     </View>

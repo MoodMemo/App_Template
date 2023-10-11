@@ -19,16 +19,16 @@ const Popup = ({ visible, onClose }) => {
             source={require('./assets/write_0904.png')}
             style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
           <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
-            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>!</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 20, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
+            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 20, fontWeight: 'bold' }}>무</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 20, fontWeight: 'bold' }}>!</Text>
           </View>
           <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <View style={{ flexDirection: 'row', flex: 1,}}>
               <TouchableOpacity style={diaryStyles.cancelBtn} 
               onPress={() => {onClose(); amplitude.confirmPushedStampFinModal();}}
               >
-                <Text style={{ color: '#72D193', fontSize: 14, fontWeight: '600',}}>확인</Text>
+                <Text style={{ color: '#72D193', fontSize: 16, fontWeight: '600',}}>확인</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -80,7 +80,7 @@ const diaryStyles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'center',
     color: '#344054', 
-    padding: 10,
+    padding: 8,
     marginBottom: 16,
     backgroundColor: 'white', 
     borderColor: '#72D193',

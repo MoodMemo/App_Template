@@ -174,7 +174,7 @@ const StampView = () => {
       fontSize: 24 * scale, // 기본 fontSize에 비율을 곱함
     },
     buttonText: {
-      fontSize: 12 * scale, // 기본 fontSize에 비율을 곱함
+      fontSize: 12 * scale + 1, // 기본 fontSize에 비율을 곱함
       fontWeight: '400',
       color: '#212429',
       textAlign: 'center',
@@ -202,14 +202,14 @@ const StampView = () => {
     modalTitle: {
       color: '#212429',
       textAlign: 'center',
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: 'Pretendard',
       fontWeight: '400',
       fontStyle: 'normal',
     },
     modalText: {
       fontFamily: 'Pretendard',
-      fontSize: 12,
+      fontSize: 14,
       fontStyle: 'normal',
       fontWeight: '400',
     },
@@ -238,10 +238,10 @@ const StampView = () => {
     },
     stampText: {
       fontFamily: 'Pretendard',
-      fontSize: 14,
+      fontSize: 16,
       fontStyle: 'normal',
       fontWeight: '400',
-      lineHeight: 20,
+      lineHeight: 24,
     },
     timeContainer: {
       flexDirection: 'row',
@@ -254,10 +254,10 @@ const StampView = () => {
     },
     timeText: {
       fontFamily: 'Pretendard',
-      fontSize: 14,
+      fontSize: 16,
       fontStyle: 'normal',
       fontWeight: '400',
-      lineHeight: 20,
+      lineHeight: 24,
     },
     horizontalLine: {
       // width: '100%',
@@ -289,20 +289,20 @@ const StampView = () => {
       alignSelf: 'stretch',
       color: '#212429',
       textAlignVertical: 'top',
-      fontSize: 14,
+      fontSize: 16,
       fontFamily: 'Pretendard',
       fontWeight: '400',
       fontStyle: 'normal',
-      lineHeight: 20,
+      lineHeight: 24,
     },
     maxLength: {
       color: '#495057',
       textAlign: 'right',
-      fontSize: 12,
+      fontSize: 14,
       fontFamily: 'Pretendard',
       fontWeight: '400',
       fontStyle: 'normal',
-      lineHeight: 20,
+      lineHeight: 24,
     },
     imgContainer: {
       flexDirection: 'column',
@@ -371,7 +371,7 @@ const StampView = () => {
     
     timeModalText: {
       fontFamily: 'Pretendard',
-      fontSize: 16,
+      fontSize: 18,
       fontStyle: 'normal',
       fontWeight: '400',
     },
@@ -462,10 +462,10 @@ const StampView = () => {
                       <DatePicker date={tempDate} onDateChange={setTempDate} mode="datetime" theme="light"/>
                       <View style={styles.timeButtons}>
                         <TouchableOpacity onPress={handleCancleTimeModal}>
-                          <Text>취소</Text>
+                          <Text style={{fontSize:16}}>취소</Text>
                         </TouchableOpacity>
                         <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 10, right: 20}} onPress={handleSubmitTimeModal}>
-                          <Text>확인</Text>
+                          <Text style={{fontSize:16}}>확인</Text>
                         </TouchableOpacity>
                       </View>
                     </View>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Button, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
+import { View, Button, Platform, Image, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, StatusBar} from 'react-native';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from './DocumentFunc';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { deleteUserStamp } from '../src/graphql/mutations';
@@ -38,8 +38,8 @@ export const FromFutureView = () => {
           source={require('../assets/boring_gray_0904.png')}
           style={{ width: 124, height: (113 * 124) / 124 , marginBottom: 16}} // 비율을 유지하며 height 자동 조절
         />
-        <Text style={{fontSize: 14, color: '#dbdbdb', }}>미래에서 왔냐무?</Text>
-        <Text style={{fontSize: 14, color: '#dbdbdb', }}>타임머신은 없는데무!</Text>
+        <Text style={{fontSize: 16, color: '#dbdbdb', }}>미래에서 왔냐무?</Text>
+        <Text style={{fontSize: 16, color: '#dbdbdb', }}>타임머신은 없는데무!</Text>
       </View>
 
     </View>
@@ -53,7 +53,7 @@ export const MooWasBoredView = () => {
           source={require('../assets/boring_gray_0904.png')}
           style={{ width: 124, height: (113 * 124) / 124 , marginBottom: 16}} // 비율을 유지하며 height 자동 조절
         />
-        <Text style={{fontSize: 14, color: '#dbdbdb', }}>심심했다무...</Text>
+        <Text style={{fontSize: 16, color: '#dbdbdb', }}>심심했다무...</Text>
       </View>
 
     </View>
@@ -74,12 +74,12 @@ export const TellMeYourDayView = () => {
           source={require('../assets/boring_gray_0904.png')}
           style={{ width: 124, height: (113 * 124) / 124 , marginBottom: 16}} // 비율을 유지하며 height 자동 조절
         />
-        <Text style={{fontSize: 14, color: '#dbdbdb', }}>심심하다무...</Text>
-        <Text style={{fontSize: 14, color: '#dbdbdb', }}>무슨 일이 있었는지 들려달라무!</Text>
+        <Text style={{fontSize: 16, color: '#dbdbdb', }}>심심하다무...</Text>
+        <Text style={{fontSize: 16, color: '#dbdbdb', }}>무슨 일이 있었는지 들려달라무!</Text>
 
         <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} 
           onPress={() => {handleRecordEmotion(); amplitude.pushStampInTellMeYourDayView();}}>
-          <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
+          <Text style={{fontSize: 16, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
         </TouchableOpacity>
       </View>
 
@@ -101,14 +101,14 @@ export const PleaseOneMoreStampView = () => {
           style={{ width: 104, height: (107 * 104) / 104 , marginBottom: 16}} // 비율을 유지하며 height 자동 조절
         />
         <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-          <Text style={{fontSize: 14, color: '#495057', }}>스탬프 </Text>
-          <Text style={{fontSize: 14, color: '#495057', fontWeight: '700'}}>한 개만 더</Text>
-          <Text style={{fontSize: 14, color: '#495057', }}> 찍으면, 일기를 만들 수 있다무!</Text>
+          <Text style={{fontSize: 16, color: '#495057', }}>스탬프 </Text>
+          <Text style={{fontSize: 16, color: '#495057', fontWeight: '700', marginBottom:(Platform.OS==='android' ? 3 : 0)}}>한 개만 더</Text>
+          <Text style={{fontSize: 16, color: '#495057', }}> 찍으면, 일기를 만들 수 있다무!</Text>
         </View>
 
-        <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} 
+        <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn,{width:200}]} 
           onPress={() => {handleRecordEmotion(); amplitude.pushStampInPleaseOneMoreStampView();}}>
-          <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
+          <Text style={{fontSize: 16, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
         </TouchableOpacity>
       </View>
 
@@ -130,14 +130,14 @@ export const PleaseOneMoreStampMini = () => {
           style={{ width: 104, height: (107 * 104) / 104 , marginBottom: 16}} // 비율을 유지하며 height 자동 조절
         />
         <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-          <Text style={{fontSize: 14, color: '#495057', }}>스탬프 </Text>
-          <Text style={{fontSize: 14, color: '#495057', fontWeight: '700'}}>한 개만 더</Text>
-          <Text style={{fontSize: 14, color: '#495057', }}> 찍으면, 일기를 만들 수 있다무!</Text>
+          <Text style={{fontSize: 16, color: '#495057', }}>스탬프 </Text>
+          <Text style={{fontSize: 16, color: '#495057', fontWeight: '700', marginBottom:(Platform.OS==='android' ? 3 : 0)}}>한 개만 더</Text>
+          <Text style={{fontSize: 16, color: '#495057', }}> 찍으면, 일기를 만들 수 있다무!</Text>
         </View>
 
-        <TouchableOpacity style={typeChangeBtnStyles.nudgingBtn} 
+        <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn,{width:200}]} 
           onPress={() => {handleRecordEmotion(); amplitude.pushStampInPleaseOneMoreStampViewInStampSwitch();}}>
-          <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
+          <Text style={{fontSize: 16, color: '#ffffff', fontWeight: '600'}}>감정 스탬프 기록하기</Text>
         </TouchableOpacity>
       </View>
 

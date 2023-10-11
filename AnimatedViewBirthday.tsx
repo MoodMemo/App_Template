@@ -374,20 +374,20 @@ const AnimatedViewBirthday = () => {
                 bottom:'12%'
               }}>
                 <Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#212429",
                   marginLeft: '5%'
                 }}>어서와라<Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#FCD49B",
                 }}>무</Text></Text>
                 <Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#212429",
                   marginLeft: '5%'
                 }}>나는 '무드메모'의 요정,</Text>
                 <Text style={{
-                  fontSize: 32,
+                  fontSize: 34,
                   fontWeight:'bold',
                   color:"#72D193",
                   marginLeft: '5%'
@@ -398,7 +398,7 @@ const AnimatedViewBirthday = () => {
                 bottom:'8%'
               }}>
                 <Text style={{
-                  fontSize: 18,
+                  fontSize: 20,
                   color:"#212429",
                   marginLeft: '5%'
                 }}>이제부터 나를 따라와라무!</Text>
@@ -440,15 +440,15 @@ const AnimatedViewBirthday = () => {
                 bottom:'6%'
               }}>
                 <Text style={{
-                    fontSize: 24,
+                    fontSize: 26,
                     color:"#212429",
                     marginLeft: '5%'
                   }}>생일을 입력해달라<Text style={{
-                    fontSize: 24,
+                    fontSize: 26,
                     color:"#FCD49B",
                   }}>무</Text></Text>
                 <TouchableOpacity onPress={() => {setIsDatePickerVisible(!isDatePickerVisible)}}>
-                  <Text style={{fontSize:25, marginLeft: '5%', paddingTop:20, color: '#E2E2E2'}}>{showingBirthday}</Text>
+                  <Text style={{fontSize:27, marginLeft: '5%', paddingTop:20, color: '#E2E2E2'}}>{showingBirthday}</Text>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#000000",width:'50%',marginLeft:'5%'}}/>
               </View>
@@ -532,11 +532,11 @@ const AnimatedViewBirthday = () => {
                 bottom:'6%'
               }}>
                 <Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#212429",
                   marginLeft: '5%'
                 }}>직업을 알려달라<Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#FCD49B",
                 }}>무</Text></Text>
               </View>
@@ -587,11 +587,11 @@ const AnimatedViewBirthday = () => {
                 bottom:'6%'
               }}>
                 <Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#212429",
                   marginLeft: '5%'
                 }}>무가 불러줄 이름을 말해달라<Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#FCD49B",
                 }}>무</Text></Text>
               </View>
@@ -673,7 +673,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 20,
+    fontSize: 22,
   },
   warning: {
     position: 'absolute',

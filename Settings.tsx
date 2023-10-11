@@ -167,7 +167,7 @@ const Settings = () => {
                       paddingBottom: 5,
                       paddingTop: 20,
                   }}>
-                  <Text>프로필</Text>
+                  <Text style={{fontSize:16,color:'#999999'}}>프로필</Text>
                 </View>
                 <ChangeProfile/>
                 {/* <TouchableOpacity onPress={() => {
@@ -218,7 +218,7 @@ const Settings = () => {
                       paddingBottom: 5,
                       paddingTop: 20,
                   }}>
-                  <Text>앱 설정</Text>
+                  <Text style={{fontSize:16,color:'#999999'}}>앱 설정</Text>
                 </View>
                 <TouchableOpacity disabled={true}>
                     <View
@@ -229,7 +229,7 @@ const Settings = () => {
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }}>
-                        <Text style={{fontSize: 17, color:"#495057"}}>알림</Text>
+                        <Text style={{fontSize: 19, color:"#495057"}}>알림</Text>
                         <SwitchToggle
                           switchOn={isNotificationEnabled}
                           onPress={async () => {
@@ -429,8 +429,8 @@ const Settings = () => {
                             <View style={{
                                 alignItems:'center',
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057"}}>알림을 받으시려면 기기 설정에서</Text>
-                                    <Text style={{fontSize: 17, color:"#495057"}}>알림 권한을 허용해주세요!</Text>
+                                    <Text style={{fontSize: 19, color:"#495057"}}>알림을 받으시려면 기기 설정에서</Text>
+                                    <Text style={{fontSize: 19, color:"#495057"}}>알림 권한을 허용해주세요!</Text>
                             </View>
                         </View>
                     </Modal>
@@ -450,7 +450,7 @@ const Settings = () => {
                             flexDirection: 'row',
                             justifyContent: 'space-between'
                         }}>
-                        <Text style={{fontSize: 17, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림 목록</Text>
+                        <Text style={{fontSize: 19, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림 목록</Text>
                     </View>
                     <Modal isVisible={isNotificationListModalVisible}
                     animationIn={"fadeIn"}
@@ -481,7 +481,7 @@ const Settings = () => {
                                 flexDirection: 'row',
                                 justifyContent: 'space-between'
                                 }}>
-                                    <Text style={{fontSize: 17}}>알림 목록</Text>
+                                    <Text style={{fontSize: 19}}>알림 목록</Text>
                             </View>
                             <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
                             <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
@@ -511,7 +511,7 @@ const Settings = () => {
                       paddingBottom: 5,
                       paddingTop: 20,
                   }}>
-                  <Text>무드메모</Text>
+                  <Text style={{fontSize:16,color:'#999999'}}>무드메모</Text>
                 </View>
                 <TouchableOpacity disabled={true}>
                       <View
@@ -522,8 +522,8 @@ const Settings = () => {
                               flexDirection: 'row',
                               justifyContent: 'space-between'
                           }}>
-                          <Text style={{fontSize: 17, color:"#495057"}}>버전</Text>
-                          <Text style={{fontSize: 17, color:"#DBDBDB"}}>ver {VersionCheck.getCurrentVersion()}</Text>
+                          <Text style={{fontSize: 19, color:"#495057"}}>버전</Text>
+                          <Text style={{fontSize: 19, color:"#DBDBDB"}}>ver {VersionCheck.getCurrentVersion()}</Text>
                       </View>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
@@ -582,7 +582,7 @@ const Settings = () => {
                             paddingBottom: 20,
                             paddingTop: 20,
                         }}>
-                        <Text style={{fontSize: 17, color:"#495057"}}>고객센터/의견 보내기/오류 제보</Text>
+                        <Text style={{fontSize: 19, color:"#495057"}}>고객센터/의견 보내기/오류 제보</Text>
                     </View>
                     <Modal isVisible={isReportModalVisible}
                     animationIn={"fadeIn"}
@@ -600,7 +600,7 @@ const Settings = () => {
                     }}>
                         <View style={{
                             backgroundColor:"#FFFAF4",
-                            width:300,
+                            width:330,
                             height:300,
                             // justifyContent:'center',
                             alignItems:'center',
@@ -612,13 +612,13 @@ const Settings = () => {
                                 paddingHorizontal: 20,
                                 justifyContent: 'space-between', // 상하로 딱 붙이기
                                 }}>
-                                    <Text style={{fontSize: 14, color:"#495057", paddingVertical: 10,}}>오류/의견은 언제나 환영이라무! 🥬</Text>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingVertical: 10,marginTop:10,marginBottom:10}}>오류/의견은 언제나 환영이라무! 🥬</Text>
                                     {/* <Text style={{fontSize: 14, color:"#495057"}}>무가 귀기울여 듣겠다무!</Text> */}
                                     <View style={{ flexDirection: 'row', flex: 1,}}>
                                         <View style={styles.memoContent}>
                                             <TextInput
-                                                style={{ fontSize: 12, color:"#000000",}}
-                                                placeholder="운영진에게 메세지 남기기"
+                                                style={{ fontSize: 14, color:"#000000",}}
+                                                placeholder="운영진에게 메시지 남기기"
                                                 multiline={true}
                                                 // maxLength={500}
                                                 onChangeText={handleMemoChange}
@@ -629,7 +629,7 @@ const Settings = () => {
                                     </View>
                                     <View style={{ flexDirection: 'row', paddingVertical: 13,}}>
                                         <TouchableOpacity style={styles.confirmBtn} onPress={() => {sentryUserFeedback();}}>
-                                            <Text style={{ color: '#ffffff', fontSize: 14, fontWeight: '600',}}>확인</Text>
+                                            <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                                         </TouchableOpacity>
                                         </View>
                                     </View>
@@ -649,7 +649,7 @@ const Settings = () => {
                             paddingBottom: 20,
                             paddingTop: 20,
                         }}>
-                        <Text style={{fontSize: 17, color:"#495057"}}>개발자에게 커피 사주기</Text>
+                        <Text style={{fontSize: 19, color:"#495057"}}>개발자에게 커피 사주기</Text>
                     </View>
                     <Modal isVisible={isCoffeeModalVisible}
                     animationIn={"fadeIn"}
@@ -677,9 +677,9 @@ const Settings = () => {
                                 justifyContent:'center',
                                 alignItems:'center',
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>카카오뱅크 이O하</Text>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>3333-27-9623079</Text>
-                                    <Text style={{fontSize: 17, color:"#495057", }}>감사합니다!</Text>
+                                    <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>카카오뱅크 이O하</Text>
+                                    <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>3333-27-9623079</Text>
+                                    <Text style={{fontSize: 19, color:"#495057", }}>감사합니다!</Text>
                             </View>
                         </View>
                     </Modal>
@@ -697,7 +697,7 @@ const Settings = () => {
                             paddingBottom: 20,
                             paddingTop: 20,
                         }}>
-                        <Text style={{fontSize: 17, color:"#495057"}}>모든 데이터 초기화하기</Text>
+                        <Text style={{fontSize: 19, color:"#495057"}}>모든 데이터 초기화하기</Text>
                     </View>
                     <Modal isVisible={isClearDataModalVisible}
                     animationIn={"fadeIn"}
@@ -726,11 +726,11 @@ const Settings = () => {
                                 alignItems:'center',
                                 marginTop:20,
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>작성한 일기, 스탬프를 포함한</Text>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>모든 데이터를 초기화합니다.</Text>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>초기화한 모든 데이터는</Text>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>다시 복구할 수 없습니다.</Text>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingBottom: 10,}}>초기화하시겠습니까?</Text>
+                                    <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>작성한 일기, 스탬프를 포함한</Text>
+                                    <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>모든 데이터를 초기화합니다.</Text>
+                                    <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>초기화한 모든 데이터는</Text>
+                                    <Text style={{fontSize: 19, color:"#DD0000", paddingBottom: 10,}}>다시 복구할 수 없습니다.</Text>
+                                    <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>초기화하시겠습니까?</Text>
                             </View>
                             <View style={{
                                 paddingHorizontal: "5%",
@@ -743,7 +743,7 @@ const Settings = () => {
                                     setIsClearDataModalVisible(!isClearDataModalVisible);
                                     }}
                                     style={styles.cancelBtn}>
-                                    <Text style={{fontSize: 17}}>취소</Text>
+                                    <Text style={{fontSize: 19}}>취소</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={async ()=>{
                                     amplitude.confirmResetBtn(); //데이터 초기화함
@@ -754,7 +754,7 @@ const Settings = () => {
                                     RNRestart.restart();
                                 }}
                                 style={styles.clearBtn}>
-                                    <Text style={{fontSize: 17}}>초기화</Text>
+                                    <Text style={{fontSize: 19}}>초기화</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -832,7 +832,7 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'center',
         color: '#344054', 
-        padding: 10,
+        padding: 7,
         marginBottom: 16,
         backgroundColor: 'white', 
         borderColor: '#72D193',
@@ -846,7 +846,7 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'center',
         color: '#FF0000', 
-        padding: 10,
+        padding: 7,
         marginBottom: 16,
         backgroundColor: 'white', 
         borderColor: '#FF0000',

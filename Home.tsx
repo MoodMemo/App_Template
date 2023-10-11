@@ -96,12 +96,12 @@ const Home = ({name}:any) => {
                 position:'relative'
               }}>
                 <Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#212429",
                   marginLeft: '5%'
                 }}>지금의 감정은 어떠냐무~?</Text>
                 <Text style={{
-                  fontSize: 24,
+                  fontSize: 26,
                   color:"#212429",
                   marginLeft: '5%'
                 }}>감정을 남겨보지 않겠냐무?</Text>
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
       // 폰트 크기 16px
       width: '100%',
       height: '100%',
-      fontSize: 18,
+      fontSize: 20,
       marginTop: 28,
       marginLeft: 28,
       marginRight: 200,
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
       alignItems: 'center', // 옵션들을 세로로 가운데 정렬
       marginTop: 32,
       marginHorizontal: 28,
+      marginBottom:12
     },
     fixButton: {
       width: 20,
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
       color: '#FFFFFF',
-      fontSize: 16,
+      fontSize: 18,
       fontWeight: 'bold'
     },
   });

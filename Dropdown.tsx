@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     color: 'rgba(0, 0, 0, 0.5)',
     fontFamily: 'Pretendard',
     fontWeight: '400',
-    fontSize: 12,
+    fontSize: 14,
     fontStyle: 'normal',
     textAlignVertical: 'center',
   },

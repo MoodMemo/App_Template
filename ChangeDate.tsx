@@ -68,7 +68,7 @@ const ChangeDate = () => {
                     <View style={{
                         paddingBottom: 20,
                         }}>
-                            <Text style={{fontSize: 17, color:"#495057"}}>생일 입력</Text>
+                            <Text style={{fontSize: 19, color:"#495057"}}>생일 입력</Text>
                     </View>
                     <View style={{
                         paddingBottom: 20,
@@ -85,7 +85,7 @@ const ChangeDate = () => {
                         await AsyncStorage.setItem('@UserInfo:birthShow', formatDate(birthday));
                         setIsDatePickerVisible(!isDatePickerVisible);
                     }}>
-                        <Text style={{paddingBottom: 20, fontSize: 17,}}>저장</Text>
+                        <Text style={{paddingBottom: 20, fontSize: 19,}}>저장</Text>
                     </TouchableOpacity>  
                 </View>     
             </Modal>

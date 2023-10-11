@@ -89,7 +89,7 @@ const NotificationViewSave = ({id,time,timeChangedProp,checkTimeChanged,isModalV
                 //console.log(changedDate);
                 //console.log(repository.getAllNotifications());
                 }}>
-                <Text style={{fontSize: 17}}>저장</Text>
+                <Text style={{fontSize: 19}}>저장</Text>
             </TouchableOpacity>
             <Modal isVisible={isModalNoticeVisible}
                 animationIn={"fadeIn"}
@@ -113,8 +113,8 @@ const NotificationViewSave = ({id,time,timeChangedProp,checkTimeChanged,isModalV
                         alignItems:'center',
                         borderRadius:10
                         }}>
-                        <Text style={{fontSize: 17}}>이미 해당 시간에</Text>
-                        <Text style={{fontSize: 17}}>알림이 있어요!</Text>
+                        <Text style={{fontSize: 19}}>이미 해당 시간에</Text>
+                        <Text style={{fontSize: 19}}>알림이 있어요!</Text>
                     </View>
             </Modal>
         </View>
