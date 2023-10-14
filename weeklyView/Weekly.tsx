@@ -309,7 +309,7 @@ const Weekly = () => {
       else return <ReadyToGenerateDiary/>; // 스탬프가 2개 이상일 때 // 일기 만들 준비 됐다무 ! // 할차례
     }
     else if (today.isBefore(dayjs(), 'day')) {
-      if (stampCnt === 2) return <ReadyToGenerateDiary_forPast/>; // 스탬프가 2개일 때
+      if (stampCnt >= 2) return <ReadyToGenerateDiary_forPast/>; // 스탬프가 2개일 때
       else {
         amplitude.clickPast_noDiary();
         return <nodata.MooWasBoredView/>; // past
