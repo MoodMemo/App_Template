@@ -352,9 +352,10 @@ amplitude.beginSession();},[]);
     repository.updatePushedStampCount(); // db 4->5 migration
     console.log("isRegistered: " + isRegistered);
     return (
-      <SafeAreaView style={styles.container}>
-        <Main/>
-      </SafeAreaView>
+      // <SafeAreaView style={styles.container}>
+      //   <Main/>
+      // </SafeAreaView>
+      <Main/>
     );
   }
   else
@@ -387,6 +388,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    // backgroundColor:'#FFFAF4'
   },
 });
 

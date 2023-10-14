@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef} from 'react';
-import { View, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar, Platform } from 'react-native';
+import { View, StyleSheet, Touchable, TouchableOpacity, SafeAreaView, Image, Modal, StatusBar, Platform } from 'react-native';
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
