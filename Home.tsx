@@ -75,7 +75,7 @@ const Home = ({name}:any) => {
       {/* 드롭다운 컴포넌트 */}
       <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
     </View>
-    <Image source={require('./assets/image16.png')} style={styles.mooImage}/>
+    <Image source={require('./assets/colorMooMedium.png')} style={styles.mooImage}/>
     <View style={styles.options}>
       <Dropdown options={options} onSelectOption={handleOptionSelect} />
       <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
@@ -146,13 +146,15 @@ const styles = StyleSheet.create({
     },
     mooImage: {
       // 이미지 원본 크기
-      width: 100,
-      height: 100,
+      // width: 100,
+      // height: 100,
+      width: 80,
+      height: 393*79/363 ,
       position: 'absolute',
-      top: 49.3,
-      right: 28,
+      top: 55,
+      right: 35,
       // 회전
-      transform: [{ rotate: '11.9deg' }],
+      transform: [{ rotate: '25deg' }],
     },
     options: {
       flexDirection: 'row', // 옵션들을 가로로 배치
