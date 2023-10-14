@@ -253,11 +253,11 @@ const Statistics = () => {
           </View>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록 일자</Text>
-            <Text style={{fontSize:22,color:'#212429'}}>{countLoggedDates}개</Text>
+            <Text style={{fontSize:22,color:'#212429'}}>{countLoggedDates}일</Text>
           </View>
           <View style={{alignItems:'center',marginRight:5}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>연속 기록 일자</Text>
-            <Text style={{fontSize:22,color:'#212429'}}>{countConsecutedLoggedDates}개</Text>
+            <Text style={{fontSize:22,color:'#212429'}}>{countConsecutedLoggedDates}일</Text>
           </View>
         </View>
         <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
