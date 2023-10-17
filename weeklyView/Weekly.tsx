@@ -95,6 +95,7 @@ const Weekly = () => {
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
   const [tryToChangeToday, setTryToChangeToday] = useState<dayjs.Dayjs>(today);
   const handleTodayChange = (date: dayjs.Dayjs) => { 
+    setIsTryingSelf(false);
     if (isEditMode) {
       setTryToChangeToday(date);
       amplitude.click2move2AnotherDayWhileEditingDiary(date.format('YYYY-MM-DD'));
@@ -198,6 +199,19 @@ const Weekly = () => {
           // todo - 에러 처리 해야함
       }});
   };
+  const handleCreateDiaryMyself = () => {
+    realm.write(() => {
+      repository.createDailyReport({
+        // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
+        date: today.format('YYYY-MM-DD'), // todo - ai 서버 로직 변경하면 이거로 수정해야함 
+        title: '제목',
+        bodytext: '오늘의 일기\n\n\n',
+        keyword: [],
+      });
+      setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
+    });
+  }
+
   const cancelRequest = () => {
     setIsCanceled(true);
     cancelTokenSource.cancel('Request canceled by the user');
@@ -208,12 +222,18 @@ const Weekly = () => {
   //     setEditedBodytext(todayReport.bodytext);
   //   }
   // }, [todayReport]);
+  const [isTryingSelf, setIsTryingSelf] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
   const [tmpEditedTitle, setTmpEditedTitle] = useState(editedTitle);
   const [editedBodytext, setEditedBodytext] = useState(todayReport ? todayReport.bodytext : '');
   const [tmpEditedBodyText, setTmpEditedBodyText] = useState(editedBodytext);
   const handleEditButton = () => { 
+    setIsEditMode(true);
+    setEditedTitle(todayReport ? todayReport.title : '');
+    setEditedBodytext(todayReport ? todayReport.bodytext : '');
+  };
+  const handleDeleteButton = () => { 
     setIsEditMode(true);
     setEditedTitle(todayReport ? todayReport.title : '');
     setEditedBodytext(todayReport ? todayReport.bodytext : '');
@@ -256,16 +276,42 @@ const Weekly = () => {
     return (
       <View style={{flex: 1, alignItems: 'center', }}>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+
+          {!isTryingSelf ? (
+          <View>
+            <View style={bubbleStyles.container}>
+              <Text style={{fontSize: 16, color: '#fff', }}>일기를 만들 준비가 됐다무!</Text>
+            </View>
+            <View style={bubbleStyles.tail}></View>
+            </View>):(
+              <View>
+                <View style={[bubbleStyles.container, {backgroundColor: '#FFCC4D'}]}>
+                  <Text style={{fontSize: 16, color: '#fff', }}>Moo가 만들 수 있는데무 ...!</Text>
+                </View>
+                <View style={[bubbleStyles.tail, {backgroundColor: '#FFCC4D'}]}></View>
+              </View>
+          )}
+
           <Image 
             source={require('../assets/colorMooMedium.png')}
-            style={{ width: 104, height: (110 * 104) / 104 , marginBottom: 16}} // 비율을 유지하며 height 자동 조절
+            style={{ width: 104, height: (110 * 104) / 104 , marginTop: 20, marginBottom: 30}} // 비율을 유지하며 height 자동 조절
           />
-          <Text style={{fontSize: 14, color: '#495057', }}>일기를 만들 준비가 됐다무!!</Text>
-  
-          <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn, {width: 200}]} 
+          
+          {!isTryingSelf ? (
+            <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10}]} 
+              onPress={() => {setIsTryingSelf(true); amplitude.try_createDiaryMyself();}} >
+              <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>내가 직접 쓸래</Text>
+            </TouchableOpacity> ) : (
+            <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10, borderColor:'#FFCC4D'}]} 
+              onPress={() => {setIsTryingSelf(true); handleCreateDiaryMyself(); amplitude.createDiaryMyself(today.format('YYYY-MM-DD'));}} >
+              <Text style={{fontSize: 14, color: '#FFCC4D', fontWeight: '600', }}>그래도 내가 쓸래</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={[bubbleStyles.reply, {width: 160}]} 
             onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}} >
-            <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>무에게 일기 작성 요청하기</Text>
+            <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>무가 만들어줘!</Text>
           </TouchableOpacity>
+
         </View>
   
       </View>
@@ -275,15 +321,40 @@ const Weekly = () => {
     return (
       <View style={{flex: 1, alignItems: 'center', }}>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', }}>
+          
+          {!isTryingSelf ? (
+            <View>
+              <View style={bubbleStyles.container}>
+                <Text style={{fontSize: 16, color: '#fff', }}>일기를 만들 준비가 됐다무!</Text>
+              </View>
+              <View style={bubbleStyles.tail}></View>
+            </View>):(
+              <View>
+                <View style={[bubbleStyles.container, {backgroundColor: '#FFCC4D'}]}>
+                  <Text style={{fontSize: 16, color: '#fff', }}>Moo가 만들 수 있는데무 ...!</Text>
+                </View>
+                <View style={[bubbleStyles.tail, {backgroundColor: '#FFCC4D'}]}></View>
+              </View>
+          )}
+
           <Image 
             source={require('../assets/colorMooMedium.png')}
-            style={{ width: 104, height: (110 * 104) / 104 , marginBottom: 16}} // 비율을 유지하며 height 자동 조절
+            style={{ width: 104, height: (110 * 104) / 104 , marginTop: 20, marginBottom: 30}} // 비율을 유지하며 height 자동 조절
           />
-          <Text style={{fontSize: 14, color: '#495057', }}>일기를 만들 준비가 됐다무!!</Text>
-  
-          <TouchableOpacity style={[typeChangeBtnStyles.nudgingBtn, {width: 200}]}
+
+          {!isTryingSelf ? (
+            <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10}]} 
+              onPress={() => {setIsTryingSelf(true); amplitude.try_createDiaryMyself_forPast();}} >
+              <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>내가 직접 쓸래</Text>
+            </TouchableOpacity> ) : (
+            <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10, borderColor:'#FFCC4D'}]} 
+              onPress={() => {setIsTryingSelf(true); handleCreateDiaryMyself(); amplitude.createDiaryMyself_forPast(today.format('YYYY-MM-DD'));}} >
+              <Text style={{fontSize: 14, color: '#FFCC4D', fontWeight: '600', }}>그래도 내가 쓸래</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={[bubbleStyles.reply, {width: 160, }]} 
             onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can_forPast(today.format('YYYY-MM-DD'));}} >
-            <Text style={{fontSize: 14, color: '#ffffff', fontWeight: '600'}}>무에게 일기 작성 요청하기</Text>
+            <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>무가 만들어줘!</Text>
           </TouchableOpacity>
         </View>
   
@@ -331,6 +402,7 @@ const Weekly = () => {
   };
   const [dropdownButtonVisible, setDropdownButtonVisible] = useState(false);
   const [stampClickModalVisible, setStampClickModalVisible] = useState(false);
+  const [deleteDiaryModalVisible, setDeleteDiaryModalVisible] = useState(false);
   const closeStampClickModal = () => {
     setStampClickModalVisible(false);
   };
@@ -352,11 +424,21 @@ const Weekly = () => {
     setDropdownButtonVisible(false);
     setStampClickModalVisible(true);
   }
-  const handleDeleteButton = () => {
-    amplitude.clickDeleteButton();
-    setDropdownButtonVisible(false);
-    setIsDeletingStampModalVisible(true);
-    setToday(today);
+  const handleDeleteDiaryButton = () => {
+    amplitude.clickDeleteDiaryButton();
+    setDeleteDiaryModalVisible(true);
+  }
+  const handleDeleteDiaryConfirm = () => {
+    amplitude.confirmDeleteDiaryButton();
+    realm.write(() => {
+      const reportToUpdate = realm.objects('DailyReport').filtered('date = $0', todayReport.date)[0];
+      if (reportToUpdate) {
+        reportToUpdate.title = '제목';
+        reportToUpdate.bodytext = '오늘의 일기\n\n\n';
+        reportToUpdate.keyword = [];
+        reportToUpdate.updatedAt = new Date();
+      }
+    });
   }
   const handleDeleteConfirm = (deleteStamp: repository.IPushedStamp) => {
     const today = dayjs(deleteStamp.dateTime);
@@ -540,7 +622,7 @@ const Weekly = () => {
             {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
               <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
             ) : (<View></View>)}
-            <Text style={typeChangeBtnStyles.deactiveFont}>AI 일기</Text>
+            <Text style={typeChangeBtnStyles.deactiveFont}>일기</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -549,7 +631,7 @@ const Weekly = () => {
             <Text style={typeChangeBtnStyles.deactiveFont}>스탬프 기록</Text>
           </TouchableOpacity>
           <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickDiarySwitchInDiaryView()}}>
-            <Text style={typeChangeBtnStyles.activeFont}>AI 일기</Text>
+            <Text style={typeChangeBtnStyles.activeFont}>일기</Text>
             {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
               <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
             ) : (<View></View>)}
@@ -654,14 +736,22 @@ const Weekly = () => {
           <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }}>
             <View>
               <View style={[styles.title, {marginTop: 20,}]}>
-              <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429'}}>다이어리</Text>
+              <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429', }}>다이어리</Text>
                 {!isEditMode ? (
+                  <View style={{flexDirection: 'row', gap: 10}}>
                   <TouchableOpacity onPress={ () => {handleEditButton(); amplitude.editAIDiary(today.format('YYYY-MM-DD'));}}>
                     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
                       <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
-                      <Text style={{fontSize: 12, color: '#495057'}}> 직접 수정</Text>
+                      <Text style={{fontSize: 12, color: '#495057'}}> 수정</Text>
                     </View>
                   </TouchableOpacity>
+                  <TouchableOpacity onPress={ () => {handleDeleteDiaryButton();}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                    <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
+                    <Text style={{fontSize: 12, color: '#495057'}}> 삭제</Text>
+                  </View>
+                </TouchableOpacity>
+                </View>
                 ) : (
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <TouchableOpacity onPress={() => {setIsWarningModalVisible(true); amplitude.cancelToEditDiary();}}>
@@ -928,12 +1018,86 @@ const Weekly = () => {
                     
         </View>
       </Modal>
+      {/* 4-6. AI 일기 삭제 경고 모달 */}
+      <Modal isVisible={deleteDiaryModalVisible}
+        animationIn={"fadeIn"} animationOut={"fadeOut"}
+        backdropColor='#CCCCCC' backdropOpacity={0.9}
+        style={{ alignItems:'center' }}
+        backdropTransitionInTiming={0} // Disable default backdrop animation
+        backdropTransitionOutTiming={0} // Disable default backdrop animation
+      >
+        <View style={TimelineDiaryStyles.finishLodingModal}>
+          {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+          <Image 
+            source={require('../assets/colorMooMini.png')}
+            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+          <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>일기를 삭제하겠냐</Text>
+            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
+          </View>
+          <View style={{alignItems: 'center',}}>
+            <Text style={{ color: '#475467', fontSize: 14, }}>다시 볼 수 없다무..!</Text>
+          </View>
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
+              <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setDeleteDiaryModalVisible(false); amplitude.cancelToDeleteDiary();}}>
+                <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteDiaryConfirm(); setDeleteDiaryModalVisible(false);}}>
+                <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+                    
+        </View>
+      </Modal>
       
     </View>
     
   );
 };
 
+const bubbleStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#72D193',
+    padding: 10,
+    // maxWidth: 200,
+    width: 220,
+    alignSelf: 'flex-start', // 좌측 정렬로 변경
+    alignItems: 'center',
+    borderRadius: 10,
+    // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
+    position: 'relative',
+    overflow: 'hidden', // 클리핑 적용
+  },
+  tail: {
+    position: 'absolute',
+    width: 20, // 꼬리의 길이
+    height: 20, // 꼬리의 높이
+    left: 10, // 꼬리 위치
+    bottom: -5, // 꼬리 위치
+    backgroundColor: '#72D193',
+    transform: [{ rotate: '45deg' }],
+    borderTopLeftRadius: 10, // 둥글게 만들기
+    // borderBottomLeftRadius: 10,
+    // borderTopRightRadius: 10
+  },
+  reply: {
+    backgroundColor: '#fff',
+    padding: 7,
+    // maxWidth: 200,
+    width: 200,
+    alignSelf: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
+    position: 'relative',
+    borderColor: '#72D193',
+    borderWidth: 1,
+    overflow: 'hidden', // 클리핑 적용
+  },
+});
 
 const dropDownStyles = StyleSheet.create({
   dropdownContainer: {
