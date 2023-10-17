@@ -8,7 +8,6 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import TrashCan from 'react-native-vector-icons/MaterialCommunityIcons';
 import * as repository from '../src/localDB/document';
 import realm from '../src/localDB/document';
 import * as amplitude from '../AmplitudeAPI';
@@ -748,7 +747,7 @@ const Weekly = () => {
                   </TouchableOpacity>
                   <TouchableOpacity onPress={ () => {handleDeleteDiaryButton();}}>
                   <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                    <TrashCan name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
+                    <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
                     <Text style={{fontSize: 12, color: '#495057'}}> 삭제</Text>
                   </View>
                 </TouchableOpacity>
