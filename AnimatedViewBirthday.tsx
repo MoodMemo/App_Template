@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dimensions, Image, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet} from 'react-native';
+import { SafeAreaView, StatusBar, Dimensions, Image, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet} from 'react-native';
 import realm from './src/localDB/document';
 import * as repository from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -291,20 +291,20 @@ const AnimatedViewBirthday = () => {
       }
     }
     else if (section === 'birthday') {
-      if(showingBirthday==='NNNN/NN/NN' && Platform.OS==='android'){
-        setIsWarningVisible(true);
-      }
-      else{
-        setIsWarningVisible(false);
+      // if(showingBirthday==='NNNN/NN/NN' && Platform.OS==='android'){
+      //   setIsWarningVisible(true);
+      // }
+      // else{
+        // setIsWarningVisible(false);
         console.log('Selected birthday:', birthday);
         setSection('job');
-      }
+      // }
     }
     else {
-      if(job==='' && Platform.OS==='android'){
-        setIsWarningVisible(true);
-      }
-      else {
+      // if(job==='' && Platform.OS==='android'){
+      //   setIsWarningVisible(true);
+      // }
+      // else {
         if (Platform.OS === 'android') {
           if(Platform.Version<33){
             AsyncStorage.setItem('@UserInfo:notificationAllow','true');
@@ -356,13 +356,18 @@ const AnimatedViewBirthday = () => {
           });
         }
         console.log('Selected job:', job);
-      }
+      // }
     };
   }
 
   return (
     <>
         {section === 'start' ? (
+          <SafeAreaView style={styles.container}>
+            <StatusBar
+              backgroundColor="#FFFFFF"
+              barStyle='dark-content'
+            />
           <View style={styles.view}>
             <View style={{justifyContent: 'center',
             flex:1}}>
@@ -403,7 +408,7 @@ const AnimatedViewBirthday = () => {
                   marginLeft: '5%'
                 }}>이제부터 나를 따라와라무!</Text>
               </View>
-              <TouchableOpacity style={styles.button} onPress={()=>{
+              <TouchableOpacity style={styles.nameButton} onPress={()=>{
                 handleNext();
                 amplitude.userRegiStart();
               }}>
@@ -411,7 +416,13 @@ const AnimatedViewBirthday = () => {
               </TouchableOpacity>
             </View>
           </View>
+          </SafeAreaView>
         ) : (section === 'birthday' ? (
+          <SafeAreaView style={styles.container}>
+            <StatusBar
+              backgroundColor="#FFFFFF"
+              barStyle='dark-content'
+            />
           <View style={styles.view}>
             <Divider style={{
                 position: 'absolute',
@@ -501,19 +512,38 @@ const AnimatedViewBirthday = () => {
                       </TouchableOpacity>  
                   </View>     
               </Modal>
-              {isWarningVisible &&
+              {/* {isWarningVisible &&
               <View style={styles.warning}>
                 <Text style={{color: '#FF7168', fontSize: 16,}}>입력은 필수다무!</Text>
-              </View>}
-              <TouchableOpacity style={styles.button} onPress={()=>{
-                handleNext();
-                amplitude.userRegiBirthday(birthday.toDateString());
+              </View>} */}
+              <View style={{flexDirection:'row',
+              alignContent:'space-between',
+              marginHorizontal:'3%',
+              position:'absolute',
+              bottom: '3%',
               }}>
-                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={styles.skipButton} onPress={()=>{
+                  handleNext();
+                  amplitude.test1();//생일 입력 스킵
+                }}>
+                  <Text style={styles.buttonText}>건너뛰기</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={()=>{
+                  handleNext();
+                  amplitude.userRegiBirthday(birthday.toDateString());
+                }}>
+                    <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
+          </SafeAreaView>
         ) : (section === 'job' ? (
+          <SafeAreaView style={styles.container}>
+            <StatusBar
+              backgroundColor="#FFFFFF"
+              barStyle='dark-content'
+            />
           <View style={styles.view}>
             <Divider style={{
                 position: 'absolute',
@@ -546,19 +576,38 @@ const AnimatedViewBirthday = () => {
                 placeholderTextColor='#DBDBDB'
                 onChangeText={(text) => setJob(text)}
               />
-              {isWarningVisible && 
+              {/* {isWarningVisible && 
               <View style={styles.warning}>
                 <Text style={{color: '#FF7168', fontSize: 16, }}>입력은 필수다무!</Text>
-              </View>}
-              <TouchableOpacity style={styles.button} onPress={()=>{
-                handleNext();
-                amplitude.userRegiJob_Fin(job);
+              </View>} */}
+              <View style={{flexDirection:'row',
+              alignContent:'space-between',
+              marginHorizontal:'3%',
+              position:'absolute',
+              bottom: '3%',
               }}>
-                  <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={styles.skipButton} onPress={()=>{
+                  handleNext();
+                  amplitude.test1();//직업 입력 스킵
+                }}>
+                  <Text style={styles.buttonText}>건너뛰기</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={()=>{
+                  handleNext();
+                  amplitude.userRegiJob_Fin(job);
+                }}>
+                    <Text style={styles.buttonText}>{(section === 'name') || (section === 'birthday') || (section === 'start') ? '다음' : '완료'}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
+          </SafeAreaView>
         ) : (section === 'name' ? (
+          <SafeAreaView style={styles.container}>
+            <StatusBar
+              backgroundColor="#FFFFFF"
+              barStyle='dark-content'
+            />
           <View style={styles.view}>
               <Divider style={{
                 position: 'absolute',
@@ -605,7 +654,7 @@ const AnimatedViewBirthday = () => {
               <View style={styles.warning}>
                 <Text style={{color: '#FF7168', fontSize: 16,}}>입력은 필수다무!</Text>
               </View>}
-              <TouchableOpacity style={styles.button} onPress={() => {
+              <TouchableOpacity style={styles.nameButton} onPress={() => {
                 handleNext();
                 amplitude.userRegiName(name);
               }}>
@@ -613,6 +662,7 @@ const AnimatedViewBirthday = () => {
               </TouchableOpacity>
             </View>
           </View>
+          </SafeAreaView>
         ) : (
           <Main username={name}/> // 새로운 정보가 추가되면 이 부분 수정해주시고, Main.tsx도 수정해주세요! (주석처리된 부분)
         ))))}
@@ -633,6 +683,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: '#ffffff',
   },
   view: {
     position: 'relative',
@@ -661,6 +712,25 @@ const styles = StyleSheet.create({
     marginHorizontal:16
   },
   button: {
+    position: 'relative',
+    width: '67%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#72D193',
+    borderRadius: 7,
+  },
+  skipButton: {
+    position: 'relative',
+    width: '30%',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#CCCCCC',
+    borderRadius: 7,
+    marginRight:'3%'
+  },
+  nameButton: {
     position: 'absolute',
     bottom: '3%',
     width: '90%',

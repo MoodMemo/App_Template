@@ -17,11 +17,7 @@ const Home = ({name}:any) => {
   const [fixModalVisible, setFixModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
   const [isFirstStamp,setIsFirstStamp]=useState(false);
-  const [firstButtonX, setFirstButtonX] = useState(0);
-  const [firstButtonY, setFirstButtonY] = useState(0);
-  const [firstWidth, setFirstWidth] = useState(0);
-  const [firstHeight, setFirstHeight] = useState(0);
-  const [{top,right,bottom,left},setSafeAreaInsets]= useState(initialWindowMetrics?.insets);
+  
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정

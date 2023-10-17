@@ -361,9 +361,7 @@ amplitude.beginSession();},[]);
   else
   {
     return (
-      <SafeAreaView style={styles.container}>
-        <AnimatedViewBirthday/>
-      </SafeAreaView>
+      <AnimatedViewBirthday/>
     );
   }
 }
