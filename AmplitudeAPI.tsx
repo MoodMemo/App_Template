@@ -492,6 +492,54 @@ export function clickDeleteButton() {
     view: 'weekly',
     action: 'click',});
 }
+export function clickDeleteDiaryButton() {
+  amplitude.track('weekly: click, delete diary button',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function cancelToDeleteDiary() {
+  amplitude.track('weekly: cancel, delete diary',
+  {
+    view: 'weekly',
+    action: 'cancel',
+    secondView: 'delete diary modal',});
+}
+export function confirmDeleteDiaryButton() {
+  amplitude.track('weekly: confirm, delete diary',
+  {
+    view: 'weekly',
+    action: 'confirm',
+    secondView: 'delete diary modal',});
+}
+export function createDiaryMyself(today: String) {
+  amplitude.track('weekly: confirm, create diary myself',
+  {
+    view: 'weekly',
+    action: 'confirm',
+    today});
+}
+export function createDiaryMyself_forPast(today: String) {
+  amplitude.track('weekly: confirm, create diary myself',
+  {
+    view: 'weekly',
+    action: 'confirm',
+    today});
+}
+export function try_createDiaryMyself_forPast() {
+  amplitude.track('weekly: click, create diary myself',
+  {
+    view: 'weekly',
+    action: 'click',
+    });
+}
+export function try_createDiaryMyself() {
+  amplitude.track('weekly: click, create diary myself',
+  {
+    view: 'weekly',
+    action: 'click',
+    });
+}
 
 
 /* setting view */
