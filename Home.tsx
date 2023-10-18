@@ -3,6 +3,7 @@ import { View, StyleSheet, Touchable, TouchableOpacity, SafeAreaView, Image, Mod
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
+import StampOnBoarding from './StampOnBoarding';
 // import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -82,36 +83,7 @@ const Home = ({name}:any) => {
     <StampView/>
     {/* 스탬프 설정 모달 */}
     <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
-  </View>) : (<View style={{justifyContent: 'center',
-            flex:1,
-            backgroundColor:'#FFFAF4'}}>
-              <Image 
-                source={require('./assets/colorMooMedium.png')}
-                style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '6%', alignSelf:'center', overflow: 'hidden', transform:[{rotate:'11.91deg'}]}}></Image>
-              <View style={{
-                position:'relative'
-              }}>
-                <Text style={{
-                  fontSize: 26,
-                  color:"#212429",
-                  marginLeft: '5%'
-                }}>지금의 감정은 어떠냐무~?</Text>
-                <Text style={{
-                  fontSize: 26,
-                  color:"#212429",
-                  marginLeft: '5%'
-                }}>감정을 남겨보지 않겠냐무?</Text>
-              </View>
-              <TouchableOpacity style={styles.button} onPress={(async () => { 
-                // Do something before delay
-                await AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                setIsFirstStamp(false);
-                amplitude.userRegiFin_andStampGo() //스탬프 첫 입력 유도
-                }
-              )}>
-                  <Text style={styles.buttonText}>감정 스탬프 남기러 가기!</Text>
-              </TouchableOpacity>
-            </View>)}
+  </View>) : (<StampOnBoarding/>)}
   </>
   );
 }
@@ -165,18 +137,18 @@ const styles = StyleSheet.create({
       height: 20,
     },
     button: {
-      position: 'absolute',
       bottom: '18%',
-      width: '90%',
+      width: '30%',
       height: 60,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#72D193',
+      backgroundColor: 'white',
       borderRadius: 7,
-      marginHorizontal:'5%'
+      borderColor:'#72D193',
+      borderWidth: 1
     },
     buttonText: {
-      color: '#FFFFFF',
+      color: '#72D193',
       fontSize: 18,
       fontWeight: 'bold'
     },
