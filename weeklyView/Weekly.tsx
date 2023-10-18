@@ -186,7 +186,7 @@ const Weekly = () => {
             console.log("today.format('YYYY-MM-DD'): ", today.format('YYYY-MM-DD'));
             setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
           });
-          setIsLodingModalVisible(false);
+          // setIsLodingModalVisible(false);
           setIsLodingFinishModalVisible(true);
         }
       })
@@ -195,7 +195,7 @@ const Weekly = () => {
           console.log('Request canceled', error.message);
         } else {
           console.log('Error', error.message);
-          setIsLodingModalVisible(false);
+          // setIsLodingModalVisible(false);
           // todo - 에러 처리 해야함
       }});
   };
@@ -848,39 +848,66 @@ const Weekly = () => {
             backdropTransitionInTiming={0} // Disable default backdrop animation
             backdropTransitionOutTiming={0} // Disable default backdrop animation
           >
-            <View style={diaryStyles.lodingModal}>
+            {!isLodingFinishModalVisible ? (
+              <View style={diaryStyles.lodingModal}>
+                {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+                <Image 
+                  source={require('../assets/write_0904.png')}
+                  style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
+                <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                  <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중이다</Text>
+                  <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                  <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
+                </View>
+                <View style={{alignItems: 'center',}}>
+                  <Text style={{ color: '#475467', fontSize: 14, }}>AI 일기가 발행되고 있으니, 화면을 벗어나지 말라무.</Text>
+                  <Text style={{ color: '#475467', fontSize: 14, }}>발행 중 이탈 시, 발행이 취소된다무...</Text>
+                </View>
+                <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                  <View style={{ flexDirection: 'row', flex: 1,}}>
+                    <TouchableOpacity style={diaryStyles.cancelBtn} 
+                    onPress={() => {amplitude.waitingForAIDiary();}}
+                    // onPress={() => {
+                    //   cancelRequest();
+                    //   setIsLodingModalVisible(false);
+                    // }}
+                    >
+                      <Text style={{ color: '#72D193', fontSize: 14, fontWeight: '600',}}>조금만 기다려달라무 ...✏️💦</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>     
+              </View>
+
+            ):(
+            
+            <View style={diaryStyles.finishLodingModal}>
               {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
               <Image 
-                source={require('../assets/write_0904.png')}
-                style={{ width: 92, height: (105 * 92) / 92 , marginTop: 40,}}></Image>
+                source={require('../assets/finish_0904.png')}
+                style={{ width: 100, height: (80 * 100) / 100 , marginTop: 50,}}></Image>
               <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기 발행 중이다</Text>
+                <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기가 발행됐다</Text>
                 <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
                 <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
               </View>
               <View style={{alignItems: 'center',}}>
-                <Text style={{ color: '#475467', fontSize: 14, }}>AI 일기가 발행되고 있으니, 화면을 벗어나지 말라무.</Text>
-                <Text style={{ color: '#475467', fontSize: 14, }}>발행 중 이탈 시, 발행이 취소된다무...</Text>
+                <Text style={{ color: '#475467', fontSize: 14, }}>내가 멋지게 만든 일기를 확인해 봐라무!</Text>
               </View>
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.cancelBtn} 
-                  onPress={() => {amplitude.waitingForAIDiary();}}
-                  // onPress={() => {
-                  //   cancelRequest();
-                  //   setIsLodingModalVisible(false);
-                  // }}
-                  >
-                    <Text style={{ color: '#72D193', fontSize: 14, fontWeight: '600',}}>조금만 기다려달라무 ...✏️💦</Text>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingModalVisible(false); amplitude.backToWeeklyFromCanModal(today.format('YYYY-MM-DD'));}}>
+                    <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
               </View>
                         
             </View>
+            )}
       </Modal>
       {/* 4-2. 일기 생성 완료 모달 */}
       <Modal 
-        isVisible={isLodingFinishModalVisible}
+        // isVisible={isLodingFinishModalVisible}
+        isVisible={false}
         animationIn={"fadeIn"}
         animationOut={"fadeOut"}
         backdropColor='#CCCCCC' 
@@ -904,7 +931,7 @@ const Weekly = () => {
           </View>
           <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <View style={{ flexDirection: 'row', flex: 1,}}>
-              <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false); amplitude.backToWeeklyFromCanModal(today.format('YYYY-MM-DD'));}}>
+              <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingModalVisible(false); setIsLodingFinishModalVisible(false); amplitude.backToWeeklyFromCanModal(today.format('YYYY-MM-DD'));}}>
                 <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
               </TouchableOpacity>
             </View>
