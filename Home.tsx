@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef} from 'react';
-import { View, StyleSheet, Touchable, TouchableOpacity, Image, Modal, StatusBar, Platform } from 'react-native';
+import { View, StyleSheet, Touchable, TouchableOpacity, SafeAreaView, Image, Modal, StatusBar, Platform } from 'react-native';
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
+import StampOnBoarding from './StampOnBoarding';
 // import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,11 +18,7 @@ const Home = ({name}:any) => {
   const [fixModalVisible, setFixModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
   const [isFirstStamp,setIsFirstStamp]=useState(false);
-  const [firstButtonX, setFirstButtonX] = useState(0);
-  const [firstButtonY, setFirstButtonY] = useState(0);
-  const [firstWidth, setFirstWidth] = useState(0);
-  const [firstHeight, setFirstHeight] = useState(0);
-  const [{top,right,bottom,left},setSafeAreaInsets]= useState(initialWindowMetrics?.insets);
+  
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
@@ -75,7 +72,7 @@ const Home = ({name}:any) => {
       {/* 드롭다운 컴포넌트 */}
       <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
     </View>
-    <Image source={require('./assets/image16.png')} style={styles.mooImage}/>
+    <Image source={require('./assets/colorMooMedium.png')} style={styles.mooImage}/>
     <View style={styles.options}>
       <Dropdown options={options} onSelectOption={handleOptionSelect} />
       <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
@@ -86,36 +83,7 @@ const Home = ({name}:any) => {
     <StampView/>
     {/* 스탬프 설정 모달 */}
     <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
-  </View>) : (<View style={{justifyContent: 'center',
-            flex:1,
-            backgroundColor:'#FFFAF4'}}>
-              <Image 
-                source={require('./assets/colorMooMedium.png')}
-                style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '6%', alignSelf:'center', overflow: 'hidden', transform:[{rotate:'11.91deg'}]}}></Image>
-              <View style={{
-                position:'relative'
-              }}>
-                <Text style={{
-                  fontSize: 24,
-                  color:"#212429",
-                  marginLeft: '5%'
-                }}>지금의 감정은 어떠냐무~?</Text>
-                <Text style={{
-                  fontSize: 24,
-                  color:"#212429",
-                  marginLeft: '5%'
-                }}>감정을 남겨보지 않겠냐무?</Text>
-              </View>
-              <TouchableOpacity style={styles.button} onPress={(async () => { 
-                // Do something before delay
-                await AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                setIsFirstStamp(false);
-                amplitude.userRegiFin_andStampGo() //스탬프 첫 입력 유도
-                }
-              )}>
-                  <Text style={styles.buttonText}>감정 스탬프 남기러 가기!</Text>
-              </TouchableOpacity>
-            </View>)}
+  </View>) : (<StampOnBoarding/>)}
   </>
   );
 }
@@ -138,7 +106,7 @@ const styles = StyleSheet.create({
       // 폰트 크기 16px
       width: '100%',
       height: '100%',
-      fontSize: 18,
+      fontSize: 20,
       marginTop: 28,
       marginLeft: 28,
       marginRight: 200,
@@ -146,13 +114,15 @@ const styles = StyleSheet.create({
     },
     mooImage: {
       // 이미지 원본 크기
-      width: 100,
-      height: 100,
+      // width: 100,
+      // height: 100,
+      width: 80,
+      height: 393*79/363 ,
       position: 'absolute',
-      top: 49.3,
-      right: 28,
+      top: 55,
+      right: 35,
       // 회전
-      transform: [{ rotate: '11.9deg' }],
+      transform: [{ rotate: '25deg' }],
     },
     options: {
       flexDirection: 'row', // 옵션들을 가로로 배치
@@ -160,25 +130,26 @@ const styles = StyleSheet.create({
       alignItems: 'center', // 옵션들을 세로로 가운데 정렬
       marginTop: 32,
       marginHorizontal: 28,
+      marginBottom:12
     },
     fixButton: {
       width: 20,
       height: 20,
     },
     button: {
-      position: 'absolute',
       bottom: '18%',
-      width: '90%',
+      width: '30%',
       height: 60,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#72D193',
+      backgroundColor: 'white',
       borderRadius: 7,
-      marginHorizontal:'5%'
+      borderColor:'#72D193',
+      borderWidth: 1
     },
     buttonText: {
-      color: '#FFFFFF',
-      fontSize: 16,
+      color: '#72D193',
+      fontSize: 18,
       fontWeight: 'bold'
     },
   });

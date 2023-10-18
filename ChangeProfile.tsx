@@ -44,7 +44,7 @@ const ChangeProfile = () => {
                 paddingBottom: 20,
                 paddingTop: 20,
             }}>
-            <Text style={{fontSize: 17, color:"#495057"}}>프로필 설정 변경</Text>
+            <Text style={{fontSize: 19, color:"#495057"}}>프로필 설정 변경</Text>
         </View>
         <Modal isVisible={isProfileModalVisible}
         animationIn={"fadeIn"}
@@ -78,12 +78,12 @@ const ChangeProfile = () => {
             }}>
                 <View style={{paddingBottom: 40,
                             }}>
-                                <Text style={{fontSize: 17, color:"#495057"}}>프로필 설정 변경</Text>
+                                <Text style={{fontSize: 19, color:"#495057"}}>프로필 설정 변경</Text>
                 </View>
                 <ScrollView>
                     <View style={{paddingBottom: 10,
                         }}>
-                            <Text style={{fontSize: 17, color:'#666666'}}>이름</Text>
+                            <Text style={{fontSize: 19, color:'#666666'}}>이름</Text>
                     </View>
                     <View style={{paddingBottom: 15,
                         }}>
@@ -97,13 +97,13 @@ const ChangeProfile = () => {
                     </View>
                     <View style={{paddingBottom: 25,
                         }}>
-                            <Text style={{fontSize: 17, color:'#666666'}}>생일</Text>
+                            <Text style={{fontSize: 19, color:'#666666'}}>생일</Text>
                     </View>
                     <ChangeDate/>
                     <View style={{paddingBottom: 10,
                     paddingTop:5
                         }}>
-                            <Text style={{fontSize: 17, color:'#666666'}}>직업</Text>
+                            <Text style={{fontSize: 19, color:'#666666'}}>직업</Text>
                     </View>
                     <View style={{paddingBottom: 20,
                         }}>
@@ -131,7 +131,7 @@ const ChangeProfile = () => {
                     amplitude.cancelToChangeProfile();
                     setIsProfileModalVisible(!isProfileModalVisible);
                     }}>
-                    <Text style={{fontSize: 17}}>취소</Text>
+                    <Text style={{fontSize: 19}}>취소</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={async ()=>{
                     if(job!=='') await AsyncStorage.setItem('@UserInfo:job', job);
@@ -140,7 +140,7 @@ const ChangeProfile = () => {
                     amplitude.saveNewProfile();
                     setIsProfileModalVisible(!isProfileModalVisible);
                 }}>
-                    <Text style={{fontSize: 17}}>저장</Text>
+                    <Text style={{fontSize: 19}}>저장</Text>
                 </TouchableOpacity>
                 </View>
             </View>

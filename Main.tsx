@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Alert, StatusBar, View} from 'react-native';
+import {Alert, StatusBar, View, SafeAreaView} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialAllIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -27,7 +27,8 @@ import {default as Text} from "./CustomText"
 const Tab = createBottomTabNavigator();
 
 function HomeScreen(username:any) {
-  return <Home name={username}/>; //Home.tsx
+  return (
+  <Home name={username}/>); //Home.tsx
 }
 
 function WeeklyScreen({ route, navigation }) {
@@ -244,104 +245,110 @@ function Main({username}:any) {
       Settings -> SettingsScreen입니다.
     */
     /* //TODO : css 분리 작업, 불필요한 반복 줄이기 */
-    <NavigationContainer>
-      {/* <StatusBar
-        backgroundColor={statusBar}
-        barStyle={'dark-content'}
-      /> */}
-      {/*
-        Navigator와 관련된 컴포넌트들은 NavigationContainer 안에 넣어줘야 했습니다.
-      */}
-      <Tab.Navigator
-      initialRouteName="Home" //기본은 홈 화면이도록
-      screenOptions={{
-        tabBarShowLabel: false, //이게 true면 하단 바 아이콘 밑에 label도 같이 렌더링됩니다.
-        headerShown: false, //이게 true면 각 탭의 상단에 해당 Tab의 label이 렌더링됩니다. 매우 보기 싫습니다.
-        tabBarActiveTintColor:"#72D193",
-        tabBarInactiveTintColor:"#484C524D",
-        tabBarStyle:{height:60,
-          elevation: 0,}
-        }}>
-        <Tab.Screen
-          name="Home"
-          children={()=>HomeScreen(username)}//홈 화면
-          listeners={{
-            tabPress: e => {
-              amplitude.moveToHome();
-              // Prevent default action
-              // e.preventDefault();
-              // Do something with the `navigation` object
-              //navigation.navigate('Home');
-            },
-          }}
-          options={{
-            tabBarIcon: ({color, size}) => (
-              <Octicons name="smiley" color={color} size={size} /> //하단 바 아이콘
-            ),
-            unmountOnBlur: true,
-          }}
-        />
-        <Tab.Screen
-          name="Weekly"
-          component={WeeklyScreen} //주간 화면
-          listeners={{
-            tabPress: e => {
-              setStatusBar('#FFFFFF');
-              amplitude.moveToWeekly();
-              // Prevent default action
-              // e.preventDefault();
-              // Do something with the `navigation` object
-              //navigation.navigate('Home');
-            },
-          }}
-          options={{
-            tabBarIcon: ({color, size}) => (
-              <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
-            ),
-            unmountOnBlur: true,
-          }}
-        />
-        <Tab.Screen
-          name="Statistics"
-          component={StatisticsScreen} //주간 화면
-          listeners={{
-            tabPress: e => {
-              setStatusBar('#FAFAFA');
-              // Prevent default action
-              // e.preventDefault();
-              // Do something with the `navigation` object
-              //navigation.navigate('Home');
-            },
-          }}
-          options={{
-            tabBarIcon: ({color, size}) => (
-              <MaterialAllIcons name="chart-bar" color={color} size={size} /> //하단 바 아이콘
-            ),
-            unmountOnBlur: true,
-          }}
-        />
-        <Tab.Screen
-          name="설정"
-          component={SettingsScreen} //설정 화면
-          listeners={{
-            tabPress: e => {
-              setStatusBar('#FFFFFF');
-              amplitude.moveToSetting();
-              // Prevent default action
-              // e.preventDefault();
-              // Do something with the `navigation` object
-              //navigation.navigate('Home');
-            },
-          }}
-          options={{
-            tabBarIcon: ({color, size}) => (
-              <MaterialIcons name="settings" color={color} size={size} /> //하단 바 아이콘
-            ),
-            lazy:false,
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <>
+      <SafeAreaView style={{backgroundColor:statusBar}}/>
+      <SafeAreaView style={{flex:1,backgroundColor:'#FFFFFF'}}>
+        <NavigationContainer>
+        {/* <StatusBar
+          backgroundColor={statusBar}
+          barStyle={'dark-content'}
+        /> */}
+        {/*
+          Navigator와 관련된 컴포넌트들은 NavigationContainer 안에 넣어줘야 했습니다.
+        */}
+        <Tab.Navigator
+        initialRouteName="Home" //기본은 홈 화면이도록
+        screenOptions={{
+          tabBarShowLabel: false, //이게 true면 하단 바 아이콘 밑에 label도 같이 렌더링됩니다.
+          headerShown: false, //이게 true면 각 탭의 상단에 해당 Tab의 label이 렌더링됩니다. 매우 보기 싫습니다.
+          tabBarActiveTintColor:"#72D193",
+          tabBarInactiveTintColor:"#484C524D",
+          tabBarStyle:{height:60,
+            elevation: 0,}
+          }}>
+          <Tab.Screen
+            name="Home"
+            children={()=>HomeScreen(username)}//홈 화면
+            listeners={{
+              tabPress: e => {
+                setStatusBar('#FFFAF4');
+                amplitude.moveToHome();
+                // Prevent default action
+                // e.preventDefault();
+                // Do something with the `navigation` object
+                //navigation.navigate('Home');
+              },
+            }}
+            options={{
+              tabBarIcon: ({color, size}) => (
+                <Octicons name="smiley" color={color} size={size} /> //하단 바 아이콘
+              ),
+              unmountOnBlur: true,
+            }}
+          />
+          <Tab.Screen
+            name="Weekly"
+            component={WeeklyScreen} //주간 화면
+            listeners={{
+              tabPress: e => {
+                setStatusBar('#FFFFFF');
+                amplitude.moveToWeekly();
+                // Prevent default action
+                // e.preventDefault();
+                // Do something with the `navigation` object
+                //navigation.navigate('Home');
+              },
+            }}
+            options={{
+              tabBarIcon: ({color, size}) => (
+                <MaterialCommunityIcons name="calendar" color={color} size={size} /> //하단 바 아이콘
+              ),
+              unmountOnBlur: true,
+            }}
+          />
+          <Tab.Screen
+            name="Statistics"
+            component={StatisticsScreen} //주간 화면
+            listeners={{
+              tabPress: e => {
+                setStatusBar('#FAFAFA');
+                // Prevent default action
+                // e.preventDefault();
+                // Do something with the `navigation` object
+                //navigation.navigate('Home');
+              },
+            }}
+            options={{
+              tabBarIcon: ({color, size}) => (
+                <MaterialAllIcons name="chart-bar" color={color} size={size} /> //하단 바 아이콘
+              ),
+              unmountOnBlur: true,
+            }}
+          />
+          <Tab.Screen
+            name="설정"
+            component={SettingsScreen} //설정 화면
+            listeners={{
+              tabPress: e => {
+                setStatusBar('#FFFFFF');
+                amplitude.moveToSetting();
+                // Prevent default action
+                // e.preventDefault();
+                // Do something with the `navigation` object
+                //navigation.navigate('Home');
+              },
+            }}
+            options={{
+              tabBarIcon: ({color, size}) => (
+                <MaterialIcons name="settings" color={color} size={size} /> //하단 바 아이콘
+              ),
+              lazy:false,
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
+    </>
   );
 }
 

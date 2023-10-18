@@ -140,7 +140,7 @@ const StampList = ({visible, closeModal}) => {
       alignSelf: 'center',
       alignItems: 'center', 
       justifyContent: 'center',
-      padding: 10,
+      padding: 8,
       marginBottom: 16,
       backgroundColor: '#72D193', 
       borderRadius: 8,
@@ -167,8 +167,8 @@ const StampList = ({visible, closeModal}) => {
       color: '#212429',
       fontFamily: 'Pretendard',
       fontWeight: '400',
-      fontSize: 16,
-      fontStyle: 'normal',
+      fontSize: 18,
+      fontStyle: 'normal'
     },
     fixModalMessageContainer: {
       paddingHorizontal: 20,
@@ -179,7 +179,7 @@ const StampList = ({visible, closeModal}) => {
       textAlign: 'left',
       fontFamily: 'Pretendard',
       fontWeight: '500',
-      fontSize: 12,
+      fontSize: 14,
       fontStyle: 'normal',
     },
     stampList: {
@@ -203,15 +203,15 @@ const StampList = ({visible, closeModal}) => {
     },
     moodEmotion: {
       color: '#212429',
-      fontSize: 24,
+      fontSize: 26,
     },
     moodText: {
       color: '#212429',
       fontFamily: 'Pretendard',
       fontWeight: '400',
-      fontSize: 14,
+      fontSize: 16,
       fontStyle: 'normal',
-      lineHeight: 20,
+      lineHeight: 24,
     },
     finishLodingModal: {
       backgroundColor: '#FFFAF4', 
@@ -239,7 +239,7 @@ const StampList = ({visible, closeModal}) => {
       color: '#000000',
       fontFamily: 'Pretendard',
       fontWeight: '600',
-      fontSize: 14,
+      fontSize: 16,
       fontStyle: 'normal',
     },
     keyboardAvoidingContainer: {
@@ -274,7 +274,7 @@ const StampList = ({visible, closeModal}) => {
       color: '#212429',
       fontFamily: 'Pretendard',
       fontWeight: '400',
-      fontSize: 16,
+      fontSize: 18,
     },
     checkImage: {
       // 기본 이미지 스타일
@@ -325,7 +325,7 @@ const StampList = ({visible, closeModal}) => {
       <View style={styles.fixModalContainer}>
         <View style={styles.fixModalTitleContainer}>
           <View style={styles.fixModalTitleContent}>
-            <TouchableOpacity onPress={closeModal}>
+            <TouchableOpacity onPress={closeModal} style={{marginTop:5}}>
               <Image source={require('./assets/arrow-back.png')} />
             </TouchableOpacity>
             <Text style={styles.fixModalTitle}>스탬프 설정</Text>
@@ -333,7 +333,8 @@ const StampList = ({visible, closeModal}) => {
           <TouchableOpacity onPress={() => {
             amplitude.tryAddCustomStamp();
             setAddStampModalVisible(true);
-          }}>
+          }}
+          style={{marginTop:5}}>
             <Image source={require('./assets/add.png')} />
           </TouchableOpacity>
         </View>
@@ -426,17 +427,17 @@ const StampList = ({visible, closeModal}) => {
             source={require('./assets/colorMooMini.png')}
             style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
           <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
-            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>!~</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 20, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
+            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 20, fontWeight: 'bold' }}>무</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 20, fontWeight: 'bold' }}>!~</Text>
           </View>
           <View style={{alignItems: 'center',}}>
-            <Text style={{ color: '#475467', fontSize: 14, }}>{userName}의 새로운 감정을 환영한다무~</Text>
+            <Text style={{ color: '#475467', fontSize: 16, }}>{userName}의 새로운 감정을 환영한다무~</Text>
           </View>
           <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <View style={{ flexDirection: 'row', flex: 1,}}>
               <TouchableOpacity style={styles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false);}}>
-                <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                <Text style={{ color: '#ffffff', fontSize: 18, fontWeight: '600',}}>확인</Text>
               </TouchableOpacity>
             </View>
           </View>       

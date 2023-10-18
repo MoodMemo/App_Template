@@ -243,32 +243,32 @@ const Statistics = () => {
       )}
       {summaryOrDetail ? (<View>
         <View style={{flexDirection: 'row', alignSelf:'center', marginTop:40, marginBottom:35}}>
-          <View style={{alignItems:'center',marginRight:20}}>
-            <Text style={{fontSize:12,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
-            <Text style={{fontSize:20,color:'#72D193'}}>{countStamps}개</Text>
+          <View style={{alignItems:'center',marginRight:18}}>
+            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
+            <Text style={{fontSize:22,color:'#72D193'}}>{countStamps}개</Text>
           </View>
-          <View style={{alignItems:'center',marginRight:20}}>
-            <Text style={{fontSize:12,color:'#212429',marginBottom:5}}>AI 일기 발행</Text>
-            <Text style={{fontSize:20,color:'#72D193'}}>{countDiarys}개</Text>
+          <View style={{alignItems:'center',marginRight:18}}>
+            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>AI 일기 발행</Text>
+            <Text style={{fontSize:22,color:'#72D193'}}>{countDiarys}개</Text>
           </View>
-          <View style={{alignItems:'center',marginRight:20}}>
-            <Text style={{fontSize:12,color:'#212429',marginBottom:5}}>기록 일자</Text>
-            <Text style={{fontSize:20,color:'#212429'}}>{countLoggedDates}개</Text>
+          <View style={{alignItems:'center',marginRight:18}}>
+            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록 일자</Text>
+            <Text style={{fontSize:22,color:'#212429'}}>{countLoggedDates}일</Text>
           </View>
           <View style={{alignItems:'center',marginRight:5}}>
-            <Text style={{fontSize:12,color:'#212429',marginBottom:5}}>연속 기록 일자</Text>
-            <Text style={{fontSize:20,color:'#212429'}}>{countConsecutedLoggedDates}개</Text>
+            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>연속 기록 일자</Text>
+            <Text style={{fontSize:22,color:'#212429'}}>{countConsecutedLoggedDates}일</Text>
           </View>
         </View>
         <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
         <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-        <Text style={{fontSize:12,color:'#212429',marginLeft:20,marginTop:30}}>가장 많이 남긴 감정이다무!</Text>
+        <Text style={{fontSize:14,color:'#212429',marginLeft:20,marginTop:30}}>가장 많이 남긴 감정이다무!</Text>
         <ScrollView contentContainerStyle={styles.stampView} horizontal={false} style={{marginTop:30}}>
           {stamps.sort(sortStamps).map((stampButton:any) => (
             <TouchableOpacity key={stampButton[0].id} style={styles.stampButton} disabled={true}>
               <Text style={styles.buttonEmotion}>{stampButton[0].emoji}</Text>
               <Text style={styles.buttonText}>{stampButton[0].stampName}</Text>
-              <Text style={{color: '#000000', fontSize: 12,}}>{stampButton[1]}</Text>
+              <Text style={{color: '#000000', fontSize: 14,}}>{stampButton[1]}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -283,29 +283,29 @@ const Statistics = () => {
                 textColor: stamp[2][1],
                 shiftTextX:-5,
                 shiftTextY:3,
-                textSize:13
+                textSize:15
               }))}
                 donut={true}
                 showText={true}
                 innerRadius={40}
-                radius={90}
+                radius={100}
               />
             </View>
             <View style={{flexDirection: 'row',
                             justifyContent: 'space-between'}}>
-              <Text style={{marginLeft:20}}>전체</Text>
-              <Text style={{marginRight:20}}>{countStamps}개</Text>
+              <Text style={{marginLeft:20,fontSize:16,color:'#999999'}}>전체</Text>
+              <Text style={{marginRight:20,fontSize:16,color:'#999999'}}>{countStamps}개</Text>
             </View>
             <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:20,marginTop:10,marginBottom:5}}/>
             {stamps.sort(sortStamps).map((stampButton:any) => (
               <TouchableOpacity key={stampButton[0].id} style={{marginHorizontal:20,flexDirection:'row',justifyContent:'space-between',marginBottom:10}} disabled={true}>
                 <View style={{flexDirection: 'row'}}>
-                  <View style={{width:10,height:10,backgroundColor:stampButton[2][0],borderRadius:5,marginTop:9,marginRight:7}}/>
-                  <Text style={{marginRight:7,fontSize:18}}>{stampButton[0].emoji}</Text>
-                  <Text style={{marginRight:7,marginTop:4}}>{stampButton[0].stampName}</Text>
-                  <Text style={{marginTop:4}}>{`${Math.round(stampButton[1]*100/countStamps)}%`}</Text>
+                  <View style={{width:12,height:12,backgroundColor:stampButton[2][0],borderRadius:8,marginTop:9,marginRight:7}}/>
+                  <Text style={{marginRight:7,fontSize:20}}>{stampButton[0].emoji}</Text>
+                  <Text style={{marginRight:7,marginTop:(Platform.OS==='android' ? 3 : 5),fontSize:16,color:'#000000'}}>{stampButton[0].stampName}</Text>
+                  <Text style={{marginTop:(Platform.OS==='android' ? 3 : 5),fontSize:16,color:'#999999'}}>{`${Math.round(stampButton[1]*100/countStamps)}%`}</Text>
                 </View>
-                <Text style={{color: '#000000',}}>{stampButton[1]}개</Text>
+                <Text style={{color: '#000000',fontSize:16}}>{stampButton[1]}개</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>)}
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
       fontWeight: '400',
       width: '100%',
       height: '100%',
-      fontSize: 22,
+      fontSize: 24,
       marginTop: 28,
       marginLeft: 28,
       marginRight: 200,
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     },
     buttonText: {
       color: '#000000',
-      fontSize: 16,
+      fontSize: 17,
     },
     confirmBtn: {
         alignSelf: 'center',
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       fontSize: 14, color: '#72D193', fontWeight:'600'
     },
-    activeFont: {fontSize: 14, color: '#000000', fontWeight:'600'},
+    activeFont: {fontSize: 16, color: '#000000', fontWeight:'600'},
     deactiveType: {
       flex: 1,
       backgroundColor: '#F3F3F3',
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       justifyContent: 'center',
     },
-    deactiveFont: {fontSize: 14, color: '#B7B7B7', fontWeight:'400'},
+    deactiveFont: {fontSize: 16, color: '#B7B7B7', fontWeight:'400'},
     canGenerateDiaryDot: {
       width: 4,
       height: 4,

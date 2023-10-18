@@ -66,7 +66,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       
       <TouchableOpacity onPress={toggleDropdown} style={dropDownStyles.dropdownButton}>
         <View style={dropDownStyles.dropdownButtonText}>
-          <Text style={{fontWeight: 'bold', color: '#212429',}}>
+          <Text style={{fontWeight: 'bold', color: '#212429',fontSize:16}}>
             {selectedValue}{label}
           </Text>
           <FontAwesomeIcon name='sort-down' size={16} color="#737373" style={{position: 'absolute', right: 7, top: 5}}/>
@@ -81,7 +81,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               onPress={() => handleOptionPress(option.value)}
               style={{ padding: 5, }}
             >
-              <Text style={{ color: '#212429', fontSize: 12, marginLeft: 5}}>{option.label}</Text>
+              <Text style={{ color: '#212429', fontSize: 14, marginLeft: 5}}>{option.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -296,7 +296,6 @@ const Weekly = () => {
             source={require('../assets/colorMooMedium.png')}
             style={{ width: 104, height: (110 * 104) / 104 , marginTop: 20, marginBottom: 30}} // 비율을 유지하며 height 자동 조절
           />
-          
           {!isTryingSelf ? (
             <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10}]} 
               onPress={() => {setIsTryingSelf(true); amplitude.try_createDiaryMyself();}} >
@@ -341,11 +340,9 @@ const Weekly = () => {
             source={require('../assets/colorMooMedium.png')}
             style={{ width: 104, height: (110 * 104) / 104 , marginTop: 20, marginBottom: 30}} // 비율을 유지하며 height 자동 조절
           />
-
           {!isTryingSelf ? (
             <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10}]} 
-              onPress={() => {setIsTryingSelf(true); amplitude.try_createDiaryMyself_forPast();}} >
-              <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>내가 직접 쓸래</Text>
+              onPress={() => {setIsTryingSelf(true); amplitude.try_createDiaryMyself_forPast();}} >              <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>내가 직접 쓸래</Text>
             </TouchableOpacity> ) : (
             <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10, borderColor:'#FFCC4D'}]} 
               onPress={() => {setIsTryingSelf(true); handleCreateDiaryMyself(); amplitude.createDiaryMyself_forPast(today.format('YYYY-MM-DD'));}} >
@@ -380,7 +377,7 @@ const Weekly = () => {
       else return <ReadyToGenerateDiary/>; // 스탬프가 2개 이상일 때 // 일기 만들 준비 됐다무 ! // 할차례
     }
     else if (today.isBefore(dayjs(), 'day')) {
-      if (stampCnt === 2) return <ReadyToGenerateDiary_forPast/>; // 스탬프가 2개일 때
+      if (stampCnt >= 2) return <ReadyToGenerateDiary_forPast/>; // 스탬프가 2개일 때
       else {
         amplitude.clickPast_noDiary();
         return <nodata.MooWasBoredView/>; // past
@@ -658,16 +655,16 @@ const Weekly = () => {
                       <View style={Timelinestyles.block}>
 
                         <View style={Timelinestyles.title}>
-                          <Text style={{fontSize: 12, color: '#212429'}}>{item.stampName}</Text>
+                          <Text style={{fontSize: 14, color: '#212429'}}>{item.stampName}</Text>
                           <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
-                            <Text style={{ fontSize: 12, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
+                            <Text style={{ fontSize: 14, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
                             {/* 수정 & 삭제 */}
                             <View>
                               <TouchableOpacity
                                 onPress={() => {setDropdownButtonVisible(!dropdownButtonVisible), getBoxMessure(index); setTmpChosenStamp(item); amplitude.clickStampDotButton();}}
                                 ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
                               >
-                                <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 10}} />
+                                <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 12}} />
                               </TouchableOpacity>
                             </View>
                             {/* 2. 스탬프 삭제 경고 모달 */}
@@ -689,15 +686,15 @@ const Weekly = () => {
                                   <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
                                 </View>
                                 <View style={{alignItems: 'center',}}>
-                                  <Text style={{ color: '#475467', fontSize: 14, }}>되돌릴 수 없다무..!</Text>
+                                  <Text style={{ color: '#475467', fontSize: 15, }}>되돌릴 수 없다무..!</Text>
                                 </View>
                                 <View style={{ flexDirection: 'row', marginTop: 20 }}>
                                   <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
                                     <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStampModalVisible(false); amplitude.cancelToDeleteStamp();}}>
-                                      <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>취소</Text>
+                                      <Text style={{ color: '#344054', fontSize: 18, fontWeight: '600',}}>취소</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStampModalVisible(false);}}>
-                                      <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                                      <Text style={{ color: '#ffffff', fontSize: 18, fontWeight: '600',}}>확인</Text>
                                     </TouchableOpacity>
                                   </View>
                                 </View>
@@ -755,10 +752,10 @@ const Weekly = () => {
                 ) : (
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                     <TouchableOpacity onPress={() => {setIsWarningModalVisible(true); amplitude.cancelToEditDiary();}}>
-                      <Text style={{ fontSize: 12, color: '#495057' }}>취소</Text>
+                      <Text style={{ fontSize: 14, color: '#495057' }}>취소</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary(today.format('YYYY-MM-DD'));}}>
-                      <Text style={{ fontSize: 12, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
+                      <Text style={{ fontSize: 14, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
                     </TouchableOpacity>
                   </View>
                 )}
@@ -768,11 +765,11 @@ const Weekly = () => {
                 
                 {/* date */}
                 {isEditMode ? (
-                  <Text style={{fontSize: 12, color: '#dbdbdb', marginBottom: 12}}>
+                  <Text style={{fontSize: 14, color: '#dbdbdb', marginBottom: 12}}>
                     {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
                   </Text>
                 ) : (
-                  <Text style={{fontSize: 12, color: '#212429', marginBottom: 12}}>
+                  <Text style={{fontSize: 14, color: '#212429', marginBottom: 12}}>
                   {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
                 </Text>
                 )}
@@ -787,7 +784,7 @@ const Weekly = () => {
                       onFocus={() => {amplitude.editTitle();}}
                     />
                   ) : (
-                    <Text style={{ fontSize: 16, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
+                    <Text style={{ fontSize: 18, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
                   )}
                 </View>
                 
@@ -805,7 +802,7 @@ const Weekly = () => {
                       multiline
                     />
                   ) : (
-                    <Text style={{ fontSize: 12, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
+                    <Text style={{ fontSize: 14, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
                   )}
                 </View>
 
@@ -814,7 +811,7 @@ const Weekly = () => {
                   <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
                     {todayReport.keyword.map((keyword) => (
                       <TouchableOpacity key={keyword} style={diaryStyles.keyword} onPress={() => {amplitude.clickKeyword();}} disabled={true}>
-                        <Text style={{color:'#DBDBDB'}}>{keyword}</Text>
+                        <Text style={{color:'#DBDBDB',fontSize:16}}>{keyword}</Text>
                       </TouchableOpacity>
                       // <Text key={keyword} style={[diaryStyles.keyword, {color:'#DBDBDB'}]}>{keyword}</Text>
                     ))}
@@ -823,7 +820,7 @@ const Weekly = () => {
                   <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
                     {todayReport.keyword.map((keyword) => (
                       <View style={diaryStyles.keyword}>
-                        <Text key={keyword} >{keyword}</Text>
+                        <Text key={keyword} style={{fontSize:16}}>{keyword}</Text>
                       </View>
                     ))}
                   </View>
@@ -922,12 +919,12 @@ const Weekly = () => {
             source={require('../assets/finish_0904.png')}
             style={{ width: 100, height: (80 * 100) / 100 , marginTop: 50,}}></Image>
           <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>AI 일기가 발행됐다</Text>
-            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>~</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 20, fontWeight: 'bold' }}>AI 일기가 발행됐다</Text>
+            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 20, fontWeight: 'bold' }}>무</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 20, fontWeight: 'bold' }}>~</Text>
           </View>
           <View style={{alignItems: 'center',}}>
-            <Text style={{ color: '#475467', fontSize: 14, }}>내가 멋지게 만든 일기를 확인해 봐라무!</Text>
+            <Text style={{ color: '#475467', fontSize: 16, }}>내가 멋지게 만든 일기를 확인해 봐라무!</Text>
           </View>
           <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <View style={{ flexDirection: 'row', flex: 1,}}>
@@ -998,10 +995,10 @@ const Weekly = () => {
           <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
               <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningModalVisible(false); amplitude.cancelCancelEditingDiary();}}>
-                <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>닫기</Text>
+                <Text style={{ color: '#344054', fontSize: 18, fontWeight: '600',}}>닫기</Text>
               </TouchableOpacity>
               <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelButton(); setIsWarningModalVisible(false); amplitude.confirmCancelEditingDiary(today.format('YYYY-MM-DD'));}}>
-                <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                <Text style={{ color: '#ffffff', fontSize: 18, fontWeight: '600',}}>확인</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1035,10 +1032,10 @@ const Weekly = () => {
           <View style={{ flexDirection: 'row', marginTop: 20 }}>
             <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
               <TouchableOpacity style={diaryStyles.cancelOut2EditBtn} onPress={() => {setIsWarningMove2AnotherDayModalVisible(false); amplitude.cancel2move2AnotherDayWhileEditingDiary();}}>
-                <Text style={{ color: '#344054', fontSize: 16, fontWeight: '600',}}>닫기</Text>
+                <Text style={{ color: '#344054', fontSize: 18, fontWeight: '600',}}>닫기</Text>
               </TouchableOpacity>
               <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {handleCancelWhileMove2AnotherDayButton(tryToChangeToday); setIsWarningMove2AnotherDayModalVisible(false);}}>
-                <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                <Text style={{ color: '#ffffff', fontSize: 18, fontWeight: '600',}}>확인</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -1195,7 +1192,7 @@ const styles = StyleSheet.create({
   },
   dayText: {
     color: '#212429',
-    fontSize: 12,
+    fontSize: 14,
     textAlign: 'center',
     marginVertical: 5,
     // backgroundColor: 'pink',
@@ -1297,7 +1294,7 @@ const typeChangeBtnStyles = StyleSheet.create({
     justifyContent: 'center',
     fontSize: 14, color: '#72D193', fontWeight:'600'
   },
-  activeFont: {fontSize: 14, color: '#72D193', fontWeight:'600'},
+  activeFont: {fontSize: 16, color: '#72D193', fontWeight:'600'},
   deactiveType: {
     flex: 1,
     backgroundColor: '#F3F3F3',
@@ -1306,12 +1303,12 @@ const typeChangeBtnStyles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
   },
-  deactiveFont: {fontSize: 14, color: '#B7B7B7', fontWeight:'400'},
+  deactiveFont: {fontSize: 16, color: '#B7B7B7', fontWeight:'400'},
   canGenerateDiaryDot: {
     width: 4,
     height: 4,
     top: 6,
-    right: 50,
+    right: 48,
     backgroundColor: '#FF7168', // 타원의 색상을 지정하세요
     borderRadius: 4, // 절반의 크기로 borderRadius를 설정하여 타원 모양으로 만듭니다
     position: 'absolute', // 원하는 위치에 배치하려면 position을 'absolute'로 설정합니다
@@ -1387,7 +1384,7 @@ const diaryStyles = StyleSheet.create({
     borderRadius: 12, 
     paddingHorizontal: 16,
     width: 343, 
-    height: 302,
+    height: 330,
     // height: 218,
     shadowColor: 'black',
     shadowRadius: 50,           // 그림자 블러 반경
@@ -1423,7 +1420,7 @@ const diaryStyles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center', 
     justifyContent: 'center',
-    padding: 10,
+    padding: 8,
     marginBottom: 16,
     backgroundColor: '#72D193', 
     borderRadius: 8,
@@ -1434,7 +1431,7 @@ const diaryStyles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center', 
     justifyContent: 'center',
-    padding: 10,
+    padding: 8,
     marginBottom: 16,
     backgroundColor: '#ffffff', 
     borderRadius: 8,
@@ -1487,7 +1484,7 @@ const Timelinestyles = StyleSheet.create({
     justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
     marginHorizontal: 10,
     marginVertical: 9,
-    fontSize: 12,
+    fontSize: 14,
     color: '#212429',
   },
   line: {
@@ -1533,7 +1530,7 @@ const TimelineDropDownStyles = StyleSheet.create({
     elevation: 4,              // 안드로이드에서 그림자를 표시하기 위한 설정
   },
   dropdownButtonText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#212429',
     paddingVertical: 5,
     paddingRight: 30,
@@ -1645,7 +1642,7 @@ const TimelineDiaryStyles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center', 
     justifyContent: 'center',
-    padding: 10,
+    padding: 8,
     marginBottom: 16,
     backgroundColor: '#72D193', 
     borderRadius: 8,
@@ -1656,7 +1653,7 @@ const TimelineDiaryStyles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center', 
     justifyContent: 'center',
-    padding: 10,
+    padding: 8,
     marginBottom: 16,
     backgroundColor: '#ffffff', 
     borderRadius: 8,
