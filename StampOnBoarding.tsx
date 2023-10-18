@@ -102,7 +102,7 @@ const StampOnBoarding = () => {
           setSelectedEmotionLabel('기쁨')
           setSection('stamp');
           setSelectedEmotionId(getCustomStampsByField('stampName','기쁨').id);
-          amplitude.test1();//첫 스탬프 기쁨 선택
+          amplitude.clickFirstStamp_JOY();//첫 스탬프 기쁨 선택
           }
         )}>
             <Text style={styles.buttonText}>기뻐😆</Text>
@@ -115,7 +115,7 @@ const StampOnBoarding = () => {
           setSelectedEmotionLabel('슬픔');
           setSelectedEmotionId(getCustomStampsByField('stampName','슬픔').id);
           setSection('stamp');
-          amplitude.test1() //첫 스탬프 슬픔 선택
+          amplitude.clickFirstStamp_SAD() //첫 스탬프 슬픔 선택
           }
         )}>
             <Text style={styles.buttonText}>슬퍼...😭</Text>
@@ -128,7 +128,7 @@ const StampOnBoarding = () => {
           setSelectedEmotionLabel('평온');
           setSelectedEmotionId(getCustomStampsByField('stampName','평온').id);
           setSection('stamp');
-          amplitude.test1() //첫 스탬프 평온 선택
+          amplitude.clickFirstStamp_CARM() //첫 스탬프 평온 선택
           }
         )}>
             <Text style={styles.buttonText}>그냥 그래🙂</Text>
@@ -216,7 +216,7 @@ const StampOnBoarding = () => {
                 //console.log(selectedEmotionId);
                 //handleCreatePushedStamp();
                 // AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                amplitude.test1() //첫 스탬프 입력 완료
+                amplitude.confirmFirstStamp() //첫 스탬프 입력 완료
                 }
                 )}>
                     <Text style={styles.buttonText}>다 적었어!</Text>
@@ -284,7 +284,7 @@ const StampOnBoarding = () => {
                 // console.log(selectedEmotionId);
                 // handleCreatePushedStamp();
                 // AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                amplitude.test1() //첫 스탬프 입력 후 튜토리얼
+                amplitude.okForMoosRemembering() //첫 스탬프 입력 후 튜토리얼
                 }
                 )}>
                     <Text style={styles.buttonText}>그래 좋아!</Text>
@@ -359,7 +359,7 @@ const StampOnBoarding = () => {
                     // console.log(selectedEmotionId);
                     handleCreatePushedStamp();
                     AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                    amplitude.test1() //첫 스탬프 입력 완료
+                    amplitude.confirmEndTutorial() //첫 스탬프 입력 완료
                     }
                     )}>
                         <Text style={styles.buttonText}>고마워 무야!</Text>

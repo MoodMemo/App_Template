@@ -802,3 +802,46 @@ export function moveToDetail() {
     view: 'statistics',
     action: 'click',});
 }
+
+export function clickFirstStamp_JOY() {
+  amplitude.track('onboarding: click, first stamp, 기쁨',
+  {
+    view: 'onboarding',
+    action: 'click',
+});
+}
+export function clickFirstStamp_SAD() {
+  amplitude.track('onboarding: click, first stamp, 슬픔',
+  {
+    view: 'onboarding',
+    action: 'click',
+});
+}
+export function clickFirstStamp_CARM() {
+  amplitude.track('onboarding: click, first stamp, 평온',
+  {
+    view: 'onboarding',
+    action: 'click',
+});
+}
+export function confirmFirstStamp() {
+  amplitude.track('onboarding: confirm, first stamp',
+  {
+    view: 'onboarding',
+    action: 'confirm',
+});
+}
+export function okForMoosRemembering() {
+  amplitude.track('onboarding: confirm, moos remembering after confirm stamp',
+  {
+    view: 'onboarding',
+    action: 'confirm',
+});
+}
+export function confirmEndTutorial() {
+  amplitude.track('onboarding: confirm, end tutorial',
+  {
+    view: 'onboarding',
+    action: 'confirm',
+});
+}
