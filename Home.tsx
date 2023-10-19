@@ -11,6 +11,7 @@ import type {StatusBarStyle} from 'react-native';
 import { useSafeAreaFrame, useSafeAreaInsets, initialWindowMetrics} from 'react-native-safe-area-context';
 
 import {default as Text} from "./CustomText"
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Home = ({name}:any) => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -76,7 +77,8 @@ const Home = ({name}:any) => {
     <View style={styles.options}>
       <Dropdown options={options} onSelectOption={handleOptionSelect} />
       <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
-        <Image source={require('./assets/edit.png')} />
+        {/* <Image source={require('./assets/edit.png')} /> */}
+        <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
       </TouchableOpacity>
     </View>
     {/* 감정 스탬프 뷰 */}
