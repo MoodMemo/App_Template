@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef} from 'react';
-import { View, StyleSheet, Touchable, TouchableOpacity, SafeAreaView, Image, Modal, StatusBar, Platform } from 'react-native';
+import { View, StyleSheet, Touchable, TouchableOpacity, SafeAreaView, Image, StatusBar, Platform } from 'react-native';
+import Modal from "react-native-modal";
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
 import StampOnBoarding from './StampOnBoarding';
 // import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
+import * as repository from './src/localDB/document';
+import realm from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {StatusBarStyle} from 'react-native';
 import { useSafeAreaFrame, useSafeAreaInsets, initialWindowMetrics} from 'react-native-safe-area-context';
@@ -19,10 +22,18 @@ const Home = ({name}:any) => {
   const [fixModalVisible, setFixModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
   const [isFirstStamp,setIsFirstStamp]=useState(false);
-  
+  const [isStampTemplateAdded,setIsStampTemplateAdded]=useState(true);
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
+    AsyncStorage.getItem('@UserInfo:addedStampTemplate')
+      .then((value) => {
+        if(value!=='true'){
+          setIsStampTemplateAdded(false);
+        }
+    }).catch((error) => {
+      console.error("Error fetching addedStampTemplate:", error);
+    });
     AsyncStorage.getItem('@UserInfo:userName')
       .then((value) => {
         if (value) {
@@ -47,6 +58,82 @@ const Home = ({name}:any) => {
     console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
     console.log(isFirstStamp);
   }, []);
+
+  const addStampTemplate = () => {
+    repository.createCustomStamp({
+      stampName: "불안",
+      emoji: "😖"
+    });
+    repository.createCustomStamp({
+      stampName: "걱정",
+      emoji: "😨"
+    });
+    repository.createCustomStamp({
+      stampName: "황당",
+      emoji: "😦"
+    });
+    repository.createCustomStamp({
+      stampName: "졸림",
+      emoji: "😴"
+    });
+    repository.createCustomStamp({
+      stampName: "귀찮음",
+      emoji: "😮‍💨"
+    });
+    repository.createCustomStamp({
+      stampName: "후회",
+      emoji: "😢"
+    });
+    repository.createCustomStamp({
+      stampName: "배고픔",
+      emoji: "🍗"
+    });
+    repository.createCustomStamp({
+      stampName: "나른함",
+      emoji: "😑"
+    });
+    repository.createCustomStamp({
+      stampName: "후회",
+      emoji: "😢"
+    });
+    repository.createCustomStamp({
+      stampName: "웃김",
+      emoji: "😄"
+    });
+    repository.createCustomStamp({
+      stampName: "신기함",
+      emoji: "😮"
+    });
+    repository.createCustomStamp({
+      stampName: "후회",
+      emoji: "😢"
+    });
+    repository.createCustomStamp({
+      stampName: "감동",
+      emoji: "🥹"
+    });
+    repository.createCustomStamp({
+      stampName: "요리",
+      emoji: "🍽️"
+    });
+    repository.createCustomStamp({
+      stampName: "운동",
+      emoji: "💪"
+    });
+    repository.createCustomStamp({
+      stampName: "아이디어",
+      emoji: "💡"
+    });
+    repository.createCustomStamp({
+      stampName: "투두",
+      emoji: "✅"
+    });
+  };
+
+  const handleStampTemplateAddedTrue = () => {
+    setIsStampTemplateAdded(true);
+    AsyncStorage.setItem('@UserInfo:addedStampTemplate','true');
+  };
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -86,6 +173,90 @@ const Home = ({name}:any) => {
     {/* 스탬프 설정 모달 */}
     <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
   </View>) : (<StampOnBoarding/>)}
+  <Modal isVisible={!isStampTemplateAdded}
+      animationIn={"fadeIn"}
+      animationInTiming={200}
+      animationOut={"fadeOut"}
+      animationOutTiming={200}
+      backdropColor='#CCCCCC'//'#FAFAFA'
+      backdropOpacity={0.8}
+      style={{
+          alignItems:'center'
+      }}>
+          <View style={{
+              backgroundColor:"#FFFAF4",
+              width:'90%',
+              height:'60%',
+              justifyContent:'center',
+              alignItems:'center',
+              borderRadius:10
+          }}>
+              <View style={{
+                  justifyContent:'center',
+                  alignItems:'center',
+                  marginTop:20,
+                  }}>
+                    <TouchableOpacity disabled={true} style={{
+                    // position: 'absolute',
+                    // bottom: 350,
+                    width: 250,
+                    height: 160,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#72D193',
+                    borderRadius: 7,
+                    marginHorizontal:'5%'
+                    }}>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", paddingBottom: 5,paddingTop:5}}>{userName}에게</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", paddingBottom: 5,paddingTop:5}}>새로운 스탬프들을 준비했다무!</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", paddingBottom: 5,paddingTop:5}}>Moo가 준비한 스탬프들을</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", paddingBottom: 5,paddingTop:5}}>추가해보겠냐무?</Text>
+                </TouchableOpacity>
+                    <View style={{
+                    // position: 'absolute',
+                    // left:180,
+                    // bottom: 310,
+                    marginTop:-3,
+                    width:0,
+                    height:0,
+                    borderTopWidth:20,
+                    borderTopColor:'#72D193',
+                    borderLeftWidth:20,
+                    borderLeftColor:'#FFFFFF00',
+                    borderRightWidth:20,
+                    borderRightColor:'#FFFFFF00',
+                    borderBottomWidth:20,
+                    borderBottomColor:'#FFFFFF00',
+                    }}/>
+                    <Image source={require('./assets/colorMooMedium.png')} style={{
+                      width: 90,
+                      height: 393*89/363,
+                      transform: [{ rotate: '25deg' }],}}/>
+              </View>
+              <View style={{
+                  paddingHorizontal: "5%",
+                  marginTop:30,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between'
+                  }}>
+                  <TouchableOpacity onPress={async ()=>{
+                      amplitude.test1(); //스탬프 템플릿 추가 안 함
+                      handleStampTemplateAddedTrue();
+                      }}
+                      style={styles.cancelBtn}>
+                      <Text style={{fontSize: 19}}>아냐 괜찮아</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={async ()=>{
+                      amplitude.test1(); //스탬프 템플릿 추가함
+                      handleStampTemplateAddedTrue();
+                      realm.write(addStampTemplate);
+                  }}
+                  style={styles.clearBtn}>
+                      <Text style={{fontSize: 19}}>응 좋아!</Text>
+                  </TouchableOpacity>
+              </View>
+          </View>
+      </Modal>
   </>
   );
 }
@@ -153,6 +324,34 @@ const styles = StyleSheet.create({
       color: '#72D193',
       fontSize: 18,
       fontWeight: 'bold'
+    },
+    cancelBtn: {
+      alignSelf: 'center',
+      alignItems: 'center', 
+      justifyContent: 'center',
+      color: '#FF0000', 
+      padding: 7,
+      marginBottom: 16,
+      backgroundColor: 'white', 
+      borderColor: '#FF0000',
+      borderWidth:1,
+      borderRadius: 8,
+      flex: 1,
+      marginHorizontal:10,
+    },
+    clearBtn: {
+      alignSelf: 'center',
+      alignItems: 'center', 
+      justifyContent: 'center',
+      color: '#344054',
+      padding: 7,
+      marginBottom: 16,
+      backgroundColor: 'white', 
+      borderColor: '#72D193',
+      borderWidth:1,
+      borderRadius: 8,
+      flex: 1,
+      marginHorizontal:10,
     },
   });
 
