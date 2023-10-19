@@ -95,7 +95,6 @@ const Weekly = () => {
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
   const [tryToChangeToday, setTryToChangeToday] = useState<dayjs.Dayjs>(today);
   const handleTodayChange = (date: dayjs.Dayjs) => { 
-    setIsTryingSelf(false);
     if (isEditMode) {
       setTryToChangeToday(date);
       amplitude.click2move2AnotherDayWhileEditingDiary(date.format('YYYY-MM-DD'));
@@ -222,7 +221,6 @@ const Weekly = () => {
   //     setEditedBodytext(todayReport.bodytext);
   //   }
   // }, [todayReport]);
-  const [isTryingSelf, setIsTryingSelf] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todayReport ? todayReport.title : '');
   const [tmpEditedTitle, setTmpEditedTitle] = useState(editedTitle);
@@ -277,38 +275,24 @@ const Weekly = () => {
       <View style={{flex: 1, alignItems: 'center', }}>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', }}>
 
-          {!isTryingSelf ? (
           <View>
             <View style={bubbleStyles.container}>
               <Text style={{fontSize: 16, color: '#fff', }}>일기를 만들 준비가 됐다무!</Text>
             </View>
             <View style={bubbleStyles.tail}></View>
-            </View>):(
-              <View>
-                <View style={[bubbleStyles.container, {backgroundColor: '#FFCC4D'}]}>
-                  <Text style={{fontSize: 16, color: '#fff', }}>Moo가 만들 수 있는데무 ...!</Text>
-                </View>
-                <View style={[bubbleStyles.tail, {backgroundColor: '#FFCC4D'}]}></View>
-              </View>
-          )}
+          </View>
 
           <Image 
             source={require('../assets/colorMooMedium.png')}
-            style={{ width: 104, height: (110 * 104) / 104 , marginTop: 20, marginBottom: 30}} // 비율을 유지하며 height 자동 조절
+            style={{ width: 104, height: (110 * 104) / 104 , marginTop: 20, marginBottom: 40}} // 비율을 유지하며 height 자동 조절
           />
-          {!isTryingSelf ? (
-            <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10}]} 
-              onPress={() => {setIsTryingSelf(true); amplitude.try_createDiaryMyself();}} >
-              <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>내가 직접 쓸래</Text>
-            </TouchableOpacity> ) : (
-            <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10, borderColor:'#FFCC4D'}]} 
-              onPress={() => {setIsTryingSelf(true); handleCreateDiaryMyself(); amplitude.createDiaryMyself(today.format('YYYY-MM-DD'));}} >
-              <Text style={{fontSize: 14, color: '#FFCC4D', fontWeight: '600', }}>그래도 내가 쓸래</Text>
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity style={[bubbleStyles.reply, {width: 160}]} 
+          <TouchableOpacity style={[bubbleStyles.reply, {width: 184, height: 46, marginBottom: 10}]} 
             onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}} >
-            <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>무가 만들어줘!</Text>
+            <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>무가 만들어줘!</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[bubbleStyles.reply, {width: 184, height: 46, marginBottom: 10}]} 
+            onPress={() => {handleCreateDiaryMyself(); amplitude.createDiaryMyself(today.format('YYYY-MM-DD'));}} >
+            <Text style={{fontSize: 16, color: '#FFCC4D', fontWeight: '600'}}>내가 직접 쓸래</Text>
           </TouchableOpacity>
 
         </View>
@@ -321,37 +305,24 @@ const Weekly = () => {
       <View style={{flex: 1, alignItems: 'center', }}>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center', }}>
           
-          {!isTryingSelf ? (
-            <View>
-              <View style={bubbleStyles.container}>
-                <Text style={{fontSize: 16, color: '#fff', }}>일기를 만들 준비가 됐다무!</Text>
-              </View>
-              <View style={bubbleStyles.tail}></View>
-            </View>):(
-              <View>
-                <View style={[bubbleStyles.container, {backgroundColor: '#FFCC4D'}]}>
-                  <Text style={{fontSize: 16, color: '#fff', }}>Moo가 만들 수 있는데무 ...!</Text>
-                </View>
-                <View style={[bubbleStyles.tail, {backgroundColor: '#FFCC4D'}]}></View>
-              </View>
-          )}
+          <View>
+            <View style={bubbleStyles.container}>
+              <Text style={{fontSize: 16, color: '#fff', }}>일기를 만들 준비가 됐다무!</Text>
+            </View>
+            <View style={bubbleStyles.tail}></View>
+          </View>
 
           <Image 
             source={require('../assets/colorMooMedium.png')}
-            style={{ width: 104, height: (110 * 104) / 104 , marginTop: 20, marginBottom: 30}} // 비율을 유지하며 height 자동 조절
+            style={{ width: 104, height: (110 * 104) / 104 , marginTop: 20, marginBottom: 40}} // 비율을 유지하며 height 자동 조절
           />
-          {!isTryingSelf ? (
-            <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10}]} 
-              onPress={() => {setIsTryingSelf(true); amplitude.try_createDiaryMyself_forPast();}} >              <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>내가 직접 쓸래</Text>
-            </TouchableOpacity> ) : (
-            <TouchableOpacity style={[bubbleStyles.reply, {width: 160, marginBottom: 10, borderColor:'#FFCC4D'}]} 
-              onPress={() => {setIsTryingSelf(true); handleCreateDiaryMyself(); amplitude.createDiaryMyself_forPast(today.format('YYYY-MM-DD'));}} >
-              <Text style={{fontSize: 14, color: '#FFCC4D', fontWeight: '600', }}>그래도 내가 쓸래</Text>
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity style={[bubbleStyles.reply, {width: 160, }]} 
+          <TouchableOpacity style={[bubbleStyles.reply, {width: 184, height: 46, marginBottom: 10}]} 
             onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can_forPast(today.format('YYYY-MM-DD'));}} >
-            <Text style={{fontSize: 14, color: '#72D193', fontWeight: '600'}}>무가 만들어줘!</Text>
+            <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>무가 만들어줘!</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[bubbleStyles.reply, {width: 184, height: 46, borderColor: '#FFCC4D'}]} 
+            onPress={() => {handleCreateDiaryMyself(); amplitude.createDiaryMyself_forPast(today.format('YYYY-MM-DD'));}} >
+              <Text style={{fontSize: 16, color: '#FFCC4D', fontWeight: '600'}}>내가 직접 쓸래</Text>
           </TouchableOpacity>
         </View>
   
@@ -715,7 +686,7 @@ const Weekly = () => {
                   ))}
                 </View>
                 {getEmoji(getStamp(today)).length === 1 && today.isSame(dayjs(), 'day')? (
-                  <View style={{ alignItems: 'center', height: 260, marginTop: 30}}>
+                  <View style={{ alignItems: 'center', height: 280, marginTop: 15, }}>
                     <nodata.PleaseOneMoreStampMini/>
                   </View>
                   ) : (<View></View>)}
@@ -1090,6 +1061,7 @@ const bubbleStyles = StyleSheet.create({
     width: 220,
     alignSelf: 'flex-start', // 좌측 정렬로 변경
     alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 10,
     // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
     position: 'relative',
@@ -1114,6 +1086,7 @@ const bubbleStyles = StyleSheet.create({
     width: 200,
     alignSelf: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 10,
     // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
     position: 'relative',
