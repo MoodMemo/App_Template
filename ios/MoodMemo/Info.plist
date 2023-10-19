@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
@@ -78,10 +80,10 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
-		<key>CFBundleURLSchemes</key>
-		<array>
-			<string>fb854860769368350</string>
-		</array>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb854860769368350</string>
+			</array>
 		</dict>
 	</array>
 	<key>FacebookAppID</key>

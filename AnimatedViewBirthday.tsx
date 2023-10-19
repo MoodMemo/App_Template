@@ -26,6 +26,7 @@ async function saveUserInfo_toAsyncStorage(userName:any, birthday:any, job:any) 
       await AsyncStorage.setItem('@UserInfo:birth', birthday);
       await AsyncStorage.setItem('@UserInfo:birthShow', birthday);
       await AsyncStorage.setItem('@UserInfo:job', job);
+      await AsyncStorage.setItem('@UserInfo:addedStampTemplate','true');
       //await AsyncStorage.setItem('@UserInfo:notificationAllow', 'true');
       await AsyncStorage.setItem('@UserInfo:registerDate', new Date().toString());
       // await AsyncStorage.setItem('@UserInfo:progressedDate', progressedDate); -> 얘는 나중에 스탬프 찍으면 업데이트
@@ -118,6 +119,74 @@ async function test_realm_ver4() {
     repository.createCustomStamp({
       stampName: "피곤",
       emoji: "😴"
+    });
+    repository.createCustomStamp({
+      stampName: "불안",
+      emoji: "😖"
+    });
+    repository.createCustomStamp({
+      stampName: "걱정",
+      emoji: "😨"
+    });
+    repository.createCustomStamp({
+      stampName: "황당",
+      emoji: "😦"
+    });
+    repository.createCustomStamp({
+      stampName: "졸림",
+      emoji: "😴"
+    });
+    repository.createCustomStamp({
+      stampName: "귀찮음",
+      emoji: "😮‍💨"
+    });
+    repository.createCustomStamp({
+      stampName: "후회",
+      emoji: "😢"
+    });
+    repository.createCustomStamp({
+      stampName: "배고픔",
+      emoji: "🍗"
+    });
+    repository.createCustomStamp({
+      stampName: "나른함",
+      emoji: "😑"
+    });
+    repository.createCustomStamp({
+      stampName: "후회",
+      emoji: "😢"
+    });
+    repository.createCustomStamp({
+      stampName: "웃김",
+      emoji: "😄"
+    });
+    repository.createCustomStamp({
+      stampName: "신기함",
+      emoji: "😮"
+    });
+    repository.createCustomStamp({
+      stampName: "후회",
+      emoji: "😢"
+    });
+    repository.createCustomStamp({
+      stampName: "감동",
+      emoji: "🥹"
+    });
+    repository.createCustomStamp({
+      stampName: "요리",
+      emoji: "🍽️"
+    });
+    repository.createCustomStamp({
+      stampName: "운동",
+      emoji: "💪"
+    });
+    repository.createCustomStamp({
+      stampName: "아이디어",
+      emoji: "💡"
+    });
+    repository.createCustomStamp({
+      stampName: "투두",
+      emoji: "✅"
     });
     console.log("create default custom stamp finished");
   }
