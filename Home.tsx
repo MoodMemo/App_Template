@@ -59,7 +59,7 @@ const Home = ({name,first}:any) => {
     console.log(isStampTemplateAdded,'isStampTemplateAdded',first);
   }, []);
 
-  const addStampTemplate = () => {
+  const addStampTemplate_old = () => {
     repository.createCustomStamp({
       stampName: "불안",
       emoji: "😖"
@@ -112,6 +112,24 @@ const Home = ({name,first}:any) => {
       stampName: "감동",
       emoji: "🥹"
     });
+    repository.createCustomStamp({
+      stampName: "요리",
+      emoji: "🍽️"
+    });
+    repository.createCustomStamp({
+      stampName: "운동",
+      emoji: "💪"
+    });
+    repository.createCustomStamp({
+      stampName: "아이디어",
+      emoji: "💡"
+    });
+    repository.createCustomStamp({
+      stampName: "투두",
+      emoji: "✅"
+    });
+  };
+  const addStampTemplate = () => {
     repository.createCustomStamp({
       stampName: "요리",
       emoji: "🍽️"
@@ -189,50 +207,72 @@ const Home = ({name,first}:any) => {
               height:'60%',
               justifyContent:'center',
               alignItems:'center',
-              borderRadius:10
+              borderRadius:20
           }}>
+
               <View style={{
                   justifyContent:'center',
                   alignItems:'center',
-                  marginTop:20,
                   }}>
+
+                  <View style={{marginBottom: 50}}>
+                    <Text style={{fontSize: 19, color:'#72D193',}}>업데이트 소식!</Text>
+                  </View>
+
+
+
                     <TouchableOpacity disabled={true} style={{
-                    // position: 'absolute',
-                    // bottom: 350,
-                    width: 250,
-                    height: 160,
+                    padding: 10,
+                    width: 200,
                     justifyContent: 'center',
-                    alignItems: 'center',
+                    // alignItems: 'center',
                     backgroundColor: '#72D193',
-                    borderRadius: 7,
-                    marginHorizontal:'5%'
+                    borderRadius: 10,
+                    position: 'relative',
+                    marginRight: 50,
                     }}>
-                      <Text style={{fontSize: 19, color:"#FFFFFF", paddingBottom: 5,paddingTop:5}}>{userName}에게</Text>
-                      <Text style={{fontSize: 19, color:"#FFFFFF", paddingBottom: 5,paddingTop:5}}>새로운 스탬프들을 준비했다무!</Text>
-                      <Text style={{fontSize: 19, color:"#FFFFFF", paddingBottom: 5,paddingTop:5}}>Moo가 준비한 스탬프들을</Text>
-                      <Text style={{fontSize: 19, color:"#FFFFFF", paddingBottom: 5,paddingTop:5}}>추가해보겠냐무?</Text>
-                </TouchableOpacity>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>Moo가 독특한 스탬프를</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>만들어봤다무!</Text>
+                    </TouchableOpacity>
                     <View style={{
-                    // position: 'absolute',
-                    // left:180,
-                    // bottom: 310,
-                    marginTop:-3,
-                    width:0,
-                    height:0,
-                    borderTopWidth:20,
-                    borderTopColor:'#72D193',
-                    borderLeftWidth:20,
-                    borderLeftColor:'#FFFFFF00',
-                    borderRightWidth:20,
-                    borderRightColor:'#FFFFFF00',
-                    borderBottomWidth:20,
-                    borderBottomColor:'#FFFFFF00',
+                      width: 20, // 꼬리의 길이
+                      height: 20, // 꼬리의 높이
+                      left: -80, // 꼬리 위치
+                      bottom: 15, // 꼬리 위치
+                      backgroundColor: '#72D193',
+                      transform: [{ rotate: '45deg' }],
+                      borderTopLeftRadius: 10, // 둥글게 만들기
+                      marginBottom: 10,
+                    }}/>
+
+                    <TouchableOpacity disabled={true} style={{
+                    padding: 10,
+                    width: 225,
+                    justifyContent: 'center',
+                    // alignItems: 'center',
+                    backgroundColor: '#72D193',
+                    borderRadius: 10,
+                    position: 'relative',
+                    marginLeft: 25,
+                    }}>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>한 번 추가해보지 않을래무?</Text>
+                    </TouchableOpacity>
+                    <View style={{
+                      width: 20, // 꼬리의 길이
+                      height: 20, // 꼬리의 높이
+                      left: 80, // 꼬리 위치
+                      bottom: 15, // 꼬리 위치
+                      backgroundColor: '#72D193',
+                      transform: [{ rotate: '45deg' }],
+                      borderTopLeftRadius: 10, // 둥글게 만들기
                     }}/>
                     <Image source={require('./assets/colorMooMedium.png')} style={{
                       width: 90,
                       height: 393*89/363,
-                      transform: [{ rotate: '25deg' }],}}/>
+                      transform: [{ rotate: '25deg' }],
+                      marginBottom: 20}}/>
               </View>
+
               <View style={{
                   paddingHorizontal: "5%",
                   marginTop:30,
@@ -244,7 +284,7 @@ const Home = ({name,first}:any) => {
                       handleStampTemplateAddedTrue();
                       }}
                       style={styles.cancelBtn}>
-                      <Text style={{fontSize: 19}}>아냐 괜찮아</Text>
+                      <Text style={{fontSize: 19, color: '#FF7168'}}>음 .. 괜찮아</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={async ()=>{
                       amplitude.confirmAddStampTemplate(); //스탬프 템플릿 추가함
@@ -252,7 +292,7 @@ const Home = ({name,first}:any) => {
                       realm.write(addStampTemplate);
                   }}
                   style={styles.clearBtn}>
-                      <Text style={{fontSize: 19}}>응 좋아!</Text>
+                      <Text style={{fontSize: 19, color: '#72D193'}}>좋아!</Text>
                   </TouchableOpacity>
               </View>
           </View>
@@ -329,11 +369,11 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       alignItems: 'center', 
       justifyContent: 'center',
-      color: '#FF0000', 
+      color: '#FF7168', 
       padding: 7,
       marginBottom: 16,
       backgroundColor: 'white', 
-      borderColor: '#FF0000',
+      borderColor: '#FF7168',
       borderWidth:1,
       borderRadius: 8,
       flex: 1,

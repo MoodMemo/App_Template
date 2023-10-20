@@ -121,58 +121,6 @@ async function test_realm_ver4() {
       emoji: "😴"
     });
     repository.createCustomStamp({
-      stampName: "불안",
-      emoji: "😖"
-    });
-    repository.createCustomStamp({
-      stampName: "걱정",
-      emoji: "😨"
-    });
-    repository.createCustomStamp({
-      stampName: "황당",
-      emoji: "😦"
-    });
-    repository.createCustomStamp({
-      stampName: "졸림",
-      emoji: "😴"
-    });
-    repository.createCustomStamp({
-      stampName: "귀찮음",
-      emoji: "😮‍💨"
-    });
-    repository.createCustomStamp({
-      stampName: "후회",
-      emoji: "😢"
-    });
-    repository.createCustomStamp({
-      stampName: "배고픔",
-      emoji: "🍗"
-    });
-    repository.createCustomStamp({
-      stampName: "나른함",
-      emoji: "😑"
-    });
-    repository.createCustomStamp({
-      stampName: "후회",
-      emoji: "😢"
-    });
-    repository.createCustomStamp({
-      stampName: "웃김",
-      emoji: "😄"
-    });
-    repository.createCustomStamp({
-      stampName: "신기함",
-      emoji: "😮"
-    });
-    repository.createCustomStamp({
-      stampName: "후회",
-      emoji: "😢"
-    });
-    repository.createCustomStamp({
-      stampName: "감동",
-      emoji: "🥹"
-    });
-    repository.createCustomStamp({
       stampName: "요리",
       emoji: "🍽️"
     });
