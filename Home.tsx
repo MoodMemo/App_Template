@@ -16,7 +16,7 @@ import { useSafeAreaFrame, useSafeAreaInsets, initialWindowMetrics} from 'react-
 import {default as Text} from "./CustomText"
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Home = ({name}:any) => {
+const Home = ({name,first}:any) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const options = ['최근 생성 순'];
   const [fixModalVisible, setFixModalVisible] = useState(false);
@@ -56,7 +56,7 @@ const Home = ({name}:any) => {
       console.error("Error fetching firstStamp:", error);
     });
     console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
-    console.log(isFirstStamp);
+    console.log(isStampTemplateAdded,'isStampTemplateAdded',first);
   }, []);
 
   const addStampTemplate = () => {
@@ -173,7 +173,7 @@ const Home = ({name}:any) => {
     {/* 스탬프 설정 모달 */}
     <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
   </View>) : (<StampOnBoarding/>)}
-  <Modal isVisible={!isStampTemplateAdded}
+  <Modal isVisible={!first&&!isStampTemplateAdded}
       animationIn={"fadeIn"}
       animationInTiming={200}
       animationOut={"fadeOut"}
