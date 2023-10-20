@@ -593,7 +593,7 @@ const AnimatedViewBirthday = () => {
               }}>
                 <TouchableOpacity style={styles.skipButton} onPress={()=>{
                   handleNext();
-                  amplitude.test1();//생일 입력 스킵
+                  amplitude.cancelRegiBirthday();//생일 입력 스킵
                 }}>
                   <Text style={styles.buttonText}>건너뛰기</Text>
                 </TouchableOpacity>
@@ -657,7 +657,7 @@ const AnimatedViewBirthday = () => {
               }}>
                 <TouchableOpacity style={styles.skipButton} onPress={()=>{
                   handleNext();
-                  amplitude.test1();//직업 입력 스킵
+                  amplitude.cancelRegiJob_Fin();//직업 입력 스킵
                 }}>
                   <Text style={styles.buttonText}>건너뛰기</Text>
                 </TouchableOpacity>

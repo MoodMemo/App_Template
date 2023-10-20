@@ -70,12 +70,24 @@ export function userRegiBirthday(birthday: String) {
     action: 'confirm',
     birthday});
 }
+export function cancelRegiBirthday() {
+  amplitude.track('intro: cancel, birthday',
+  {
+    view: 'intro',
+    action: 'cancel',});
+}
 export function userRegiJob_Fin(job: String) {
   amplitude.track('intro: confirm, job',
   {
     view: 'intro',
     action: 'confirm',
     job});
+}
+export function cancelRegiJob_Fin() {
+  amplitude.track('intro: cancel, job',
+  {
+    view: 'intro',
+    action: 'cancel',});
 }
 export function userRegiFin_andStampGo() {
   amplitude.track('intro: confirm, first stamp',
@@ -803,6 +815,7 @@ export function moveToDetail() {
     action: 'click',});
 }
 
+/** onboarding*/
 export function clickFirstStamp_JOY() {
   amplitude.track('onboarding: click, first stamp, 기쁨',
   {
@@ -843,5 +856,22 @@ export function confirmEndTutorial() {
   {
     view: 'onboarding',
     action: 'confirm',
+});
+}
+
+
+/** new modal */
+export function confirmAddStampTemplate() {
+  amplitude.track('stamp: confirm, add stamp template',
+  {
+    view: 'stamp',
+    action: 'confirm',
+});
+}
+export function cancelAddStampTemplate() {
+  amplitude.track('stamp: cancel, add stamp template',
+  {
+    view: 'stamp',
+    action: 'cancel',
 });
 }

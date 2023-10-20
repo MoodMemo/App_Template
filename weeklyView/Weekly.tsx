@@ -290,7 +290,7 @@ const Weekly = () => {
             onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}} >
             <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>무가 만들어줘!</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[bubbleStyles.reply, {width: 184, height: 46, marginBottom: 10}]} 
+          <TouchableOpacity style={[bubbleStyles.reply, {width: 184, height: 46, marginBottom: 10, borderColor: '#FFCC4D'}]} 
             onPress={() => {handleCreateDiaryMyself(); amplitude.createDiaryMyself(today.format('YYYY-MM-DD'));}} >
             <Text style={{fontSize: 16, color: '#FFCC4D', fontWeight: '600'}}>내가 직접 쓸래</Text>
           </TouchableOpacity>

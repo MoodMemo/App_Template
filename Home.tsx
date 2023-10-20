@@ -240,14 +240,14 @@ const Home = ({name}:any) => {
                   justifyContent: 'space-between'
                   }}>
                   <TouchableOpacity onPress={async ()=>{
-                      amplitude.test1(); //스탬프 템플릿 추가 안 함
+                      amplitude.cancelAddStampTemplate(); //스탬프 템플릿 추가 안 함
                       handleStampTemplateAddedTrue();
                       }}
                       style={styles.cancelBtn}>
                       <Text style={{fontSize: 19}}>아냐 괜찮아</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={async ()=>{
-                      amplitude.test1(); //스탬프 템플릿 추가함
+                      amplitude.confirmAddStampTemplate(); //스탬프 템플릿 추가함
                       handleStampTemplateAddedTrue();
                       realm.write(addStampTemplate);
                   }}
