@@ -230,11 +230,12 @@ const reloadNotification = async () => {
 
 (async () => { 
   // Do something before delay
-  await new Promise(f => setTimeout(f, 600));
+  
   await AppVersionCheck();
   //await getToken();
   //setShowCodePushUpdate(true);
   const codePushUpdateAvailable = await codePushVersionCheck();
+  await new Promise(f => setTimeout(f, 600));
   // await reloadNotification();
   SplashScreen.hide();
   // Do something after

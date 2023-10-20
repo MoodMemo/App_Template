@@ -26,9 +26,9 @@ import {default as Text} from "./CustomText"
 
 const Tab = createBottomTabNavigator();
 
-function HomeScreen(username:any) {
+function HomeScreen(username:any,first:any) {
   return (
-  <Home name={username}/>); //Home.tsx
+  <Home name={username} first={first}/>); //Home.tsx
 }
 
 function WeeklyScreen({ route, navigation }) {
@@ -228,7 +228,7 @@ async function test_realm_ver4_RUD() { // 테스트 완료 ! 지워도 됩니다
 /** asyncstorage 테스트용 함수
  */
 
-function Main({username}:any) {
+function Main({username,first}:any) {
   const [statusBar, setStatusBar] = useState('#FFFAF4');
   const [name, setName] = useState('');
   useEffect(() => {
@@ -268,7 +268,7 @@ function Main({username}:any) {
           }}>
           <Tab.Screen
             name="Home"
-            children={()=>HomeScreen(username)}//홈 화면
+            children={()=>HomeScreen(username,first)}//홈 화면
             listeners={{
               tabPress: e => {
                 setStatusBar('#FFFAF4');
