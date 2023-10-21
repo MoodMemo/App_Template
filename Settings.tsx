@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWindowDimensions, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar} from 'react-native';
+import { Image, useWindowDimensions, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar, Dimensions} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
@@ -14,6 +14,7 @@ import RNRestart from 'react-native-restart';
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
 import ChangeProfile from './ChangeProfile';
+import { tmpMooStamps, tmpGiftStamps, MooStampDivider, GiftStampDivider } from './SettingsEventComponent';
 
 import * as amplitude from './AmplitudeAPI';
 
@@ -41,6 +42,24 @@ const clearAsyncStorage = async () => {
 
 const restartApp = async () => {
     RNRestart.restart();
+}
+
+const TitleDivider = () => {
+    return (
+        <View>
+            <Divider style={{backgroundColor:"#DDDDDD"}}/>
+            <Divider style={{backgroundColor:"#DDDDDD"}}/>
+        </View>
+    )
+}
+
+const SubtitleDivider = () => {
+    return (
+        <View>
+            <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+            <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+        </View>
+    )
 }
 
 const Settings = () => {
@@ -121,24 +140,41 @@ const Settings = () => {
     //       console.log("Don't know how to open URL: " + url);
     //     }
     //   };
-  const {height,width}=useWindowDimensions();
-  //const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isKakaoModalVisible, setIsKakaoModalVisible] = useState(false);
-  const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
-  const [isReportModalVisible, setIsReportModalVisible] = useState(false);
-  const [isCoffeeModalVisible, setIsCoffeeModalVisible] = useState(false);
-  const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
-  const [isNotificationListModalVisible, setIsNotificationListModalVisible] = useState(false);
-  const [isClearDataModalVisible, setIsClearDataModalVisible] = useState(false);
-  const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
-  const [isNotificationTimeChanged, setIsNotificationTimeChanged] = useState(false);
-  const [isNotificationAdded, setIsNotificationAdded] = useState(false);
+    const {height,width}=useWindowDimensions();
+    //const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isKakaoModalVisible, setIsKakaoModalVisible] = useState(false);
+    const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
+    const [isReportModalVisible, setIsReportModalVisible] = useState(false);
+    const [isShopModalVisible, setIsShopModalVisible] = useState(false);
+    const [isCoffeeModalVisible, setIsCoffeeModalVisible] = useState(false);
+    const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
+    const [isNotificationListModalVisible, setIsNotificationListModalVisible] = useState(false);
+    const [isClearDataModalVisible, setIsClearDataModalVisible] = useState(false);
+    const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+    const [isNotificationTimeChanged, setIsNotificationTimeChanged] = useState(false);
+    const [isNotificationAdded, setIsNotificationAdded] = useState(false);
 
-  const sortNotificationByTime = (a:any,b:any) => {
-    if(a.time > b.time) return 1;
-    else if(a.time < b.time) return -1;
-    else return 0;
-  }
+    const sortNotificationByTime = (a:any,b:any) => {
+        if(a.time > b.time) return 1;
+        else if(a.time < b.time) return -1;
+        else return 0;
+    }
+
+    const editStampList = (list) => {
+        let updatedList = [...list];
+        if (updatedList.length % 3 === 2) {
+            updatedList.push({ id: list.length + 1, image: '', });
+        }
+        return updatedList;
+    }
+    const updatedMooStamps = editStampList(tmpMooStamps);
+    const updateGiftStamps = editStampList(tmpGiftStamps);
+
+    const renderItem = ({ item }) => (
+        <View style={{}}>
+          <Image source={item.image} style={eventModalStyles.image} />
+        </View>
+      );
 
   (async () => {
     await AsyncStorage.getItem('@UserInfo:notificationAllow',(err,result)=>{
@@ -161,78 +197,24 @@ const Settings = () => {
         overScrollMode="never"
         showsVerticalScrollIndicator={false}
         >
-                <View
-                  style={{
-                      paddingHorizontal: 20,
-                      paddingBottom: 5,
-                      paddingTop: 20,
-                  }}>
-                  <Text style={{fontSize:16,color:'#999999'}}>프로필</Text>
+                {/* 프로필 섹션 */}
+                <View style={tabStyles.title}>
+                    <Text style={tabStyles.titleText}>프로필</Text>
                 </View>
                 <ChangeProfile/>
-                {/* <TouchableOpacity onPress={() => {
-                    amplitude.connectToKakaoChatBot();
-                    setIsKakaoModalVisible(!isKakaoModalVisible);
-                    }}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                        }}>
-                        <Text style={{fontSize: 17, color:"#495057"}}>채널톡 연동</Text>
-                    </View>
-                    <Modal isVisible={isKakaoModalVisible}
-                    animationIn={"fadeIn"}
-                    animationInTiming={200}
-                    animationOut={"fadeOut"}
-                    animationOutTiming={200}
-                    onBackdropPress={() => {
-                        setIsKakaoModalVisible(!isKakaoModalVisible);
-                    }}
-                    backdropColor='#CCCCCC'//'#FAFAFA'
-                    backdropOpacity={0.8}
-                    style={{
-                        alignItems:'center'
-                    }}>
-                        <View style={{
-                            backgroundColor:"#FFFAF4",
-                            width:'80%',
-                            height:'30%',
-                            justifyContent:'center',
-                            alignItems:'center',
-                            borderRadius:10
-                        }}>
-                            <View style={{
-                                }}>
-                                    <Text style={{fontSize: 17, color:"#495057"}}>채널톡 연동은 개발 중!</Text>
-                            </View>
-                        </View>
-                    </Modal>
-                </TouchableOpacity> */}
-                <Divider style={{backgroundColor:"#DDDDDD"}}/>
-                <Divider style={{backgroundColor:"#DDDDDD"}}/>
-                <View
-                  style={{
-                      paddingHorizontal: 20,
-                      paddingBottom: 5,
-                      paddingTop: 20,
-                  }}>
-                  <Text style={{fontSize:16,color:'#999999'}}>앱 설정</Text>
+                <TitleDivider/>
+                
+                {/* 앱 설정 섹션 */}
+                <View style={tabStyles.title}>
+                  <Text style={tabStyles.titleText}>앱 설정</Text>
                 </View>
+
                 <TouchableOpacity disabled={true}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                        }}>
-                        <Text style={{fontSize: 19, color:"#495057"}}>알림</Text>
+                    <View style={[tabStyles.content, {flexDirection: 'row',justifyContent: 'space-between'}]}>
+                        <Text style={tabStyles.contentText}>알림</Text>
                         <SwitchToggle
-                          switchOn={isNotificationEnabled}
-                          onPress={async () => {
+                        switchOn={isNotificationEnabled}
+                        onPress={async () => {
                             if (Platform.OS === 'android') {
                                 if(Platform.Version<33){
                                     if(!isNotificationEnabled){
@@ -278,7 +260,7 @@ const Settings = () => {
                                 else{
                                     try {
                                         const granted = await PermissionsAndroid.request(
-                                          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+                                        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
                                         );
                                         if(granted==='granted'){
                                             console.log(PermissionsAndroid.RESULTS.GRANTED);
@@ -327,9 +309,9 @@ const Settings = () => {
                                             setIsNotificationModalVisible(!isNotificationModalVisible);
                                             console.log(1,'denied');
                                         }
-                                      } catch (error) {
+                                    } catch (error) {
                                         console.warn(error);
-                                      }
+                                    }
                                 }
                             }
                             else{
@@ -382,27 +364,27 @@ const Settings = () => {
                                             console.log(1,'denied');
                                         }
                                     })
-                                  } catch (error) {
+                                } catch (error) {
                                     console.warn(error);
-                                  }
+                                }
                             }
-                          }}
-                          containerStyle={{
+                        }}
+                        containerStyle={{
                             marginTop: 2,
                             width: 45,  
                             height: 25,
                             borderRadius: 25,
                             padding: 3,
-                          }}
-                          circleStyle={{
+                        }}
+                        circleStyle={{
                             width: 20,
                             height: 20,
                             borderRadius: 20,
-                          }}
-                          circleColorOff='#FFFFFF'
-                          circleColorOn='#FFFFFF'
-                          backgroundColorOn='#72D193'
-                          backgroundColorOff='#78788029'
+                        }}
+                        circleColorOff='#FFFFFF'
+                        circleColorOn='#FFFFFF'
+                        backgroundColorOn='#72D193'
+                        backgroundColorOff='#78788029'
                         />
                     </View>
                     <Modal isVisible={isNotificationModalVisible}
@@ -435,21 +417,14 @@ const Settings = () => {
                         </View>
                     </Modal>
                 </TouchableOpacity>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+                <SubtitleDivider/>
+
                 <TouchableOpacity disabled={!isNotificationEnabled}
                 onPress={async () => {
                     setIsNotificationListModalVisible(!isNotificationListModalVisible);
                     amplitude.intoNotiList();
                     }}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                        }}>
+                    <View style={[tabStyles.content, {flexDirection: 'row', justifyContent: 'space-between'}]}>
                         <Text style={{fontSize: 19, color:isNotificationEnabled ? "#495057" : "#CCCCCC"}}>알림 목록</Text>
                     </View>
                     <Modal isVisible={isNotificationListModalVisible}
@@ -503,52 +478,28 @@ const Settings = () => {
                         </View>
                     </Modal>
                 </TouchableOpacity>
-                <Divider style={{backgroundColor:"#DDDDDD"}}/>
-                <Divider style={{backgroundColor:"#DDDDDD"}}/>
-                <View
-                  style={{
-                      paddingHorizontal: 20,
-                      paddingBottom: 5,
-                      paddingTop: 20,
-                  }}>
-                  <Text style={{fontSize:16,color:'#999999'}}>무드메모</Text>
+                <TitleDivider/>
+
+                {/* 이벤트 섹션 */}
+                <View style={tabStyles.title}>
+                  <Text style={tabStyles.titleText}>이벤트</Text>
                 </View>
-                <TouchableOpacity disabled={true}>
-                      <View
-                          style={{
-                              paddingHorizontal: 20,
-                              paddingBottom: 20,
-                              paddingTop: 20,
-                              flexDirection: 'row',
-                              justifyContent: 'space-between'
-                          }}>
-                          <Text style={{fontSize: 19, color:"#495057"}}>버전</Text>
-                          <Text style={{fontSize: 19, color:"#DBDBDB"}}>ver {VersionCheck.getCurrentVersion()}</Text>
-                      </View>
-                </TouchableOpacity>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                {/* <TouchableOpacity onPress={() => {
-                    amplitude.intoGuide();
-                    setIsNoticeModalVisible(!isNoticeModalVisible);
+
+                <TouchableOpacity onPress={() => {
+                    amplitude.intoServiceCenter();
+                    setIsReportModalVisible(!isReportModalVisible);
                     }}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                        }}>
-                        <Text style={{fontSize: 17, color:"#495057"}}>공지사항/이용 가이드</Text>
+                    <View style={tabStyles.content}>
+                        <Text style={tabStyles.contentText}>이벤트 현황</Text>
                     </View>
-                    <Modal isVisible={isNoticeModalVisible}
+                    <Modal isVisible={false}
                     animationIn={"fadeIn"}
                     animationInTiming={200}
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
-                        amplitude.outToSettingFromGuide();
-                        setIsNoticeModalVisible(!isNoticeModalVisible);
+                        amplitude.outToSettingFromServiceCenter();
+                        setIsReportModalVisible(!isReportModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
                     backdropOpacity={0.8}
@@ -557,32 +508,123 @@ const Settings = () => {
                     }}>
                         <View style={{
                             backgroundColor:"#FFFAF4",
-                            width:'80%',
-                            height:'30%',
-                            justifyContent:'center',
+                            width:330,
+                            height:300,
+                            // justifyContent:'center',
                             alignItems:'center',
                             borderRadius:10
                         }}>
                             <View style={{
+                                // justifyContent:'center',
+                                alignItems:'center',
+                                paddingHorizontal: 20,
+                                justifyContent: 'space-between', // 상하로 딱 붙이기
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057"}}>공지사항/이용 가이드는 개발 중!</Text>
-                            </View>
+                                    <Text style={{fontSize: 17, color:"#495057", paddingVertical: 10,marginTop:10,marginBottom:10}}>오류/의견은 언제나 환영이라무! 🥬</Text>
+                                    {/* <Text style={{fontSize: 14, color:"#495057"}}>무가 귀기울여 듣겠다무!</Text> */}
+                                    <View style={{ flexDirection: 'row', flex: 1,}}>
+                                        <View style={styles.memoContent}>
+                                            <TextInput
+                                                style={{ fontSize: 14, color:"#000000",}}
+                                                placeholder="운영진에게 메시지 남기기"
+                                                multiline={true}
+                                                // maxLength={500}
+                                                onChangeText={handleMemoChange}
+                                                value={memo}
+                                                // numberOfLines={numberOfLines}
+                                            />
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', paddingVertical: 13,}}>
+                                        <TouchableOpacity style={styles.confirmBtn} onPress={() => {sentryUserFeedback();}}>
+                                            <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+                                        </TouchableOpacity>
+                                        </View>
+                                    </View>
                         </View>
                     </Modal>
                 </TouchableOpacity>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/> */}
+                <SubtitleDivider/>
+
+                <TouchableOpacity onPress={() => {
+                    amplitude.intoServiceCenter();
+                    setIsShopModalVisible(!isShopModalVisible);
+                    }}>
+                    <View style={tabStyles.content}>
+                        <Text style={tabStyles.contentText}>은행잎 가져다주기 - 은행잎 임티?</Text>
+                    </View>
+                    
+                    <Modal isVisible={isShopModalVisible}
+                        animationIn={"fadeIn"}
+                        animationInTiming={200}
+                        animationOut={"fadeOut"}
+                        animationOutTiming={200}
+                        onBackdropPress={() => {
+                            // amplitude.outToSettingFromServiceCenter();
+                            setIsShopModalVisible(!isShopModalVisible);
+                    }}
+                    backdropColor='#CCCCCC'//'#FAFAFA'
+                    backdropOpacity={0.8}
+                    style={{ alignItems:'center', }}>
+                        
+                        <View style={eventModalStyles.container}>
+                            <ScrollView contentContainerStyle={{alignItems: 'center', gap: 10,}}>
+                                
+                                <Text style={{fontSize: 17, color:"#495057", marginTop:20,}}>Moo의 은행잎 상점에 어서오라무!🥬</Text>
+
+                                <MooStampDivider/>
+                                
+                                <View style={eventModalStyles.threeByThreeContainer}>
+                                    {updatedMooStamps.map((mooStamp) => (
+                                        <TouchableOpacity key={mooStamp.id} style={eventModalStyles.btnContainer} 
+                                        // onPress={() => {handleButtonPress(stampButton)}} 어떤 액션일지 몰라서
+                                        >
+                                            {renderItem({item: mooStamp})}
+                                            {/* <Text style={{}}>{mooStamp.sold}</Text> // 얘는 솔드아웃 여부 필요할까봐 넣어둠 */}
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+
+                                <GiftStampDivider/>
+
+                                <View style={[eventModalStyles.threeByThreeContainer, {marginBottom: 20}]}>
+                                    {updateGiftStamps.map((gift) => (
+                                        <TouchableOpacity key={gift.id} style={[eventModalStyles.btnContainer, {gap: 3}]} 
+                                        // onPress={() => {handleButtonPress(stampButton)}} 어떤 액션일지 몰라서
+                                        >
+                                            {renderItem({item: gift})}
+                                            <Text style={{}}>{gift.name}</Text> 
+                                            <Text style={{}}>{gift.remaining}</Text> 
+                                        </TouchableOpacity>
+                                    ))}
+                                </View>
+
+                            </ScrollView>
+
+                        </View>
+                    </Modal>
+                </TouchableOpacity>
+                <SubtitleDivider/>
+
+                {/* 무드메모 섹션 */}
+                <View style={tabStyles.title}>
+                  <Text style={tabStyles.titleText}>무드메모</Text>
+                </View>
+                
+                <TouchableOpacity disabled={true}>
+                    <View style={[tabStyles.content, {flexDirection: 'row', justifyContent: 'space-between'}]}>
+                        <Text style={tabStyles.contentText}>버전</Text>
+                        <Text style={{fontSize: 19, color:"#DBDBDB"}}>ver {VersionCheck.getCurrentVersion()}</Text>
+                    </View>
+                </TouchableOpacity>
+                <SubtitleDivider/>
+
                 <TouchableOpacity onPress={() => {
                     amplitude.intoServiceCenter();
                     setIsReportModalVisible(!isReportModalVisible);
                     }}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                        }}>
-                        <Text style={{fontSize: 19, color:"#495057"}}>고객센터/의견 보내기/오류 제보</Text>
+                    <View style={tabStyles.content}>
+                        <Text style={tabStyles.contentText}>고객센터/의견 보내기/오류 제보</Text>
                     </View>
                     <Modal isVisible={isReportModalVisible}
                     animationIn={"fadeIn"}
@@ -636,68 +678,58 @@ const Settings = () => {
                         </View>
                     </Modal>
                 </TouchableOpacity>
+                <SubtitleDivider/>
+                
                 {Platform.OS==='android' ? (<>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <TouchableOpacity onPress={() => {
-                    amplitude.intoCoffee();
-                    setIsCoffeeModalVisible(!isCoffeeModalVisible);
-                    }}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                        }}>
-                        <Text style={{fontSize: 19, color:"#495057"}}>개발자에게 커피 사주기</Text>
-                    </View>
-                    <Modal isVisible={isCoffeeModalVisible}
-                    animationIn={"fadeIn"}
-                    animationInTiming={200}
-                    animationOut={"fadeOut"}
-                    animationOutTiming={200}
-                    onBackdropPress={() => {
-                        amplitude.outToSettingFromCoffee();
+                    <TouchableOpacity onPress={() => {
+                        amplitude.intoCoffee();
                         setIsCoffeeModalVisible(!isCoffeeModalVisible);
-                    }}
-                    backdropColor='#CCCCCC'//'#FAFAFA'
-                    backdropOpacity={0.8}
-                    style={{
-                        alignItems:'center'
-                    }}>
-                        <View style={{
-                            backgroundColor:"#FFFAF4",
-                            width:'80%',
-                            height:'30%',
-                            justifyContent:'center',
-                            alignItems:'center',
-                            borderRadius:10
+                        }}>
+                        <View style={tabStyles.content}>
+                            <Text style={tabStyles.contentText}>개발자에게 커피 사주기</Text>
+                        </View>
+                        <Modal isVisible={isCoffeeModalVisible}
+                        animationIn={"fadeIn"}
+                        animationInTiming={200}
+                        animationOut={"fadeOut"}
+                        animationOutTiming={200}
+                        onBackdropPress={() => {
+                            amplitude.outToSettingFromCoffee();
+                            setIsCoffeeModalVisible(!isCoffeeModalVisible);
+                        }}
+                        backdropColor='#CCCCCC'//'#FAFAFA'
+                        backdropOpacity={0.8}
+                        style={{
+                            alignItems:'center'
                         }}>
                             <View style={{
+                                backgroundColor:"#FFFAF4",
+                                width:'80%',
+                                height:'30%',
                                 justifyContent:'center',
                                 alignItems:'center',
-                                }}>
-                                    <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>카카오뱅크 이O하</Text>
-                                    <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>3333-27-9623079</Text>
-                                    <Text style={{fontSize: 19, color:"#495057", }}>감사합니다!</Text>
+                                borderRadius:10
+                            }}>
+                                <View style={{
+                                    justifyContent:'center',
+                                    alignItems:'center',
+                                    }}>
+                                        <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>카카오뱅크 이O하</Text>
+                                        <Text style={{fontSize: 19, color:"#495057", paddingBottom: 10,}}>3333-27-9623079</Text>
+                                        <Text style={{fontSize: 19, color:"#495057", }}>감사합니다!</Text>
+                                </View>
                             </View>
-                        </View>
-                    </Modal>
-                </TouchableOpacity>
+                        </Modal>
+                    </TouchableOpacity>
+                    <SubtitleDivider/>
                 </>) : (<></>)}
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-                <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
+
                 <TouchableOpacity onPress={() => {
                     amplitude.clickReset(); //데이터 초기화하기 모달 켬
                     setIsClearDataModalVisible(!isClearDataModalVisible);
                     }}>
-                    <View
-                        style={{
-                            paddingHorizontal: 20,
-                            paddingBottom: 20,
-                            paddingTop: 20,
-                        }}>
-                        <Text style={{fontSize: 19, color:"#495057"}}>모든 데이터 초기화하기</Text>
+                    <View style={tabStyles.content}>
+                        <Text style={tabStyles.contentText}>모든 데이터 초기화하기</Text>
                     </View>
                     <Modal isVisible={isClearDataModalVisible}
                     animationIn={"fadeIn"}
@@ -760,10 +792,58 @@ const Settings = () => {
                         </View>
                     </Modal>
                 </TouchableOpacity>
+                {/* <TitleDivider/> */}
+
+                
+
         </ScrollView>
       </View>
     );
 }
+
+
+const tabStyles = StyleSheet.create({
+    title: {
+        paddingHorizontal: 20,
+        paddingBottom: 5,
+        paddingTop: 20,
+    },
+    titleText: {
+        fontSize:16,color:'#999999'
+    },
+    content: {
+        paddingHorizontal: 20,
+        paddingBottom: 15,
+        paddingTop: 15,
+    },
+    contentText: {
+        fontSize: 19, color:"#495057"
+    }
+});
+const eventModalStyles = StyleSheet.create({
+    container: {
+        backgroundColor:"#FFFAF4",
+        width:330,
+        alignItems: 'center',
+        borderRadius: 10,
+    },
+    threeByThreeContainer: {
+        width: 280, 
+        alignContent: 'center',
+        flexDirection: 'row', // 버튼들을 가로로 배열
+        flexWrap: 'wrap', // 가로로 공간이 부족하면 다음 줄로 넘어감
+        justifyContent: 'space-between', // 버튼들 사이의 간격을 동일하게 분배
+    },
+    btnContainer: {
+        width: 90,
+        marginBottom: 15,
+        alignItems: 'center',
+    },
+    image: {
+        width: 80,
+        height: (85 * 80) / 80 ,
+    }
+});
 
 const styles = StyleSheet.create({
     container: {
