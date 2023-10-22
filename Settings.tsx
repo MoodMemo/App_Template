@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, useWindowDimensions, View, TextInput, TouchableOpacity, PermissionsAndroid, Platform, StyleSheet, ScrollView, Switch, Linking, StatusBar, Dimensions} from 'react-native';
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
@@ -10,6 +10,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import VersionCheck from 'react-native-version-check';
 import { PERMISSIONS, RESULTS, requestNotifications, checkNotifications} from "react-native-permissions";
 import RNRestart from 'react-native-restart';
+import MCIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialAllIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
@@ -153,6 +156,9 @@ const Settings = () => {
     const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
     const [isNotificationTimeChanged, setIsNotificationTimeChanged] = useState(false);
     const [isNotificationAdded, setIsNotificationAdded] = useState(false);
+    const [isEventLevelModalVisible, setIsEventLevelModalVisible] = useState(false);
+    const [autumnEventCoin,setAutumnEventCoin] = useState(0);
+    const [autumnEventLevel,setAutumnEventLevel] = useState(1);
 
     const sortNotificationByTime = (a:any,b:any) => {
         if(a.time > b.time) return 1;
@@ -175,6 +181,20 @@ const Settings = () => {
           <Image source={item.image} style={eventModalStyles.image} />
         </View>
       );
+    
+    useEffect(() => {
+        AsyncStorage.getItem('@UserInfo:notificationAllow',(err,result)=>{
+            if(JSON.parse(String(result))) setIsNotificationEnabled(true);
+            else setIsNotificationEnabled(false);
+            console.log('notificationallowed',result);
+        });
+        AsyncStorage.getItem('@UserInfo:AutumnEventCoin').then((value) => {
+            setAutumnEventCoin(value);
+        })
+        AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value) => {
+            setAutumnEventLevel(Number(value));
+        })
+      },[]);
 
   (async () => {
     await AsyncStorage.getItem('@UserInfo:notificationAllow',(err,result)=>{
@@ -182,6 +202,12 @@ const Settings = () => {
         else setIsNotificationEnabled(false);
         console.log('notificationallowed',result);
     });
+    await AsyncStorage.getItem('@UserInfo:AutumnEventCoin').then((value) => {
+        setAutumnEventCoin(value);
+    })
+    AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value) => {
+        setAutumnEventLevel(Number(value));
+    })
   })();
 
     return (
@@ -482,24 +508,28 @@ const Settings = () => {
 
                 {/* 이벤트 섹션 */}
                 <View style={tabStyles.title}>
-                  <Text style={tabStyles.titleText}>이벤트</Text>
+                  <Text style={tabStyles.titleText}>가을 이벤트</Text>
                 </View>
-
-                <TouchableOpacity onPress={() => {
-                    amplitude.intoServiceCenter();
-                    setIsReportModalVisible(!isReportModalVisible);
-                    }}>
-                    <View style={tabStyles.content}>
-                        <Text style={tabStyles.contentText}>이벤트 현황</Text>
+                    <View style={[tabStyles.content,{flexDirection:'row',justifyContent:'space-between'}]}>
+                        <View style={{flexDirection:'row'}}>
+                            <Text style={tabStyles.contentText}>레벨</Text>
+                            <TouchableOpacity onPress={() => {
+                            amplitude.test1();//이벤트 현황 켬
+                            setIsEventLevelModalVisible(!isEventLevelModalVisible);
+                            }}>
+                            <MCIcons name="information-outline" color={'#AAAAAA'} size={22} style={{marginLeft:5,marginTop:2}}/>
+                            </TouchableOpacity>
+                        </View>
+                        <Text style={{color:'#FFCC4D',fontSize:19,marginLeft:10}}>Lv. {autumnEventLevel}</Text>
                     </View>
-                    <Modal isVisible={false}
+                    <Modal isVisible={isEventLevelModalVisible}
                     animationIn={"fadeIn"}
                     animationInTiming={200}
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
-                        amplitude.outToSettingFromServiceCenter();
-                        setIsReportModalVisible(!isReportModalVisible);
+                        amplitude.test1();//이벤트 현황 끔
+                        setIsEventLevelModalVisible(!isEventLevelModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
                     backdropOpacity={0.8}
@@ -508,52 +538,90 @@ const Settings = () => {
                     }}>
                         <View style={{
                             backgroundColor:"#FFFAF4",
-                            width:330,
-                            height:300,
-                            // justifyContent:'center',
-                            alignItems:'center',
+                            width:340,
+                            height:320,
                             borderRadius:10
                         }}>
-                            <View style={{
-                                // justifyContent:'center',
-                                alignItems:'center',
-                                paddingHorizontal: 20,
-                                justifyContent: 'space-between', // 상하로 딱 붙이기
+                            <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:15, marginLeft:20, marginRight:20, width:'90%'}}>
+                                <Text style={{fontSize: 18, color: '#212429', marginLeft:5, marginTop:5}}>레벨 안내</Text>
+                                <TouchableOpacity onPress={() => {
+                                    setIsEventLevelModalVisible(!isEventLevelModalVisible);
+                                    amplitude.test1();//이벤트 설명 끔
                                 }}>
-                                    <Text style={{fontSize: 17, color:"#495057", paddingVertical: 10,marginTop:10,marginBottom:10}}>오류/의견은 언제나 환영이라무! 🥬</Text>
-                                    {/* <Text style={{fontSize: 14, color:"#495057"}}>무가 귀기울여 듣겠다무!</Text> */}
-                                    <View style={{ flexDirection: 'row', flex: 1,}}>
-                                        <View style={styles.memoContent}>
-                                            <TextInput
-                                                style={{ fontSize: 14, color:"#000000",}}
-                                                placeholder="운영진에게 메시지 남기기"
-                                                multiline={true}
-                                                // maxLength={500}
-                                                onChangeText={handleMemoChange}
-                                                value={memo}
-                                                // numberOfLines={numberOfLines}
-                                            />
-                                        </View>
+                                    <MaterialAllIcons name='close' color={'#DBDBDB'} size={27} style={{marginTop:4}}/>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{
+                                alignSelf:'center',
+                                width:290,
+                                borderBottomWidth:1.5,
+                                borderBottomColor:'#FFCC4D',
+                                borderStyle:'solid',
+                                marginTop:30
+                            }}>
+                                <View style={{
+                                flexDirection:'row',
+                                justifyContent:'space-between',
+                                width:260,
+                                alignSelf:'center',}}>
+                                <View style={{flexDirection:'row', justifyContent:'space-between',width:110,marginBottom:15}}>
+                                    <Text style={{color:'#212429',fontSize:14}}>Lv. 1</Text>
+                                    <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                                        <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
+                                        <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>1~2개</Text>
                                     </View>
-                                    <View style={{ flexDirection: 'row', paddingVertical: 13,}}>
-                                        <TouchableOpacity style={styles.confirmBtn} onPress={() => {sentryUserFeedback();}}>
-                                            <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
-                                        </TouchableOpacity>
-                                        </View>
+                                </View>
+                                <View style={{flexDirection:'row', justifyContent:'space-between',width:110,marginBottom:15}}>
+                                    <Text style={{color:'#212429',fontSize:14}}>Lv. 2</Text>
+                                    <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                                        <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
+                                        <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>1~3개</Text>
                                     </View>
+                                </View>
+                            </View>
+                            <View style={{flexDirection:'row', justifyContent:'space-between',width:260, alignSelf:'center'}}>
+                                <View style={{flexDirection:'row', justifyContent:'space-between',width:110,marginBottom:15}}>
+                                    <Text style={{color:'#212429',fontSize:14}}>Lv. 3</Text>
+                                    <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                                        <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
+                                        <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>2~4개</Text>
+                                    </View>
+                                </View>
+                                <View style={{flexDirection:'row', justifyContent:'space-between',width:110,marginBottom:15}}>
+                                    <Text style={{color:'#212429',fontSize:14}}>Lv. 4</Text>
+                                    <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                                        <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
+                                        <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>3~5개</Text>
+                                    </View>
+                                </View>
+                            </View>
+                            </View>
+                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>규칙 안내</Text>
+                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>- 스탬프 생성 시 은행잎을 랜덤하게 획득 가능합니다.</Text>
+                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>- 획득 가능 은행잎의 개수는 레벨에 따라 상이합니다.</Text>
+                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>레벨 변화</Text>
+                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>- 날짜를 연속해 스탬프를 남기면 레벨 +1</Text>
+                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>- 하루 동안 스탬프를 남기지 않으면 레벨 -1</Text>
                         </View>
                     </Modal>
-                </TouchableOpacity>
-                <SubtitleDivider/>
 
-                <TouchableOpacity onPress={() => {
+                <SubtitleDivider/>
+                    <View style={[tabStyles.content,{flexDirection:'row',justifyContent:'space-between'}]}>
+                        <Text style={tabStyles.contentText}>은행잎 현황</Text>
+                        <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                            <Image source={require('./assets/autumn_event_coin.png')} style={{width:25,height:25*98/102}}/>
+                            <Text style={{color:'#FFCC4D',fontSize:19,marginLeft:10}}>{autumnEventCoin}개</Text>
+                        </View>
+                    </View>
+                    <TouchableOpacity onPress={() => {
                     amplitude.intoServiceCenter();
                     setIsShopModalVisible(!isShopModalVisible);
                     }}>
-                    <View style={tabStyles.content}>
-                        <Text style={tabStyles.contentText}>은행잎 가져다주기 - 은행잎 임티?</Text>
-                    </View>
-                    
+                        <View style={{backgroundColor:'#FFCC4D', width:350, height:55, flexDirection:'row', alignItems:'center', justifyContent:'center', borderRadius:10, alignSelf:'center'}}>
+                            <MCIcons name='cart' color={'#FFFFFF'} size={27}/>
+                            <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>은행잎 상점</Text>
+                        </View>
+                    </TouchableOpacity>
                     <Modal isVisible={isShopModalVisible}
                         animationIn={"fadeIn"}
                         animationInTiming={200}
@@ -598,12 +666,9 @@ const Settings = () => {
                                         </TouchableOpacity>
                                     ))}
                                 </View>
-
                             </ScrollView>
-
                         </View>
                     </Modal>
-                </TouchableOpacity>
                 <SubtitleDivider/>
 
                 {/* 무드메모 섹션 */}

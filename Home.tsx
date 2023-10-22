@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef} from 'react';
-import { View, StyleSheet, Touchable, TouchableOpacity, SafeAreaView, Image, StatusBar, Platform } from 'react-native';
+import { Dimensions, View, StyleSheet, Touchable, TouchableOpacity, SafeAreaView, Image, StatusBar, Platform } from 'react-native';
 import Modal from "react-native-modal";
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
 import StampOnBoarding from './StampOnBoarding';
+import AutumnEventDetailModal from './AutumnEventDetailModal';
 // import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
 import * as repository from './src/localDB/document';
@@ -16,6 +17,9 @@ import { useSafeAreaFrame, useSafeAreaInsets, initialWindowMetrics} from 'react-
 import {default as Text} from "./CustomText"
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
 const Home = ({name,first}:any) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const options = ['최근 생성 순'];
@@ -23,6 +27,7 @@ const Home = ({name,first}:any) => {
   const [userName, setUserName] = useState('');
   const [isFirstStamp,setIsFirstStamp]=useState(false);
   const [isStampTemplateAdded,setIsStampTemplateAdded]=useState(true);
+  const [isEventModalVisible,setIsEventModalVisible] = useState(false);
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
@@ -173,12 +178,18 @@ const Home = ({name,first}:any) => {
         backgroundColor="#FFFAF4"
         barStyle='dark-content'
       />
-    {isFirstStamp===false ? (<View style={styles.view}>
+    {isFirstStamp===false ? (<><View style={styles.view}>
     <View style={styles.titleContainer}>
       {/* 드롭다운 컴포넌트 */}
       <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
     </View>
     <Image source={require('./assets/colorMooMedium.png')} style={styles.mooImage}/>
+    <TouchableOpacity onPress={() => {
+      setIsEventModalVisible(!isEventModalVisible);
+      amplitude.test1();//이벤트 배너 켬
+    }}>
+      <Image source={require('./assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
+    </TouchableOpacity>
     <View style={styles.options}>
       <Dropdown options={options} onSelectOption={handleOptionSelect} />
       <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
@@ -190,7 +201,21 @@ const Home = ({name,first}:any) => {
     <StampView/>
     {/* 스탬프 설정 모달 */}
     <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
-  </View>) : (<StampOnBoarding/>)}
+  </View>
+  <Modal isVisible={isEventModalVisible}
+    animationIn={"fadeIn"}
+    animationInTiming={200}
+    animationOut={"fadeOut"}
+    animationOutTiming={200}
+    onBackdropPress={() => {
+      amplitude.test1();//이벤트 배너 끔
+        setIsEventModalVisible(!isEventModalVisible);
+  }}
+  backdropColor='#CCCCCC'//'#FAFAFA'
+  backdropOpacity={0.8}
+  style={{ alignItems:'center', }}>
+    <AutumnEventDetailModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible}/>
+  </Modal></>) : (<StampOnBoarding/>)}
   <Modal isVisible={!first&&!isStampTemplateAdded}
       animationIn={"fadeIn"}
       animationInTiming={200}
@@ -218,8 +243,6 @@ const Home = ({name,first}:any) => {
                   <View style={{marginBottom: 50}}>
                     <Text style={{fontSize: 19, color:'#72D193',}}>업데이트 소식!</Text>
                   </View>
-
-
 
                     <TouchableOpacity disabled={true} style={{
                     padding: 10,
@@ -393,6 +416,13 @@ const styles = StyleSheet.create({
       flex: 1,
       marginHorizontal:10,
     },
+    bannerImage: {
+      width:windowWidth-30,
+      height:(windowWidth-30)*240/1440,
+      borderRadius:10,
+      alignSelf:'center',
+      top:18
+    }
   });
 
 export default Home;

@@ -342,7 +342,7 @@ function Main({username,first}:any) {
               tabBarIcon: ({color, size}) => (
                 <MaterialIcons name="settings" color={color} size={size} /> //하단 바 아이콘
               ),
-              lazy:false,
+              unmountOnBlur: true,
             }}
           />
         </Tab.Navigator>
