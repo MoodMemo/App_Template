@@ -159,6 +159,9 @@ const Settings = () => {
     const [isEventLevelModalVisible, setIsEventLevelModalVisible] = useState(false);
     const [autumnEventCoin,setAutumnEventCoin] = useState(0);
     const [autumnEventLevel,setAutumnEventLevel] = useState(1);
+    const [autumnEventBoughtIce,setAutumnEventBoughtIce] = useState(false);
+    const [autumnEventBoughtChicken1,setAutumnEventBoughtChicken1] = useState(false);
+    const [autumnEventBoughtChicken2,setAutumnEventBoughtChicken2] = useState(false);
 
     const sortNotificationByTime = (a:any,b:any) => {
         if(a.time > b.time) return 1;
@@ -193,6 +196,21 @@ const Settings = () => {
         })
         AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value) => {
             setAutumnEventLevel(Number(value));
+        })
+        AsyncStorage.getItem('@UserInfo:AutumnEventBoughtIce').then((value) => {
+            if(value==='true'){
+                setAutumnEventBoughtIce(true);
+            }
+        })
+        AsyncStorage.getItem('@UserInfo:AutumnEventBoughtChicken1').then((value) => {
+            if(value==='true'){
+                setAutumnEventBoughtChicken1(true);
+            }
+        })
+        AsyncStorage.getItem('@UserInfo:AutumnEventBoughtChicken2').then((value) => {
+            if(value==='true'){
+                setAutumnEventBoughtChicken2(true);
+            }
         })
       },[]);
 
