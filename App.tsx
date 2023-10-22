@@ -228,6 +228,18 @@ const reloadNotification = async () => {
   })
 }
 
+const autumnEventInitialize = async () => {
+  await AsyncStorage.getItem('@UserInfo:AutumnEvent').then((value) => {
+    if(value!=='true'){
+      AsyncStorage.setItem('@UserInfo:AutumnEvent','true');
+      AsyncStorage.setItem('@UserInfo:AutumnEventCoin','0');
+      AsyncStorage.setItem('@UserInfo:AutumnEventLevel','1');
+      AsyncStorage.setItem('@UserInfo:AutumnEventStampDate','10/10');
+      AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate','10/10');
+    }
+  })
+};
+
 (async () => { 
   // Do something before delay
   
@@ -236,6 +248,7 @@ const reloadNotification = async () => {
   //setShowCodePushUpdate(true);
   const codePushUpdateAvailable = await codePushVersionCheck();
   await new Promise(f => setTimeout(f, 600));
+  await autumnEventInitialize();
   // await reloadNotification();
   SplashScreen.hide();
   // Do something after

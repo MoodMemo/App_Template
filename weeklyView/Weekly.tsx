@@ -8,6 +8,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as repository from '../src/localDB/document';
 import realm from '../src/localDB/document';
 import * as amplitude from '../AmplitudeAPI';
@@ -33,6 +34,7 @@ import StampClick from '../StampClick';
 import StampView from '../StampView';
 import {default as Text} from "../CustomText"
 import * as nodata from './NoDataView';
+import AutumnEventCoinModal from '../AutumnEventCoinModal';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -144,10 +146,34 @@ const Weekly = () => {
   const [isWarningMove2AnotherDayModalVisible, setIsWarningMove2AnotherDayModalVisible] = useState(false);
 
   const [isCanceled, setIsCanceled] = useState(false);
+
+  const [isFirstDiaryToday, setIsFirstDiaryToday] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
 
     setIsLodingModalVisible(true);
+
+    const url = 'http://3.34.55.218:5000/time';
+    axios.get(url).then((response)=>{
+      var month=response.data.month;
+      var day=response.data.day;
+      AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
+        var date=value.split('/');
+        var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+        var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+        let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+        if(totalDays>0){
+          console.log(value);
+          console.log(totalDays,'일');
+          console.log('date_now: ',date_now);
+          console.log('date_stamp: ',date_stamp);
+          setIsFirstDiaryToday(true);
+          AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
+        }
+      })
+    }).catch((error)=>{
+      console.error('Failed to GET Server Time');
+    })
 
     const todayStampList = [];
     getStamp(today).forEach((stamp) => {
@@ -452,7 +478,10 @@ const Weekly = () => {
       });
     }
   };
-  
+
+
+  const [isEventModalVisible, setIsEventModalVisible]=useState(false);
+
 
   // tmp_createDummyData(); 
 
@@ -815,6 +844,7 @@ const Weekly = () => {
             style={{ alignItems:'center' }}
             backdropTransitionInTiming={0} // Disable default backdrop animation
             backdropTransitionOutTiming={0} // Disable default backdrop animation
+            onModalHide={()=>{setIsEventModalVisible(!isEventModalVisible)}}
           >
             {!isLodingFinishModalVisible ? (
               <View style={diaryStyles.lodingModal}>
@@ -868,10 +898,23 @@ const Weekly = () => {
                   </TouchableOpacity>
                 </View>
               </View>
-                        
             </View>
             )}
       </Modal>
+      
+      <Modal isVisible={isEventModalVisible && isFirstDiaryToday}
+      animationIn={"fadeIn"}
+      animationInTiming={200}
+      animationOut={"fadeOut"}
+      animationOutTiming={200}
+      onBackdropPress={() => {
+        amplitude.test1();//일기 - 은행잎 획득 모달 끔
+        setIsEventModalVisible(!isEventModalVisible);
+        setIsFirstDiaryToday(false);
+      }}>
+        <AutumnEventCoinModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible} type="diary"/>
+      </Modal>
+
       {/* 4-2. 일기 생성 완료 모달 */}
       <Modal 
         // isVisible={isLodingFinishModalVisible}
@@ -907,6 +950,7 @@ const Weekly = () => {
                     
         </View>
       </Modal>
+
       {/* 4-3. 일기 생성 불가 모달 */}
       <Modal 
         isVisible={isCannotModalVisible}

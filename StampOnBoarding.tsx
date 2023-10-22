@@ -355,7 +355,7 @@ const StampOnBoarding = () => {
                     // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
                     // setIsFirstStamp(false);
                     setSection('');
-                    navigation.navigate('Weekly');
+                    navigation.navigate('Weekly',{ showPopup: true });
                     // console.log(selectedEmotionId);
                     handleCreatePushedStamp();
                     AsyncStorage.setItem('@UserInfo:firstStamp','false');
