@@ -236,6 +236,9 @@ const autumnEventInitialize = async () => {
       AsyncStorage.setItem('@UserInfo:AutumnEventLevel','1');
       AsyncStorage.setItem('@UserInfo:AutumnEventStampDate','10/10');
       AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate','10/10');
+      AsyncStorage.setItem('@UserInfo:AutumnEventBoughtIce','false');
+      AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken1','false');
+      AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken2','false');
     }
   })
 };
