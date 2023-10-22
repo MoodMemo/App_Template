@@ -226,6 +226,9 @@ const Settings = () => {
                 setAutumnEventBoughtChicken2(true);
             }
         })
+        getAmount('chicken_1').then((value)=>{
+            console.log(value);
+        });
       },[]);
 
   (async () => {
