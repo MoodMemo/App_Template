@@ -657,7 +657,7 @@ const Settings = () => {
                                 <Text style={{fontSize: 18, color: '#212429', marginLeft:5, marginTop:5}}>레벨 안내</Text>
                                 <TouchableOpacity onPress={() => {
                                     setIsEventLevelModalVisible(!isEventLevelModalVisible);
-                                    amplitude.cancelLevelInfoByBackdrop();//레벨 설명 끔
+                                    amplitude.cancelLevelInfoByCancelBtn();//레벨 설명 끔
                                 }}>
                                     <MCIcons name='close' color={'#DBDBDB'} size={27} style={{marginTop:4}}/>
                                 </TouchableOpacity>

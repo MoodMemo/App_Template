@@ -942,7 +942,7 @@ export function cancelLevelInfoByBackdrop() {
   amplitude.track('event: cancel level info by backdrop',
   {action: 'cancel'});
 }
-export function cancelLevelInfoByBackdrop() {
+export function cancelLevelInfoByCancelBtn() {
   amplitude.track('event: cancel level info by cancel btn',
   {action: 'cancel'});
 }
