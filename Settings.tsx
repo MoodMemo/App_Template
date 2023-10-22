@@ -18,6 +18,7 @@ import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
 import ChangeProfile from './ChangeProfile';
 import { tmpMooStamps, tmpGiftStamps, MooStampDivider, GiftStampDivider } from './SettingsEventComponent';
+import { getAmount } from './AutumnEventGiftAPI';
 
 import * as amplitude from './AmplitudeAPI';
 
@@ -212,6 +213,9 @@ const Settings = () => {
                 setAutumnEventBoughtChicken2(true);
             }
         })
+        getAmount('chicken_1').then((value)=>{
+            console.log(value);
+        });
       },[]);
 
   (async () => {

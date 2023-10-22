@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, CancelToken } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as amplitude from '../AmplitudeAPI'
+import * as amplitude from './AmplitudeAPI'
 
 // DailyReportDto.Response 타입 정의
 interface CheckResponse {
@@ -15,21 +15,25 @@ interface CheckResponse {
     // imageUrl: string; // 이거 필요없지?
   }
   
-  async function getAmount(key){
+  const getAmount = async (key) => {
+    // const url = `http://3.34.55.218:5000/${key}/check`;
+
+    // try {
+    //     const response: AxiosResponse<CheckResponse> = axios.get(url);
+
+    //     return response.data.amount
+    // } catch(error) {
+    //     amplitude.test1()//기프티콘 수량 가져오기 실패
+    //     if (axios.isCancel(error)) {
+    //         console.log('Request canceled');
+    //     } else {
+    //         throw new Error(`Failed to get amount of ${key}`);
+    //     }
+    // }
     const url = `http://3.34.55.218:5000/${key}/check`;
-
-    try {
-        const response: AxiosResponse<CheckResponse> = axios.get(url);
-
-        return response.data.amount
-    } catch(error) {
-        amplitude.test1()//기프티콘 수량 가져오기 실패
-        if (axios.isCancel(error)) {
-            console.log('Request canceled');
-        } else {
-            throw new Error(`Failed to get amount of ${key}`);
-        }
-    }
+    const response = await axios.get(url);
+    var amount = response.data.amount;
+    return amount;
   }
 
   async function buyGift(key){
