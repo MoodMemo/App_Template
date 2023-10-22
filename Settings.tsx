@@ -11,14 +11,15 @@ import VersionCheck from 'react-native-version-check';
 import { PERMISSIONS, RESULTS, requestNotifications, checkNotifications} from "react-native-permissions";
 import RNRestart from 'react-native-restart';
 import MCIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import MaterialAllIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
 import ChangeProfile from './ChangeProfile';
 import { tmpMooStamps, tmpGiftStamps, MooStampDivider, GiftStampDivider } from './SettingsEventComponent';
-import { getAmount } from './AutumnEventGiftAPI';
+import { getAmount, buyGift} from './AutumnEventGiftAPI';
 
 import * as amplitude from './AmplitudeAPI';
 
@@ -26,8 +27,8 @@ import * as Sentry from "@sentry/react-native";
 import { UserFeedback } from "@sentry/react-native";
 import { useFocusEffect } from '@react-navigation/native';
 
-import {default as Text} from "./CustomText"
-
+import {default as Text} from "./CustomText";
+// import {getAmount, buyGift} from "./AutumnEventGiftAPI";
 
 const test = () => {
   console.log('hello');
@@ -185,6 +186,18 @@ const Settings = () => {
           <Image source={item.image} style={eventModalStyles.image} />
         </View>
       );
+    const renderBoughtItem = ( key ) => {
+        if (key === 'ice') {
+            if (autumnEventBoughtIce) return true;
+            else return false;
+        } else if (key === 'chicken_1') {
+            if (autumnEventBoughtChicken1) return true;
+            else return false;
+        } else if (key === 'chicken_2') {
+            if (autumnEventBoughtChicken2) return true;
+            else return false;
+        }
+    }
     
     useEffect(() => {
         AsyncStorage.getItem('@UserInfo:notificationAllow',(err,result)=>{
@@ -570,7 +583,7 @@ const Settings = () => {
                                     setIsEventLevelModalVisible(!isEventLevelModalVisible);
                                     amplitude.test1();//이벤트 설명 끔
                                 }}>
-                                    <MaterialAllIcons name='close' color={'#DBDBDB'} size={27} style={{marginTop:4}}/>
+                                    <MCIcons name='close' color={'#DBDBDB'} size={27} style={{marginTop:4}}/>
                                 </TouchableOpacity>
                             </View>
                             <View style={{
@@ -649,45 +662,59 @@ const Settings = () => {
                         animationInTiming={200}
                         animationOut={"fadeOut"}
                         animationOutTiming={200}
-                        onBackdropPress={() => {
-                            // amplitude.outToSettingFromServiceCenter();
-                            setIsShopModalVisible(!isShopModalVisible);
-                    }}
+                        onBackdropPress={() => {}}
                     backdropColor='#CCCCCC'//'#FAFAFA'
                     backdropOpacity={0.8}
                     style={{ alignItems:'center', }}>
                         
                         <View style={eventModalStyles.container}>
-                            <ScrollView contentContainerStyle={{alignItems: 'center', gap: 10,}}>
-                                
-                                <Text style={{fontSize: 17, color:"#495057", marginTop:20,}}>Moo의 은행잎 상점에 어서오라무!🥬</Text>
+                            <ScrollView contentContainerStyle={{alignItems: 'center', gap: 20,}}>
 
-                                <MooStampDivider/>
+                                <View style={{ width: 290, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                                        <MCIcons name='cart' color={'#FFCC4D'} size={27}/>  
+                                        <Text style={{fontSize: 16, color: '#FFCC4D',}}>은행잎 상점</Text>
+                                    </View>
+                                    <TouchableOpacity onPress={() => {setIsShopModalVisible(!isShopModalVisible); amplitude.test1();}}>
+                                        <AntDesign name='close' color={'#DBDBDB'} size={27}/>
+                                    </TouchableOpacity>
+                                </View>
                                 
+                                <View style={{width: 290, alignItems: 'flex-end'}}>
+                                    <View style={{backgroundColor: '#FCF5E3', flexDirection:'row',justifyContent:'space-between', gap: 10, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 6}}>
+                                        <Text style={{fontSize: 16, color: '#212429',}}>은행잎 현황</Text>
+                                        <View style={{flexDirection:'row', justifyContent:'space-between'}}>
+                                            <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
+                                            <Text style={{color:'#FFCC4D',fontSize:16,marginLeft:10}}>{autumnEventCoin}개</Text>
+                                        </View>
+                                    </View>
+                                </View>
+
                                 <View style={eventModalStyles.threeByThreeContainer}>
-                                    {updatedMooStamps.map((mooStamp) => (
-                                        <TouchableOpacity key={mooStamp.id} style={eventModalStyles.btnContainer} 
-                                        // onPress={() => {handleButtonPress(stampButton)}} 어떤 액션일지 몰라서
-                                        >
-                                            {renderItem({item: mooStamp})}
-                                            {/* <Text style={{}}>{mooStamp.sold}</Text> // 얘는 솔드아웃 여부 필요할까봐 넣어둠 */}
-                                        </TouchableOpacity>
-                                    ))}
-                                </View>
-
-                                <GiftStampDivider/>
-
-                                <View style={[eventModalStyles.threeByThreeContainer, {marginBottom: 20}]}>
                                     {updateGiftStamps.map((gift) => (
-                                        <TouchableOpacity key={gift.id} style={[eventModalStyles.btnContainer, {gap: 3}]} 
+                                        <TouchableOpacity key={gift.id} style={eventModalStyles.btnContainer} 
                                         // onPress={() => {handleButtonPress(stampButton)}} 어떤 액션일지 몰라서
+                                        // onPress={() => {console.log(getAmount('ice'))}}
                                         >
-                                            {renderItem({item: gift})}
-                                            <Text style={{}}>{gift.name}</Text> 
-                                            <Text style={{}}>{gift.remaining}</Text> 
+                                            {/* {renderItem({item: gift})} */}
+                                            {gift.icon}
+                                            {/* <MCIcons name='cart' color={'black'} size={27}/> */}
+                                            <Text style={eventModalStyles.text}>{gift.name}</Text> 
+                                            <View style={{flexDirection: 'row', gap: 5}}>
+                                                <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
+                                                <Text style={[{color: '#FFCC4D', fontSize: 15,},
+                                                                renderBoughtItem(gift.key) && {color: '#CCCCCC',} // 구매한 아이템은 회색으로
+                                                                ]}>5개</Text>    
+                                                {/* <Text style={{}}>{gift.key}개</Text>     */}
+                                            </View>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
+
+                                <View style={{backgroundColor:'#FFCC4D', width:290, height:44, flexDirection:'row', alignItems:'center', justifyContent:'center', borderRadius:6, alignSelf:'center'}}>
+                                    <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>구매하기</Text>
+                                </View>
+
                             </ScrollView>
                         </View>
                     </Modal>
@@ -909,10 +936,13 @@ const tabStyles = StyleSheet.create({
 });
 const eventModalStyles = StyleSheet.create({
     container: {
-        backgroundColor:"#FFFAF4",
+        backgroundColor:"#fff",
         width:330,
         alignItems: 'center',
-        borderRadius: 10,
+        borderRadius: 12,
+        paddingTop: 15,
+        paddingBottom: 20,
+        gap: 20
     },
     threeByThreeContainer: {
         width: 280, 
@@ -920,15 +950,27 @@ const eventModalStyles = StyleSheet.create({
         flexDirection: 'row', // 버튼들을 가로로 배열
         flexWrap: 'wrap', // 가로로 공간이 부족하면 다음 줄로 넘어감
         justifyContent: 'space-between', // 버튼들 사이의 간격을 동일하게 분배
+        gap: 10,
     },
     btnContainer: {
-        width: 90,
-        marginBottom: 15,
+        width: 133,
         alignItems: 'center',
+        borderColor: '#FFCC4D',
+        borderWidth: 1,
+        borderRadius: 15,
+        paddingTop: 20,
+        paddingBottom: 10,
+        gap: 10,
+        borderStyle: 'dashed',
     },
     image: {
         width: 80,
         height: (85 * 80) / 80 ,
+    },
+    text: {
+        textAlign: 'center',
+        color: '#212429',
+        fontSize: 14,
     }
 });
 
