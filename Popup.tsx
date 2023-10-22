@@ -35,7 +35,7 @@ const Popup = ({ visible, onClose }) => {
             console.log('date_now: ',date_now);
             console.log('date_stamp: ',date_stamp);
             setIsFirstStampToday(true);
-            amplitude.test1();//오늘의 첫 스탬프 찍음
+            amplitude.confirmFirstStampInADay();//오늘의 첫 스탬프 찍음
             AsyncStorage.setItem('@UserInfo:AutumnEventStampDate',month.toString()+'/'+day.toString());
             AsyncStorage.setItem('@UserInfo:AutumnEventLastRunDate',month.toString()+'/'+day.toString());
           }
@@ -84,7 +84,7 @@ const Popup = ({ visible, onClose }) => {
     animationOut={"fadeOut"}
     animationOutTiming={200}
     onBackdropPress={() => {
-      amplitude.test1();//은행잎 획득 모달 끔
+      amplitude.cancelGetLeavesModal();//은행잎 획득 모달 끔
       setIsEventModalVisible(!isEventModalVisible);
     }}
     onModalHide={()=>{setIsFirstStampToday(false);}}>

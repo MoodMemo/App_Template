@@ -125,7 +125,7 @@ const Settings = () => {
             // comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback);
-        amplitude.test1()//가을 이벤트 사용자 연락처 입력, 원래 이거 자리였어요 >> amplitude.send2sentry(userFeedback.comments); 
+        amplitude.sendContact(autumnEventGiftInfo)//가을 이벤트 사용자 연락처 입력, 원래 이거 자리였어요 >> amplitude.send2sentry(userFeedback.comments); 
         /*
         const userFeedback2: UserFeedback = {
             event_id: sentryId,
@@ -625,7 +625,7 @@ const Settings = () => {
                         <View style={{flexDirection:'row'}}>
                             <Text style={tabStyles.contentText}>레벨</Text>
                             <TouchableOpacity onPress={() => {
-                            amplitude.test1();//레벨 설명 켬
+                            amplitude.clickLevelInfo();//레벨 설명 켬
                             setIsEventLevelModalVisible(!isEventLevelModalVisible);
                             }}>
                             <MCIcons name="information-outline" color={'#AAAAAA'} size={22} style={{marginLeft:5,marginTop:2}}/>
@@ -639,7 +639,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
-                        amplitude.test1();//레벨 설명 끔
+                        amplitude.cancelLevelInfoByBackdrop();//레벨 설명 끔
                         setIsEventLevelModalVisible(!isEventLevelModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -657,7 +657,7 @@ const Settings = () => {
                                 <Text style={{fontSize: 18, color: '#212429', marginLeft:5, marginTop:5}}>레벨 안내</Text>
                                 <TouchableOpacity onPress={() => {
                                     setIsEventLevelModalVisible(!isEventLevelModalVisible);
-                                    amplitude.test1();//레벨 설명 끔
+                                    amplitude.cancelLevelInfoByBackdrop();//레벨 설명 끔
                                 }}>
                                     <MCIcons name='close' color={'#DBDBDB'} size={27} style={{marginTop:4}}/>
                                 </TouchableOpacity>
@@ -725,7 +725,7 @@ const Settings = () => {
                         </View>
                     </View>
                     <TouchableOpacity onPress={() => {
-                    amplitude.test1(); //은행잎 상점 켬
+                    amplitude.clickShop(); //은행잎 상점 켬
                     getGiftAmount();
                     setIsShopModalVisible(!isShopModalVisible);
                     }}>
@@ -744,7 +744,7 @@ const Settings = () => {
                             setAutumnEventGiftBuying(false);
                             setAutumnEventPressedGiftInfo({});
                             setAutumnEventPressedGift('');
-                            amplitude.test1();//은행잎 상점 모달 끔
+                            amplitude.cancelShopByBackdrop();//은행잎 상점 모달 끔
                         }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
                     backdropOpacity={0.8}
@@ -756,7 +756,7 @@ const Settings = () => {
                         }
                         else{
                             setAutumnEventGiftInfoModal(true);
-                            amplitude.test1()//경품 수령 정보 입력 모달 켬
+                            amplitude.clickSubmitContactModal()//경품 수령 정보 입력 모달 켬
                         }
                     }}>
                         <View style={eventModalStyles.container}>
@@ -772,7 +772,7 @@ const Settings = () => {
                                         setAutumnEventGiftBuying(false);
                                         setAutumnEventPressedGiftInfo({});
                                         setAutumnEventPressedGift('');
-                                        amplitude.test1();//은행잎 상점 모달 끔
+                                        amplitude.cancelShopByCancelBtn();//은행잎 상점 모달 끔
                                     }}>
                                         <AntDesign name='close' color={'#DBDBDB'} size={27}/>
                                     </TouchableOpacity>
@@ -794,7 +794,7 @@ const Settings = () => {
                                         disabled={renderBoughtItem(gift.key) ? true : (gift.cost<=autumnEventCoin ? false : true)}
                                         onPress={()=>{
                                             setAutumnEventPressedGift(gift.key);
-                                            amplitude.test1()//상품 눌러놓음, gift.key가 상품명
+                                            amplitude.clickGift(gift.key)//상품 눌러놓음, gift.key가 상품명
                                         }}
                                         >
                                             {/* {renderItem({item: gift})} */}
@@ -832,7 +832,7 @@ const Settings = () => {
                                     setAutumnEventGiftBuying(true);
                                     setAutumnEventPressedGiftInfo(findDictionaryByKey(autumnEventPressedGift));
                                     setIsShopModalVisible(!isShopModalVisible);
-                                    amplitude.test1()//상품 구매하기 누름
+                                    amplitude.confirmBuyGift()//상품 구매하기 누름
                                 }}>
                                     <View style={{backgroundColor:(autumnEventPressedGift!=='' ? '#FFCC4D' : '#CCCCCC'), width:290, height:44, flexDirection:'row', alignItems:'center', justifyContent:'center', borderRadius:6, alignSelf:'center'}}>
                                         <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>구매하기</Text>
@@ -852,7 +852,7 @@ const Settings = () => {
                         setAutumnEventPressedGiftInfo({});
                         setAutumnEventPressedGift('');
                         setAutumnEventGiftBuyingCanceled(true);
-                        amplitude.test1();//경품 정보 입력 모달 끔
+                        amplitude.cancelSubmitContactModalByBackdrop();//경품 정보 입력 모달 끔
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
                     backdropOpacity={0.8}
@@ -860,11 +860,11 @@ const Settings = () => {
                     onModalHide={()=>{
                         if(autumnEventGiftBuyingSucceed){
                             setAutumnEventGiftBuyingSucceedModal(true);
-                            amplitude.test1();//경품 구매 성공 모달 켬
+                            amplitude.clickSuccessToBuyModal();//경품 구매 성공 모달 켬
                         }
                         else if(!autumnEventGiftBuyingCanceled){
                             setAutumnEventGiftBuyingFailedModal(true);
-                            amplitude.test1();//경품 구매 실패 모달 켬
+                            amplitude.clickFailToBuyModal();//경품 구매 실패 모달 켬
                         }
                         setAutumnEventGiftBuyingSucceed(false);
                     }}>
@@ -881,7 +881,7 @@ const Settings = () => {
                                         setAutumnEventPressedGiftInfo({});
                                         setAutumnEventPressedGift('');
                                         setAutumnEventGiftBuyingCanceled(true);
-                                        amplitude.test1();//경품 정보 입력 모달 끔
+                                        amplitude.cancelSubmitContactModalByCancelBtn();//경품 정보 입력 모달 끔
                                     }}>
                                         <AntDesign name='close' color={'#DBDBDB'} size={27}/>
                                     </TouchableOpacity>
@@ -935,7 +935,7 @@ const Settings = () => {
                                     onChangeText={(text) => setAutumnEventGiftInfo(text)}
                                 />
                                 <TouchableOpacity onPress={()=>{
-                                    amplitude.test1();//경품 정보 입력 제출함
+                                    amplitude.confirmSubmitContact();//경품 정보 입력 제출함
                                     console.log(autumnEventPressedGift);
                                     buyGift(autumnEventPressedGift).then((value)=>{
                                         console.log(value);
@@ -964,7 +964,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
-                        amplitude.test1(); //상품 구매 완료 모달 끔
+                        amplitude.cancelSuccessToBuyModal(); //상품 구매 완료 모달 끔
                         setAutumnEventGiftBuyingSucceedModal(!autumnEventGiftBuyingSucceedModal);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -996,7 +996,7 @@ const Settings = () => {
                                 justifyContent: 'space-between'
                                 }}>
                                 <TouchableOpacity onPress={async ()=>{
-                                    amplitude.test1(); //상품 구매 완료 후 리뷰 달러 감
+                                    amplitude.clickGoToReview(name); //상품 구매 완료 후 리뷰 달러 감
                                     if (Platform.OS == "android") {
                                         Linking.openURL('https://play.google.com/store/apps/details?id=com.moodmemo');
                                     } else {
@@ -1020,7 +1020,7 @@ const Settings = () => {
                                     <Text style={{fontSize: 19,color:'#FFCC4D'}}>리뷰 달기</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={async ()=>{
-                                    amplitude.test1(); //상품 구매 완료 모달 끔
+                                    amplitude.cancelSuccessToBuyModal(); //상품 구매 완료 모달 끔
                                     setAutumnEventGiftBuyingSucceedModal(!autumnEventGiftBuyingSucceedModal);
                                 }}
                                 style={{
@@ -1048,7 +1048,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
-                        amplitude.test1(); //상품 구매 실패 모달 끔
+                        amplitude.cancelFailToBuyModal(); //상품 구매 실패 모달 끔
                         setAutumnEventGiftBuyingFailedModal(!autumnEventGiftBuyingFailedModal);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -1078,7 +1078,7 @@ const Settings = () => {
                                 justifyContent: 'space-between'
                                 }}>
                                 <TouchableOpacity onPress={async ()=>{
-                                    amplitude.test1(); //상품 구매 실패 모달 끔
+                                    amplitude.cancelFailToBuyModal(); //상품 구매 실패 모달 끔
                                     setAutumnEventGiftBuyingFailedModal(!autumnEventGiftBuyingFailedModal);
                                 }}
                                 style={{

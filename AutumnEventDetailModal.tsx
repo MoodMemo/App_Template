@@ -25,7 +25,7 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
             </View>
             <TouchableOpacity onPress={() => {
               setIsModalVisible(!isModalVisible);
-              amplitude.test1();//이벤트 배너 끔
+              amplitude.cancelEventInfoModalByBackDrop();//이벤트 배너 끔
             }}>
                 <MaterialAllIcons name='close' color={'#FFFFFF'} size={35}/>
             </TouchableOpacity>

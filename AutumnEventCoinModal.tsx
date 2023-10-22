@@ -43,13 +43,13 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                       coin=Math.floor(Math.random()*3)+3;
                     }
                     setRandomAutumnEventCoin(coin);
-                    amplitude.test1();//스탬프 찍어서 은행잎 획득함, 은행잎 개수 : coin
+                    amplitude.getLeavesByStamp(coin);//스탬프 찍어서 은행잎 획득함, 은행잎 개수 : coin
                     AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(Number(value)+coin).toString());
-                    amplitude.test1();//은행잎 총 개수 갱신, 총 은행잎 개수 : Number(value)+coin
+                    amplitude.updateLeaves(Number(value)+coin);//은행잎 총 개수 갱신, 총 은행잎 개수 : Number(value)+coin
                     console.log(Number(value)+coin,'은행잎 있음');
                     if(level<4){
                       AsyncStorage.setItem('@UserInfo:AutumnEventLevel',(Number(level)+1).toString());
-                      amplitude.test1();//이벤트 레벨 올라감, 현재 레벨 : Number(level)+1
+                      amplitude.levelUpEvent(Number(level)+1);//이벤트 레벨 올라감, 현재 레벨 : Number(level)+1
                     }
                 });
             })
@@ -62,7 +62,7 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                 setAutumnEventCoin(Number(value));
                 AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(Number(value)+1).toString());
                 console.log(Number(value)+1,'은행잎 있음');
-                amplitude.test1();//일기 써서 은행잎 획득함, 총 은행잎 개수 : Number(value)+1
+                amplitude.getLeavesByDiary(Number(value)+1);//일기 써서 은행잎 획득함, 총 은행잎 개수 : Number(value)+1
             });
         }
     },[]);
@@ -136,7 +136,7 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
             }}>
             </View>}
             <TouchableOpacity onPress={async ()=>{
-                amplitude.test1() //은행잎 획득 모달 끔
+                amplitude.cancelGetLeavesModal() //은행잎 획득 모달 끔
                 setIsModalVisible(!isModalVisible);
             }}
             style={styles.clearBtn}>

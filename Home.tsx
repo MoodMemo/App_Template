@@ -186,7 +186,7 @@ const Home = ({name,first}:any) => {
     <Image source={require('./assets/colorMooMedium.png')} style={styles.mooImage}/>
     <TouchableOpacity onPress={() => {
       setIsEventModalVisible(!isEventModalVisible);
-      amplitude.test1();//이벤트 배너 켬
+      amplitude.clickEventInfoModal();//이벤트 배너 켬
     }}>
       <Image source={require('./assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
     </TouchableOpacity>
@@ -208,8 +208,8 @@ const Home = ({name,first}:any) => {
     animationOut={"fadeOut"}
     animationOutTiming={200}
     onBackdropPress={() => {
-      amplitude.test1();//이벤트 배너 끔
-        setIsEventModalVisible(!isEventModalVisible);
+      amplitude.cancelEventInfoModalByCancelBtn();//이벤트 배너 끔
+      setIsEventModalVisible(!isEventModalVisible);
   }}
   backdropColor='#CCCCCC'//'#FAFAFA'
   backdropOpacity={0.8}

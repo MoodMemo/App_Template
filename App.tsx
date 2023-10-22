@@ -232,7 +232,7 @@ const reloadNotification = async () => {
 const autumnEventInitialize = async () => {
   await AsyncStorage.getItem('@UserInfo:AutumnEvent').then((value) => {
     if(value!=='true'){
-      amplitude.test1();//은행잎 이벤트 초기화
+      amplitude.initializeEvent();//은행잎 이벤트 초기화
       AsyncStorage.setItem('@UserInfo:AutumnEvent','true');
       AsyncStorage.setItem('@UserInfo:AutumnEventCoin','0');
       AsyncStorage.setItem('@UserInfo:AutumnEventLevel','1');
@@ -279,13 +279,13 @@ const autumnEventInitialize = async () => {
               if(totalDays2===totalDays){
                 AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value)=>{
                   AsyncStorage.setItem('@UserInfo:AutumnEventLevel', Math.max(Number(value)-totalDays+1,1).toString());
-                  amplitude.test1();//이벤트 레벨 감소, 현재 레벨 : Math.max(Number(value)-totalDays+1,1)
+                  amplitude.levelDownEvent(Math.max(Number(value)-totalDays+1,1));//이벤트 레벨 감소, 현재 레벨 : Math.max(Number(value)-totalDays+1,1)
                 })
               }
               else{
                 AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value)=>{
                   AsyncStorage.setItem('@UserInfo:AutumnEventLevel', Math.max(Number(value)-totalDays2,1).toString());
-                  amplitude.test1();//이벤트 레벨 감소, 현재 레벨 : Math.max(Number(value)-totalDays2,1)
+                  amplitude.levelDownEvent(Math.max(Number(value)-totalDays2,1));//이벤트 레벨 감소, 현재 레벨 : Math.max(Number(value)-totalDays2,1)
                 })
               }
               AsyncStorage.setItem('@UserInfo:AutumnEventLastRunDate',month+'/'+day);

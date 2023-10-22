@@ -169,7 +169,7 @@ const Weekly = () => {
           console.log('date_stamp: ',date_stamp);
           setIsFirstDiaryToday(true);
           AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
-          amplitude.test1();//오늘 첫 일기 만듦 - AI 일기
+          amplitude.confirmFirstAIDiaryInADay();//오늘 첫 일기 만듦 - AI 일기
         }
       })
     }).catch((error)=>{
@@ -243,7 +243,7 @@ const Weekly = () => {
           setIsFirstDiaryToday(true);
           setIsEventModalVisible(true);
           AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
-          amplitude.test1();//오늘 첫 일기 만듦 - 직접 작성
+          amplitude.confirmFirstSelfDiaryInADay();//오늘 첫 일기 만듦 - 직접 작성
         }
       })
     }).catch((error)=>{
@@ -933,7 +933,7 @@ const Weekly = () => {
       animationOut={"fadeOut"}
       animationOutTiming={200}
       onBackdropPress={() => {
-        amplitude.test1();//일기 - 은행잎 획득 모달 끔
+        amplitude.cancelGetLeavesModal();//일기 - 은행잎 획득 모달 끔
         setIsEventModalVisible(!isEventModalVisible);
         setIsFirstDiaryToday(false);
       }}>
