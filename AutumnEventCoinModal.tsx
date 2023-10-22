@@ -24,16 +24,34 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
         if(type==='stamp'){
             AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value) => {
                 setAutumnEventLevel(Number(value));
-            })
-            var coin=Math.floor(Math.random()*2)+1;
-            setRandomAutumnEventCoin(coin);
-            AsyncStorage.getItem('@UserInfo:AutumnEventCoin').then((value) => {
-                setAutumnEventCoin(Number(value));
-                AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(Number(value)+coin).toString());
-                console.log(Number(value)+coin,'은행잎 있음');
-            });
-            AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value) => {
-                setAutumnEventLevel(Number(value));
+                var level=value;
+                console.log('Level : ',level);
+                AsyncStorage.getItem('@UserInfo:AutumnEventCoin').then((value) => {
+                    setAutumnEventCoin(Number(value));
+                    var coin;
+                    if(level==1){
+                      console.log(level);
+                      coin=Math.floor(Math.random()*2)+1;
+                    }
+                    else if(level==2){
+                      coin=Math.floor(Math.random()*3)+1;
+                    }
+                    else if(level==3){
+                      coin=Math.floor(Math.random()*3)+2;
+                    }
+                    else{
+                      coin=Math.floor(Math.random()*3)+3;
+                    }
+                    setRandomAutumnEventCoin(coin);
+                    amplitude.test1();//스탬프 찍어서 은행잎 획득함, 은행잎 개수 : coin
+                    AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(Number(value)+coin).toString());
+                    amplitude.test1();//은행잎 총 개수 갱신, 총 은행잎 개수 : Number(value)+coin
+                    console.log(Number(value)+coin,'은행잎 있음');
+                    if(level<4){
+                      AsyncStorage.setItem('@UserInfo:AutumnEventLevel',(Number(level)+1).toString());
+                      amplitude.test1();//이벤트 레벨 올라감, 현재 레벨 : Number(level)+1
+                    }
+                });
             })
         }
         else{
@@ -44,6 +62,7 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                 setAutumnEventCoin(Number(value));
                 AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(Number(value)+1).toString());
                 console.log(Number(value)+1,'은행잎 있음');
+                amplitude.test1();//일기 써서 은행잎 획득함, 총 은행잎 개수 : Number(value)+1
             });
         }
     },[]);
@@ -52,7 +71,7 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
         <View style={{
             backgroundColor:"#FFFAF4",
             width:340,
-            height:335,
+            height:autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<60 ? 380 : 330,
             borderRadius:10,
             alignSelf:'center'
         }}>
@@ -71,23 +90,51 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                 flexDirection:'row',
                 justifyContent:'space-between',
                 alignSelf:'center',
-                width:200,
+                width:230,
                 marginTop:30,
             }}>
                 <Text style={{color:'#212429',fontSize:18}}>이벤트 레벨</Text>
-                <Text style={{color:'#FFCC4D',fontSize:18}}>Lv. {autumnEventLevel}</Text>
+                <Text style={{color:'#FFCC4D',fontSize:18}}>Lv. {autumnEventLevel===4 ? 4 : autumnEventLevel+1}{autumnEventLevel===4 ? '': ' (Up !)'}</Text>
             </View>
             <View style={{
                 flexDirection:'row',
                 justifyContent:'space-between',
                 alignSelf:'center',
-                width:200,
+                width:230,
                 marginTop:20,
-                marginBottom:25,
             }}>
                 <Text style={{color:'#212429',fontSize:18}}>은행잎 현황</Text>
                 <Text style={{color:'#FFCC4D',fontSize:18}}>{autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)}개</Text>
             </View>
+            {autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<15 ? <View style={{
+                alignSelf:'center',
+                alignItems:'center',
+                width:230,
+                marginTop:20,
+                marginBottom:20,
+            }}>
+                <Text style={{color:'#212429',fontSize:16}}>스타벅스 아아까지 {15-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1))}개!</Text>
+            </View> : autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<30 ? <View style={{
+                alignSelf:'center',
+                alignItems:'center',
+                width:230,
+                marginTop:20,
+                marginBottom:20,
+            }}>
+                <Text style={{color:'#212429',fontSize:16}}>배라 파인트까지 {30-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1))}개!</Text>
+            </View> : autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<60 ? <View style={{
+                alignSelf:'center',
+                alignItems:'center',
+                width:230,
+                marginTop:20,
+                marginBottom:20,
+            }}>
+                <Text style={{color:'#212429',fontSize:16}}>치킨까지 {60-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1))}개!</Text>
+            </View> : <View style={{
+              marginTop:10,
+              marginBottom:10,
+            }}>
+            </View>}
             <TouchableOpacity onPress={async ()=>{
                 amplitude.test1() //은행잎 획득 모달 끔
                 setIsModalVisible(!isModalVisible);

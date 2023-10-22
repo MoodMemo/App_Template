@@ -14,10 +14,10 @@ export const tmpMooStamps =[
 ];
 
 export const tmpGiftStamps =[
-  { id: 1, icon: <Feather name='coffee' color={'black'} size={27}/>, name: '스타벅스\n아이스아메리카노', key: 'coffee'},
-  { id: 2, icon: <MaterialIcons name='icecream' color={'black'} size={27}/>, name: '배스킨라빈스\n파인트', key: 'ice'},
-  { id: 3, icon: <MCIcons name='food-drumstick-outline' color={'black'} size={27}/>, name: '굽네\n고추바사삭', key: 'chicken_1'},
-  { id: 4, icon: <MCIcons name='food-drumstick-outline' color={'black'} size={27}/>, name: 'BHC\n뿌링클', key: 'chicken_2', tmp: 0},
+  { id: 1, name: '스타벅스\n아이스아메리카노', key: 'coffee', cost:1},
+  { id: 2, name: '배스킨라빈스\n파인트', key: 'ice', cost:1},
+  { id: 3, name: '굽네\n고추바사삭', key: 'chicken_1', cost: 2},
+  { id: 4, name: 'BHC\n뿌링클', key: 'chicken_2', cost: 60},
 ];
 
 export const GiftStampDivider = () => {

@@ -169,6 +169,7 @@ const Weekly = () => {
           console.log('date_stamp: ',date_stamp);
           setIsFirstDiaryToday(true);
           AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
+          amplitude.test1();//오늘 첫 일기 만듦 - AI 일기
         }
       })
     }).catch((error)=>{
@@ -225,6 +226,30 @@ const Weekly = () => {
       }});
   };
   const handleCreateDiaryMyself = () => {
+    const url = 'http://3.34.55.218:5000/time';
+    axios.get(url).then((response)=>{
+      var month=response.data.month;
+      var day=response.data.day;
+      AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
+        var date=value.split('/');
+        var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+        var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+        let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+        if(totalDays>0){
+          console.log(value);
+          console.log(totalDays,'일');
+          console.log('date_now: ',date_now);
+          console.log('date_stamp: ',date_stamp);
+          setIsFirstDiaryToday(true);
+          setIsEventModalVisible(true);
+          AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
+          amplitude.test1();//오늘 첫 일기 만듦 - 직접 작성
+        }
+      })
+    }).catch((error)=>{
+      console.error('Failed to GET Server Time');
+    })
+
     realm.write(() => {
       repository.createDailyReport({
         // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),

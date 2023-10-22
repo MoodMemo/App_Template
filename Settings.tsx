@@ -14,6 +14,8 @@ import MCIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Feather from 'react-native-vector-icons/Feather';
+import axios, { AxiosResponse, CancelToken } from 'axios';
 
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
@@ -28,7 +30,6 @@ import { UserFeedback } from "@sentry/react-native";
 import { useFocusEffect } from '@react-navigation/native';
 
 import {default as Text} from "./CustomText";
-// import {getAmount, buyGift} from "./AutumnEventGiftAPI";
 
 const test = () => {
   console.log('hello');
@@ -84,13 +85,13 @@ const Settings = () => {
 
         const userFeedback: UserFeedback = {
             event_id: sentryId,
-            name: "사용자도 아직",
+            name: name,
             email: "이메일은 아직 개발 안했음",
             comments: memo,
             // comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback);
-        amplitude.send2sentry(userFeedback.comments);
+        amplitude.send2sentry(userFeedback.comments); 
         /*
         const userFeedback2: UserFeedback = {
             event_id: sentryId,
@@ -105,6 +106,39 @@ const Settings = () => {
         
         setMemo('');
         setIsReportModalVisible(!isReportModalVisible);
+    }
+
+    const autumnEventSentry = () => {
+
+        const sentryId = Sentry.captureMessage("가을 이벤트 경품 전달 연락처");    
+        // OR: const sentryId = Sentry.lastEventId();
+        // var userName = await AsyncStorage.getItem('@UserInfo:userName');
+        // if (userName === null) userName = '익명';
+
+        console.log(sentryId);
+
+        const userFeedback: UserFeedback = {
+            event_id: sentryId,
+            name: name,
+            email: "이메일은 아직 개발 안했음",
+            comments: autumnEventGiftInfo,
+            // comments: "memo",
+        };
+        Sentry.captureUserFeedback(userFeedback);
+        amplitude.test1()//가을 이벤트 사용자 연락처 입력, 원래 이거 자리였어요 >> amplitude.send2sentry(userFeedback.comments); 
+        /*
+        const userFeedback2: UserFeedback = {
+            event_id: sentryId,
+            name: "사용자도 아직",
+            email: "이메일은 아직 개발 안했음",
+            // comments: memo,
+            comments: "memo",
+        };
+        Sentry.captureUserFeedback(userFeedback2);
+        amplitude.test99999(userFeedback2.comments);
+        */
+        
+        setAutumnEventGiftInfo('');
     }
 
     const generateNotificationMessage = (notificationTime:Date) => {
@@ -147,6 +181,7 @@ const Settings = () => {
     //   };
     const {height,width}=useWindowDimensions();
     //const [isModalVisible, setIsModalVisible] = useState(false);
+    const [name,setName] = useState('');
     const [isKakaoModalVisible, setIsKakaoModalVisible] = useState(false);
     const [isNoticeModalVisible, setIsNoticeModalVisible] = useState(false);
     const [isReportModalVisible, setIsReportModalVisible] = useState(false);
@@ -164,6 +199,20 @@ const Settings = () => {
     const [autumnEventBoughtIce,setAutumnEventBoughtIce] = useState(false);
     const [autumnEventBoughtChicken1,setAutumnEventBoughtChicken1] = useState(false);
     const [autumnEventBoughtChicken2,setAutumnEventBoughtChicken2] = useState(false);
+    const [autumnEventCoffeeAmount,setAutumnEventCoffeeAmount] = useState(0);
+    const [autumnEventIceAmount,setAutumnEventIceAmount] = useState(0);
+    const [autumnEventChicken1Amount,setAutumnEventChicken1Amount] = useState(0);
+    const [autumnEventChicken2Amount,setAutumnEventChicken2Amount] = useState(0);
+    const [autumnEventPressedGift,setAutumnEventPressedGift] = useState('');
+    const [autumnEventGiftBuying,setAutumnEventGiftBuying] = useState(false);
+    const [autumnEventGiftInfoModal,setAutumnEventGiftInfoModal] = useState(false);
+    const [autumnEventPressedGiftInfo,setAutumnEventPressedGiftInfo] = useState({});
+    const [autumnEventGiftInfo,setAutumnEventGiftInfo] = useState('');
+    const [autumnEventGiftBuyingSucceed,setAutumnEventGiftBuyingSucceed] = useState(false);
+    const [autumnEventGiftBuyingSucceedModal,setAutumnEventGiftBuyingSucceedModal] = useState(false);
+    const [autumnEventGiftBuyingFailedModal,setAutumnEventGiftBuyingFailedModal] = useState(false);
+    const [autumnEventGiftBuyingCanceled,setAutumnEventGiftBuyingCanceled] = useState(false);
+
 
     const sortNotificationByTime = (a:any,b:any) => {
         if(a.time > b.time) return 1;
@@ -198,6 +247,33 @@ const Settings = () => {
             else return false;
         }
     }
+
+    const getGiftAmount = () => {
+        getAmount('coffee').then((value)=>{
+            setAutumnEventCoffeeAmount(value);
+        });
+        getAmount('ice').then((value)=>{
+            setAutumnEventIceAmount(value);
+        });
+        getAmount('chicken_1').then((value)=>{
+            setAutumnEventChicken1Amount(value);
+        });
+        getAmount('chicken_2').then((value)=>{
+            setAutumnEventChicken2Amount(value);
+        });
+    }
+
+    const findDictionaryByKey = (key) => {
+        // 배열을 순회하면서 key와 일치하는 딕셔너리를 찾습니다.
+        for (const item of updateGiftStamps) {
+          if (item.key === key) {
+            return item;
+          }
+        }
+      
+        // 일치하는 key를 찾지 못한 경우 null을 반환합니다.
+        return null;
+      }
     
     useEffect(() => {
         AsyncStorage.getItem('@UserInfo:notificationAllow',(err,result)=>{
@@ -226,9 +302,9 @@ const Settings = () => {
                 setAutumnEventBoughtChicken2(true);
             }
         })
-        getAmount('chicken_1').then((value)=>{
-            console.log(value);
-        });
+        AsyncStorage.getItem('@UserInfo:userName').then((value) => {
+            setName(value);
+        })
       },[]);
 
   (async () => {
@@ -549,7 +625,7 @@ const Settings = () => {
                         <View style={{flexDirection:'row'}}>
                             <Text style={tabStyles.contentText}>레벨</Text>
                             <TouchableOpacity onPress={() => {
-                            amplitude.test1();//이벤트 현황 켬
+                            amplitude.test1();//레벨 설명 켬
                             setIsEventLevelModalVisible(!isEventLevelModalVisible);
                             }}>
                             <MCIcons name="information-outline" color={'#AAAAAA'} size={22} style={{marginLeft:5,marginTop:2}}/>
@@ -563,7 +639,7 @@ const Settings = () => {
                     animationOut={"fadeOut"}
                     animationOutTiming={200}
                     onBackdropPress={() => {
-                        amplitude.test1();//이벤트 현황 끔
+                        amplitude.test1();//레벨 설명 끔
                         setIsEventLevelModalVisible(!isEventLevelModalVisible);
                     }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
@@ -574,14 +650,14 @@ const Settings = () => {
                         <View style={{
                             backgroundColor:"#FFFAF4",
                             width:340,
-                            height:320,
+                            height:350,
                             borderRadius:10
                         }}>
                             <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:15, marginLeft:20, marginRight:20, width:'90%'}}>
                                 <Text style={{fontSize: 18, color: '#212429', marginLeft:5, marginTop:5}}>레벨 안내</Text>
                                 <TouchableOpacity onPress={() => {
                                     setIsEventLevelModalVisible(!isEventLevelModalVisible);
-                                    amplitude.test1();//이벤트 설명 끔
+                                    amplitude.test1();//레벨 설명 끔
                                 }}>
                                     <MCIcons name='close' color={'#DBDBDB'} size={27} style={{marginTop:4}}/>
                                 </TouchableOpacity>
@@ -631,11 +707,11 @@ const Settings = () => {
                                 </View>
                             </View>
                             </View>
-                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>규칙 안내</Text>
-                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>- 스탬프 생성 시 은행잎을 랜덤하게 획득 가능합니다.</Text>
+                            <Text style={{color:'#212429',fontSize:16, marginLeft:25, marginTop:15, marginBottom:10}}>규칙 안내</Text>
+                            <Text style={{color:'#212429',fontSize:14, marginLeft:25,marginBottom:5}}>- 스탬프 생성 시 은행잎을 랜덤하게 획득 가능합니다.</Text>
                             <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>- 획득 가능 은행잎의 개수는 레벨에 따라 상이합니다.</Text>
-                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>레벨 변화</Text>
-                            <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>- 날짜를 연속해 스탬프를 남기면 레벨 +1</Text>
+                            <Text style={{color:'#212429',fontSize:16, marginLeft:25, marginTop:15, marginBottom:10}}>레벨 변화</Text>
+                            <Text style={{color:'#212429',fontSize:14, marginLeft:25,marginBottom:5}}>- 날짜를 연속해 스탬프를 남기면 레벨 +1</Text>
                             <Text style={{color:'#212429',fontSize:14, marginLeft:25}}>- 하루 동안 스탬프를 남기지 않으면 레벨 -1</Text>
                         </View>
                     </Modal>
@@ -649,7 +725,8 @@ const Settings = () => {
                         </View>
                     </View>
                     <TouchableOpacity onPress={() => {
-                    amplitude.intoServiceCenter();
+                    amplitude.test1(); //은행잎 상점 켬
+                    getGiftAmount();
                     setIsShopModalVisible(!isShopModalVisible);
                     }}>
                         <View style={{backgroundColor:'#FFCC4D', width:350, height:55, flexDirection:'row', alignItems:'center', justifyContent:'center', borderRadius:10, alignSelf:'center'}}>
@@ -662,11 +739,26 @@ const Settings = () => {
                         animationInTiming={200}
                         animationOut={"fadeOut"}
                         animationOutTiming={200}
-                        onBackdropPress={() => {}}
+                        onBackdropPress={() => {
+                            setIsShopModalVisible(!isShopModalVisible);
+                            setAutumnEventGiftBuying(false);
+                            setAutumnEventPressedGiftInfo({});
+                            setAutumnEventPressedGift('');
+                            amplitude.test1();//은행잎 상점 모달 끔
+                        }}
                     backdropColor='#CCCCCC'//'#FAFAFA'
                     backdropOpacity={0.8}
-                    style={{ alignItems:'center', }}>
-                        
+                    style={{ alignItems:'center', }}
+                    onModalHide={()=>{
+                        if(!autumnEventGiftBuying){
+                            setAutumnEventPressedGift('');
+                            setAutumnEventPressedGiftInfo({});
+                        }
+                        else{
+                            setAutumnEventGiftInfoModal(true);
+                            amplitude.test1()//경품 수령 정보 입력 모달 켬
+                        }
+                    }}>
                         <View style={eventModalStyles.container}>
                             <ScrollView contentContainerStyle={{alignItems: 'center', gap: 20,}}>
 
@@ -675,7 +767,13 @@ const Settings = () => {
                                         <MCIcons name='cart' color={'#FFCC4D'} size={27}/>  
                                         <Text style={{fontSize: 16, color: '#FFCC4D',}}>은행잎 상점</Text>
                                     </View>
-                                    <TouchableOpacity onPress={() => {setIsShopModalVisible(!isShopModalVisible); amplitude.test1();}}>
+                                    <TouchableOpacity onPress={() => {
+                                        setIsShopModalVisible(!isShopModalVisible);
+                                        setAutumnEventGiftBuying(false);
+                                        setAutumnEventPressedGiftInfo({});
+                                        setAutumnEventPressedGift('');
+                                        amplitude.test1();//은행잎 상점 모달 끔
+                                    }}>
                                         <AntDesign name='close' color={'#DBDBDB'} size={27}/>
                                     </TouchableOpacity>
                                 </View>
@@ -691,33 +789,317 @@ const Settings = () => {
                                 </View>
 
                                 <View style={eventModalStyles.threeByThreeContainer}>
-                                    {updateGiftStamps.map((gift) => (
-                                        <TouchableOpacity key={gift.id} style={eventModalStyles.btnContainer} 
-                                        // onPress={() => {handleButtonPress(stampButton)}} 어떤 액션일지 몰라서
-                                        // onPress={() => {console.log(getAmount('ice'))}}
+                                {updateGiftStamps.map((gift) => (
+                                        <TouchableOpacity key={gift.id} style={[eventModalStyles.btnContainer,{borderColor: (renderBoughtItem(gift.key) ? '#E7E7E7' : gift.cost<=autumnEventCoin ? '#FFCC4D' : '#E7E7E7'),backgroundColor: (autumnEventPressedGift===gift.key ? '#FFF9EB' : '#FFFFFF')}]} 
+                                        disabled={renderBoughtItem(gift.key) ? true : (gift.cost<=autumnEventCoin ? false : true)}
+                                        onPress={()=>{
+                                            setAutumnEventPressedGift(gift.key);
+                                            amplitude.test1()//상품 눌러놓음, gift.key가 상품명
+                                        }}
                                         >
                                             {/* {renderItem({item: gift})} */}
-                                            {gift.icon}
+                                            {gift.key==='coffee' ? (<Feather name='coffee' color={(renderBoughtItem(gift.key) ? '#CBCBCB' : gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB')} size={27}/>)
+                                            : (gift.key==='ice' ? (<MaterialIcons name='icecream' color={renderBoughtItem(gift.key) ? '#CBCBCB' :(gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB')} size={27}/>)
+                                            : (gift.key==='chicken_1' ? (<MCIcons name='food-drumstick-outline' color={renderBoughtItem(gift.key) ? '#CBCBCB' : (gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB')} size={27}/>)
+                                            : (<MCIcons name='food-drumstick-outline' color={renderBoughtItem(gift.key) ? '#CBCBCB' : (gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB')} size={27}/>)))}
                                             {/* <MCIcons name='cart' color={'black'} size={27}/> */}
-                                            <Text style={eventModalStyles.text}>{gift.name}</Text> 
+                                            <Text style={{
+                                                textAlign: 'center',
+                                                color: (renderBoughtItem(gift.key) ? '#CBCBCB' : gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB'),
+                                                fontSize: 14,
+                                            }}>{gift.name}</Text>
+                                            {renderBoughtItem(gift.key) ? <Text style={{textAlign: 'center',
+                                            color: '#CBCBCB',
+                                            fontSize: 14,}}>구매 완료!</Text> : (gift.key==='coffee' && autumnEventCoffeeAmount===0) || (gift.key==='ice' && autumnEventIceAmount===0) || (gift.key==='chicken_1' && autumnEventChicken1Amount===0) || (gift.key==='chicken_2' && autumnEventChicken2Amount===0) ? <Text style={{textAlign: 'center',
+                                            color: '#CBCBCB',
+                                            fontSize: 14,}}>품절</Text> :
+                                            <Text style={{textAlign: 'center',
+                                            color: (gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB'),
+                                            fontSize: 14,}}>{gift.key==='coffee' ? autumnEventCoffeeAmount : (gift.key==='ice' ? autumnEventIceAmount : (gift.key==='chicken_1' ? autumnEventChicken1Amount : autumnEventChicken2Amount))} / {gift.key==='coffee' ? 30 : (gift.key==='ice' ? 10 : (gift.key==='chicken_1' ? 3 : 3))}</Text>}
                                             <View style={{flexDirection: 'row', gap: 5}}>
-                                                <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
-                                                <Text style={[{color: '#FFCC4D', fontSize: 15,},
-                                                                renderBoughtItem(gift.key) && {color: '#CCCCCC',} // 구매한 아이템은 회색으로
-                                                                ]}>5개</Text>    
+                                                {renderBoughtItem(gift.key) ? (<Image source={require('./assets/autumn_event_coin_disabled.png')} style={{width:20,height:20*100/100}}/>) : gift.cost<=autumnEventCoin ? (<Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>) : (<Image source={require('./assets/autumn_event_coin_disabled.png')} style={{width:20,height:20*100/100}}/>)}
+                                                <Text style={{
+                                                    color: (renderBoughtItem(gift.key) ? '#CBCBCB' : (gift.cost<=autumnEventCoin ? '#FFCC4D' : '#CBCBCB')),
+                                                    fontSize: 15,
+                                                    // renderBoughtItem(gift.key) && {color: '#CCCCCC',} // 구매한 아이템은 회색으로
+                                                }}>{gift.cost}개</Text>
                                                 {/* <Text style={{}}>{gift.key}개</Text>     */}
                                             </View>
                                         </TouchableOpacity>
                                     ))}
                                 </View>
-
-                                <View style={{backgroundColor:'#FFCC4D', width:290, height:44, flexDirection:'row', alignItems:'center', justifyContent:'center', borderRadius:6, alignSelf:'center'}}>
-                                    <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>구매하기</Text>
-                                </View>
-
+                                <TouchableOpacity disabled={autumnEventPressedGift!=='' ? false : true} onPress={()=>{
+                                    setAutumnEventGiftBuying(true);
+                                    setAutumnEventPressedGiftInfo(findDictionaryByKey(autumnEventPressedGift));
+                                    setIsShopModalVisible(!isShopModalVisible);
+                                    amplitude.test1()//상품 구매하기 누름
+                                }}>
+                                    <View style={{backgroundColor:(autumnEventPressedGift!=='' ? '#FFCC4D' : '#CCCCCC'), width:290, height:44, flexDirection:'row', alignItems:'center', justifyContent:'center', borderRadius:6, alignSelf:'center'}}>
+                                        <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>구매하기</Text>
+                                    </View>
+                                </TouchableOpacity>
                             </ScrollView>
                         </View>
                     </Modal>
+
+                    <Modal isVisible={autumnEventGiftInfoModal}
+                    animationIn={"fadeIn"}
+                    animationInTiming={200}
+                    animationOut={"fadeOut"}
+                    animationOutTiming={200}
+                    onBackdropPress={() => {
+                        setAutumnEventGiftInfoModal(!autumnEventGiftInfoModal);
+                        setAutumnEventPressedGiftInfo({});
+                        setAutumnEventPressedGift('');
+                        setAutumnEventGiftBuyingCanceled(true);
+                        amplitude.test1();//경품 정보 입력 모달 끔
+                    }}
+                    backdropColor='#CCCCCC'//'#FAFAFA'
+                    backdropOpacity={0.8}
+                    style={{ alignItems:'center', }}
+                    onModalHide={()=>{
+                        if(autumnEventGiftBuyingSucceed){
+                            setAutumnEventGiftBuyingSucceedModal(true);
+                            amplitude.test1();//경품 구매 성공 모달 켬
+                        }
+                        else if(!autumnEventGiftBuyingCanceled){
+                            setAutumnEventGiftBuyingFailedModal(true);
+                            amplitude.test1();//경품 구매 실패 모달 켬
+                        }
+                        setAutumnEventGiftBuyingSucceed(false);
+                    }}>
+                        <View style={eventModalStyles.container}>
+                            <ScrollView contentContainerStyle={{alignItems: 'center', gap: 20,}}>
+
+                                <View style={{ width: 290, flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                                        <MCIcons name='cart' color={'#FFCC4D'} size={27}/>  
+                                        <Text style={{fontSize: 16, color: '#FFCC4D',}}>은행잎 상점</Text>
+                                    </View>
+                                    <TouchableOpacity onPress={() => {
+                                        setAutumnEventGiftInfoModal(!autumnEventGiftInfoModal);
+                                        setAutumnEventPressedGiftInfo({});
+                                        setAutumnEventPressedGift('');
+                                        setAutumnEventGiftBuyingCanceled(true);
+                                        amplitude.test1();//경품 정보 입력 모달 끔
+                                    }}>
+                                        <AntDesign name='close' color={'#DBDBDB'} size={27}/>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View>
+                                        <TouchableOpacity style={[eventModalStyles.btnContainer,{borderColor: '#FFCC4D'}]} 
+                                        disabled={true}
+                                        onPress={()=>{setAutumnEventPressedGift(autumnEventPressedGiftInfo.key);}}
+                                        >
+                                            {/* {renderItem({item: gift})} */}
+                                            {autumnEventPressedGiftInfo.key==='coffee' ? (<Feather name='coffee' color={'#212429'} size={27}/>)
+                                            : (autumnEventPressedGiftInfo.key==='ice' ? (<MaterialIcons name='icecream' color={'#212429'} size={27}/>)
+                                            : (autumnEventPressedGiftInfo.key==='chicken_1' ? (<MCIcons name='food-drumstick-outline' color={'#212429'} size={27}/>)
+                                            : (<MCIcons name='food-drumstick-outline' color={'#212429'} size={27}/>)))}
+                                            {/* <MCIcons name='cart' color={'black'} size={27}/> */}
+                                            <Text style={{
+                                                textAlign: 'center',
+                                                color: '#212429',
+                                                fontSize: 14,
+                                            }}>{autumnEventPressedGiftInfo.name}</Text>
+                                            <View style={{flexDirection: 'row', gap: 5}}>
+                                                <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
+                                                <Text style={{
+                                                    color: '#FFCC4D',
+                                                    fontSize: 15,
+                                                    // renderBoughtItem(gift.key) && {color: '#CCCCCC',} // 구매한 아이템은 회색으로
+                                                }}>{autumnEventPressedGiftInfo.cost}개</Text>
+                                                {/* <Text style={{}}>{gift.key}개</Text>     */}
+                                            </View>
+                                        </TouchableOpacity>
+                                </View>
+                                <Text style={{
+                                    alignSelf:'flex-start',
+                                    color: '#212429',
+                                    fontSize: 16,
+                                }}>수령 정보 입력</Text>
+                                <TextInput
+                                    style={{
+                                        fontSize:16,
+                                        color: '#000000',
+                                        width: '100%',
+                                        padding: 7,
+                                        borderWidth:1,
+                                        borderRadius: 10,
+                                        borderColor:'#F0F0F0',
+                                        marginTop:-5
+                                      }}
+                                    placeholder="전화번호 또는 이메일 입력"
+                                    placeholderTextColor='#DBDBDB'
+                                    onChangeText={(text) => setAutumnEventGiftInfo(text)}
+                                />
+                                <TouchableOpacity onPress={()=>{
+                                    amplitude.test1();//경품 정보 입력 제출함
+                                    console.log(autumnEventPressedGift);
+                                    buyGift(autumnEventPressedGift).then((value)=>{
+                                        console.log(value);
+                                        if(value){
+                                            autumnEventSentry();
+                                            setAutumnEventGiftBuyingSucceed(true);
+                                            AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(autumnEventCoin-autumnEventPressedGiftInfo.cost).toString());
+                                            setAutumnEventCoin(autumnEventCoin-autumnEventPressedGiftInfo.cost);
+                                        }
+                                        setAutumnEventGiftInfoModal(!autumnEventGiftInfoModal);
+                                        setAutumnEventPressedGiftInfo({});
+                                        setAutumnEventPressedGift('');
+                                    })  
+                                }}>
+                                    <View style={{backgroundColor:(autumnEventPressedGift!=='' ? '#FFCC4D' : '#CCCCCC'), width:290, height:44, flexDirection:'row', alignItems:'center', justifyContent:'center', borderRadius:6, alignSelf:'center'}}>
+                                        <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>제출하기</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </ScrollView>
+                        </View>
+                    </Modal>
+
+                    <Modal isVisible={autumnEventGiftBuyingSucceedModal}
+                    animationIn={"fadeIn"}
+                    animationInTiming={200}
+                    animationOut={"fadeOut"}
+                    animationOutTiming={200}
+                    onBackdropPress={() => {
+                        amplitude.test1(); //상품 구매 완료 모달 끔
+                        setAutumnEventGiftBuyingSucceedModal(!autumnEventGiftBuyingSucceedModal);
+                    }}
+                    backdropColor='#CCCCCC'//'#FAFAFA'
+                    backdropOpacity={0.8}
+                    style={{
+                        alignItems:'center'
+                    }}>
+                        <View style={{
+                            backgroundColor:"#FFFAF4",
+                            width:340,
+                            height:300,
+                            justifyContent:'center',
+                            alignItems:'center',
+                            borderRadius:10
+                        }}>
+                            <Image source={require('./assets/colorMooMedium.png')} style={{width: 80, height: 393*79/363 ,marginTop:10}}/>
+                            <View style={{
+                                justifyContent:'center',
+                                alignItems:'center',
+                                marginTop:20,
+                                }}>
+                                    <Text style={{fontSize: 19, color:"#101828", fontWeight:'900', paddingBottom: 10,}}>은행잎 잘 받았다무~</Text>
+                                    <Text style={{fontSize: 17, color:"#475467", fontWeight:'600', paddingBottom: 10,}}>경품은 다음 주 수요일에 지급된다무!</Text>
+                            </View>
+                            <View style={{
+                                paddingHorizontal: "5%",
+                                marginTop:20,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                                }}>
+                                <TouchableOpacity onPress={async ()=>{
+                                    amplitude.test1(); //상품 구매 완료 후 리뷰 달러 감
+                                    if (Platform.OS == "android") {
+                                        Linking.openURL('https://play.google.com/store/apps/details?id=com.moodmemo');
+                                    } else {
+                                        Linking.openURL('https://apps.apple.com/kr/app/%EB%AC%B4%EB%93%9C%EB%A9%94%EB%AA%A8/id6467786547');
+                                    }
+                                    setAutumnEventGiftBuyingSucceedModal(!autumnEventGiftBuyingSucceedModal);
+                                    }}
+                                    style={{
+                                        alignSelf: 'center',
+                                        alignItems: 'center', 
+                                        justifyContent: 'center',
+                                        padding: 7,
+                                        marginBottom: 5,
+                                        backgroundColor: 'white', 
+                                        borderColor: '#FFCC4D',
+                                        borderWidth:1,
+                                        borderRadius: 8,
+                                        flex: 1,
+                                        marginHorizontal:7,
+                                      }}>
+                                    <Text style={{fontSize: 19,color:'#FFCC4D'}}>리뷰 달기</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={async ()=>{
+                                    amplitude.test1(); //상품 구매 완료 모달 끔
+                                    setAutumnEventGiftBuyingSucceedModal(!autumnEventGiftBuyingSucceedModal);
+                                }}
+                                style={{
+                                    alignSelf: 'center',
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    padding: 7,
+                                    marginBottom: 5,
+                                    backgroundColor: '#FFCC4D', 
+                                    borderColor: '#FFCC4D',
+                                    borderWidth:1,
+                                    borderRadius: 8,
+                                    flex: 1,
+                                    marginHorizontal:7,
+                                  }}>
+                                    <Text style={{fontSize: 19, color:'#FFFFFF'}}>확인</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+
+                    <Modal isVisible={autumnEventGiftBuyingFailedModal}
+                    animationIn={"fadeIn"}
+                    animationInTiming={200}
+                    animationOut={"fadeOut"}
+                    animationOutTiming={200}
+                    onBackdropPress={() => {
+                        amplitude.test1(); //상품 구매 실패 모달 끔
+                        setAutumnEventGiftBuyingFailedModal(!autumnEventGiftBuyingFailedModal);
+                    }}
+                    backdropColor='#CCCCCC'//'#FAFAFA'
+                    backdropOpacity={0.8}
+                    style={{
+                        alignItems:'center'
+                    }}>
+                        <View style={{
+                            backgroundColor:"#FFFAF4",
+                            width:340,
+                            height:180,
+                            justifyContent:'center',
+                            alignItems:'center',
+                            borderRadius:10
+                        }}>
+                            <View style={{
+                                justifyContent:'center',
+                                alignItems:'center',
+                                marginTop:20,
+                                }}>
+                                    <Text style={{fontSize: 19, color:"#101828", fontWeight:'900', paddingBottom: 10,}}>경품 구매에 실패했습니다.</Text>
+                            </View>
+                            <View style={{
+                                paddingHorizontal: "5%",
+                                marginTop:20,
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                                }}>
+                                <TouchableOpacity onPress={async ()=>{
+                                    amplitude.test1(); //상품 구매 실패 모달 끔
+                                    setAutumnEventGiftBuyingFailedModal(!autumnEventGiftBuyingFailedModal);
+                                }}
+                                style={{
+                                    alignSelf: 'center',
+                                    alignItems: 'center', 
+                                    justifyContent: 'center',
+                                    padding: 7,
+                                    marginBottom: 5,
+                                    backgroundColor: '#FFCC4D', 
+                                    borderColor: '#FFCC4D',
+                                    borderWidth:1,
+                                    borderRadius: 8,
+                                    flex: 1,
+                                    marginHorizontal:7,
+                                  }}>
+                                    <Text style={{fontSize: 19, color:'#FFFFFF'}}>확인</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+
                 <SubtitleDivider/>
 
                 {/* 무드메모 섹션 */}
@@ -955,7 +1337,6 @@ const eventModalStyles = StyleSheet.create({
     btnContainer: {
         width: 133,
         alignItems: 'center',
-        borderColor: '#FFCC4D',
         borderWidth: 1,
         borderRadius: 15,
         paddingTop: 20,
