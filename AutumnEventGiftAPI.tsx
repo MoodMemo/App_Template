@@ -36,21 +36,12 @@ interface CheckResponse {
     return amount;
   }
 
-  async function buyGift(key){
+  const buyGift = async (key) => {
     const url = `http://3.34.55.218:5000/${key}/buy`;
-
-    try {
-        const response: AxiosResponse<BuyResponse> = axios.get(url);
-
-        return response.data.result
-    } catch(error) {
-        amplitude.test1()//기프티콘 수량 가져오기 실패
-        if (axios.isCancel(error)) {
-            console.log('Request canceled');
-        } else {
-            throw new Error(`Failed to buy ${key}`);
-        }
-    }
+    const response = await axios.get(url);
+    var result = response.data.result;
+    console.log(result);
+    return result;
   }
   
   export { getAmount, buyGift };

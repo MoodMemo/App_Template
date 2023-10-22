@@ -25,7 +25,7 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
             </View>
             <TouchableOpacity onPress={() => {
               setIsModalVisible(!isModalVisible);
-              amplitude.test1();//이벤트 설명 끔
+              amplitude.test1();//이벤트 배너 끔
             }}>
                 <MaterialAllIcons name='close' color={'#FFFFFF'} size={35}/>
             </TouchableOpacity>
@@ -39,11 +39,11 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
           showsVerticalScrollIndicator={true}>
           <View style={{alignItems:'center',marginTop:20}}>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15}}>가을을 맞아 무드메모에서 특별한 이벤트를 준비했어요!</Text>
-            <Text style={{fontWeight:'100',color:'#212429',fontSize:15}}>무에게 은행잎을 가져다주고, 다양한 선물을 가져가세요!</Text>
-            <Text style={{fontWeight:'100',color:'#212429',fontSize:15}}>가을을 맞아 무드메모에서 특별한 이벤트를 준비했어요!</Text>
+            <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10}}>무에게 은행잎을 가져다주고, 다양한 선물을 가져가세요!</Text>
+            <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10,marginBottom:20}}>이벤트 기간 : 10/23(월) ~ 11/12(일)</Text>
           </View>
           <View style={styles.eventModalDetailBlockView}>
-            <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:20,marginBottom:25}}>은행잎 획득 조건</Text>
+            <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:20,marginBottom:20}}>은행잎 획득 조건</Text>
             <View style={styles.eventModalTextBox}>
               <Text style={{color:'#212429',fontSize:14}}>(하루 1회) 스탬프 생성 완료 시</Text>
             </View>
@@ -89,9 +89,9 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
               </View>
             </View>
           </View>
-          <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20}}>유의사항</Text>
-          <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20}}>이따 쓰도록</Text>
-          <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20}}>유의사항</Text>
+          <Text style={{fontWeight:'100',color:'#212429',fontSize:17, marginLeft:20, marginBottom:10}}>유의사항</Text>
+          <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20,marginBottom:5}}>- 기프티콘은 구매한 다음 주 수요일에 일괄 발송됩니다.</Text>
+          <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20}}>- 배라 파인트와 치킨은 인당 1회 구매 가능합니다.</Text>
         </ScrollView>
         </View>
       </View>
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     {
       backgroundColor:'#FFFFFF',
       width:320,
-      height:160,
+      height:150,
       alignSelf:'center',
       alignItems:'center',
       borderColor:'#F9C649',

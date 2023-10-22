@@ -16,27 +16,34 @@ const Popup = ({ visible, onClose }) => {
   const [autumnEventStampDate,setAutumnEventStampDate] = useState('');
   
   useEffect(()=>{
-    const url = 'http://3.34.55.218:5000/time';
-    axios.get(url).then((response)=>{
-      var month=response.data.month;
-      var day=response.data.day;
-      AsyncStorage.getItem('@UserInfo:AutumnEventStampDate').then((value)=>{
-        var date=value.split('/');
-        var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-        var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-        let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
-        if(totalDays>0){
-          console.log(value);
-          console.log(totalDays,'일');
-          console.log('date_now: ',date_now);
-          console.log('date_stamp: ',date_stamp);
-          setIsFirstStampToday(true);
-          AsyncStorage.setItem('@UserInfo:AutumnEventStampDate',month.toString()+'/'+day.toString());
-        }
+    if(visible){
+      const url = 'http://3.34.55.218:5000/time';
+      axios.get(url).then((response)=>{
+        console.log('서버 시간',response.data.month,'월 ',response.data.day,'일');
+        var month=response.data.month;
+        var day=response.data.day;
+        AsyncStorage.getItem('@UserInfo:AutumnEventStampDate').then((value)=>{
+          var date=value.split('/');
+          var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+          var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+          console.log('date_now',date_now);
+          console.log('date_stamp',date_stamp);
+          let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+          if(totalDays>0){
+            console.log(value);
+            console.log(totalDays,'일');
+            console.log('date_now: ',date_now);
+            console.log('date_stamp: ',date_stamp);
+            setIsFirstStampToday(true);
+            amplitude.test1();//오늘의 첫 스탬프 찍음
+            AsyncStorage.setItem('@UserInfo:AutumnEventStampDate',month.toString()+'/'+day.toString());
+            AsyncStorage.setItem('@UserInfo:AutumnEventLastRunDate',month.toString()+'/'+day.toString());
+          }
+        })
+      }).catch((error)=>{
+        console.error('Failed to GET Server Time');
       })
-    }).catch((error)=>{
-      console.error('Failed to GET Server Time');
-    })
+    }
   },[]);
 
   return (
