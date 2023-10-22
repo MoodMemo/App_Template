@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, CancelToken } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as amplitude from '../AmplitudeAPI'
+import * as amplitude from './AmplitudeAPI'
 
 // DailyReportDto.Response 타입 정의
 interface CheckResponse {
