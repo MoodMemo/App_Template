@@ -880,24 +880,26 @@ export function cancelAddStampTemplate() {
 export function initializeEvent() {
   amplitude.track('event: initialize');
 }
-export function levelUpEvent(level) {
-  amplitude.track('event: level up', level);
+export function levelUpEvent(level: Number) {
+  amplitude.track('event: level up', {
+    nowLevel: level
+  });
 }
-export function levelDownEvent(level) {
+export function levelDownEvent(level: Number) {
   amplitude.track('event: level down',
   {
     nowLevel: level
   });
 }
-export function getLeavesByStamp(totalLeaves) {
+export function getLeavesByStamp(totalLeaves: Number) {
   amplitude.track('event: get leaves by stamp',
   {action: 'get leaves', totalLeaves});
 }
-export function getLeavesByDiary(totalLeaves) {
+export function getLeavesByDiary(totalLeaves: Number) {
   amplitude.track('event: get leaves by diary',
   {action: 'get leaves', totalLeaves});
 }
-export function updateLeaves(totalLeaves) {
+export function updateLeaves(totalLeaves: Number) {
   amplitude.track('event: update leaves',
   {action: 'update leaves', totalLeaves});
 }
