@@ -14,9 +14,9 @@ export const tmpMooStamps =[
 ];
 
 export const tmpGiftStamps =[
-  { id: 1, name: '스타벅스\n아이스아메리카노', key: 'coffee', cost:1},
-  { id: 2, name: '배스킨라빈스\n파인트', key: 'ice', cost:1},
-  { id: 3, name: '굽네\n고추바사삭', key: 'chicken_1', cost: 2},
+  { id: 1, name: '스타벅스\n아이스아메리카노', key: 'coffee', cost:15},
+  { id: 2, name: '배스킨라빈스\n파인트', key: 'ice', cost:30},
+  { id: 3, name: '굽네\n고추바사삭', key: 'chicken_1', cost: 60},
   { id: 4, name: 'BHC\n뿌링클', key: 'chicken_2', cost: 60},
 ];
 

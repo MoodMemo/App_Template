@@ -21,7 +21,7 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
       <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:15, marginLeft:20, marginRight:20}}>
             <View style={{flexDirection:'row'}}>
                 <MaterialAllIcons name='wallet-giftcard' color={'#FFA24D'} size={35}/>
-                <Text style={[styles.text,{marginLeft:10,marginTop:5}]}>무드메모 <Text style={styles.coloredText}>가을 이벤트</Text> 안내</Text>
+                <Text style={[styles.text,{marginLeft:10,marginTop:(Platform.OS==='android' ? 5 : 8)}]}>무드메모 <Text style={styles.coloredText}>가을 이벤트</Text> 안내</Text>
             </View>
             <TouchableOpacity onPress={() => {
               setIsModalVisible(!isModalVisible);

@@ -628,7 +628,7 @@ const Settings = () => {
                             amplitude.clickLevelInfo();//레벨 설명 켬
                             setIsEventLevelModalVisible(!isEventLevelModalVisible);
                             }}>
-                            <MCIcons name="information-outline" color={'#AAAAAA'} size={22} style={{marginLeft:5,marginTop:2}}/>
+                            <MCIcons name="information-outline" color={'#AAAAAA'} size={22} style={{marginLeft:5,marginTop:(Platform.OS==='android' ? 2: 0)}}/>
                             </TouchableOpacity>
                         </View>
                         <Text style={{color:'#FFCC4D',fontSize:19,marginLeft:10}}>Lv. {autumnEventLevel}</Text>

@@ -228,8 +228,8 @@ const Home = ({name,first}:any) => {
       }}>
           <View style={{
               backgroundColor:"#FFFAF4",
-              width:'90%',
-              height:'60%',
+              width:350,
+              height:530,
               justifyContent:'center',
               alignItems:'center',
               borderRadius:20
