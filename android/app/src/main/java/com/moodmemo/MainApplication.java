@@ -12,6 +12,8 @@ import java.util.List;
 
 import com.microsoft.codepush.react.CodePush;
 
+import com.reactnativecommunity.cameraroll.CameraRollPackage;
+
 //import com.reactnativerestart.RestartPackage;
 
 // for amplitude
