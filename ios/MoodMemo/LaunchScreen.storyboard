@@ -17,9 +17,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="AutumnSplashImage" translatesAutoresizingMaskIntoConstraints="NO" id="G7r-i5-zec">
-                                <rect key="frame" x="0.0" y="-86" width="375" height="753"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="AutumnSplashImage" translatesAutoresizingMaskIntoConstraints="NO" id="Z9k-Fw-7JT">
+                                <rect key="frame" x="-201" y="-156" width="777" height="840"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="QpA-pA-4X9"/>
@@ -32,7 +32,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="AutumnSplashImage" width="589.5" height="1278"/>
+        <image name="AutumnSplashImage" width="393" height="852"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
