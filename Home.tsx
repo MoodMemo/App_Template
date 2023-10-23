@@ -405,18 +405,18 @@ const styles = StyleSheet.create({
       height: 20,
     },
     button: {
+      position: 'absolute',
       bottom: '18%',
-      width: '30%',
+      width: '90%',
       height: 60,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'white',
+      backgroundColor: '#72D193',
       borderRadius: 7,
-      borderColor:'#72D193',
-      borderWidth: 1
+      marginHorizontal:'5%'
     },
     buttonText: {
-      color: '#72D193',
+      color: '#FFFFFF',
       fontSize: 18,
       fontWeight: 'bold'
     },
