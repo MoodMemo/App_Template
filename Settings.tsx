@@ -121,7 +121,7 @@ const Settings = () => {
             event_id: sentryId,
             name: name,
             email: "이메일은 아직 개발 안했음",
-            comments: autumnEventGiftInfo,
+            comments: autumnEventPressedGift+' : '+autumnEventGiftInfo,
             // comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback);
@@ -245,6 +245,19 @@ const Settings = () => {
         } else if (key === 'chicken_2') {
             if (autumnEventBoughtChicken2) return true;
             else return false;
+        }
+    }
+
+    const autumnEventBoughtGift = ( key ) => {
+        if (key === 'ice') {
+            setAutumnEventBoughtIce(true);
+            AsyncStorage.setItem('@UserInfo:AutumnEventBoughtIce','true');
+        } else if (key === 'chicken_1') {
+            setAutumnEventBoughtChicken1(true);
+            AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken1','true');
+        } else if (key === 'chicken_2') {
+            setAutumnEventBoughtChicken2(true);
+            AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken2','true');
         }
     }
 
@@ -944,6 +957,7 @@ const Settings = () => {
                                             setAutumnEventGiftBuyingSucceed(true);
                                             AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(autumnEventCoin-autumnEventPressedGiftInfo.cost).toString());
                                             setAutumnEventCoin(autumnEventCoin-autumnEventPressedGiftInfo.cost);
+                                            autumnEventBoughtGift(autumnEventPressedGift);
                                         }
                                         setAutumnEventGiftInfoModal(!autumnEventGiftInfoModal);
                                         setAutumnEventPressedGiftInfo({});
@@ -1282,7 +1296,7 @@ const Settings = () => {
                                     RNRestart.restart();
                                 }}
                                 style={styles.clearBtn}>
-                                    <Text style={{fontSize: 19}}>초기화</Text>
+                                    <Text style={{fontSize: 19.2}}>초기화</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

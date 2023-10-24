@@ -40,7 +40,7 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
           <View style={{alignItems:'center',marginTop:20}}>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15}}>가을을 맞아 무드메모에서 특별한 이벤트를 준비했어요!</Text>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10}}>무에게 은행잎을 가져다주고, 다양한 선물을 가져가세요!</Text>
-            <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10,marginBottom:20}}>이벤트 기간 : 10/23(월) ~ 11/12(일)</Text>
+            <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10,marginBottom:20}}>이벤트 기간 : 10/24(화) ~ 11/13(월)</Text>
           </View>
           <View style={styles.eventModalDetailBlockView}>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:20,marginBottom:20}}>은행잎 획득 조건</Text>
@@ -90,7 +90,7 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
             </View>
           </View>
           <Text style={{fontWeight:'100',color:'#212429',fontSize:17, marginLeft:20, marginBottom:10}}>유의사항</Text>
-          <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20,marginBottom:5}}>- 기프티콘은 구매한 다음 주 수요일에 일괄 발송됩니다.</Text>
+          <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20,marginBottom:5}}>- 상품은 구매한 다음 주차 목요일에 일괄 발송됩니다.</Text>
           <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20}}>- 배라 파인트와 치킨은 인당 1회 구매 가능합니다.</Text>
         </ScrollView>
         </View>
