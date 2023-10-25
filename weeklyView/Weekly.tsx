@@ -1226,7 +1226,7 @@ const styles = StyleSheet.create({
   },
   day_today: {
     borderBottomWidth: 2,
-    borderColor: '#72D193',
+    borderColor: '#FFCC4D',//#72D193
   },
   day_notYet_today: {
     borderBottomWidth: 2,
@@ -1251,10 +1251,10 @@ const styles = StyleSheet.create({
   dayText_today: {
     // flexDirection: 'column', 
     color: 'white',
-    backgroundColor: '#72D193',
+    backgroundColor: '#FFCC4D',//72D193
     borderRadius: 10,
-    width: 20,
-    height: 20,
+    width: 22,
+    height: 22,
     lineHeight: 20,
     overflow: 'hidden',
   },
@@ -1336,7 +1336,11 @@ const typeChangeBtnStyles = StyleSheet.create({
     justifyContent: 'center',
     fontSize: 14, color: '#72D193', fontWeight:'600'
   },
-  activeFont: {fontSize: 16, color: '#72D193', fontWeight:'600'},
+  activeFont: {
+    fontSize: 16,
+    color: '#FFCC4D',//72D193
+    fontWeight:'600'
+  },
   deactiveType: {
     flex: 1,
     backgroundColor: '#F3F3F3',

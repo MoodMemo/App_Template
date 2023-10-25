@@ -175,7 +175,7 @@ const Home = ({name,first}:any) => {
   return (
     <>
     <StatusBar
-        backgroundColor="#FFFAF4"
+        backgroundColor="#FFFAEE"
         barStyle='dark-content'
       />
     {isFirstStamp===false ? (<><View style={styles.view}>
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#FFFFFF',
     },
     titleContainer: {
-      backgroundColor: '#FFFAF4',
+      backgroundColor: '#FFFAEE',
       height: 133,
       borderBottomRightRadius: 43,
       // alignItems: 'center', // 가로 정렬

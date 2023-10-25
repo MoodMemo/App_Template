@@ -773,7 +773,6 @@ const Settings = () => {
                         }
                     }}>
                         <View style={eventModalStyles.container}>
-                            <ScrollView contentContainerStyle={{alignItems: 'center', gap: 20,}}>
 
                                 <View style={{ width: 290, flexDirection: 'row', justifyContent: 'space-between'}}>
                                     <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
@@ -851,7 +850,6 @@ const Settings = () => {
                                         <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>구매하기</Text>
                                     </View>
                                 </TouchableOpacity>
-                            </ScrollView>
                         </View>
                     </Modal>
 
