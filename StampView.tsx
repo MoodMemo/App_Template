@@ -7,7 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 import * as amplitude from './AmplitudeAPI';
 import {default as Text} from "./CustomText"
 import { useSafeAreaInsets, useSafeAreaFrame, initialWindowMetrics } from 'react-native-safe-area-context';
+import * as ImagePicker from 'react-native-image-picker';
 
+const includeExtra = true;
 // 화면의 가로 크기
 const screenWidth = Dimensions.get('window').width;
 // screenWidth가 500보다 크면 500으로, 작으면 screenWidth로 설정
@@ -36,8 +38,6 @@ const StampView = () => {
   const [memo, setMemo] = useState('');
   const [numberOfLines, setNumberOfLines] = useState(1);
 
-  const [images, setImages] = useState([]);
-
   const [{top,right,bottom,left},setSafeAreaInsets]= useState(initialWindowMetrics?.insets);
 
   const navigation = useNavigation();
@@ -47,6 +47,16 @@ const StampView = () => {
 
   // 4개의 버튼과 각 버튼 사이의 간격을 위한 값
   const iOSButtonWidth = (iOSwidth - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
+
+  const [response, setResponse] = React.useState<any>(null);
+
+  const onButtonPress = React.useCallback((type, options) => {
+    if (type === 'capture') {
+      ImagePicker.launchCamera(options, setResponse);
+    } else {
+      ImagePicker.launchImageLibrary(options, setResponse);
+    }
+  }, []);
 
   useEffect(() => {
     const stampsListener = (collection, changes) => {
@@ -310,6 +320,13 @@ const StampView = () => {
       padding: 16,
       justifyContent: 'flex-start',
       gap: 10,
+      // backgroundColor: 'gray'
+    },
+    imgContent: {
+      flexDirection: 'row',
+      // flexWrap: 'wrap',
+      width: '100%',
+      gap: 12,
     },
     imgButton: {
       flexDirection: 'column',
@@ -327,7 +344,7 @@ const StampView = () => {
       borderWidth: 1,
       borderColor: '#D7D7D7',
       borderStyle: 'dashed',
-      backgroundColor: '#F2F2F2',
+      backgroundColor: '#FAFAFA',
     },
     imgText: {
       color: '#D7D7D7',
@@ -388,6 +405,27 @@ const StampView = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    safeAreaContainer: {
+      flex: 1,
+      backgroundColor: 'aliceblue',
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginVertical: 8,
+    },
+    imageContainer: {
+      marginVertical: 24,
+      alignItems: 'center',
+    },
+    image: {
+      width: 100,
+      height: 100,
+      borderRadius: 6,
+      backgroundColor: 'gray',
+      marginRight: 12,
+    },
+  
   });
   return (
     <View style={styles.container}>
@@ -449,6 +487,33 @@ const StampView = () => {
                     <Text style={styles.maxLength}>{memo.length}/500</Text>
                   </View>
                 </View>
+                <View style={styles.imgContainer}>
+                  <Text style={styles.modalText}>사진 추가</Text>
+                  <View style={styles.imgContent}>
+                    <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
+                      selectionLimit: 0,
+                      mediaType: 'photo',
+                      includeBase64: false,
+                      includeExtra,
+                    })}>
+                      <Image source={require('./assets/add-circle.png')} />
+                      <Text style={styles.imgText}>사진 추가</Text>
+                    </TouchableOpacity>
+                    <ScrollView horizontal={true}>
+                    {response?.assets &&
+                      response?.assets.map(({uri}: {uri: string}) => (
+                        <View key={uri}>
+                          <Image
+                            resizeMode="cover"
+                            resizeMethod="scale"
+                            style={styles.image}
+                            source={{uri: uri}}
+                          />
+                        </View>
+                    ))}
+                    </ScrollView>
+                  </View>
+                </View>
               </ScrollView>
             </>
           ) : (
@@ -502,6 +567,75 @@ const StampView = () => {
   );
 };
 
+interface Action {
+  title: string;
+  type: 'capture' | 'library';
+  options: ImagePicker.CameraOptions | ImagePicker.ImageLibraryOptions;
+}
 
+const actions: Action[] = [
+  {
+    title: 'Take Image',
+    type: 'capture',
+    options: {
+      saveToPhotos: true,
+      mediaType: 'photo',
+      includeBase64: false,
+      includeExtra,
+    },
+  },
+  {
+    title: 'Select Image',
+    type: 'library',
+    options: {
+      selectionLimit: 0,
+      mediaType: 'photo',
+      includeBase64: false,
+      includeExtra,
+    },
+  },
+  {
+    title: 'Take Video',
+    type: 'capture',
+    options: {
+      saveToPhotos: true,
+      formatAsMp4: true,
+      mediaType: 'video',
+      includeExtra,
+    },
+  },
+  {
+    title: 'Select Video',
+    type: 'library',
+    options: {
+      selectionLimit: 0,
+      mediaType: 'video',
+      formatAsMp4: true,
+      includeExtra,
+    },
+  },
+  {
+    title: 'Select Image or Video\n(mixed)',
+    type: 'library',
+    options: {
+      selectionLimit: 0,
+      mediaType: 'mixed',
+      includeExtra,
+    },
+  },
+];
+
+if (Platform.OS === 'ios') {
+  actions.push({
+    title: 'Take Image or Video\n(mixed)',
+    type: 'capture',
+    options: {
+      saveToPhotos: true,
+      mediaType: 'mixed',
+      includeExtra,
+      presentationStyle: 'fullScreen',
+    },
+  });
+}
 
 export default StampView;
