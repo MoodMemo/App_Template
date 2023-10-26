@@ -216,37 +216,37 @@ const Home = ({name,first}:any) => {
   style={{ alignItems:'center', }}>
     <AutumnEventDetailModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible}/>
   </Modal></>) : (
-  // <StampOnBoarding/>
-  <View style={{justifyContent: 'center',
-        flex:1,
-        backgroundColor:'#FFFAF4'}}>
-          <Image 
-            source={require('./assets/colorMooMedium.png')}
-            style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '6%', alignSelf:'center', overflow: 'hidden', transform:[{rotate:'11.91deg'}]}}></Image>
-          <View style={{
-            position:'relative'
-          }}>
-            <Text style={{
-              fontSize: 26,
-              color:"#212429",
-              marginLeft: '5%'
-            }}>지금의 감정은 어떠냐무~?</Text>
-            <Text style={{
-              fontSize: 26,
-              color:"#212429",
-              marginLeft: '5%'
-            }}>감정을 남겨보지 않겠냐무?</Text>
-          </View>
-          <TouchableOpacity style={styles.button} onPress={(async () => { 
-            // Do something before delay
-            await AsyncStorage.setItem('@UserInfo:firstStamp','false');
-            setIsFirstStamp(false);
-            amplitude.userRegiFin_andStampGo() //스탬프 첫 입력 유도
-            }
-          )}>
-              <Text style={styles.buttonText}>감정 스탬프 남기러 가기!</Text>
-          </TouchableOpacity>
-        </View>
+  <StampOnBoarding/>
+  // <View style={{justifyContent: 'center',
+  //       flex:1,
+  //       backgroundColor:'#FFFAF4'}}>
+  //         <Image 
+  //           source={require('./assets/colorMooMedium.png')}
+  //           style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '6%', alignSelf:'center', overflow: 'hidden', transform:[{rotate:'11.91deg'}]}}></Image>
+  //         <View style={{
+  //           position:'relative'
+  //         }}>
+  //           <Text style={{
+  //             fontSize: 26,
+  //             color:"#212429",
+  //             marginLeft: '5%'
+  //           }}>지금의 감정은 어떠냐무~?</Text>
+  //           <Text style={{
+  //             fontSize: 26,
+  //             color:"#212429",
+  //             marginLeft: '5%'
+  //           }}>감정을 남겨보지 않겠냐무?</Text>
+  //         </View>
+  //         <TouchableOpacity style={styles.button} onPress={(async () => { 
+  //           // Do something before delay
+  //           await AsyncStorage.setItem('@UserInfo:firstStamp','false');
+  //           setIsFirstStamp(false);
+  //           amplitude.userRegiFin_andStampGo() //스탬프 첫 입력 유도
+  //           }
+  //         )}>
+  //             <Text style={styles.buttonText}>감정 스탬프 남기러 가기!</Text>
+  //         </TouchableOpacity>
+  //       </View>
   )}
   <Modal isVisible={!first&&!isStampTemplateAdded}
       animationIn={"fadeIn"}
