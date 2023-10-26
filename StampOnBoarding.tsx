@@ -320,7 +320,7 @@ const StampOnBoarding = () => {
             </View>
 
             <Image source={require('./assets/write_0904.png')}
-            style={{ zIndex: 100, width: 181, height: (181 * 209) / 181 , alignSelf: 'flex-end', marginRight: 30, marginBottom: 10}}></Image>
+            style={{ zIndex: 100, width: 160, height: (160 * 185) / 160 , alignSelf: 'flex-end', marginRight: 30, marginBottom: 10}}></Image>
 
             <TouchableOpacity style={styles.saveButton_3} onPress={(async () => { 
                     // Do something before delay
