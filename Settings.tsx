@@ -1112,8 +1112,6 @@ const Settings = () => {
                         </View>
                     </Modal>
 
-                <SubtitleDivider/>
-
                 {/* 무드메모 섹션 */}
                 <View style={tabStyles.title}>
                   <Text style={tabStyles.titleText}>무드메모</Text>

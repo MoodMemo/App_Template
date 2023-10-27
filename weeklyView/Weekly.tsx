@@ -151,6 +151,8 @@ const Weekly = () => {
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
 
+    console.log('isFirstDiaryToday : ',isFirstDiaryToday);
+
     setIsLodingModalVisible(true);
 
     const url = 'http://3.34.55.218:5000/time';
@@ -162,6 +164,9 @@ const Weekly = () => {
         var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
         var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
         let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+        console.log('date_now: ',date_now);
+        console.log('date_stamp: ',date_stamp);
+        console.log('totalDays:',totalDays);
         if(totalDays>0){
           console.log(value);
           console.log(totalDays,'일');
@@ -918,7 +923,7 @@ const Weekly = () => {
               </View>
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingModalVisible(false); amplitude.backToWeeklyFromCanModal(today.format('YYYY-MM-DD'));}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingModalVisible(false); setIsLodingFinishModalVisible(false);amplitude.backToWeeklyFromCanModal(today.format('YYYY-MM-DD'));}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
@@ -935,6 +940,9 @@ const Weekly = () => {
       onBackdropPress={() => {
         amplitude.cancelGetLeavesModal();//일기 - 은행잎 획득 모달 끔
         setIsEventModalVisible(!isEventModalVisible);
+        
+      }}
+      onModalHide={()=>{
         setIsFirstDiaryToday(false);
       }}>
         <AutumnEventCoinModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible} type="diary"/>
