@@ -151,30 +151,9 @@ const Weekly = () => {
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
 
-    setIsLodingModalVisible(true);
+    console.log('isFirstDiaryToday : ',isFirstDiaryToday);
 
-    const url = 'http://3.34.55.218:5000/time';
-    axios.get(url).then((response)=>{
-      var month=response.data.month;
-      var day=response.data.day;
-      AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
-        var date=value.split('/');
-        var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-        var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-        let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
-        if(totalDays>0){
-          console.log(value);
-          console.log(totalDays,'일');
-          console.log('date_now: ',date_now);
-          console.log('date_stamp: ',date_stamp);
-          setIsFirstDiaryToday(true);
-          AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
-          amplitude.confirmFirstAIDiaryInADay();//오늘 첫 일기 만듦 - AI 일기
-        }
-      })
-    }).catch((error)=>{
-      console.error('Failed to GET Server Time');
-    })
+    setIsLodingModalVisible(true);
 
     const todayStampList = [];
     getStamp(today).forEach((stamp) => {
@@ -213,6 +192,31 @@ const Weekly = () => {
             setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
           });
           // setIsLodingModalVisible(false);
+          const url = 'http://3.34.55.218:5000/time';
+          axios.get(url).then((response)=>{
+            var month=response.data.month;
+            var day=response.data.day;
+            AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
+              var date=value.split('/');
+              var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+              var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+              let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+              console.log('date_now: ',date_now);
+              console.log('date_stamp: ',date_stamp);
+              console.log('totalDays:',totalDays);
+              if(totalDays>0){
+                console.log(value);
+                console.log(totalDays,'일');
+                console.log('date_now: ',date_now);
+                console.log('date_stamp: ',date_stamp);
+                setIsFirstDiaryToday(true);
+                AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
+                amplitude.confirmFirstAIDiaryInADay();//오늘 첫 일기 만듦 - AI 일기
+              }
+            })
+          }).catch((error)=>{
+            console.error('Failed to GET Server Time');
+          })
           setIsLodingFinishModalVisible(true);
         }
       })
@@ -918,7 +922,7 @@ const Weekly = () => {
               </View>
               <View style={{ flexDirection: 'row', marginTop: 20 }}>
                 <View style={{ flexDirection: 'row', flex: 1,}}>
-                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingModalVisible(false); amplitude.backToWeeklyFromCanModal(today.format('YYYY-MM-DD'));}}>
+                  <TouchableOpacity style={diaryStyles.confirmBtn} onPress={() => {setIsLodingModalVisible(false); setIsLodingFinishModalVisible(false);amplitude.backToWeeklyFromCanModal(today.format('YYYY-MM-DD'));}}>
                     <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
                   </TouchableOpacity>
                 </View>
@@ -935,6 +939,9 @@ const Weekly = () => {
       onBackdropPress={() => {
         amplitude.cancelGetLeavesModal();//일기 - 은행잎 획득 모달 끔
         setIsEventModalVisible(!isEventModalVisible);
+        
+      }}
+      onModalHide={()=>{
         setIsFirstDiaryToday(false);
       }}>
         <AutumnEventCoinModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible} type="diary"/>
@@ -1226,7 +1233,7 @@ const styles = StyleSheet.create({
   },
   day_today: {
     borderBottomWidth: 2,
-    borderColor: '#72D193',
+    borderColor: '#FFCC4D',//#72D193
   },
   day_notYet_today: {
     borderBottomWidth: 2,
@@ -1251,10 +1258,10 @@ const styles = StyleSheet.create({
   dayText_today: {
     // flexDirection: 'column', 
     color: 'white',
-    backgroundColor: '#72D193',
+    backgroundColor: '#FFCC4D',//72D193
     borderRadius: 10,
-    width: 20,
-    height: 20,
+    width: 22,
+    height: 22,
     lineHeight: 20,
     overflow: 'hidden',
   },
@@ -1336,7 +1343,11 @@ const typeChangeBtnStyles = StyleSheet.create({
     justifyContent: 'center',
     fontSize: 14, color: '#72D193', fontWeight:'600'
   },
-  activeFont: {fontSize: 16, color: '#72D193', fontWeight:'600'},
+  activeFont: {
+    fontSize: 16,
+    color: '#FFCC4D',//72D193
+    fontWeight:'600'
+  },
   deactiveType: {
     flex: 1,
     backgroundColor: '#F3F3F3',

@@ -773,7 +773,6 @@ const Settings = () => {
                         }
                     }}>
                         <View style={eventModalStyles.container}>
-                            <ScrollView contentContainerStyle={{alignItems: 'center', gap: 20,}}>
 
                                 <View style={{ width: 290, flexDirection: 'row', justifyContent: 'space-between'}}>
                                     <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
@@ -851,7 +850,6 @@ const Settings = () => {
                                         <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>구매하기</Text>
                                     </View>
                                 </TouchableOpacity>
-                            </ScrollView>
                         </View>
                     </Modal>
 
@@ -958,6 +956,7 @@ const Settings = () => {
                                             AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(autumnEventCoin-autumnEventPressedGiftInfo.cost).toString());
                                             setAutumnEventCoin(autumnEventCoin-autumnEventPressedGiftInfo.cost);
                                             autumnEventBoughtGift(autumnEventPressedGift);
+                                            amplitude.successBuyGift(autumnEventPressedGift);//경품 정보 입력 제출함
                                         }
                                         setAutumnEventGiftInfoModal(!autumnEventGiftInfoModal);
                                         setAutumnEventPressedGiftInfo({});
@@ -1113,8 +1112,6 @@ const Settings = () => {
                             </View>
                         </View>
                     </Modal>
-
-                <SubtitleDivider/>
 
                 {/* 무드메모 섹션 */}
                 <View style={tabStyles.title}>
