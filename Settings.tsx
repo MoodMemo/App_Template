@@ -956,6 +956,7 @@ const Settings = () => {
                                             AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(autumnEventCoin-autumnEventPressedGiftInfo.cost).toString());
                                             setAutumnEventCoin(autumnEventCoin-autumnEventPressedGiftInfo.cost);
                                             autumnEventBoughtGift(autumnEventPressedGift);
+                                            amplitude.successBuyGift(autumnEventPressedGift);//경품 정보 입력 제출함
                                         }
                                         setAutumnEventGiftInfoModal(!autumnEventGiftInfoModal);
                                         setAutumnEventPressedGiftInfo({});

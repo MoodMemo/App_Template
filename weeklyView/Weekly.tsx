@@ -155,32 +155,6 @@ const Weekly = () => {
 
     setIsLodingModalVisible(true);
 
-    const url = 'http://3.34.55.218:5000/time';
-    axios.get(url).then((response)=>{
-      var month=response.data.month;
-      var day=response.data.day;
-      AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
-        var date=value.split('/');
-        var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-        var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-        let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
-        console.log('date_now: ',date_now);
-        console.log('date_stamp: ',date_stamp);
-        console.log('totalDays:',totalDays);
-        if(totalDays>0){
-          console.log(value);
-          console.log(totalDays,'일');
-          console.log('date_now: ',date_now);
-          console.log('date_stamp: ',date_stamp);
-          setIsFirstDiaryToday(true);
-          AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
-          amplitude.confirmFirstAIDiaryInADay();//오늘 첫 일기 만듦 - AI 일기
-        }
-      })
-    }).catch((error)=>{
-      console.error('Failed to GET Server Time');
-    })
-
     const todayStampList = [];
     getStamp(today).forEach((stamp) => {
       console.log("stamp.dateTime: ", stamp.dateTime);
@@ -218,6 +192,31 @@ const Weekly = () => {
             setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
           });
           // setIsLodingModalVisible(false);
+          const url = 'http://3.34.55.218:5000/time';
+          axios.get(url).then((response)=>{
+            var month=response.data.month;
+            var day=response.data.day;
+            AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
+              var date=value.split('/');
+              var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+              var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+              let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+              console.log('date_now: ',date_now);
+              console.log('date_stamp: ',date_stamp);
+              console.log('totalDays:',totalDays);
+              if(totalDays>0){
+                console.log(value);
+                console.log(totalDays,'일');
+                console.log('date_now: ',date_now);
+                console.log('date_stamp: ',date_stamp);
+                setIsFirstDiaryToday(true);
+                AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
+                amplitude.confirmFirstAIDiaryInADay();//오늘 첫 일기 만듦 - AI 일기
+              }
+            })
+          }).catch((error)=>{
+            console.error('Failed to GET Server Time');
+          })
           setIsLodingFinishModalVisible(true);
         }
       })
