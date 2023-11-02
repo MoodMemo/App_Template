@@ -15,7 +15,9 @@ use_modular_headers!
 prepare_react_native_project!
 
 setup_permissions([
-  'Notifications'
+  'Notifications',
+  'PhotoLibrary',
+  'Camera',
 ])
 
 # If you are using a `react-native-flipper` your iOS build will fail when `NO_FLIPPER=1` is set.
@@ -58,6 +60,7 @@ target 'MoodMemo' do
   target 'MoodMemoTests' do
     inherit! :complete
     # Pods for testing
+    pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
   end
 
   # post_install do |installer|

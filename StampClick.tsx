@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Modal, Image, ScrollView, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Modal, Image, ScrollView, TextInput, TouchableWithoutFeedback, Dimensions, Platform } from 'react-native';
 import {default as Text} from "./CustomText"
 import DatePicker from 'react-native-date-picker';
 import * as repository from './src/localDB/document';
 import * as amplitude from './AmplitudeAPI';
 import realm from './src/localDB/document';
 // import Modal from 'react-native-modal';
+import * as ImagePicker from 'react-native-image-picker';
 
+const includeExtra = true;
 // 화면의 가로 크기
 const screenWidth = Dimensions.get('window').width;
 // screenWidth가 500보다 크면 500으로, 작으면 screenWidth로 설정
@@ -33,10 +35,14 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
   const editingStamp = stamp;
   const startDate = stamp?.dateTime;
   const startMemo = stamp?.memo;
+  const startImage = stamp?.imageUrl;
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [date, setDate] = useState(startDate);
   const [tempDate, setTempDate] = useState(startDate);
+
+  const [selectedImageUri, setSelectedImageUri] = useState(startImage);
+
   const [numberOfLines, setNumberOfLines] = useState(1);
   const [images, setImages] = useState([]);
   const [editedMemo, setEditedMemo] = useState(startMemo);
@@ -44,6 +50,7 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     setEditedMemo(stamp?.memo);
     setDate(stamp?.dateTime || new Date());
     setTempDate(stamp?.dateTime || new Date());
+    setSelectedImageUri(stamp?.imageUrl);
     getBoxMessure();
   }, [stamp, firstRef.current]);  
   // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
@@ -58,11 +65,15 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     if (firstRef) {
       firstRef.current.measureInWindow((x, y, width, height) => {
       // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
-        console.log("getFirstBoxMessure ==")
-        console.log("x : ", x); setFirstButtonX(x);
-        console.log("y : ", y); setFirstButtonY(y);
-        console.log("width : ", width); setFirstWidth(width);
-        console.log("height : ", height); setFirstHeight(height);
+        // console.log("getFirstBoxMessure ==")
+        // console.log("x : ", x); 
+        setFirstButtonX(x);
+        // console.log("y : ", y); 
+        setFirstButtonY(y);
+        // console.log("width : ", width); 
+        setFirstWidth(width);
+        // console.log("height : ", height); 
+        setFirstHeight(height);
         // console.log("pageX : ", pageX);
         // console.log("pageY : ", pageY);
       });
@@ -74,6 +85,38 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
 
   // 4개의 버튼과 각 버튼 사이의 간격을 위한 값
   const iOSButtonWidth = (iOSwidth - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
+
+  const [response, setResponse] = React.useState<any>(null);
+
+  const onButtonPress = React.useCallback((type, options) => {
+    if (type === 'capture') {
+      ImagePicker.launchCamera(options, (response) => {
+        setResponse(response);
+        if (response?.assets && response?.assets[0]?.uri) {
+          setSelectedImageUri(response?.assets[0]?.uri);
+        }
+      });
+    } else {
+      ImagePicker.launchImageLibrary(options, (response) => {
+        setResponse(response);
+        if (response?.assets && response?.assets[0]?.uri) {
+          // if(Platform.OS === 'ios') {
+          //   setSelectedImageUri('~' + response?.assets[0]?.uri.substring(response?.assets[0]?.uri.indexOf('/tmp/')));
+          // }
+          // Plaform.OS가 iOS이고 response?.assets[0]?.uri가 /tmp/가 포함되어 있으면
+          if(Platform.OS === 'ios' && response?.assets[0]?.uri.includes('/tmp/')) {
+            setSelectedImageUri('~' + response?.assets[0]?.uri.substring(response?.assets[0]?.uri.indexOf('/tmp/')));
+          }
+          else if(Platform.OS === 'ios' && response?.assets[0]?.uri.includes('/Documents/')) {
+            setSelectedImageUri('~' + response?.assets[0]?.uri.substring(response?.assets[0]?.uri.indexOf('/Documents/')));
+          }
+          else {
+            setSelectedImageUri(response?.assets[0]?.uri);
+          }
+        }
+      });
+    }
+  }, []);
 
   const handleMemoChange = (text) => {
     setEditedMemo(text);
@@ -110,6 +153,7 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
         stampToUpdate.dateTime = date;
         stampToUpdate.memo = editedMemo;
         stampToUpdate.updatedAt = new Date();
+        stampToUpdate.imageUrl = selectedImageUri;
       }
     });
   };
@@ -287,6 +331,20 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
       padding: 16,
       justifyContent: 'flex-start',
       gap: 10,
+      // backgroundColor: 'gray'
+    },
+    image: {
+      width: 100,
+      height: 100,
+      borderRadius: 6,
+      backgroundColor: 'gray',
+      marginRight: 12,
+    },
+    imgContent: {
+      flexDirection: 'row',
+      // flexWrap: 'wrap',
+      width: '100%',
+      gap: 12,
     },
     imgButton: {
       flexDirection: 'column',
@@ -304,7 +362,7 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
       borderWidth: 1,
       borderColor: '#D7D7D7',
       borderStyle: 'dashed',
-      backgroundColor: '#F2F2F2',
+      backgroundColor: '#FAFAFA',
     },
     imgText: {
       color: '#D7D7D7',
@@ -418,6 +476,43 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
                     <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
                   </View>
                 </View>
+                <View style={styles.imgContainer}>
+                  <Text style={styles.modalText}>사진 추가</Text>
+                  <View style={styles.imgContent}>
+                    <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
+                      selectionLimit: 1,
+                      mediaType: 'photo',
+                      includeBase64: false,
+                      includeExtra,
+                    })}>
+                      <Image source={require('./assets/add-circle.png')} />
+                      <Text style={styles.imgText}>사진 추가</Text>
+                    </TouchableOpacity>
+                    <ScrollView horizontal={true}>
+                    {response?.assets &&
+                      response?.assets.map(({uri}: {uri: string}) => (
+                        <View key={uri}>
+                          <Image
+                            resizeMode="cover"
+                            resizeMethod="scale"
+                            style={styles.image}
+                            source={{uri: uri}}
+                          />
+                        </View>
+                    ))}
+                    {(!response || !response?.assets) && selectedImageUri && (
+                      <View key={selectedImageUri}>
+                        <Image
+                          resizeMode="cover"
+                          resizeMethod="scale"
+                          style={styles.image}
+                          source={{uri: selectedImageUri}}
+                        />
+                      </View>
+                    )}
+                    </ScrollView>
+                  </View>
+                </View>
               </ScrollView>
             </>
           ) : (
@@ -450,6 +545,75 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
   );
 }
 
+interface Action {
+  title: string;
+  type: 'capture' | 'library';
+  options: ImagePicker.CameraOptions | ImagePicker.ImageLibraryOptions;
+}
 
+const actions: Action[] = [
+  {
+    title: 'Take Image',
+    type: 'capture',
+    options: {
+      saveToPhotos: true,
+      mediaType: 'photo',
+      includeBase64: false,
+      includeExtra,
+    },
+  },
+  {
+    title: 'Select Image',
+    type: 'library',
+    options: {
+      selectionLimit: 0,
+      mediaType: 'photo',
+      includeBase64: false,
+      includeExtra,
+    },
+  },
+  {
+    title: 'Take Video',
+    type: 'capture',
+    options: {
+      saveToPhotos: true,
+      formatAsMp4: true,
+      mediaType: 'video',
+      includeExtra,
+    },
+  },
+  {
+    title: 'Select Video',
+    type: 'library',
+    options: {
+      selectionLimit: 0,
+      mediaType: 'video',
+      formatAsMp4: true,
+      includeExtra,
+    },
+  },
+  {
+    title: 'Select Image or Video\n(mixed)',
+    type: 'library',
+    options: {
+      selectionLimit: 0,
+      mediaType: 'mixed',
+      includeExtra,
+    },
+  },
+];
+
+if (Platform.OS === 'ios') {
+  actions.push({
+    title: 'Take Image or Video\n(mixed)',
+    type: 'capture',
+    options: {
+      saveToPhotos: true,
+      mediaType: 'mixed',
+      includeExtra,
+      presentationStyle: 'fullScreen',
+    },
+  });
+}
 
 export default StampClick;

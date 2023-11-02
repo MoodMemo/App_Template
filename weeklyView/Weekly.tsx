@@ -484,11 +484,13 @@ const Weekly = () => {
     if (buttonRefs.current[index]) {
       buttonRefs.current[index].measureInWindow((x, y, width, height) => {
       // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
-        console.log("tmp ==")
-        console.log("x : ", x); setButtonX(x);
-        console.log("y : ", y); setButtonY(y);
-        console.log("width : ", width);
-        console.log("height : ", height);
+        // console.log("tmp ==")
+        // console.log("x : ", x);
+        setButtonX(x);
+        // console.log("y : ", y);
+        setButtonY(y);
+        // console.log("width : ", width);
+        // console.log("height : ", height);
         // console.log("pageX : ", pageX);
         // console.log("pageY : ", pageY);
       });
@@ -497,11 +499,13 @@ const Weekly = () => {
     if (firstRef) {
       firstRef.current.measureInWindow((x, y, width, height) => {
       // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
-        console.log("getFirstBoxMessure ==")
-        console.log("x : ", x); setFirstButtonX(x);
-        console.log("y : ", y); setFirstButtonY(y);
-        console.log("width : ", width);
-        console.log("height : ", height);
+        // console.log("getFirstBoxMessure ==")
+        // console.log("x : ", x);
+        setFirstButtonX(x);
+        // console.log("y : ", y);
+        setFirstButtonY(y);
+        // console.log("width : ", width);
+        // console.log("height : ", height);
         // console.log("pageX : ", pageX);
         // console.log("pageY : ", pageY);
       });
@@ -738,7 +742,21 @@ const Weekly = () => {
                         <View style={Timelinestyles.line}></View>
                         <Text style={Timelinestyles.title}>{item.memo}</Text>
                         {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
-
+                        {item.imageUrl && 
+                          <Image 
+                            source={{ uri: item.imageUrl }} 
+                            style={{ width: 54, height: 54, borderRadius: 4, marginHorizontal: 10, marginBottom: 10 }}  // adjust width and height as needed
+                            onLoadEnd={() => console.log(item.imageUrl)}
+                          />
+                        }
+                        {/* // 이미지 여러개일 경우 */}
+                        {/* {item.imageUrl && item.imageUrl.map((url) => (
+                          <Image 
+                            source={{ uri: url }} 
+                            style={{ width: 54, height: 54, borderRadius: 4, marginHorizontal: 10, marginBottom: 10 }}  // adjust width and height as needed
+                          />
+                        ))} */}
+  
                       </View>
                     </View>
                   ))}
@@ -854,6 +872,21 @@ const Weekly = () => {
                     ))}
                   </View>
                 )}
+                {/* 해당 날짜에 timelineData에 기록된 모든 사진들 가로로 */}
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ marginTop: 10, }}>
+                {timelineData.map((item, index) => (
+                  <View key={index}
+                    style={{ marginLeft: index === 0 ? 0 : 12, }}
+                  >
+                    {item.imageUrl && 
+                      <Image 
+                        source={{ uri: item.imageUrl }} 
+                        style={{ width: 80, height: 80, borderRadius: 6, marginBottom: 10 }}  // adjust width and height as needed
+                      />
+                    }
+                  </View>
+                ))}
+                </ScrollView>
               </View>
             </View>
           </ScrollView>

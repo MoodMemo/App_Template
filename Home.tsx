@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef} from 'react';
-import { Dimensions, View, StyleSheet, Touchable, TouchableOpacity, SafeAreaView, Image, StatusBar, Platform } from 'react-native';
+import { Dimensions, View, StyleSheet, Touchable, TouchableOpacity, SafeAreaView, Image, StatusBar, Platform, Button, PermissionsAndroid } from 'react-native';
 import Modal from "react-native-modal";
 import Dropdown from './Dropdown';
 import StampView from './StampView';
@@ -16,6 +16,11 @@ import { useSafeAreaFrame, useSafeAreaInsets, initialWindowMetrics} from 'react-
 
 import {default as Text} from "./CustomText"
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { CameraRoll, useCameraRoll } from '@react-native-camera-roll/camera-roll';
+
+import {Alert, Linking} from 'react-native';
+import Permissions, {PERMISSIONS} from 'react-native-permissions';
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -28,6 +33,140 @@ const Home = ({name,first}:any) => {
   const [isFirstStamp,setIsFirstStamp]=useState(false);
   const [isStampTemplateAdded,setIsStampTemplateAdded]=useState(true);
   const [isEventModalVisible,setIsEventModalVisible] = useState(false);
+  const [photos, getPhotos, save] = useCameraRoll();
+
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
+  const [isCameraPermission, setCameraPermission] = useState<boolean>(false);
+
+  const openSettingsAlert = useCallback(({title}: {title: string}) => {
+    Alert.alert(title, '', [
+      {
+        isPreferred: true,
+        style: 'default',
+        text: 'Open Settings',
+        onPress: () => Linking?.openSettings(),
+      },
+      {
+        isPreferred: false,
+        style: 'destructive',
+        text: 'Cancel',
+        onPress: () => {},
+      },
+    ]);
+  }, []);
+
+  const checkAndroidPermissions = useCallback(async () => {
+    if (parseInt(Platform.Version as string, 10) >= 33) {
+      const permissions = await Permissions.checkMultiple([
+        PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+        PERMISSIONS.ANDROID.READ_MEDIA_VIDEO,
+      ]);
+      if (
+        permissions[PERMISSIONS.ANDROID.READ_MEDIA_IMAGES] ===
+          Permissions.RESULTS.GRANTED &&
+        permissions[PERMISSIONS.ANDROID.READ_MEDIA_VIDEO] ===
+          Permissions.RESULTS.GRANTED
+      ) {
+        setHasPermission(true);
+        return;
+      }
+      const res = await Permissions.requestMultiple([
+        PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+        PERMISSIONS.ANDROID.READ_MEDIA_VIDEO,
+      ]);
+      if (
+        res[PERMISSIONS.ANDROID.READ_MEDIA_IMAGES] ===
+          Permissions.RESULTS.GRANTED &&
+        res[PERMISSIONS.ANDROID.READ_MEDIA_VIDEO] ===
+          Permissions.RESULTS.GRANTED
+      ) {
+        setHasPermission(true);
+      }
+      if (
+        res[PERMISSIONS.ANDROID.READ_MEDIA_IMAGES] ===
+          Permissions.RESULTS.DENIED ||
+        res[PERMISSIONS.ANDROID.READ_MEDIA_VIDEO] === Permissions.RESULTS.DENIED
+      ) {
+        checkAndroidPermissions();
+      }
+      if (
+        res[PERMISSIONS.ANDROID.READ_MEDIA_IMAGES] ===
+          Permissions.RESULTS.BLOCKED ||
+        res[PERMISSIONS.ANDROID.READ_MEDIA_VIDEO] ===
+          Permissions.RESULTS.BLOCKED
+      ) {
+        openSettingsAlert({
+          title: 'Please allow access to your photos and videos from settings',
+        });
+      }
+    } else {
+      const permission = await Permissions.check(
+        PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+      );
+      if (permission === Permissions.RESULTS.GRANTED) {
+        setHasPermission(true);        
+        return;
+      }
+      const res = await Permissions.request(
+        PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+      );
+      if (res === Permissions.RESULTS.GRANTED) {
+        setHasPermission(true);
+      }
+      if (res === Permissions.RESULTS.DENIED) {
+        checkAndroidPermissions();
+      }
+      if (res === Permissions.RESULTS.BLOCKED) {
+        openSettingsAlert({
+          title: 'Please allow access to the photo library from settings',
+        });
+      }
+    }
+  }, [openSettingsAlert]);
+
+  const checkPermission = useCallback(async () => {
+    if (Platform.OS === 'ios') {
+      const permission = await Permissions.check(PERMISSIONS.IOS.PHOTO_LIBRARY);
+      if (permission === Permissions.RESULTS.GRANTED ||
+          permission === Permissions.RESULTS.LIMITED) {
+        setHasPermission(true);
+        return;
+      }
+      const res = await Permissions.request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+      if (res === Permissions.RESULTS.GRANTED ||
+          res === Permissions.RESULTS.LIMITED) {
+        setHasPermission(true);
+      }
+      if (res === Permissions.RESULTS.BLOCKED) {
+        openSettingsAlert({
+          title: 'Please allow access to the photo library from settings',
+        });
+      }
+    } else if (Platform.OS === 'android') {
+      checkAndroidPermissions();
+    }
+  }, [checkAndroidPermissions, openSettingsAlert]);
+
+  
+  // 이미지 불러오기 함수
+  const fetchImagesFromGallery = async () => {
+    if (!hasPermission) {
+      // 권한이 없으면 이미지를 불러올 수 없습니다.
+      Alert.alert('Error', 'You need to give permission to access the gallery.');
+      return;
+    }
+
+    try {
+      const photos = await CameraRoll.getPhotos({
+        first: 20,  // 처음 20개의 이미지 불러오기
+        assetType: 'Photos',  // 'Photos' 또는 'Videos' 또는 'All'
+      });
+
+      console.log(photos); // 갤러리에서 불러온 이미지 정보 확인
+    } catch (error) {
+      console.error('Error fetching images: ', error);
+    }
+  };
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
@@ -196,6 +335,21 @@ const Home = ({name,first}:any) => {
         {/* <Image source={require('./assets/edit.png')} /> */}
         <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
       </TouchableOpacity>
+
+      {/* // 된 거 */}
+      <Button title="사진 테스트" onPress={checkPermission}/>
+      <Button title="사진 불러오기" onPress={fetchImagesFromGallery}/>
+      {
+        photos?.edges?.map((item, index) => {
+          return (
+            <Image
+              key={index}
+              style={{width: 100, height: 100}}
+              source={{uri: item.node.image.uri}}
+            />
+          );
+        })
+      }
     </View>
     {/* 감정 스탬프 뷰 */}
     <StampView/>
