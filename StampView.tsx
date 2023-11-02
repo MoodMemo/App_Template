@@ -48,6 +48,7 @@ const StampView = () => {
   const [tempDate, setTempDate] = useState(date);
 
   const [memo, setMemo] = useState('');
+  const [selectedImageUri, setSelectedImageUri] = useState<string>('');
   const [numberOfLines, setNumberOfLines] = useState(1);
 
   const [{top,right,bottom,left},setSafeAreaInsets]= useState(initialWindowMetrics?.insets);
@@ -64,9 +65,31 @@ const StampView = () => {
 
   const onButtonPress = React.useCallback((type, options) => {
     if (type === 'capture') {
-      ImagePicker.launchCamera(options, setResponse);
+      ImagePicker.launchCamera(options, (response) => {
+        setResponse(response);
+        if (response?.assets && response?.assets[0]?.uri) {
+          setSelectedImageUri(response?.assets[0]?.uri);
+        }
+      });
     } else {
-      ImagePicker.launchImageLibrary(options, setResponse);
+      ImagePicker.launchImageLibrary(options, (response) => {
+        setResponse(response);
+        if (response?.assets && response?.assets[0]?.uri) {
+          // if(Platform.OS === 'ios') {
+          //   setSelectedImageUri('~' + response?.assets[0]?.uri.substring(response?.assets[0]?.uri.indexOf('/tmp/')));
+          // }
+          // Plaform.OS가 iOS이고 response?.assets[0]?.uri가 /tmp/가 포함되어 있으면
+          if(Platform.OS === 'ios' && response?.assets[0]?.uri.includes('/tmp/')) {
+            setSelectedImageUri('~' + response?.assets[0]?.uri.substring(response?.assets[0]?.uri.indexOf('/tmp/')));
+          }
+          else if(Platform.OS === 'ios' && response?.assets[0]?.uri.includes('/Documents/')) {
+            setSelectedImageUri('~' + response?.assets[0]?.uri.substring(response?.assets[0]?.uri.indexOf('/Documents/')));
+          }
+          else {
+            setSelectedImageUri(response?.assets[0]?.uri);
+          }
+        }
+      });
     }
   }, []);
 
@@ -106,9 +129,12 @@ const StampView = () => {
         stampName: selectedEmotionLabel,
         emoji: selectedEmotion,
         memo: memo,
-        imageUrl: '', // 이미지를 추가하려면 여기에 이미지 URL을 추가
+        imageUrl: selectedImageUri, // 이미지를 추가하려면 여기에 이미지 URL을 추가
       });
     });
+
+    console.log("memo : ", memo);
+    console.log("imageUrl : ", selectedImageUri);
 
     updateCustomStampPushedCountById(selectedEmotionId, 1);
     // 모달 닫기
@@ -647,7 +673,7 @@ const StampView = () => {
                   <Text style={styles.modalText}>사진 추가</Text>
                   <View style={styles.imgContent}>
                     <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
-                      selectionLimit: 0,
+                      selectionLimit: 1,
                       mediaType: 'photo',
                       includeBase64: false,
                       includeExtra,
