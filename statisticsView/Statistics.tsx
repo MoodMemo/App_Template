@@ -150,7 +150,7 @@ const Statistics = () => {
           }
           else{
             count+=1;
-            if(ans>count){
+            if(ans<count){
               ans=count;
             }
           }
@@ -228,7 +228,7 @@ const Statistics = () => {
             <Text style={typeChangeBtnStyles.activeFont}>요약</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {setSummaryOrDetail(false); amplitude.moveToDetail();}} style={typeChangeBtnStyles.deactiveType}>
-            <Text style={typeChangeBtnStyles.deactiveFont}>상세</Text>
+            <Text style={typeChangeBtnStyles.deactiveFont}>무드 리포트</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -237,12 +237,13 @@ const Statistics = () => {
             <Text style={typeChangeBtnStyles.deactiveFont}>요약</Text>
           </TouchableOpacity>
           <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.moveToDetail()}}>
-            <Text style={typeChangeBtnStyles.activeFont}>상세</Text>
+            <Text style={typeChangeBtnStyles.activeFont}>무드 리포트</Text>
           </TouchableOpacity>
         </View>
       )}
-      {summaryOrDetail ? (<View>
-        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:40, marginBottom:35}}>
+      {summaryOrDetail ? (
+        <ScrollView style={{marginTop:20}}>
+        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:10, marginBottom:25}}>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
             <Text style={{fontSize:22,color:'#FFCC4D'}}>{countStamps}개</Text>
@@ -262,17 +263,40 @@ const Statistics = () => {
         </View>
         <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
         <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-        <Text style={{fontSize:14,color:'#212429',marginLeft:20,marginTop:30}}>가장 많이 남긴 감정이다무!</Text>
-        <ScrollView contentContainerStyle={styles.stampView} horizontal={false} style={{marginTop:30}}>
+        <View style={{marginLeft:25,alignItems:'center',marginTop:30}}>
+          <PieChart data={stampsChart.map((stamp:any) => ({
+            value: stamp[1],
+            color: stamp[2][0],
+            text: `${Math.round(stamp[1]*100/countStamps)}%`,
+            textColor: stamp[2][1],
+            shiftTextX:-5,
+            shiftTextY:3,
+            textSize:15
+          }))}
+            donut={true}
+            showText={true}
+            innerRadius={40}
+            radius={100}
+          />
+        </View>
+          <View style={{flexDirection: 'row',
+                          justifyContent: 'space-between'}}>
+            <Text style={{marginLeft:20,fontSize:16,color:'#999999'}}>전체</Text>
+            <Text style={{marginRight:20,fontSize:16,color:'#999999'}}>{countStamps}개</Text>
+          </View>
+          <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:20,marginTop:10,marginBottom:5}}/>
           {stamps.sort(sortStamps).map((stampButton:any) => (
-            <TouchableOpacity key={stampButton[0].id} style={styles.stampButton} disabled={true}>
-              <Text style={styles.buttonEmotion}>{stampButton[0].emoji}</Text>
-              <Text style={styles.buttonText}>{stampButton[0].stampName}</Text>
-              <Text style={{color: '#000000', fontSize: 14,}}>{stampButton[1]}</Text>
+            <TouchableOpacity key={stampButton[0].id} style={{marginHorizontal:20,flexDirection:'row',justifyContent:'space-between',marginBottom:10}} disabled={true}>
+              <View style={{flexDirection: 'row'}}>
+                <View style={{width:12,height:12,backgroundColor:stampButton[2][0],borderRadius:8,marginTop:9,marginRight:7}}/>
+                <Text style={{marginRight:7,fontSize:20}}>{stampButton[0].emoji}</Text>
+                <Text style={{marginRight:7,marginTop:(Platform.OS==='android' ? 3 : 5),fontSize:16,color:'#000000'}}>{stampButton[0].stampName}</Text>
+                <Text style={{marginTop:(Platform.OS==='android' ? 3 : 5),fontSize:16,color:'#999999'}}>{`${Math.round(stampButton[1]*100/countStamps)}%`}</Text>
+              </View>
+              <Text style={{color: '#000000',fontSize:16}}>{stampButton[1]}개</Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>
-        </View>) : 
+        </ScrollView>) : 
         (
           <ScrollView style={{marginTop:20}}>
             <View style={{marginLeft:25,alignItems:'center',}}>
@@ -348,7 +372,7 @@ const styles = StyleSheet.create({
     },
     titleContainer: {
         backgroundColor: '#FAFAFA',
-        height: 180,
+        height: 160,
         borderBottomRightRadius: 43,
         // alignItems: 'center', // 가로 정렬
     },
