@@ -26,8 +26,25 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb854860769368350</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CodePushDeploymentKey</key>
+	<string>$(CODEPUSH_KEY)</string>
+	<key>FacebookAppID</key>
+	<string>854860769368350</string>
+	<key>FacebookClientToken</key>
+	<string>fef88fcda3d09f90e17f8add437ee616</string>
+	<key>FacebookDisplayName</key>
+	<string>MoodMemo - Test1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -81,20 +98,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>fb854860769368350</string>
-			</array>
-		</dict>
-	</array>
-	<key>FacebookAppID</key>
-	<string>854860769368350</string>
-	<key>FacebookClientToken</key>
-	<string>fef88fcda3d09f90e17f8add437ee616</string>
-	<key>FacebookDisplayName</key>
-	<string>MoodMemo - Test1</string>
 </dict>
 </plist>

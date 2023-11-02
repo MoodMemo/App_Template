@@ -94,7 +94,7 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                 marginTop:30,
             }}>
                 <Text style={{color:'#212429',fontSize:18}}>이벤트 레벨</Text>
-                <Text style={{color:'#FFCC4D',fontSize:18}}>Lv. {autumnEventLevel===4 ? 4 : autumnEventLevel+1}{autumnEventLevel===4 ? '': ' (Up !)'}</Text>
+                <Text style={{color:'#FFCC4D',fontSize:18}}>Lv. {type==='diary' || autumnEventLevel===4 ? autumnEventLevel : autumnEventLevel+1}{type==='diary' || autumnEventLevel===4 ? '': ' (Up !)'}</Text>
             </View>
             <View style={{
                 flexDirection:'row',

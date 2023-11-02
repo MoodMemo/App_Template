@@ -250,7 +250,7 @@ const AnimatedViewBirthday = () => {
         });
         repository.createNotification({
           day: [true, true, true, true, true, true, true],
-          time: "21:00"
+          time: "22:00"
         });
         console.log("create default notification finished");
       };

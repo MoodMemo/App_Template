@@ -121,7 +121,7 @@ const Settings = () => {
             event_id: sentryId,
             name: name,
             email: "이메일은 아직 개발 안했음",
-            comments: autumnEventGiftInfo,
+            comments: autumnEventPressedGift+' : '+autumnEventGiftInfo,
             // comments: "memo",
         };
         Sentry.captureUserFeedback(userFeedback);
@@ -245,6 +245,19 @@ const Settings = () => {
         } else if (key === 'chicken_2') {
             if (autumnEventBoughtChicken2) return true;
             else return false;
+        }
+    }
+
+    const autumnEventBoughtGift = ( key ) => {
+        if (key === 'ice') {
+            setAutumnEventBoughtIce(true);
+            AsyncStorage.setItem('@UserInfo:AutumnEventBoughtIce','true');
+        } else if (key === 'chicken_1') {
+            setAutumnEventBoughtChicken1(true);
+            AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken1','true');
+        } else if (key === 'chicken_2') {
+            setAutumnEventBoughtChicken2(true);
+            AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken2','true');
         }
     }
 
@@ -628,7 +641,7 @@ const Settings = () => {
                             amplitude.clickLevelInfo();//레벨 설명 켬
                             setIsEventLevelModalVisible(!isEventLevelModalVisible);
                             }}>
-                            <MCIcons name="information-outline" color={'#AAAAAA'} size={22} style={{marginLeft:5,marginTop:2}}/>
+                            <MCIcons name="information-outline" color={'#AAAAAA'} size={22} style={{marginLeft:5,marginTop:(Platform.OS==='android' ? 2: 0)}}/>
                             </TouchableOpacity>
                         </View>
                         <Text style={{color:'#FFCC4D',fontSize:19,marginLeft:10}}>Lv. {autumnEventLevel}</Text>
@@ -760,7 +773,6 @@ const Settings = () => {
                         }
                     }}>
                         <View style={eventModalStyles.container}>
-                            <ScrollView contentContainerStyle={{alignItems: 'center', gap: 20,}}>
 
                                 <View style={{ width: 290, flexDirection: 'row', justifyContent: 'space-between'}}>
                                     <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
@@ -838,7 +850,6 @@ const Settings = () => {
                                         <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>구매하기</Text>
                                     </View>
                                 </TouchableOpacity>
-                            </ScrollView>
                         </View>
                     </Modal>
 
@@ -944,6 +955,8 @@ const Settings = () => {
                                             setAutumnEventGiftBuyingSucceed(true);
                                             AsyncStorage.setItem('@UserInfo:AutumnEventCoin',(autumnEventCoin-autumnEventPressedGiftInfo.cost).toString());
                                             setAutumnEventCoin(autumnEventCoin-autumnEventPressedGiftInfo.cost);
+                                            autumnEventBoughtGift(autumnEventPressedGift);
+                                            amplitude.successBuyGift(autumnEventPressedGift);//경품 정보 입력 제출함
                                         }
                                         setAutumnEventGiftInfoModal(!autumnEventGiftInfoModal);
                                         setAutumnEventPressedGiftInfo({});
@@ -1099,8 +1112,6 @@ const Settings = () => {
                             </View>
                         </View>
                     </Modal>
-
-                <SubtitleDivider/>
 
                 {/* 무드메모 섹션 */}
                 <View style={tabStyles.title}>
@@ -1282,7 +1293,7 @@ const Settings = () => {
                                     RNRestart.restart();
                                 }}
                                 style={styles.clearBtn}>
-                                    <Text style={{fontSize: 19}}>초기화</Text>
+                                    <Text style={{fontSize: 19.2}}>초기화</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

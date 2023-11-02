@@ -27,7 +27,7 @@ const StampOnBoarding = () => {
         setNumberOfLines(text.split('\n').length);
       };
 
-      const handleCreatePushedStamp = async () => {
+    const handleCreatePushedStamp = async () => {
         amplitude.submitStamp();
         console.log("체크 버튼 누름!");
         // 기록 시간 설정
@@ -46,311 +46,283 @@ const StampOnBoarding = () => {
         });
     
         updateCustomStampPushedCountById(selectedEmotionId, 1);
-      }
+      };
 
-    return (section==='start' ? (<View style={{justifyContent: 'center',
-    flex:1,
-    backgroundColor:'#FFFAF4'}}>
-      <Image 
-        source={require('./assets/colorMooMedium.png')}
-        style={{ width: 123, height: (123 * 131) / 123 , position: 'absolute', bottom: 200, left:140, alignSelf:'center', overflow: 'hidden', transform:[{rotate:'11.91deg'}]}}></Image>
-      <TouchableOpacity disabled={true} style={{
-          position: 'absolute',
-          bottom: 400,
-          width: '90%',
-          height: 200,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#72D193',
-          borderRadius: 7,
-          marginHorizontal:'5%'
-        }}>
-            <Text style={{
-                fontSize: 26,
-                color:"#FFFFFF",
-            }}>처음으로 감정을 남기는 걸</Text>
-            <Text style={{
-                fontSize: 26,
-                color:"#FFFFFF",
-            }}>무가 도와주겠다무!</Text>
-            <Text style={{
-                fontSize: 26,
-                color:"#FFFFFF",
-            }}>지금의 감정은 어떠냐무~?</Text>
-      </TouchableOpacity>
-      <View style={{
-        position: 'absolute',
-        left:180,
-        bottom: 360,
-        width:0,
-        height:0,
-        borderTopWidth:20,
-        borderTopColor:'#72D193',
-        borderLeftWidth:20,
-        borderLeftColor:'#FFFFFF00',
-        borderRightWidth:20,
-        borderRightColor:'#FFFFFF00',
-        borderBottomWidth:20,
-        borderBottomColor:'#FFFFFF00',
-        }}/>
-      <View style={{top:330,width:'90%',alignSelf:'center',flexDirection:'row',justifyContent:'space-between'}}>
-        <TouchableOpacity style={styles.button} onPress={(async () => { 
-          // Do something before delay
-          // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
-          // setIsFirstStamp(false);
-          setSelectedEmotion('😆');
-          setSelectedEmotionLabel('기쁨')
-          setSection('stamp');
-          setSelectedEmotionId(getCustomStampsByField('stampName','기쁨').id);
-          amplitude.clickFirstStamp_JOY();//첫 스탬프 기쁨 선택
-          }
-        )}>
-            <Text style={styles.buttonText}>기뻐😆</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={(async () => { 
-          // Do something before delay
-          // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
-          // setIsFirstStamp(false);
-          setSelectedEmotion('😭');
-          setSelectedEmotionLabel('슬픔');
-          setSelectedEmotionId(getCustomStampsByField('stampName','슬픔').id);
-          setSection('stamp');
-          amplitude.clickFirstStamp_SAD() //첫 스탬프 슬픔 선택
-          }
-        )}>
-            <Text style={styles.buttonText}>슬퍼...😭</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={(async () => { 
-          // Do something before delay
-          // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
-          // setIsFirstStamp(false);
-          setSelectedEmotion('🙂');
-          setSelectedEmotionLabel('평온');
-          setSelectedEmotionId(getCustomStampsByField('stampName','평온').id);
-          setSection('stamp');
-          amplitude.clickFirstStamp_CARM() //첫 스탬프 평온 선택
-          }
-        )}>
-            <Text style={styles.buttonText}>그냥 그래🙂</Text>
-        </TouchableOpacity>
-      </View>
-    </View>) : (section==='stamp' ? (
-        <ScrollView contentContainerStyle={{flexGrow:1}}>
-            <View style={{
-                flex:1,
-                backgroundColor:'#FFFAF4'
-            }}>
-                <View style={styles.stampContainer}>
-                  <Text style={styles.modalText}>찍은 스탬프</Text>
-                  <View style={styles.stampContent}>
-                    <Text style={styles.stampText}>{selectedEmotion}</Text>
-                    <Text style={styles.stampText}>{selectedEmotionLabel}</Text>
-                  </View>
-                </View>
-                <View style={styles.horizontalLine} />
-                <View style={styles.memoContainer}>
-                  <Text style={styles.modalText}>메모 남기기</Text>
-                  <View style={styles.memoContent}>
-                    <TextInput
-                      style={styles.memoText}
-                      placeholder="메모 작성하기"
-                      multiline={true}
-                      maxLength={500}
-                      onChangeText={handleMemoChange}
-                      onFocus={() => {
-                        amplitude.editStampMemo();
-                      }}
-                      value={memo}
-                      numberOfLines={numberOfLines}
-                    />
-                    <Text style={styles.maxLength}>{memo.length}/500</Text>
-                  </View>
-                </View>    
-        <Image 
-        source={require('./assets/colorMooMedium.png')}
-        style={{ width: 123, height: (123 * 131) / 123 , position: 'absolute', top: 470, left:250, alignSelf:'center', overflow: 'hidden', transform:[{rotate:'11.91deg'}]}}></Image>
-        <TouchableOpacity disabled={true} style={{
-          position: 'absolute',
-          top: 470,
-          width: 200,
-          height: 150,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#72D193',
-          borderRadius: 7,
-          marginHorizontal:'5%'
-        }}>
-            <Text style={{
-                fontSize: 22,
-                color:"#FFFFFF",
-            }}>방금 고른 감정을</Text>
-            <Text style={{
-                fontSize: 22,
-                color:"#FFFFFF",
-            }}>왜 골랐는지</Text>
-            <Text style={{
-                fontSize: 22,
-                color:"#FFFFFF",
-            }}>메모를 적어달라무!</Text>
-      </TouchableOpacity>
-      <View style={{
-        position: 'absolute',
-        left:230,
-        top: 500,
-        width:0,
-        height:0,
-        borderTopWidth:20,
-        borderTopColor:'#FFFFFF00',
-        borderLeftWidth:20,
-        borderLeftColor:'#72D193',
-        borderRightWidth:20,
-        borderRightColor:'#FFFFFF00',
-        borderBottomWidth:20,
-        borderBottomColor:'#FFFFFF00',
-        }}/>
-    <TouchableOpacity style={styles.saveButton} onPress={(async () => { 
-                // Do something before delay
-                // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                // setIsFirstStamp(false);
-                setSection('stampEnd');
-                //console.log(selectedEmotionId);
-                //handleCreatePushedStamp();
-                // AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                amplitude.confirmFirstStamp() //첫 스탬프 입력 완료
-                }
+    return (
+      section==='start' ? (
+        <View style={{justifyContent: 'center', flex:1, backgroundColor:'#FFFAF4'}}>
+
+          <View style={{zIndex: 200, position: 'absolute', top: '4%', alignSelf: 'center', gap: 20, flexDirection: 'row'}}>
+            <View style={{width: 14, height: 14, backgroundColor: '#7CD0B2', borderRadius: 7}}></View>
+            <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7,}}></View>
+            <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7,}}></View>
+            <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7,}}></View>
+          </View>
+
+          <View style={{width: '100%', height: 300, alignSelf:'center', bottom: 69.5, zIndex: 300, gap: 14, justifyContent: 'flex-end'}}>
+            <View style={{left: '10%'}}>
+              <View style={bubbleStyles.container}>
+                <Text style={{fontSize: 17, color: '#fff', }}>기록을 감정과 함께 남기면</Text>
+                <Text style={{fontSize: 17, color: '#fff', marginBottom: 5, }}>하루가 더 풍성해질거라무!</Text>
+                <Text style={{fontSize: 17, color: '#fff', }}>Moo랑 함께 해보지 않겠냐무?</Text>
+              </View>
+              <View style={bubbleStyles.tail}></View>
+            </View>
+
+            <View style={{right: '-25%'}}>
+              <View style={bubbleStyles.container}>
+                <Text style={{fontSize: 20, color: '#fff', fontWeight: 'bold'}}>지금 어떤 감정이 드냐무?</Text>
+              </View>
+              <View style={[bubbleStyles.tail, {left: 150}]}></View>
+            </View>
+            <Image source={require('./assets/colorMooMedium.png')}
+              style={{ width: 130, height: (130 * 139) / 130 , alignSelf:'center', }}></Image>
+          </View>
+
+          <View style={{ backgroundColor: '#fff', height: '50%', width: '100%', zIndex: 1, position: 'absolute', bottom: 0, borderTopStartRadius: 79, alignItems: 'center'}}>
+            
+            <View style={{position: 'absolute', bottom: 0, gap: 20, justifyContent: 'flex-end'}}>
+              <View style={{alignSelf:'center', flexDirection:'row', gap: 16, }}>
+                
+                <TouchableOpacity style={styles.button} onPress={(async () => { 
+                  // Do something before delay
+                  // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
+                  // setIsFirstStamp(false);
+                  setSelectedEmotion('😆');
+                  setSelectedEmotionLabel('기쁨')
+                  setSection('stamp');
+                  setSelectedEmotionId(getCustomStampsByField('stampName','기쁨').id);
+                  amplitude.clickFirstStamp_JOY();//첫 스탬프 기쁨 선택
+                  }
                 )}>
-                    <Text style={styles.buttonText}>다 적었어!</Text>
-        </TouchableOpacity>  
-    </View>
-    </ScrollView>
-    ) : (section==='stampEnd' ? 
-    (<ScrollView contentContainerStyle={{flexGrow:1}}>
-    <View style={{
-        flex:1,
-        backgroundColor:'#FFFAF4'
-    }}>
-        <Image 
-            source={require('./assets/colorMooMedium.png')}
-            style={{ width: 123, height: (123 * 131) / 123 , alignSelf:'center', overflow: 'hidden', position: 'absolute', bottom: 200, left:140, transform:[{rotate:'11.91deg'}]}}></Image>
-        <TouchableOpacity disabled={true} style={{
-            position: 'absolute',
-            bottom: 400,
-            width: '90%',
-            height: 200,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#72D193',
-            borderRadius: 7,
-            marginHorizontal:'5%'
-            }}>
-                <Text style={{
-                    fontSize: 26,
-                    color:"#FFFFFF",
-                }}>잘했다무!</Text>
-                <Text style={{
-                    fontSize: 26,
-                    color:"#FFFFFF",
-                }}>{(() => {
-                    AsyncStorage.getItem('@UserInfo:userName').then((value) => {
-                        setName(value);
-                    })
-                    return name;
-                })()}가 남긴 스탬프는</Text>
-                <Text style={{
-                    fontSize: 26,
-                    color:"#FFFFFF",
-                }}>무가 계속 기억하겠다무!</Text>
-        </TouchableOpacity>
-        <View style={{
-            position: 'absolute',
-            left:180,
-            bottom: 360,
-            width:0,
-            height:0,
-            borderTopWidth:20,
-            borderTopColor:'#72D193',
-            borderLeftWidth:20,
-            borderLeftColor:'#FFFFFF00',
-            borderRightWidth:20,
-            borderRightColor:'#FFFFFF00',
-            borderBottomWidth:20,
-            borderBottomColor:'#FFFFFF00',
-            }}/>
-        <TouchableOpacity style={styles.saveButton} onPress={(async () => { 
-                // Do something before delay
-                // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                // setIsFirstStamp(false);
-                setSection('end');
-                // console.log(selectedEmotionId);
-                // handleCreatePushedStamp();
-                // AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                amplitude.okForMoosRemembering() //첫 스탬프 입력 후 튜토리얼
-                }
+                    <Text style={[styles.buttonText, {fontSize: 36}]}>😆</Text>
+                    <Text style={styles.buttonText}>기뻐</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={styles.button} onPress={(async () => { 
+                  // Do something before delay
+                  // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
+                  // setIsFirstStamp(false);
+                  setSelectedEmotion('😭');
+                  setSelectedEmotionLabel('슬픔');
+                  setSelectedEmotionId(getCustomStampsByField('stampName','슬픔').id);
+                  setSection('stamp');
+                  amplitude.clickFirstStamp_SAD() //첫 스탬프 슬픔 선택
+                  }
                 )}>
-                    <Text style={styles.buttonText}>그래 좋아!</Text>
-        </TouchableOpacity> 
+                    <Text style={[styles.buttonText, {fontSize: 36}]}>😭</Text>
+                    <Text style={styles.buttonText}>슬퍼...</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity style={styles.button} onPress={(async () => { 
+                  // Do something before delay
+                  // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
+                  // setIsFirstStamp(false);
+                  setSelectedEmotion('🙂');
+                  setSelectedEmotionLabel('평온');
+                  setSelectedEmotionId(getCustomStampsByField('stampName','평온').id);
+                  setSection('stamp');
+                  amplitude.clickFirstStamp_CARM() //첫 스탬프 평온 선택
+                  }
+                )}>
+                    <Text style={[styles.buttonText, {fontSize: 36}]}>🙂</Text>
+                    <Text style={styles.buttonText}>그냥 그래</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={{marginBottom: 20, alignSelf:'center', }}>
+                <Text style={{color: '#495057', fontSize: 20, }}>위 스탬프 중 하나를 눌러보라무 !</Text>
+              </View>
+            </View>
+
+          </View>
+          
         </View>
-    </ScrollView>) : (
+      ) : (
+      section==='stamp' ? (
+        <ScrollView contentContainerStyle={{flexGrow:1}} >
+          <View style={{justifyContent: 'center', flex:1, backgroundColor:'#FFFAF4'}}>
+
+            <View style={{zIndex: 50, position: 'absolute', top: '4%', alignSelf: 'center', gap: 20, flexDirection: 'row'}}>
+              <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7}}></View>
+              <View style={{width: 14, height: 14, backgroundColor: '#7CD0B2', borderRadius: 7,}}></View>
+              <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7,}}></View>
+              <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7,}}></View>
+            </View>
+
+            {/* <View style={{width: '100%', height: 300, alignSelf:'center', bottom: 69.5, zIndex: 300, gap: 14, justifyContent: 'flex-end'}}>
+              <View style={{zIndex: 105, alignSelf: 'center', }}>
+                <View style={[bubbleStyles.container, {paddingVertical: 15, width: 250}]}>
+                  <Text style={{fontSize: 20, color: '#fff', zIndex: 50}}>방금 누른 감정이 왜 들었는지</Text>
+                  <Text style={{fontSize: 20, color: '#fff', zIndex: 50}}>짧게 메모도 남겨보자무!</Text>
+                </View>
+                <View style={[bubbleStyles.tail, {}]}></View>
+              </View>
+
+              <Image source={require('./assets/colorMooMedium.png')}
+              style={{ zIndex: 100, width: 130, height: (130 * 139) / 130 , alignSelf:'center', bottom: 0}}></Image>
+            </View> */}
+
+            <View style={{ backgroundColor: '#fff', height: '50%', minHeight: 350, width: '100%', zIndex: 1, position: 'absolute', bottom: 0, borderTopStartRadius: 79, paddingHorizontal: 16, justifyContent: 'flex-end', overflow: 'visible'}}>
+
+              <View style={{zIndex: 105, alignSelf: 'center', marginBottom: 14}}>
+                <View style={[bubbleStyles.container, {paddingVertical: 15, width: 250}]}>
+                  <Text style={{fontSize: 20, color: '#fff', zIndex: 50}}>방금 누른 감정이 왜 들었는지</Text>
+                  <Text style={{fontSize: 20, color: '#fff', zIndex: 50}}>짧게 메모도 남겨보자무!</Text>
+                </View>
+                <View style={[bubbleStyles.tail, {}]}></View>
+              </View>
+
+              <Image source={require('./assets/colorMooMedium.png')}
+              style={{ zIndex: 100, width: 130, height: (130 * 139) / 130 , alignSelf:'center', bottom: 0}}></Image>
+
+              <View style={[styles.stampContainer, {marginBottom: 7, gap: 5}]}>
+                <Text style={styles.modalText}>찍은 스탬프</Text>
+                <Text style={{fontSize:36, color: '#212429'}}>{selectedEmotion}</Text>
+                <Text style={{fontSize:16, color: '#212429'}}>{selectedEmotionLabel}</Text>
+              </View>
+
+              <View style={styles.memoContainer}>
+                <Text style={styles.modalText}>메모 남기기</Text>
+                <View style={styles.memoContent}>
+                  <TextInput
+                    style={styles.memoText}
+                    placeholder="메모 작성하기"
+                    multiline={true}
+                    maxLength={500}
+                    onChangeText={handleMemoChange}
+                    onFocus={() => {
+                      amplitude.editStampMemo();
+                    }}
+                    value={memo}
+                    numberOfLines={numberOfLines}
+                  />
+                  <Text style={styles.maxLength}>{memo.length}/500</Text>
+                </View>
+              </View>
+
+              <TouchableOpacity style={styles.saveButton} onPress={(async () => { 
+                    // Do something before delay
+                    // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
+                    // setIsFirstStamp(false);
+                    setSection('stampEnd');
+                    //console.log(selectedEmotionId);
+                    //handleCreatePushedStamp();
+                    // AsyncStorage.setItem('@UserInfo:firstStamp','false');
+                    amplitude.confirmFirstStamp() //첫 스탬프 입력 완료
+                    }
+                    )}>
+                        <Text style={{ color: '#72D193', fontSize: 20, fontWeight: 'bold'}}>다 적었어!</Text>
+              </TouchableOpacity>  
+            </View>
+            
+          </View>
+        </ScrollView>
+      ) : (
+      section==='stampEnd' ? (
         <ScrollView contentContainerStyle={{flexGrow:1}}>
-        <View style={{
-            flex:1,
-            backgroundColor:'#FFFAF4'
-        }}>
-            <Image 
-                source={require('./assets/colorMooMedium.png')}
-                style={{ width: 123, height: (123 * 131) / 123 , alignSelf:'center', overflow: 'hidden', position: 'absolute', bottom: 150, left:140, transform:[{rotate:'11.91deg'}]}}></Image>
-            <TouchableOpacity disabled={true} style={{
-                position: 'absolute',
-                bottom: 350,
-                width: '90%',
-                height: 320,
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#72D193',
-                borderRadius: 7,
-                marginHorizontal:'5%'
-                }}>
-                    <Text style={{
-                        fontSize: 26,
-                        color:"#FFFFFF",
-                    }}>스탬프를 두 개 이상 남기면</Text>
-                    <Text style={{
-                        fontSize: 26,
-                        color:"#FFFFFF",
-                    }}>일기를 만들어주겠다무!{"\n"}</Text>
-                    <Text style={{
-                        fontSize: 26,
-                        color:"#FFFFFF",
-                    }}>더 많은 감정을 준비했으니,</Text>
-                    <Text style={{
-                        fontSize: 26,
-                        color:"#FFFFFF",
-                    }}>지금 딱 맞는 감정을 골라보라무!{"\n"}</Text>
-                    <Text style={{
-                        fontSize: 26,
-                        color:"#FFFFFF",
-                    }}>딱 맞는 감정이 없다면</Text>
-                    <Text style={{
-                        fontSize: 26,
-                        color:"#FFFFFF",
-                    }}>직접 만들 수도 있다무!</Text>
-            </TouchableOpacity>
-            <View style={{
-                position: 'absolute',
-                left:180,
-                bottom: 310,
-                width:0,
-                height:0,
-                borderTopWidth:20,
-                borderTopColor:'#72D193',
-                borderLeftWidth:20,
-                borderLeftColor:'#FFFFFF00',
-                borderRightWidth:20,
-                borderRightColor:'#FFFFFF00',
-                borderBottomWidth:20,
-                borderBottomColor:'#FFFFFF00',
-                }}/>
-            <TouchableOpacity style={styles.saveButton} onPress={(async () => { 
+          <View style={{ justifyContent: 'center', flex:1, backgroundColor:'#EDF6E5',paddingHorizontal: 16, }}>
+            
+            <View style={{zIndex: 200, position: 'absolute', top: '4%', alignSelf: 'center', gap: 20, flexDirection: 'row'}}>
+              <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7}}></View>
+              <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7,}}></View>
+              <View style={{width: 14, height: 14, backgroundColor: '#7CD0B2', borderRadius: 7,}}></View>
+              <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7,}}></View>
+            </View>
+            
+            <View style={{zIndex: 105, alignSelf: 'center', bottom: 30}}>
+              <View style={[bubbleStyles.container, {paddingVertical: 15, width: 240}]}>
+                <Text style={{fontSize: 20, color: '#fff', marginBottom: 5}}>잘했다무!</Text>
+                <Text style={{fontSize: 20, color: '#fff', }}>{(() => {
+                        AsyncStorage.getItem('@UserInfo:userName').then((value) => {
+                            setName(value);
+                        })
+                        return name;
+                    })()}가 말해준 감정 기록은</Text>
+                <Text style={{fontSize: 20, color: '#fff', }}>Moo가 잘 기록해두겠다무!</Text>
+              </View>
+              <View style={[bubbleStyles.tail, {}]}></View>
+            </View>
+            
+            <Image source={require('./assets/finish_0904.png')}
+            style={{ zIndex: 100, width: 209, height: (209 * 168) / 209 , alignSelf:'center', }}></Image>
+
+            <TouchableOpacity style={styles.saveButton_2} onPress={(async () => { 
+              // Do something before delay
+              // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
+              // setIsFirstStamp(false);
+              setSection('end');
+              // console.log(selectedEmotionId);
+              // handleCreatePushedStamp();
+              // AsyncStorage.setItem('@UserInfo:firstStamp','false');
+              amplitude.okForMoosRemembering() //첫 스탬프 입력 후 튜토리얼
+              }
+              )}>
+              <Text style={{ color: '#72D193', fontSize: 20, fontWeight: 'bold'}}>그래, 좋아!</Text>
+            </TouchableOpacity> 
+
+          </View>
+        </ScrollView>
+      ) : (
+        <View style={{flexGrow:1}}>
+          <View style={{ justifyContent: 'flex-end', flex:1, backgroundColor:'#EDF6E5',paddingHorizontal: 16, }}>
+            
+            <View style={{zIndex: 200, position: 'absolute', top: '4%', alignSelf: 'center', gap: 20, flexDirection: 'row'}}>
+              <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7}}></View>
+              <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7,}}></View>
+              <View style={{width: 14, height: 14, backgroundColor: '#0000000A', borderRadius: 7,}}></View>
+              <View style={{width: 14, height: 14, backgroundColor: '#7CD0B2', borderRadius: 7,}}></View>
+            </View>
+
+            <View style={{gap:8, marginBottom: -20}}>
+              
+              <View style={{alignSelf: 'flex-end', marginBottom: 12, marginRight: 30}}> 
+                <View style={bubbleStyles.container}>
+                  <Text style={{fontSize: 15, color: '#fff', zIndex: 50}}>감정 기록을 2️⃣개 이상 남기면</Text>
+                  <Text style={{fontSize: 15, color: '#fff', zIndex: 50}}>Moo가 일기를 만들어서</Text>
+                  <Text style={{fontSize: 15, color: '#fff', zIndex: 50}}>편지💌를 보내줄거라무!</Text>
+                </View>
+                <View style={[bubbleStyles.tail, {left: 150}]}></View>
+              </View>
+
+              {/* <View style={{alignSelf: 'flex-end', marginBottom: 12, marginRight: 20}}> // 이거 주석 해제하면 위는 {{alignSelf: 'flex-start', marginLeft: 15, marginBottom: 12, }}>  + 밤에 
+                <View style={[bubbleStyles.container, {backgroundColor: '#aeaeae', width: 200}]}>
+                  <Text style={{fontSize: 13, color: '#fff', zIndex: 50}}>낮에는 Moo ☀️광합성☀️해야해서</Text>
+                  <Text style={{fontSize: 13, color: '#fff', zIndex: 50}}>바로는 못 만든다무 ...💦</Text>
+                </View>
+                <View style={[bubbleStyles.tail, {backgroundColor: '#aeaeae', left: 150}]}></View>
+              </View> */}
+  
+              <View style={{alignSelf: 'flex-start', marginLeft: 40}}>
+                  <View style={[bubbleStyles.container, {}]}>
+                    <Text style={{fontSize: 15, color: '#fff', zIndex: 50}}>다양한 감정을 준비했으니,</Text>
+                    <Text style={{fontSize: 15, color: '#fff', zIndex: 50}}>나에게 딱 맞는 감정을 골라보라무!</Text>
+                  </View>
+                  <View style={bubbleStyles.tail}></View>
+              </View>
+
+              <View style={{alignSelf: 'flex-end', marginRight: 30}}>
+                <View style={[bubbleStyles.container, {backgroundColor: '#aeaeae', width: 180}]}>
+                  <Text style={{fontSize: 13, color: '#fff', zIndex: 50}}>감정은 직접 만들어도 된다무!</Text>
+                </View>
+                <View style={[bubbleStyles.tail, {backgroundColor: '#aeaeae', left: 130}]}></View>
+              </View>
+
+            </View>
+
+            <View style={{alignSelf: 'center', marginLeft: 30, bottom: -35, left: -80, }}>
+              <View style={[bubbleStyles.container, {width: 180}]}>
+                <Text style={{fontSize: 17, color: '#fff', zIndex: 50, fontWeight: 'bold'}}>나랑 같이</Text>
+                <Text style={{fontSize: 17, color: '#fff', zIndex: 50, fontWeight: 'bold'}}>꾸준히 일기 써 볼</Text>
+                <Text style={{fontSize: 17, color: '#fff', zIndex: 50, fontWeight: 'bold'}}>마음이 들었냐무 ...!</Text>
+              </View>
+              <View style={[bubbleStyles.tail, {left: 130}]}></View>
+            </View>
+
+            <Image source={require('./assets/write_0904.png')}
+            style={{ zIndex: 100, width: 160, height: (160 * 185) / 160 , alignSelf: 'flex-end', marginRight: 30, marginBottom: 10}}></Image>
+
+            <TouchableOpacity style={styles.saveButton_3} onPress={(async () => { 
                     // Do something before delay
                     // await AsyncStorage.setItem('@UserInfo:firstStamp','false');
                     // setIsFirstStamp(false);
@@ -362,11 +334,12 @@ const StampOnBoarding = () => {
                     amplitude.confirmEndTutorial() //첫 스탬프 입력 완료
                     }
                     )}>
-                        <Text style={styles.buttonText}>고마워 무야!</Text>
-            </TouchableOpacity> 
-            </View>
-        </ScrollView>
-    ))));
+                        <Text style={{ color: '#72D193', fontSize: 20, fontWeight: 'bold'}}>Moo 잘 부탁해!💚☺️</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      ))));
 }
 
 const styles = StyleSheet.create({
@@ -418,20 +391,22 @@ const styles = StyleSheet.create({
       height: 20,
     },
     button: {
-      bottom: '18%',
-      width: '30%',
-      height: 60,
+      // bottom: '18%',
+      width: '28%',
+      // height: 60,
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'white',
-      borderRadius: 7,
+      borderRadius: 12,
       borderColor:'#72D193',
-      borderWidth: 1
+      borderWidth: 1,
+      // width: 133,
+      gap: 15,
+      borderStyle: 'dashed',
+      paddingVertical: 20
     },
     saveButton: {
-        position:'absolute',
-        bottom: 20,
-        width: '90%',
+        width: '100%',
         height: 60,
         justifyContent: 'center',
         alignItems: 'center',
@@ -439,12 +414,39 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 7,
         borderColor:'#72D193',
-        borderWidth: 1
+        borderWidth: 1, 
+        marginBottom: 20
+      },
+    saveButton_2: {
+        width: '100%',
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+        position: 'absolute',
+        bottom: 0,
+        backgroundColor: 'white',
+        borderRadius: 7,
+        borderColor:'#72D193',
+        borderWidth: 1, 
+        marginBottom: 20
+      },
+    saveButton_3: {
+        width: '100%',
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+        backgroundColor: 'white',
+        borderRadius: 7,
+        borderColor:'#72D193',
+        borderWidth: 1, 
+        marginBottom: 20
       },
     buttonText: {
-      color: '#72D193',
-      fontSize: 18,
-      fontWeight: 'bold'
+      color: '#212429',
+      fontSize: 20,
+      fontWeight: '100'
     },
     modalTitleContainer: {
         flexDirection: 'row',
@@ -467,12 +469,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontStyle: 'normal',
         fontWeight: '400',
+        color: '#495057',
+        marginRight: 10
       },
       stampContainer: {
         flexDirection: 'row',
         width: '100%',
-        height: 60,
-        paddingLeft: 16,
         marginTop: 30,
         // justifyContent 종류: flex-start, flex-end, center, space-between, space-around, space-evenly
         justifyContent: 'flex-start',
@@ -520,27 +522,25 @@ const styles = StyleSheet.create({
       },
       memoContainer: {
         width: '100%',
-        padding: 16,
         justifyContent: 'flex-start',
-        gap: 7,
+        gap: 12,
+        marginBottom: 47
       },
       memoContent: {
         flexDirection: 'column',
         display: 'flex',
         width: '100%',
-        height: 200,
         paddingHorizontal: 16,
-        paddingVertical: 10,
-        gap: 6,
+        paddingVertical: 8,
         borderWidth: 1,
         borderColor: '#F0F0F0',
         borderRadius: 6,
       },
       memoText: {
         alignSelf: 'stretch',
-        color: '#212429',
+        color: '#DBDBDB',
         textAlignVertical: 'top',
-        fontSize: 16,
+        fontSize: 14,
         fontFamily: 'Pretendard',
         fontWeight: '400',
         fontStyle: 'normal',
@@ -548,14 +548,57 @@ const styles = StyleSheet.create({
       },
       maxLength: {
         color: '#495057',
-        top: 100,
         textAlign: 'right',
-        fontSize: 14,
+        fontSize: 13,
         fontFamily: 'Pretendard',
         fontWeight: '400',
         fontStyle: 'normal',
         lineHeight: 24,
       },
+  });
+
+  const bubbleStyles = StyleSheet.create({
+    container: {
+      backgroundColor: '#72D193',
+      padding: 10,
+      // maxWidth: 200,
+      width: 230,
+      alignSelf: 'flex-start', // 좌측 정렬로 변경
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 20,
+      // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
+      position: 'relative',
+      overflow: 'hidden', // 클리핑 적용
+      zIndex: 30
+    },
+    tail: {
+      position: 'absolute',
+      width: 20, // 꼬리의 길이
+      height: 20, // 꼬리의 높이
+      left: 40, // 꼬리 위치
+      bottom: -5, // 꼬리 위치
+      backgroundColor: '#72D193',
+      transform: [{ rotate: '45deg' }],
+      borderTopLeftRadius: 10, // 둥글게 만들기
+      // borderBottomLeftRadius: 10,
+      // borderTopRightRadius: 10
+    },
+    reply: {
+      backgroundColor: '#fff',
+      padding: 7,
+      // maxWidth: 200,
+      width: 200,
+      alignSelf: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 10,
+      // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
+      position: 'relative',
+      borderColor: '#72D193',
+      borderWidth: 1,
+      overflow: 'hidden', // 클리핑 적용
+    },
   });
 
 export default StampOnBoarding;

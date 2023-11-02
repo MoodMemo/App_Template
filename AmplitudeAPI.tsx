@@ -1005,3 +1005,7 @@ export function clickGoToReview(name: String) {
   amplitude.track('event: click go to review',
   {action: 'click', name});
 }
+export function successBuyGift(gift: String) {
+  amplitude.track('event: success buying gift',
+  {action: 'click', gift});
+}
