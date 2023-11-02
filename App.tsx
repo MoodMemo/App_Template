@@ -121,10 +121,6 @@ function App(): JSX.Element {
     VersionCheck.needUpdate({
       currentVersion: CurrentVersion,
       latestVersion: LatestVersion,
-      rollbackRetryOptions: {
-        delayInHours: 0,
-        maxRetryAttempts: 1000
-      }
     }).then((res: any) => {
       if (res.isNeeded) {
         setIsUpdateNeeded(true);
@@ -247,7 +243,11 @@ const reloadNotification = async () => {
     console.log('codepush updating now');
     codePush.sync({
       installMode:codePush.InstallMode.IMMEDIATE,
-      mandatoryInstallMode:codePush.InstallMode.IMMEDIATE
+      mandatoryInstallMode:codePush.InstallMode.IMMEDIATE,
+      rollbackRetryOptions: {
+        delayInHours: 0,
+        maxRetryAttempts: 1000
+      }
     },
     (status) => {
       switch (status) {
