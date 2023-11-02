@@ -65,11 +65,15 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     if (firstRef) {
       firstRef.current.measureInWindow((x, y, width, height) => {
       // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
-        console.log("getFirstBoxMessure ==")
-        console.log("x : ", x); setFirstButtonX(x);
-        console.log("y : ", y); setFirstButtonY(y);
-        console.log("width : ", width); setFirstWidth(width);
-        console.log("height : ", height); setFirstHeight(height);
+        // console.log("getFirstBoxMessure ==")
+        // console.log("x : ", x); 
+        setFirstButtonX(x);
+        // console.log("y : ", y); 
+        setFirstButtonY(y);
+        // console.log("width : ", width); 
+        setFirstWidth(width);
+        // console.log("height : ", height); 
+        setFirstHeight(height);
         // console.log("pageX : ", pageX);
         // console.log("pageY : ", pageY);
       });
