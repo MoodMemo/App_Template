@@ -385,7 +385,7 @@ const Weekly = () => {
     );
   }
   const StampList_NoStamp = () => {
-    if (today.isSame(dayjs(), 'day')) return <nodata.TellMeYourDayView/>; // today
+    if (today.isSame(dayjs(), 'day')) return <nodata.Present_Zero_View/>; // today
     else if (today.isBefore(dayjs(), 'day')) {
       amplitude.clickPast_noStamp();
       return <nodata.MooWasBoredView/>; // past 
@@ -642,22 +642,22 @@ const Weekly = () => {
       {stampORdiary ? (
         <View style={typeChangeBtnStyles.twotypebtn}>
           <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickStampSwitchInStampView()}}>
-            <Text style={typeChangeBtnStyles.activeFont}>스탬프 기록</Text>
+            <Text style={typeChangeBtnStyles.activeFont}>오늘의 스탬프</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {setStampORdiary(false); amplitude.clickDiarySwitchInStampView();}} style={typeChangeBtnStyles.deactiveType}>
             {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
               <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
             ) : (<View></View>)}
-            <Text style={typeChangeBtnStyles.deactiveFont}>일기</Text>
+            <Text style={typeChangeBtnStyles.deactiveFont}>Moo의 편지함</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={typeChangeBtnStyles.twotypebtn}>
           <TouchableOpacity onPress={() => {setStampORdiary(true); amplitude.clickStampSwitchInDiaryView();}} style={typeChangeBtnStyles.deactiveType}>
-            <Text style={typeChangeBtnStyles.deactiveFont}>스탬프 기록</Text>
+            <Text style={typeChangeBtnStyles.deactiveFont}>오늘의 스탬프</Text>
           </TouchableOpacity>
           <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickDiarySwitchInDiaryView()}}>
-            <Text style={typeChangeBtnStyles.activeFont}>일기</Text>
+            <Text style={typeChangeBtnStyles.activeFont}>Moo의 편지함</Text>
             {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
               <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
             ) : (<View></View>)}
@@ -665,7 +665,7 @@ const Weekly = () => {
         </View>
       )}
 
-      {stampORdiary ? ( // 스탬프 기록
+      {stampORdiary ? ( // 오늘의 스탬프
         getEmoji(getStamp(today)).length !== 0 ? ( // 스탬프 exists
           <View style={{ alignItems: 'center', flex: 1,}}>
             <View style={{ flexDirection: 'row', marginTop: 16, marginHorizontal: 16, }}>

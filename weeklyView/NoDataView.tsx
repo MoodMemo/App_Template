@@ -7,6 +7,7 @@ import Modal from "react-native-modal";
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as repository from '../src/localDB/document';
 import realm from '../src/localDB/document';
 import * as amplitude from '../AmplitudeAPI';
@@ -103,6 +104,89 @@ export const TellMeYourDayView = () => {
     </View>
   );
 }
+export const Present_Zero_View = () => {
+  const navigation = useNavigation();
+  const handleRecordEmotion = () => {
+    // [감정 스탬프 기록하기] 버튼을 눌렀을 때 실행되는 함수
+    // Home 뷰로 이동하도록 설정
+    navigation.navigate('Home');
+  };
+  return (
+    <View style={{flex: 1, alignItems: 'center', }}>
+      <View style={{flex: 1, width: '100%', paddingHorizontal: 10, paddingTop: 10}}>
+        {/* 무 말풍선 섹션 */}
+        <View style={{marginTop: 20, flexDirection: 'row', gap: 10}}>
+          <Image 
+            source={require('../assets/profile.png')}
+            style={{ width: 40, height: 40 , zIndex: 100,}} // 비율을 유지하며 height 자동 조절
+          />
+          <View>
+
+            <View><Text style={{fontSize: 13, color: 'black', }}>Moo</Text></View>
+            
+            <View style={[finalBubbleStyles.tail, {}]}></View>
+            <View style={[finalBubbleStyles.container, {zIndex: 100}]}>
+              <Text style={{fontSize: 16, color: '#fff', }}>Moo는 오늘도 광합성하고 있겠다무</Text>
+            </View>
+            <View style={[finalBubbleStyles.container, {zIndex: 100, marginTop: 8}]}>
+              <Text style={{fontSize: 16, color: '#fff', }}>스탬프 눌러서 깨워달라무 ...</Text>
+            </View>
+          </View> 
+        </View>
+        {/* 스탬프 누르기 버튼 */}
+        <View style={{marginTop: 15, alignSelf: 'flex-end', marginRight: 10}}>
+          <View style={[finalBubbleStyles.rightTail, {}]}></View>
+          <View style={[finalBubbleStyles.rightTail, {zIndex: 101, backgroundColor: '#fff', width: 10, height: 10, top: 9, right: -2}]}></View>
+          <View style={[finalBubbleStyles.container, {zIndex: 100, flexDirection: 'row',
+          backgroundColor: '#fff', borderColor: '#FFCF55', borderWidth: 2,}]}>
+            <Ionicons name='add-circle' color="#FFCF55" style={{ fontWeight: 'bold', fontSize: 25}} />
+            <Text style={{fontSize: 20, color: '#FFCF55', }}> 스탬프 누르기</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={{position: 'absolute', bottom: 60, zIndex: 100, flexDirection: 'row' ,}}>
+        <View style={{position: 'absolute', top: -70, left: 70, }}>
+          <Image 
+                source={require('../assets/bubble.png')}
+                style={{ width: 120, height: (73 * 120) / 120 , 
+                }} // 비율을 유지하며 height 자동 조절
+              />
+          <View style={{top: -55, alignItems: 'center', }}>
+            {/* <Text style={{ color: '#fff' }}>스탬프 누르고</Text> */}
+            <Text style={{ color: '#fff' }}>Moo 깨우기</Text>
+            <Text style={{ color: '#fff' }}>0/2 ... 🫧</Text>
+          </View>
+
+          <View style={{backgroundColor: '#72D193', width: 15, height: 15, borderRadius: 20,
+        position: 'absolute', bottom: 15, left: 35}}></View>
+          <View style={{backgroundColor: '#72D193', width: 10, height: 10, borderRadius: 10,
+        position: 'absolute', bottom: -5, left: 30}}></View>
+        </View>
+        <Image 
+              source={require('../assets/moo_sun.png')}
+              style={{ width: 130, height: (161 * 130) / 130 , left: -30}} // 비율을 유지하며 height 자동 조절
+            />
+        
+
+      </View>
+      
+      <View style={{backgroundColor: '#94DC7B', height: 95, width: '120%', zIndex: 10,
+                    position: 'absolute', bottom: 0, borderTopRightRadius: 120, borderTopLeftRadius: 120,
+                    alignItems: 'center'}}>
+      </View>
+    </View>
+  );
+}
+
+
+
+
+
+
+
+
+
 export const PleaseOneMoreStampView = () => {
   const navigation = useNavigation();
   const handleRecordEmotion = () => {
@@ -263,6 +347,41 @@ const bubbleStyles = StyleSheet.create({
     borderColor: '#72D193',
     borderWidth: 1,
     overflow: 'hidden', // 클리핑 적용
+  },
+});
+const finalBubbleStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#72D193',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    alignSelf: 'flex-start', // 좌측 정렬로 변경
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 7,
+    position: 'relative',
+    overflow: 'hidden', // 클리핑 적용
+  },
+  tail: {
+    position: 'absolute',
+    width: 15, // 꼬리의 길이
+    height: 15, // 꼬리의 높이
+    left: -4, // 꼬리 위치
+    top: 20, // 꼬리 위치
+    backgroundColor: '#72D193',
+    transform: [{ rotate: '45deg' }],
+    borderTopLeftRadius: 100, // 둥글게 만들기
+  },
+  rightTail: {
+    position: 'absolute',
+    width: 15, // 꼬리의 길이
+    height: 15, // 꼬리의 높이
+    right: -4, // 꼬리 위치
+    top: 6, // 꼬리 위치
+    backgroundColor: '#FFCF55',
+    // borderColor: '#72D193',
+    // borderWidth: 2,
+    transform: [{ rotate: '45deg' }],
+    borderTopLeftRadius: 100, // 둥글게 만들기
   },
 });
 
