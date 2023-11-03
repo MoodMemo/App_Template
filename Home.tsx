@@ -4,8 +4,12 @@ import Modal from "react-native-modal";
 import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
+import StampOnBoarding from './StampOnBoarding';
+import AutumnEventDetailModal from './AutumnEventDetailModal';
 // import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
+import * as repository from './src/localDB/document';
+import realm from './src/localDB/document';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type {StatusBarStyle} from 'react-native';
 import { useSafeAreaFrame, useSafeAreaInsets, initialWindowMetrics} from 'react-native-safe-area-context';
@@ -17,7 +21,11 @@ import { CameraRoll, useCameraRoll, PhotoIdentifier } from '@react-native-camera
 import {Alert, Linking} from 'react-native';
 import Permissions, {PERMISSIONS} from 'react-native-permissions';
 
-const Home = ({name}:any) => {
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+
+const Home = ({name,first}:any) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const options = ['최근 생성 순'];
   const [fixModalVisible, setFixModalVisible] = useState(false);
@@ -179,6 +187,14 @@ const Home = ({name}:any) => {
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
+    AsyncStorage.getItem('@UserInfo:addedStampTemplate')
+      .then((value) => {
+        if(value!=='true'){
+          setIsStampTemplateAdded(false);
+        }
+    }).catch((error) => {
+      console.error("Error fetching addedStampTemplate:", error);
+    });
     AsyncStorage.getItem('@UserInfo:userName')
       .then((value) => {
         if (value) {
@@ -201,8 +217,32 @@ const Home = ({name}:any) => {
       console.error("Error fetching firstStamp:", error);
     });
     console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
-    console.log(isFirstStamp);
+    console.log(isStampTemplateAdded,'isStampTemplateAdded',first);
   }, []);
+
+  const addStampTemplate = () => {
+    repository.createCustomStamp({
+      stampName: "요리",
+      emoji: "🍽️"
+    });
+    repository.createCustomStamp({
+      stampName: "운동",
+      emoji: "💪"
+    });
+    repository.createCustomStamp({
+      stampName: "아이디어",
+      emoji: "💡"
+    });
+    repository.createCustomStamp({
+      stampName: "투두",
+      emoji: "✅"
+    });
+  };
+
+  const handleStampTemplateAddedTrue = () => {
+    setIsStampTemplateAdded(true);
+    AsyncStorage.setItem('@UserInfo:addedStampTemplate','true');
+  };
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
@@ -221,19 +261,26 @@ const Home = ({name}:any) => {
   return (
     <>
     <StatusBar
-        backgroundColor="#FFFAF4"
+        backgroundColor="#FFFAEE"
         barStyle='dark-content'
       />
-    {isFirstStamp===false ? (<View style={styles.view}>
+    {isFirstStamp===false ? (<><View style={styles.view}>
     <View style={styles.titleContainer}>
       {/* 드롭다운 컴포넌트 */}
       <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
     </View>
     <Image source={require('./assets/colorMooMedium.png')} style={styles.mooImage}/>
+    <TouchableOpacity onPress={() => {
+      setIsEventModalVisible(!isEventModalVisible);
+      amplitude.clickEventInfoModal();//이벤트 배너 켬
+    }}>
+      <Image source={require('./assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
+    </TouchableOpacity>
     <View style={styles.options}>
       <Dropdown options={options} onSelectOption={handleOptionSelect} />
       <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
-        <Image source={require('./assets/edit.png')} />
+        {/* <Image source={require('./assets/edit.png')} /> */}
+        <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
       </TouchableOpacity>
 
       {/* // 된 거 */}
@@ -248,36 +295,191 @@ const Home = ({name}:any) => {
     <StampView/>
     {/* 스탬프 설정 모달 */}
     <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
-  </View>) : (<View style={{justifyContent: 'center',
-            flex:1,
-            backgroundColor:'#FFFAF4'}}>
-              <Image 
-                source={require('./assets/colorMooMedium.png')}
-                style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '6%', alignSelf:'center', overflow: 'hidden', transform:[{rotate:'11.91deg'}]}}></Image>
+  </View>
+  {/* <Modal isVisible={isPhotoModalVisible}
+    animationIn={"fadeIn"}
+    animationInTiming={200}
+    animationOut={"fadeOut"}
+    animationOutTiming={200}
+    onBackdropPress={() => {
+      setIsPhotoModalVisible(!isPhotoModalVisible);
+  }}
+  backdropColor='#CCCCCC'//'#FAFAFA'
+  backdropOpacity={0.8}>
+    <View style={{backgroundColor:'#FFFFFF', height:windowHeight*0.8, width:windowWidth*0.8, borderRadius:20, alignItems:'center'}}>
+      <Text style={{fontSize: 20, color:'#72D193', marginTop: 20}}>사진을 선택해봐무!</Text>
+      <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'center', alignItems:'center', marginTop: 20}}>
+        {photos.map((p, i) => {
+          return (
+            <TouchableOpacity key={i} onPress={() => {
+              console.log(p.node.image.uri);
+              setIsPhotoModalVisible(!isPhotoModalVisible);
+            }}>
+              <Image
+                key={i}
+                style={{
+                  width: windowWidth*0.2,
+                  height: windowWidth*0.2,
+                  margin: 5,
+                }}
+                source={{uri: p.node.image.uri}}
+              />
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  </Modal> */}
+  <Modal isVisible={isEventModalVisible}
+    animationIn={"fadeIn"}
+    animationInTiming={200}
+    animationOut={"fadeOut"}
+    animationOutTiming={200}
+    onBackdropPress={() => {
+      amplitude.cancelEventInfoModalByCancelBtn();//이벤트 배너 끔
+      setIsEventModalVisible(!isEventModalVisible);
+  }}
+  backdropColor='#CCCCCC'//'#FAFAFA'
+  backdropOpacity={0.8}
+  style={{ alignItems:'center', }}>
+    <AutumnEventDetailModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible}/>
+  </Modal></>) : (
+  <StampOnBoarding/>
+  // <View style={{justifyContent: 'center',
+  //       flex:1,
+  //       backgroundColor:'#FFFAF4'}}>
+  //         <Image 
+  //           source={require('./assets/colorMooMedium.png')}
+  //           style={{ width: 123, height: (123 * 131) / 123 , position: 'relative', bottom: '6%', alignSelf:'center', overflow: 'hidden', transform:[{rotate:'11.91deg'}]}}></Image>
+  //         <View style={{
+  //           position:'relative'
+  //         }}>
+  //           <Text style={{
+  //             fontSize: 26,
+  //             color:"#212429",
+  //             marginLeft: '5%'
+  //           }}>지금의 감정은 어떠냐무~?</Text>
+  //           <Text style={{
+  //             fontSize: 26,
+  //             color:"#212429",
+  //             marginLeft: '5%'
+  //           }}>감정을 남겨보지 않겠냐무?</Text>
+  //         </View>
+  //         <TouchableOpacity style={styles.button} onPress={(async () => { 
+  //           // Do something before delay
+  //           await AsyncStorage.setItem('@UserInfo:firstStamp','false');
+  //           setIsFirstStamp(false);
+  //           amplitude.userRegiFin_andStampGo() //스탬프 첫 입력 유도
+  //           }
+  //         )}>
+  //             <Text style={styles.buttonText}>감정 스탬프 남기러 가기!</Text>
+  //         </TouchableOpacity>
+  //       </View>
+  )}
+  <Modal isVisible={!first&&!isStampTemplateAdded}
+      animationIn={"fadeIn"}
+      animationInTiming={200}
+      animationOut={"fadeOut"}
+      animationOutTiming={200}
+      backdropColor='#CCCCCC'//'#FAFAFA'
+      backdropOpacity={0.8}
+      style={{
+          alignItems:'center'
+      }}>
+          <View style={{
+              backgroundColor:"#FFFAF4",
+              width:350,
+              height:530,
+              justifyContent:'center',
+              alignItems:'center',
+              borderRadius:20
+          }}>
+
               <View style={{
-                position:'relative'
-              }}>
-                <Text style={{
-                  fontSize: 26,
-                  color:"#212429",
-                  marginLeft: '5%'
-                }}>지금의 감정은 어떠냐무~?</Text>
-                <Text style={{
-                  fontSize: 26,
-                  color:"#212429",
-                  marginLeft: '5%'
-                }}>감정을 남겨보지 않겠냐무?</Text>
+                  justifyContent:'center',
+                  alignItems:'center',
+                  }}>
+
+                  <View style={{marginBottom: 50}}>
+                    <Text style={{fontSize: 19, color:'#72D193',}}>업데이트 소식!</Text>
+                  </View>
+
+                    <TouchableOpacity disabled={true} style={{
+                    padding: 10,
+                    width: 200,
+                    justifyContent: 'center',
+                    // alignItems: 'center',
+                    backgroundColor: '#72D193',
+                    borderRadius: 10,
+                    position: 'relative',
+                    marginRight: 50,
+                    }}>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>Moo가 독특한 스탬프를</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>만들어봤다무!</Text>
+                    </TouchableOpacity>
+                    <View style={{
+                      width: 20, // 꼬리의 길이
+                      height: 20, // 꼬리의 높이
+                      left: -80, // 꼬리 위치
+                      bottom: 15, // 꼬리 위치
+                      backgroundColor: '#72D193',
+                      transform: [{ rotate: '45deg' }],
+                      borderTopLeftRadius: 10, // 둥글게 만들기
+                      marginBottom: 10,
+                    }}/>
+
+                    <TouchableOpacity disabled={true} style={{
+                    padding: 10,
+                    width: 225,
+                    justifyContent: 'center',
+                    // alignItems: 'center',
+                    backgroundColor: '#72D193',
+                    borderRadius: 10,
+                    position: 'relative',
+                    marginLeft: 25,
+                    }}>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>한 번 추가해보지 않을래무?</Text>
+                    </TouchableOpacity>
+                    <View style={{
+                      width: 20, // 꼬리의 길이
+                      height: 20, // 꼬리의 높이
+                      left: 80, // 꼬리 위치
+                      bottom: 15, // 꼬리 위치
+                      backgroundColor: '#72D193',
+                      transform: [{ rotate: '45deg' }],
+                      borderTopLeftRadius: 10, // 둥글게 만들기
+                    }}/>
+                    <Image source={require('./assets/colorMooMedium.png')} style={{
+                      width: 90,
+                      height: 393*89/363,
+                      transform: [{ rotate: '25deg' }],
+                      marginBottom: 20}}/>
               </View>
-              <TouchableOpacity style={styles.button} onPress={(async () => { 
-                // Do something before delay
-                await AsyncStorage.setItem('@UserInfo:firstStamp','false');
-                setIsFirstStamp(false);
-                amplitude.userRegiFin_andStampGo() //스탬프 첫 입력 유도
-                }
-              )}>
-                  <Text style={styles.buttonText}>감정 스탬프 남기러 가기!</Text>
-              </TouchableOpacity>
-            </View>)}
+
+              <View style={{
+                  paddingHorizontal: "5%",
+                  marginTop:30,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between'
+                  }}>
+                  <TouchableOpacity onPress={async ()=>{
+                      amplitude.cancelAddStampTemplate(); //스탬프 템플릿 추가 안 함
+                      handleStampTemplateAddedTrue();
+                      }}
+                      style={styles.cancelBtn}>
+                      <Text style={{fontSize: 19, color: '#FF7168'}}>음 .. 괜찮아</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={async ()=>{
+                      amplitude.confirmAddStampTemplate(); //스탬프 템플릿 추가함
+                      handleStampTemplateAddedTrue();
+                      realm.write(addStampTemplate);
+                  }}
+                  style={styles.clearBtn}>
+                      <Text style={{fontSize: 19, color: '#72D193'}}>좋아!</Text>
+                  </TouchableOpacity>
+              </View>
+          </View>
+      </Modal>
   </>
   );
 }
@@ -288,7 +490,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#FFFFFF',
     },
     titleContainer: {
-      backgroundColor: '#FFFAF4',
+      backgroundColor: '#FFFAEE',
       height: 133,
       borderBottomRightRadius: 43,
       // alignItems: 'center', // 가로 정렬
@@ -346,6 +548,41 @@ const styles = StyleSheet.create({
       fontSize: 18,
       fontWeight: 'bold'
     },
+    cancelBtn: {
+      alignSelf: 'center',
+      alignItems: 'center', 
+      justifyContent: 'center',
+      color: '#FF7168', 
+      padding: 7,
+      marginBottom: 16,
+      backgroundColor: 'white', 
+      borderColor: '#FF7168',
+      borderWidth:1,
+      borderRadius: 8,
+      flex: 1,
+      marginHorizontal:10,
+    },
+    clearBtn: {
+      alignSelf: 'center',
+      alignItems: 'center', 
+      justifyContent: 'center',
+      color: '#344054',
+      padding: 7,
+      marginBottom: 16,
+      backgroundColor: 'white', 
+      borderColor: '#72D193',
+      borderWidth:1,
+      borderRadius: 8,
+      flex: 1,
+      marginHorizontal:10,
+    },
+    bannerImage: {
+      width:windowWidth-30,
+      height:(windowWidth-30)*240/1440,
+      borderRadius:10,
+      alignSelf:'center',
+      top:18
+    }
   });
 
 export default Home;

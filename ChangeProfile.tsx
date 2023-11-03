@@ -41,8 +41,8 @@ const ChangeProfile = () => {
         <View
             style={{
                 paddingHorizontal: 20,
-                paddingBottom: 20,
-                paddingTop: 20,
+                paddingBottom: 15,
+                paddingTop: 15,
             }}>
             <Text style={{fontSize: 19, color:"#495057"}}>프로필 설정 변경</Text>
         </View>

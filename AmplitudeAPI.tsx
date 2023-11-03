@@ -70,12 +70,24 @@ export function userRegiBirthday(birthday: String) {
     action: 'confirm',
     birthday});
 }
+export function cancelRegiBirthday() {
+  amplitude.track('intro: cancel, birthday',
+  {
+    view: 'intro',
+    action: 'cancel',});
+}
 export function userRegiJob_Fin(job: String) {
   amplitude.track('intro: confirm, job',
   {
     view: 'intro',
     action: 'confirm',
     job});
+}
+export function cancelRegiJob_Fin() {
+  amplitude.track('intro: cancel, job',
+  {
+    view: 'intro',
+    action: 'cancel',});
 }
 export function userRegiFin_andStampGo() {
   amplitude.track('intro: confirm, first stamp',
@@ -492,6 +504,54 @@ export function clickDeleteButton() {
     view: 'weekly',
     action: 'click',});
 }
+export function clickDeleteDiaryButton() {
+  amplitude.track('weekly: click, delete diary button',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
+export function cancelToDeleteDiary() {
+  amplitude.track('weekly: cancel, delete diary',
+  {
+    view: 'weekly',
+    action: 'cancel',
+    secondView: 'delete diary modal',});
+}
+export function confirmDeleteDiaryButton() {
+  amplitude.track('weekly: confirm, delete diary',
+  {
+    view: 'weekly',
+    action: 'confirm',
+    secondView: 'delete diary modal',});
+}
+export function createDiaryMyself(today: String) {
+  amplitude.track('weekly: confirm, create diary myself',
+  {
+    view: 'weekly',
+    action: 'confirm',
+    today});
+}
+export function createDiaryMyself_forPast(today: String) {
+  amplitude.track('weekly: confirm, create diary myself',
+  {
+    view: 'weekly',
+    action: 'confirm',
+    today});
+}
+export function try_createDiaryMyself_forPast() {
+  amplitude.track('weekly: click, create diary myself',
+  {
+    view: 'weekly',
+    action: 'click',
+    });
+}
+export function try_createDiaryMyself() {
+  amplitude.track('weekly: click, create diary myself',
+  {
+    view: 'weekly',
+    action: 'click',
+    });
+}
 
 
 /* setting view */
@@ -753,4 +813,199 @@ export function moveToDetail() {
   {
     view: 'statistics',
     action: 'click',});
+}
+
+/** onboarding*/
+export function clickFirstStamp_JOY() {
+  amplitude.track('onboarding: click, first stamp, 기쁨',
+  {
+    view: 'onboarding',
+    action: 'click',
+});
+}
+export function clickFirstStamp_SAD() {
+  amplitude.track('onboarding: click, first stamp, 슬픔',
+  {
+    view: 'onboarding',
+    action: 'click',
+});
+}
+export function clickFirstStamp_CARM() {
+  amplitude.track('onboarding: click, first stamp, 평온',
+  {
+    view: 'onboarding',
+    action: 'click',
+});
+}
+export function confirmFirstStamp() {
+  amplitude.track('onboarding: confirm, first stamp',
+  {
+    view: 'onboarding',
+    action: 'confirm',
+});
+}
+export function okForMoosRemembering() {
+  amplitude.track('onboarding: confirm, moos remembering after confirm stamp',
+  {
+    view: 'onboarding',
+    action: 'confirm',
+});
+}
+export function confirmEndTutorial() {
+  amplitude.track('onboarding: confirm, end tutorial',
+  {
+    view: 'onboarding',
+    action: 'confirm',
+});
+}
+
+
+/** new modal */
+export function confirmAddStampTemplate() {
+  amplitude.track('stamp: confirm, add stamp template',
+  {
+    view: 'stamp',
+    action: 'confirm',
+});
+}
+export function cancelAddStampTemplate() {
+  amplitude.track('stamp: cancel, add stamp template',
+  {
+    view: 'stamp',
+    action: 'cancel',
+});
+}
+
+/** event */
+export function initializeEvent() {
+  amplitude.track('event: initialize');
+}
+export function levelUpEvent(level: Number) {
+  amplitude.track('event: level up', {
+    nowLevel: level
+  });
+}
+export function levelDownEvent(level: Number) {
+  amplitude.track('event: level down',
+  {
+    nowLevel: level
+  });
+}
+export function getLeavesByStamp(totalLeaves: Number) {
+  amplitude.track('event: get leaves by stamp',
+  {action: 'get leaves', totalLeaves});
+}
+export function getLeavesByDiary(totalLeaves: Number) {
+  amplitude.track('event: get leaves by diary',
+  {action: 'get leaves', totalLeaves});
+}
+export function updateLeaves(totalLeaves: Number) {
+  amplitude.track('event: update leaves',
+  {action: 'update leaves', totalLeaves});
+}
+export function cancelGetLeavesModal() {
+  amplitude.track('event: cancel get leaves modal',
+  {action: 'cancel'});
+}
+export function clickEventInfoModal() {
+  amplitude.track('event: click event info modal',
+  {action: 'click'});
+}
+export function cancelEventInfoModalByBackDrop() {
+  amplitude.track('event: cancel event info modal by backdrop',
+  {action: 'cancel'});
+}
+export function cancelEventInfoModalByCancelBtn() {
+  amplitude.track('event: cancel event info modal by cancel btn',
+  {action: 'cancel'});
+}
+export function confirmFirstStampInADay() {
+  amplitude.track('event: confirm first stamp in a day',
+  {action: 'confirm'});
+}
+export function confirmFirstAIDiaryInADay() {
+  amplitude.track('event: confirm first AI diary in a day',
+  {action: 'confirm'});
+}
+export function confirmFirstSelfDiaryInADay() {
+  amplitude.track('event: confirm first self diary in a day',
+  {action: 'confirm'});
+}
+export function sendContact(autumnEventGiftInfo: String) {
+  amplitude.track('event: send contact',
+  {action: 'send contact',
+  autumnEventGiftInfo});
+}
+export function clickLevelInfo() {
+  amplitude.track('event: click level info',
+  {action: 'click'});
+}
+export function cancelLevelInfoByBackdrop() {
+  amplitude.track('event: cancel level info by backdrop',
+  {action: 'cancel'});
+}
+export function cancelLevelInfoByCancelBtn() {
+  amplitude.track('event: cancel level info by cancel btn',
+  {action: 'cancel'});
+}
+export function clickShop() {
+  amplitude.track('event: click shop',
+  {action: 'click'});
+}
+export function cancelShopByBackdrop() {
+  amplitude.track('event: cancel shop by backdrop',
+  {action: 'cancel'});
+}
+export function cancelShopByCancelBtn() {
+  amplitude.track('event: cancel shop by cancel btn',
+  {action: 'cancel'});
+}
+export function clickSubmitContactModal() {
+  amplitude.track('event: click submit contact modal',
+  {action: 'click'});
+}
+export function cancelSubmitContactModalByBackdrop() {
+  amplitude.track('event: cancel submit contact modal by backdrop',
+  {action: 'cancel'});
+}
+export function cancelSubmitContactModalByCancelBtn() {
+  amplitude.track('event: cancel submit contact modal by cancel btn',
+  {action: 'cancel'});
+}
+export function confirmSubmitContact() {
+  amplitude.track('event: confirm submit contact',
+  {action: 'confirm'});
+}
+export function clickSuccessToBuyModal() {
+  amplitude.track('event: click success to buy modal',
+  {action: 'click'});
+}
+export function cancelSuccessToBuyModal() {
+  amplitude.track('event: cancel success to buy modal',
+  {action: 'cancel'});
+}
+export function clickFailToBuyModal() {
+  amplitude.track('event: click fail to buy modal',
+  {action: 'click'});
+}
+export function cancelFailToBuyModal() {
+  amplitude.track('event: cancel fail to buy modal',
+  {action: 'cancel'});
+}
+export function clickGift(gift: String) {
+  amplitude.track('event: click gift',
+  {action: 'click',
+  gift});
+}
+export function confirmBuyGift() {
+  amplitude.track('event: confirm buy gift',
+  {action: 'confirm'});
+}
+export function clickGoToReview(name: String) {
+  amplitude.track('event: click go to review',
+  {action: 'click', name});
+}
+export function successBuyGift(gift: String) {
+  amplitude.track('event: success buying gift',
+  {action: 'click', gift});
 }

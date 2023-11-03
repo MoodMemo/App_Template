@@ -1,11 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Modal, Image, TextInput, TouchableWithoutFeedback, Dimensions, Platform } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Modal as ModalRN, Image, TextInput, TouchableWithoutFeedback, Dimensions, Platform, Button, SafeAreaView } from 'react-native';
 import DatePicker from 'react-native-date-picker';
-import realm, { ICustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
+import realm, { ICustomStamp, createCustomStamp, createPushedStamp, getAllCustomStamps, updateCustomStampPushedCountById } from './src/localDB/document';
 import Weekly from './weeklyView/Weekly'
 import { useNavigation } from '@react-navigation/native';
 import * as amplitude from './AmplitudeAPI';
-import {default as Text} from "./CustomText"
+import {default as Text} from "./CustomText";
+import Modal from "react-native-modal";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets, useSafeAreaFrame, initialWindowMetrics } from 'react-native-safe-area-context';
 import * as ImagePicker from 'react-native-image-picker';
 
@@ -30,6 +32,16 @@ const StampView = () => {
   const [selectedEmotion, setSelectedEmotion] = useState(null);
   const [selectedEmotionLabel, setSelectedEmotionLabel] = useState(null);
   const [selectedEmotionId, setSelectedEmotionId] = useState('');
+
+  const [addStampDataLabel, setAddStampDataLabel] = useState('');
+  const [addStampDataEmotion, setAddStampDataEmotion] = useState('');
+
+  const [addStampModalVisible, setAddStampModalVisible] = useState(false);
+  const [addStampButtonDisabled, setAddStampButtonDisabled] = useState(true);
+
+  const [isLodingFinishModalVisible, setIsLodingFinishModalVisible] = useState(false);
+  const [userName, setUserName] = useState('');
+
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [date, setDate] = useState(new Date());
@@ -89,6 +101,15 @@ const StampView = () => {
     const stampsCollection = realm.objects('CustomStamp');
     stampsCollection.addListener(stampsListener);
   
+    AsyncStorage.getItem('@UserInfo:userName')
+      .then((value) => {
+        if (value) {
+          setUserName(value);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching userName:", error);
+      });
     return () => {
       stampsCollection.removeListener(stampsListener);
     }
@@ -122,6 +143,31 @@ const StampView = () => {
     // Weekly.tsx 뷰로 이동
     navigation.navigate('Weekly', { showPopup: true });
   }
+
+  const handleAddStamp = (label, emotion) => {
+    amplitude.submitAddCustomStamp(label);
+    // 새 스탬프 객체의 초기 데이터를 생성
+    const newStampData = {
+      stampName: label,
+      emoji: emotion,
+    };
+  
+    let newStamp;
+    // Realm 데이터베이스에 스탬프 추가
+    realm.write(() => {
+      newStamp = createCustomStamp(newStampData);
+    });
+    // 상태 업데이트: 새 스탬프를 customStamps에 추가
+    const updatedCustomStamps = [...customStamps, newStamp];
+    setCustomStamps(updatedCustomStamps);
+  
+    // 모달과 버튼 상태 초기화
+    setAddStampModalVisible(false);
+    setAddStampButtonDisabled(true);
+    setIsLodingFinishModalVisible(true);
+    setAddStampDataLabel('');
+    console.log("스탬프 추가");
+  };
 
   const onClose = async () => {
     // amplitude.cancelStamp();
@@ -215,6 +261,103 @@ const StampView = () => {
       color: '#212429',
       textAlign: 'center',
       fontFamily: 'Pretendard',
+    },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.3)', // 반투명한 검정색 배경
+    },
+    addStampModalContainer: {
+      // flex: 1,
+      backgroundColor: 'white',
+      width: '80%',
+      height: 260,
+      alignSelf: 'center',
+      marginTop: 'auto',
+      marginBottom: 'auto',
+      borderRadius: 16,
+    },
+    addStampModalTitleContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginTop: 15,
+      marginHorizontal: 16,
+      marginBottom: 40,
+    },
+    addStampModalTitle: {
+      color: '#212429',
+      fontFamily: 'Pretendard',
+      fontWeight: '400',
+      fontSize: 16,
+    },
+    checkImage: {
+      // 기본 이미지 스타일
+      
+    },
+    disabledCheckImage: {
+      opacity: 0.2, // 비활성 시에 투명도 조절
+    },
+    addStampModalContent: {
+      // 가운데에 위치하도록
+      flex: 1,
+      justifyContent: 'space-between',
+      flexDirection: 'column',
+      alignItems: 'center',
+      // gap: 15,
+      marginBottom: 55,
+    },
+    addStampModalEmotionBox: {
+      width: 50,
+      height: 50,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#F0F0F0',
+      backgroundColor: 'white',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    addStampModalEmotion: {
+      fontSize: 24 * scale,
+    },
+    addStampModalLabelBox: {
+      width: '80%',
+      height: 50,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#F0F0F0',
+      backgroundColor: 'white',
+      paddingHorizontal: 10,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    addStampModalLabel: {
+      fontSize: 16,
+    },
+    finishLodingModal: {
+      backgroundColor: '#FFFAF4', 
+      justifyContent: 'space-between', // 상하로 딱 붙이기
+      alignItems: 'center', // 가운데 정렬
+      flexDirection: 'column',
+      borderRadius: 12, 
+      paddingHorizontal: 16,
+      width: 343, 
+      height: 284,
+      shadowColor: 'black',
+      shadowRadius: 50,           // 그림자 블러 반경
+      elevation: 5, 
+    },
+    confirmBtn: {
+      alignSelf: 'center',
+      alignItems: 'center', 
+      justifyContent: 'center',
+      padding: 10,
+      marginBottom: 16,
+      backgroundColor: '#72D193', 
+      borderRadius: 8,
+      flex: 1,
     },
     modalContainer: {
       flex: 1,
@@ -454,6 +597,10 @@ const StampView = () => {
   
   });
   return (
+    <>
+    {addStampModalVisible && (
+      <View style={styles.overlay} />
+    )}
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.stampView} horizontal={false}>
         {customStamps.map((stampButton) => (
@@ -462,8 +609,17 @@ const StampView = () => {
             <Text style={styles.buttonText}>{stampButton.stampName}</Text>
           </TouchableOpacity>
         ))}
+        <TouchableOpacity style={styles.stampButton} onPress={() => {
+            amplitude.tryAddCustomStamp();
+            setAddStampModalVisible(true);
+        }}>
+          <Image source={require('./assets/add.png')} />
+        </TouchableOpacity>
       </ScrollView>
-      <Modal visible={modalVisible} animationType="slide" transparent>
+      {addStampModalVisible && (
+        <View style={styles.overlay} />
+      )}
+      <ModalRN visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
 
           { !timeModalVisible ? (
@@ -567,7 +723,7 @@ const StampView = () => {
           )}
 
         </View>
-      </Modal>
+      </ModalRN>
 
       {/* <Modal visible={timeModalVisible} animationType="fade" transparent onRequestClose={handleCloseTimeModal}>
         <TouchableWithoutFeedback onPressOut={handleCloseTimeModal}>
@@ -590,6 +746,89 @@ const StampView = () => {
         </TouchableWithoutFeedback>
       </Modal> */}
     </View>
+    <ModalRN visible={addStampModalVisible} animationType='slide' transparent>
+        <View style={styles.addStampModalContainer}>
+          <View style={styles.addStampModalTitleContainer}>
+            <TouchableOpacity onPress={() => {
+              amplitude.cancelAddCustomStamp();
+              setAddStampModalVisible(false);
+              setAddStampDataEmotion('');
+              setAddStampDataLabel('');
+              setAddStampButtonDisabled(true);
+            }}>
+              <Image source={require('./assets/close.png')} />
+            </TouchableOpacity>
+            <Text style={styles.addStampModalTitle}>스탬프 추가</Text>
+            <TouchableOpacity disabled={addStampButtonDisabled} onPress={() => handleAddStamp(addStampDataLabel, addStampDataEmotion)}>
+              <Image source={require('./assets/add_check.png')} 
+                style={[
+                  styles.checkImage,
+                  addStampButtonDisabled && styles.disabledCheckImage
+                ]}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.addStampModalContent}>
+            <View style={styles.addStampModalEmotionBox}>
+              <TextInput
+                style={styles.addStampModalEmotion}
+                placeholder='😊'
+                placeholderTextColor='rgba(0, 0, 0, 0.2)'
+                maxLength={2}
+                onChangeText={(text) => {
+                  setAddStampDataEmotion(text);
+                  if(text.length > 0 && addStampDataLabel.length > 0) setAddStampButtonDisabled(false);
+                  else setAddStampButtonDisabled(true);
+                }}
+              />
+            </View>
+            <View style={styles.addStampModalLabelBox}>
+              <TextInput
+                style={styles.addStampModalLabel}
+                placeholder='스탬프 이름 입력'
+                onChangeText={(text) => {
+                  setAddStampDataLabel(text);
+                  if(text.length > 0 && addStampDataEmotion.length > 0) setAddStampButtonDisabled(false);
+                  else setAddStampButtonDisabled(true);
+                }}
+              />
+            </View>
+          </View>
+        </View>
+      </ModalRN>
+      <Modal 
+        isVisible={isLodingFinishModalVisible}
+        animationIn={"fadeIn"}
+        animationOut={"fadeOut"}
+        backdropColor='#CCCCCC' 
+        backdropOpacity={0.9}
+        style={{ alignItems:'center' }}
+        backdropTransitionInTiming={0} // Disable default backdrop animation
+        backdropTransitionOutTiming={0} // Disable default backdrop animation
+      >
+        <View style={styles.finishLodingModal}>
+          {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+          <Image 
+            source={require('./assets/colorMooMini.png')}
+            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+          <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
+            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>!~</Text>
+          </View>
+          <View style={{alignItems: 'center',}}>
+            <Text style={{ color: '#475467', fontSize: 14, }}>{userName}의 새로운 감정을 환영한다무~</Text>
+          </View>
+          <View style={{ flexDirection: 'row', marginTop: 20 }}>
+            <View style={{ flexDirection: 'row', flex: 1,}}>
+              <TouchableOpacity style={styles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false);}}>
+                <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+              </TouchableOpacity>
+            </View>
+          </View>       
+        </View>
+      </Modal>
+    </>
   );
 };
 

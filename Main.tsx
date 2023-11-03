@@ -26,9 +26,9 @@ import {default as Text} from "./CustomText"
 
 const Tab = createBottomTabNavigator();
 
-function HomeScreen(username:any) {
+function HomeScreen(username:any,first:any) {
   return (
-  <Home name={username}/>); //Home.tsx
+  <Home name={username} first={first}/>); //Home.tsx
 }
 
 function WeeklyScreen({ route, navigation }) {
@@ -228,7 +228,7 @@ async function test_realm_ver4_RUD() { // 테스트 완료 ! 지워도 됩니다
 /** asyncstorage 테스트용 함수
  */
 
-function Main({username}:any) {
+function Main({username,first}:any) {
   const [statusBar, setStatusBar] = useState('#FFFAF4');
   const [name, setName] = useState('');
   useEffect(() => {
@@ -261,14 +261,14 @@ function Main({username}:any) {
         screenOptions={{
           tabBarShowLabel: false, //이게 true면 하단 바 아이콘 밑에 label도 같이 렌더링됩니다.
           headerShown: false, //이게 true면 각 탭의 상단에 해당 Tab의 label이 렌더링됩니다. 매우 보기 싫습니다.
-          tabBarActiveTintColor:"#72D193",
+          tabBarActiveTintColor:"#FFCC4D",
           tabBarInactiveTintColor:"#484C524D",
           tabBarStyle:{height:60,
             elevation: 0,}
           }}>
           <Tab.Screen
             name="Home"
-            children={()=>HomeScreen(username)}//홈 화면
+            children={()=>HomeScreen(username,first)}//홈 화면
             listeners={{
               tabPress: e => {
                 setStatusBar('#FFFAF4');
@@ -342,7 +342,7 @@ function Main({username}:any) {
               tabBarIcon: ({color, size}) => (
                 <MaterialIcons name="settings" color={color} size={size} /> //하단 바 아이콘
               ),
-              lazy:false,
+              unmountOnBlur: true,
             }}
           />
         </Tab.Navigator>

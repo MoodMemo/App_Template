@@ -328,15 +328,15 @@ const StampList = ({visible, closeModal}) => {
             <TouchableOpacity onPress={closeModal} style={{marginTop:5}}>
               <Image source={require('./assets/arrow-back.png')} />
             </TouchableOpacity>
-            <Text style={styles.fixModalTitle}>스탬프 설정</Text>
+            <Text style={styles.fixModalTitle}>스탬프 삭제</Text>
           </View>
-          <TouchableOpacity onPress={() => {
+          {/* <TouchableOpacity onPress={() => {
             amplitude.tryAddCustomStamp();
             setAddStampModalVisible(true);
           }}
           style={{marginTop:5}}>
             <Image source={require('./assets/add.png')} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <View style={styles.fixModalMessageContainer}>
           <Text style={styles.fixModalMessage}>감정스탬프를 삭제할 수 있다무🥬</Text>
@@ -371,6 +371,9 @@ const StampList = ({visible, closeModal}) => {
             <TouchableOpacity onPress={() => {
               amplitude.cancelAddCustomStamp();
               setAddStampModalVisible(false);
+              setAddStampDataEmotion('');
+              setAddStampDataLabel('');
+              setAddStampButtonDisabled(true);
             }}>
               <Image source={require('./assets/close.png')} />
             </TouchableOpacity>
@@ -389,6 +392,7 @@ const StampList = ({visible, closeModal}) => {
               <TextInput
                 style={styles.addStampModalEmotion}
                 placeholder='🔥'
+                placeholderTextColor='rgba(0, 0, 0, 0.2)'
                 maxLength={2}
                 onChangeText={(text) => {
                   setAddStampDataEmotion(text);
