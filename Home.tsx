@@ -12,7 +12,7 @@ import { useSafeAreaFrame, useSafeAreaInsets, initialWindowMetrics} from 'react-
 
 import {default as Text} from "./CustomText"
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { CameraRoll, useCameraRoll } from '@react-native-camera-roll/camera-roll';
+import { CameraRoll, useCameraRoll, PhotoIdentifier } from '@react-native-camera-roll/camera-roll';
 
 import {Alert, Linking} from 'react-native';
 import Permissions, {PERMISSIONS} from 'react-native-permissions';
@@ -25,7 +25,8 @@ const Home = ({name}:any) => {
   const [isFirstStamp,setIsFirstStamp]=useState(false);
   const [isStampTemplateAdded,setIsStampTemplateAdded]=useState(true);
   const [isEventModalVisible,setIsEventModalVisible] = useState(false);
-  const [photos, getPhotos, save] = useCameraRoll();
+  const [photos, setPhotos] = useState<PhotoIdentifier[]>([]);
+  const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
 
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [isCameraPermission, setCameraPermission] = useState<boolean>(false);
@@ -160,6 +161,22 @@ const Home = ({name}:any) => {
     }
   };
 
+  const fetchPhotos = useCallback(async () => {
+    console.log("fecthPhotos 함수 실행");
+    const res = await CameraRoll.getPhotos({
+      first: 10,
+      assetType: 'Photos',
+    });
+    setPhotos(res?.edges);
+  }, []);
+  
+  useEffect(() => {
+    if (hasPermission) {
+      fetchPhotos();
+    }
+  }, [hasPermission, fetchPhotos]);
+
+
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
     AsyncStorage.getItem('@UserInfo:userName')
@@ -200,7 +217,7 @@ const Home = ({name}:any) => {
     amplitude.exitCustomStampList();
     setFixModalVisible(false);
   };
-  console.log('aa',name);
+  // console.log('aa',name);
   return (
     <>
     <StatusBar
@@ -220,19 +237,12 @@ const Home = ({name}:any) => {
       </TouchableOpacity>
 
       {/* // 된 거 */}
-      <Button title="사진 테스트" onPress={checkPermission}/>
-      <Button title="사진 불러오기" onPress={fetchImagesFromGallery}/>
-      {
-        photos?.edges?.map((item, index) => {
-          return (
-            <Image
-              key={index}
-              style={{width: 100, height: 100}}
-              source={{uri: item.node.image.uri}}
-            />
-          );
-        })
-      }
+      {/* <Button title="사진 테스트" onPress={checkPermission}/> */}
+      {/* <Button title="사진 불러오기" onPress={fetchPhotos}/> */}
+      {/* <Button title="사진 모달 띄우기" onPress={() => {
+        fetchPhotos();
+        setIsPhotoModalVisible(true);
+      }}/> */}
     </View>
     {/* 감정 스탬프 뷰 */}
     <StampView/>
