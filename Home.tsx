@@ -16,7 +16,7 @@ import { useSafeAreaFrame, useSafeAreaInsets, initialWindowMetrics} from 'react-
 
 import {default as Text} from "./CustomText"
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { CameraRoll, useCameraRoll } from '@react-native-camera-roll/camera-roll';
+import { CameraRoll, useCameraRoll, PhotoIdentifier } from '@react-native-camera-roll/camera-roll';
 
 import {Alert, Linking} from 'react-native';
 import Permissions, {PERMISSIONS} from 'react-native-permissions';
@@ -33,7 +33,8 @@ const Home = ({name,first}:any) => {
   const [isFirstStamp,setIsFirstStamp]=useState(false);
   const [isStampTemplateAdded,setIsStampTemplateAdded]=useState(true);
   const [isEventModalVisible,setIsEventModalVisible] = useState(false);
-  const [photos, getPhotos, save] = useCameraRoll();
+  const [photos, setPhotos] = useState<PhotoIdentifier[]>([]);
+  const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
 
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [isCameraPermission, setCameraPermission] = useState<boolean>(false);
@@ -168,6 +169,22 @@ const Home = ({name,first}:any) => {
     }
   };
 
+  const fetchPhotos = useCallback(async () => {
+    console.log("fecthPhotos 함수 실행");
+    const res = await CameraRoll.getPhotos({
+      first: 10,
+      assetType: 'Photos',
+    });
+    setPhotos(res?.edges);
+  }, []);
+  
+  useEffect(() => {
+    if (hasPermission) {
+      fetchPhotos();
+    }
+  }, [hasPermission, fetchPhotos]);
+
+
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
     AsyncStorage.getItem('@UserInfo:addedStampTemplate')
@@ -203,76 +220,6 @@ const Home = ({name,first}:any) => {
     console.log(isStampTemplateAdded,'isStampTemplateAdded',first);
   }, []);
 
-  const addStampTemplate_old = () => {
-    repository.createCustomStamp({
-      stampName: "불안",
-      emoji: "😖"
-    });
-    repository.createCustomStamp({
-      stampName: "걱정",
-      emoji: "😨"
-    });
-    repository.createCustomStamp({
-      stampName: "황당",
-      emoji: "😦"
-    });
-    repository.createCustomStamp({
-      stampName: "졸림",
-      emoji: "😴"
-    });
-    repository.createCustomStamp({
-      stampName: "귀찮음",
-      emoji: "😮‍💨"
-    });
-    repository.createCustomStamp({
-      stampName: "후회",
-      emoji: "😢"
-    });
-    repository.createCustomStamp({
-      stampName: "배고픔",
-      emoji: "🍗"
-    });
-    repository.createCustomStamp({
-      stampName: "나른함",
-      emoji: "😑"
-    });
-    repository.createCustomStamp({
-      stampName: "후회",
-      emoji: "😢"
-    });
-    repository.createCustomStamp({
-      stampName: "웃김",
-      emoji: "😄"
-    });
-    repository.createCustomStamp({
-      stampName: "신기함",
-      emoji: "😮"
-    });
-    repository.createCustomStamp({
-      stampName: "후회",
-      emoji: "😢"
-    });
-    repository.createCustomStamp({
-      stampName: "감동",
-      emoji: "🥹"
-    });
-    repository.createCustomStamp({
-      stampName: "요리",
-      emoji: "🍽️"
-    });
-    repository.createCustomStamp({
-      stampName: "운동",
-      emoji: "💪"
-    });
-    repository.createCustomStamp({
-      stampName: "아이디어",
-      emoji: "💡"
-    });
-    repository.createCustomStamp({
-      stampName: "투두",
-      emoji: "✅"
-    });
-  };
   const addStampTemplate = () => {
     repository.createCustomStamp({
       stampName: "요리",
@@ -310,7 +257,7 @@ const Home = ({name,first}:any) => {
     amplitude.exitCustomStampList();
     setFixModalVisible(false);
   };
-  console.log('aa',name);
+  // console.log('aa',name);
   return (
     <>
     <StatusBar
@@ -337,25 +284,52 @@ const Home = ({name,first}:any) => {
       </TouchableOpacity>
 
       {/* // 된 거 */}
-      <Button title="사진 테스트" onPress={checkPermission}/>
-      <Button title="사진 불러오기" onPress={fetchImagesFromGallery}/>
-      {
-        photos?.edges?.map((item, index) => {
-          return (
-            <Image
-              key={index}
-              style={{width: 100, height: 100}}
-              source={{uri: item.node.image.uri}}
-            />
-          );
-        })
-      }
+      {/* <Button title="사진 테스트" onPress={checkPermission}/> */}
+      {/* <Button title="사진 불러오기" onPress={fetchPhotos}/> */}
+      {/* <Button title="사진 모달 띄우기" onPress={() => {
+        fetchPhotos();
+        setIsPhotoModalVisible(true);
+      }}/> */}
     </View>
     {/* 감정 스탬프 뷰 */}
     <StampView/>
     {/* 스탬프 설정 모달 */}
     <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
   </View>
+  {/* <Modal isVisible={isPhotoModalVisible}
+    animationIn={"fadeIn"}
+    animationInTiming={200}
+    animationOut={"fadeOut"}
+    animationOutTiming={200}
+    onBackdropPress={() => {
+      setIsPhotoModalVisible(!isPhotoModalVisible);
+  }}
+  backdropColor='#CCCCCC'//'#FAFAFA'
+  backdropOpacity={0.8}>
+    <View style={{backgroundColor:'#FFFFFF', height:windowHeight*0.8, width:windowWidth*0.8, borderRadius:20, alignItems:'center'}}>
+      <Text style={{fontSize: 20, color:'#72D193', marginTop: 20}}>사진을 선택해봐무!</Text>
+      <View style={{flexDirection:'row', flexWrap:'wrap', justifyContent:'center', alignItems:'center', marginTop: 20}}>
+        {photos.map((p, i) => {
+          return (
+            <TouchableOpacity key={i} onPress={() => {
+              console.log(p.node.image.uri);
+              setIsPhotoModalVisible(!isPhotoModalVisible);
+            }}>
+              <Image
+                key={i}
+                style={{
+                  width: windowWidth*0.2,
+                  height: windowWidth*0.2,
+                  margin: 5,
+                }}
+                source={{uri: p.node.image.uri}}
+              />
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    </View>
+  </Modal> */}
   <Modal isVisible={isEventModalVisible}
     animationIn={"fadeIn"}
     animationInTiming={200}
