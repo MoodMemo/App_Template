@@ -10,7 +10,6 @@
 		00E356F31AD99517003FC87E /* MoodMemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* MoodMemoTests.m */; };
 		01369C3538B66127CBF81593 /* libPods-MoodMemo-MoodMemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C3B69305BD1F373E8F54415 /* libPods-MoodMemo-MoodMemoTests.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
-		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		D0C40CCEF4E7C21896C9D189 /* libPods-MoodMemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FAB2D7AB7B0FA2F1960FD1E /* libPods-MoodMemo.a */; };
 		FF0D3B512ABA292300B698DC /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = FF0D3B502ABA292300B698DC /* main.jsbundle */; };
@@ -37,6 +36,7 @@
 		FF0D3B822ABB80C200B698DC /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF0D3B812ABB80C200B698DC /* Pretendard-Medium.ttf */; };
 		FF560B022AE65CC000BD2932 /* autumn_event_splash.png in Resources */ = {isa = PBXBuildFile; fileRef = FF560B012AE65CC000BD2932 /* autumn_event_splash.png */; };
 		FF560B062AE65F7200BD2932 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF560B052AE65F7200BD2932 /* LaunchScreen.storyboard */; };
+		FF748BF52AF4B23800858DA4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF748BF42AF4B23800858DA4 /* Images.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,7 +57,6 @@
 		13B07F961A680F5B00A75B9A /* MoodMemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MoodMemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = MoodMemo/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = MoodMemo/AppDelegate.mm; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = MoodMemo/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = MoodMemo/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = MoodMemo/main.m; sourceTree = "<group>"; };
 		3C3B69305BD1F373E8F54415 /* libPods-MoodMemo-MoodMemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MoodMemo-MoodMemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -93,6 +92,7 @@
 		FF0D3B812ABB80C200B698DC /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 		FF560B012AE65CC000BD2932 /* autumn_event_splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = autumn_event_splash.png; path = MoodMemo/autumn_event_splash.png; sourceTree = "<group>"; };
 		FF560B052AE65F7200BD2932 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		FF748BF42AF4B23800858DA4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,10 +140,10 @@
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				FF560B012AE65CC000BD2932 /* autumn_event_splash.png */,
-				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				FF560B052AE65F7200BD2932 /* LaunchScreen.storyboard */,
+				FF748BF42AF4B23800858DA4 /* Images.xcassets */,
 			);
 			name = MoodMemo;
 			sourceTree = "<group>";
@@ -329,6 +329,7 @@
 			files = (
 				FF0D3B512ABA292300B698DC /* main.jsbundle in Resources */,
 				FF0D3B6E2ABB7B3100B698DC /* FontAwesome.ttf in Resources */,
+				FF748BF52AF4B23800858DA4 /* Images.xcassets in Resources */,
 				FF0D3B712ABB7B3100B698DC /* Fontisto.ttf in Resources */,
 				FF0D3B6D2ABB7B3100B698DC /* EvilIcons.ttf in Resources */,
 				FF0D3B742ABB7B3100B698DC /* Zocial.ttf in Resources */,
@@ -351,7 +352,6 @@
 				FF0D3B782ABB7B3100B698DC /* Entypo.ttf in Resources */,
 				FF0D3B792ABB7B3100B698DC /* MaterialCommunityIcons.ttf in Resources */,
 				FF0D3B7D2ABB7B3100B698DC /* FontAwesome6_Brands.ttf in Resources */,
-				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
