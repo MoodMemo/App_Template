@@ -18,7 +18,7 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
     return(
       <View style={{width:360,height:580,top:-30}}>
       <Image source={require('./assets/autumn_event_modal_background.png')} style={{position:'absolute',resizeMode:'stretch',alignSelf:'center',width:400,height:700}}/>
-      <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:15, marginLeft:20, marginRight:20}}>
+      <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:15, marginLeft:20, marginRight:20, marginBottom:15}}>
             <View style={{flexDirection:'row'}}>
                 <MaterialAllIcons name='wallet-giftcard' color={'#FFA24D'} size={35}/>
                 <Text style={[styles.text,{marginLeft:10,marginTop:(Platform.OS==='android' ? 5 : 8)}]}>무드메모 <Text style={styles.coloredText}>가을 이벤트</Text> 안내</Text>
@@ -37,7 +37,7 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
           bounces={false}
           overScrollMode="never"
           showsVerticalScrollIndicator={true}>
-          <View style={{alignItems:'center',marginTop:20}}>
+          <View style={{alignItems:'center'}}>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15}}>가을을 맞아 무드메모에서 특별한 이벤트를 준비했어요!</Text>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10}}>무에게 은행잎을 가져다주고, 다양한 선물을 가져가세요!</Text>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10,marginBottom:20}}>이벤트 기간 : 10/24(화) ~ 11/13(월)</Text>
@@ -53,13 +53,13 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
           </View>
           <View style={styles.eventModalMarketBlockView}>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:20,marginBottom:25}}>은행잎 상점 상품 및 가격 안내</Text>
-            <View style={{flexDirection:'row', justifyContent:'space-between',width:'90%',marginBottom:15}}>
+            {/* <View style={{flexDirection:'row', justifyContent:'space-between',width:'90%',marginBottom:15}}>
               <Text style={{color:'#212429',fontSize:14}}>감정 표현</Text>
               <View style={{flexDirection:'row', justifyContent:'space-between',width:60}}>
                 <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
                 <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>5개</Text>
               </View>
-            </View>
+            </View> */}
             <View style={{flexDirection:'row', justifyContent:'space-between',width:'90%',marginBottom:15}}>
               <Text style={{color:'#212429',fontSize:14}}>스타벅스 아이스 아메리카노 <Text>(총 30개)</Text></Text>
               <View style={{flexDirection:'row', justifyContent:'space-between',width:60}}>
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     {
       backgroundColor:'#FFFFFF',
       width: 320,
-      height:250,
+      height:210,
       alignSelf:'center',
       alignItems:'center',
       borderColor:'#F9C649',

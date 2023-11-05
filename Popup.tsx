@@ -8,15 +8,23 @@ import axios, { AxiosResponse, CancelToken } from 'axios';
 import {default as Text} from "./CustomText"
 
 import AutumnEventCoinModal from './AutumnEventCoinModal';
+import AutumnEventDetailModal from './AutumnEventDetailModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Popup = ({ visible, onClose }) => {
   const [isEventModalVisible, setIsEventModalVisible]=useState(false);
   const [isFirstStampToday,setIsFirstStampToday]=useState(false);
   const [autumnEventStampDate,setAutumnEventStampDate] = useState('');
+  const [isEventDetailModalVisible,setIsEventDetailModalVisible] = useState(false);
+  const [isEventFirstStamp,setIsEventFirstStamp]=useState(false);
   
   useEffect(()=>{
     if(visible){
+      AsyncStorage.getItem('@UserInfo:AutumnEventFirstStamp').then((value) => {
+        if(value==='true'){
+          setIsEventFirstStamp(true);
+        }
+      })
       const url = 'http://3.34.55.218:5000/time';
       axios.get(url).then((response)=>{
         console.log('서버 시간',response.data.month,'월 ',response.data.day,'일');
@@ -87,8 +95,20 @@ const Popup = ({ visible, onClose }) => {
       amplitude.cancelGetLeavesModal();//은행잎 획득 모달 끔
       setIsEventModalVisible(!isEventModalVisible);
     }}
-    onModalHide={()=>{setIsFirstStampToday(false);}}>
+    onModalHide={()=>{setIsFirstStampToday(false);setIsEventDetailModalVisible(true);}}>
       <AutumnEventCoinModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible} type="stamp"/>
+    </Modal>
+    <Modal isVisible={isEventFirstStamp&&isEventDetailModalVisible}
+    animationIn={"fadeIn"}
+    animationInTiming={200}
+    animationOut={"fadeOut"}
+    animationOutTiming={200}
+    onBackdropPress={() => {
+      amplitude.cancelGetLeavesModal();//은행잎 획득 모달 끔
+      setIsEventDetailModalVisible(!isEventDetailModalVisible);
+    }}
+    onModalHide={()=>{AsyncStorage.setItem('@UserInfo:AutumnEventFirstStamp','false'); setIsEventFirstStamp(false);}}>
+      <AutumnEventDetailModal isModalVisible={isEventDetailModalVisible} setIsModalVisible={setIsEventDetailModalVisible}/>
     </Modal>
     </>
   );

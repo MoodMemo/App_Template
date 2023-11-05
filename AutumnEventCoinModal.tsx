@@ -19,6 +19,7 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
     const [autumnEventCoin,setAutumnEventCoin] = useState(0);
     const [randomAutumnEventCoin,setRandomAutumnEventCoin] = useState(0);
     const [autumnEventLevel,setAutumnEventLevel] = useState(1);
+    
 
     useEffect(()=>{
         if(type==='stamp'){
@@ -113,7 +114,7 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                 marginTop:20,
                 marginBottom:20,
             }}>
-                <Text style={{color:'#212429',fontSize:16}}>스타벅스 아아까지 {15-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1))}개!</Text>
+                <Text style={{color:'#212429',fontSize:16}}>스타벅스 아아까지 {Math.floor((15-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)))/4)}일!</Text>
             </View> : autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<30 ? <View style={{
                 alignSelf:'center',
                 alignItems:'center',
@@ -121,7 +122,7 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                 marginTop:20,
                 marginBottom:20,
             }}>
-                <Text style={{color:'#212429',fontSize:16}}>배라 파인트까지 {30-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1))}개!</Text>
+                <Text style={{color:'#212429',fontSize:16}}>배라 파인트까지 {Math.floor((30-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)))/4)}일!</Text>
             </View> : autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<60 ? <View style={{
                 alignSelf:'center',
                 alignItems:'center',
@@ -129,7 +130,7 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                 marginTop:20,
                 marginBottom:20,
             }}>
-                <Text style={{color:'#212429',fontSize:16}}>치킨까지 {60-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1))}개!</Text>
+                <Text style={{color:'#212429',fontSize:16}}>치킨까지 {Math.floor((60-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)))/4)}일!</Text>
             </View> : <View style={{
               marginTop:10,
               marginBottom:10,

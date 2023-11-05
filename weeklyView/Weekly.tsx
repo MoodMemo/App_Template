@@ -35,9 +35,11 @@ import StampView from '../StampView';
 import {default as Text} from "../CustomText"
 import * as nodata from './NoDataView';
 import AutumnEventCoinModal from '../AutumnEventCoinModal';
+import AutumnEventDetailModal from '../AutumnEventDetailModal';
 
 import * as Sentry from '@sentry/react-native';
 
+const windowWidth = Dimensions.get('window').width;
 
 interface DropdownProps {
   label: string;
@@ -148,6 +150,8 @@ const Weekly = () => {
   const [isCanceled, setIsCanceled] = useState(false);
 
   const [isFirstDiaryToday, setIsFirstDiaryToday] = useState(false);
+
+  const [isEventDetailModalVisible,setIsEventDetailModalVisible] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
 
@@ -641,6 +645,28 @@ const Weekly = () => {
         </View>
 
       </View>
+
+      <TouchableOpacity onPress={() => {
+        setIsEventDetailModalVisible(!isEventDetailModalVisible);
+        amplitude.clickEventInfoModal();//이벤트 배너 켬
+      }}>
+        <Image source={require('../assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
+      </TouchableOpacity>
+
+      <Modal isVisible={isEventDetailModalVisible}
+        animationIn={"fadeIn"}
+        animationInTiming={200}
+        animationOut={"fadeOut"}
+        animationOutTiming={200}
+        onBackdropPress={() => {
+          amplitude.cancelEventInfoModalByCancelBtn();//이벤트 배너 끔
+          setIsEventModalVisible(!isEventDetailModalVisible);
+      }}
+      backdropColor='#CCCCCC'//'#FAFAFA'
+      backdropOpacity={0.8}
+      style={{ alignItems:'center', }}>
+        <AutumnEventDetailModal isModalVisible={isEventDetailModalVisible} setIsModalVisible={setIsEventDetailModalVisible}/>
+      </Modal>
 
       {/* 3 & 4 & 5 */}
       {stampORdiary ? (
@@ -1244,6 +1270,14 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#FAFAFA',
+  },
+  bannerImage: {
+    width:windowWidth-30,
+    height:(windowWidth-30)*240/1440,
+    borderRadius:10,
+    alignSelf:'center',
+    top:10,
+    marginBottom:15,
   },
   text: {
     fontSize: 20,
