@@ -676,7 +676,8 @@ const Weekly = () => {
             <Text style={typeChangeBtnStyles.activeFont}>오늘의 스탬프</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {setStampORdiary(false); amplitude.clickDiarySwitchInStampView(); amplitude.test2}} style={typeChangeBtnStyles.deactiveType}>
-            <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
+            
+            { today.isSame(dayjs(), 'day') ? (<View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>):(<View/>)}
             <MCIcon name='lock-open-variant' color="#FF7168" style={{ fontWeight: 'bold', fontSize: 18}} />
             <Text style={typeChangeBtnStyles.deactiveFont}> Moo의 편지함</Text>
           </TouchableOpacity>

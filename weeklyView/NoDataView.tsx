@@ -208,11 +208,14 @@ function Bubble({ text, imageSource, delay, toneDown, letter, last }) {
         </View>
       ) : (
       letter ? (
-        <TouchableOpacity style={[finalBubbleStyles.gotoLetter_container, {}]}
-        onPress={() => {amplitude.test2(); letter();}}>
-          <FontAwesome name='envelope-o' color="#72D193" style={{ fontWeight: 'bold', fontSize: 25}} />
-          <Text style={{fontSize: 16, color: '#72D193', }}>Moo의 편지 확인하기</Text>
-        </TouchableOpacity>
+        <View style={{flexDirection: 'row', }}>
+          <TouchableOpacity style={[finalBubbleStyles.gotoLetter_container, {}]}
+          onPress={() => {amplitude.test2(); letter();}}>
+            <FontAwesome name='envelope-o' color="#72D193" style={{ fontWeight: 'bold', fontSize: 25}} />
+            <Text style={{fontSize: 16, color: '#72D193', }}>Moo의 편지 확인하기</Text>
+          </TouchableOpacity>
+          <Text style={{fontSize: 14, color: '#72D193', marginLeft: 3, alignSelf: 'flex-end', paddingVertical: 10,}}>← Click!</Text>
+        </View>
       ) : (
       last ? (
         <View style={[finalBubbleStyles.container, {zIndex: 100, alignItems: 'flex-start'}]}>
