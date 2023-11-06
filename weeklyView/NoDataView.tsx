@@ -228,6 +228,37 @@ function Bubble({ text, imageSource, delay, toneDown, letter, last }) {
   );
 }
 
+export const Home_Moo_Message = ({ name }: { name: string }) => {
+  const navigation = useNavigation();
+  const handleRecordEmotion = () => {
+    // [감정 스탬프 기록하기] 버튼을 눌렀을 때 실행되는 함수
+    // Home 뷰로 이동하도록 설정
+    navigation.navigate('Home');
+  };
+  const [userName, setUserName] = useState('');
+  return (
+    <View style={{justifyContent: 'space-between', marginHorizontal: 15, marginTop: 20}}>
+      {/* 무 말풍선 섹션 */}
+      <View style={{flexDirection: 'row', gap: 10}}>
+        <Image 
+          source={require('../assets/profile.png')}
+          style={{ width: 34, height: 34 , zIndex: 100,}} // 비율을 유지하며 height 자동 조절
+        />
+        <View>
+          <View style={{marginBottom: 4}}><Text style={{fontSize: 18, color: '#212429', fontWeight: 'bold',}}>Moo</Text></View>
+          <View style={[finalBubbleStyles.container, {zIndex: 100}]}>
+            <Text style={{fontSize: 16, color: '#fff', }}>Moo는 광합성☀️ 중이지만{`\n`}{name}의 감정을 듣고싶다무</Text>
+          </View>
+          <View style={[finalBubbleStyles.container, {zIndex: 100, }]}>
+            <Text style={{fontSize: 16, color: '#fff', }}>무슨 일이 있었는지 알려달라무!</Text>
+          </View>
+        </View> 
+      </View>
+      </View>
+  );
+}
+
+
 export const Present_Zero_View = () => {
   const navigation = useNavigation();
   const handleRecordEmotion = () => {
