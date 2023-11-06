@@ -97,7 +97,7 @@ const Weekly = () => {
 
   useEffect(() => {
     // 컴포넌트가 마운트될 때 스크롤을 최하단으로 이동
-    scrollViewRef.current.scrollToEnd({ animated: true });
+    if (stampORdiary) { scrollViewRef.current.scrollToEnd({ animated: true });}
   }, []);
 
   // 1. 오늘 날짜 & 2. 스탬프리스트
@@ -659,31 +659,42 @@ const Weekly = () => {
       </View>
 
       {/* status bar */}
-      {stampORdiary ? (
+
+      {!todayReport ? ( // 1. 편지를 못 받으면, 편지함이 안 열림
         <View style={typeChangeBtnStyles.twotypebtn}>
-          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickStampSwitchInStampView()}}>
+          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickStampSwitchInStampView(); amplitude.test2}}>
             <Text style={typeChangeBtnStyles.activeFont}>오늘의 스탬프</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {setStampORdiary(false); amplitude.clickDiarySwitchInStampView();}} style={typeChangeBtnStyles.deactiveType}>
-            {/* {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
-              <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
-            ) : (<View></View>)} */}
+          <View style={typeChangeBtnStyles.deactiveType}>
             <MCIcon name='lock' color="#B7B7B7" style={{ fontWeight: 'bold', fontSize: 18}} />
+            <Text style={typeChangeBtnStyles.deactiveFont}> Moo의 편지함</Text>
+          </View>
+        </View>
+      ) : ( stampORdiary ? ( // 2. 편지를 받으면, 편지함을 볼 수 있음 
+        <View style={typeChangeBtnStyles.twotypebtn}>
+          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickStampSwitchInStampView(); amplitude.test2}}>
+            <Text style={typeChangeBtnStyles.activeFont}>오늘의 스탬프</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {setStampORdiary(false); amplitude.clickDiarySwitchInStampView(); amplitude.test2}} style={typeChangeBtnStyles.deactiveType}>
+            <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
+            <MCIcon name='lock-open-variant' color="#FF7168" style={{ fontWeight: 'bold', fontSize: 18}} />
             <Text style={typeChangeBtnStyles.deactiveFont}> Moo의 편지함</Text>
           </TouchableOpacity>
         </View>
-      ) : (
-        <View style={typeChangeBtnStyles.twotypebtn}>
-          <TouchableOpacity onPress={() => {setStampORdiary(true); amplitude.clickStampSwitchInDiaryView();}} style={typeChangeBtnStyles.deactiveType}>
-            <Text style={typeChangeBtnStyles.deactiveFont}>오늘의 스탬프</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickDiarySwitchInDiaryView()}}>
-            <Text style={typeChangeBtnStyles.activeFont}>Moo의 편지함</Text>
-            {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
-              <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
-            ) : (<View></View>)}
-          </TouchableOpacity>
-        </View>
+        ) : (
+          <View style={typeChangeBtnStyles.twotypebtn}>
+            <TouchableOpacity onPress={() => {setStampORdiary(true); amplitude.clickStampSwitchInDiaryView();}} style={typeChangeBtnStyles.deactiveType}>
+              <Text style={typeChangeBtnStyles.deactiveFont}>오늘의 스탬프</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickDiarySwitchInDiaryView()}}>
+              {/* <MCIcon name='lock-open-variant' color="#FFCC4D" style={{ fontWeight: 'bold', fontSize: 18}} /> */}
+              <Text style={typeChangeBtnStyles.activeFont}>Moo의 편지함</Text>
+              {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
+                <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
+              ) : (<View></View>)}
+            </TouchableOpacity>
+          </View>
+        )
       )}
 
       {/* [오늘의 스탬프] */}
@@ -803,7 +814,7 @@ const Weekly = () => {
         )
       ) : ( // [Moo의 편지함]
       todayReport!==null ? ( // 일기 있음
-        <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }}>
+        <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }} ref={scrollViewRef}>
           <View>
             <View style={[styles.title, {marginTop: 20,}]}>
             <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429', }}>다이어리</Text>
@@ -1422,7 +1433,7 @@ const typeChangeBtnStyles = StyleSheet.create({
     width: 4,
     height: 4,
     top: 6,
-    right: 48,
+    right: 12,
     backgroundColor: '#FF7168', // 타원의 색상을 지정하세요
     borderRadius: 4, // 절반의 크기로 borderRadius를 설정하여 타원 모양으로 만듭니다
     position: 'absolute', // 원하는 위치에 배치하려면 position을 'absolute'로 설정합니다
