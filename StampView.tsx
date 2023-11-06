@@ -252,6 +252,26 @@ const StampView = () => {
       backgroundColor: '#FFFFFF',
       gap: 10,
     },
+    blank: {
+      ...Platform.select({
+        ios : {
+          width: iOSButtonWidth,
+        },
+        android : {
+          width: buttonWidth, 
+        },
+      }),
+      height: 84 * scale, // 기본 높이에 비율을 곱함
+      borderRadius: 12 * scale, // 기본 borderRadius에 비율을 곱함
+      marginBottom: 20 * scale, // 기본 marginBottom에 비율을 곱함
+      justifyContent: 'center',
+      alignItems: 'center',
+      // borderWidth: 1,
+      // borderStyle: 'dashed',
+      // borderColor: '#7CD0B2',
+      // backgroundColor: '#FFFFFF',
+      gap: 10,
+    },
     buttonEmotion: {
       fontSize: 24 * scale, // 기본 fontSize에 비율을 곱함
     },
@@ -615,6 +635,8 @@ const StampView = () => {
         }}>
           <Image source={require('./assets/add.png')} />
         </TouchableOpacity>
+        {customStamps.length%4 === 1 || customStamps.length%4 === 2? (<View style={styles.blank}/>) : (<View/>)}
+        {customStamps.length%4 === 1 ? (<View style={styles.blank}/>) : (<View/>)}
       </ScrollView>
       {addStampModalVisible && (
         <View style={styles.overlay} />
@@ -746,6 +768,7 @@ const StampView = () => {
         </TouchableWithoutFeedback>
       </Modal> */}
     </View>
+    {/* 모달 영역 */}
     <ModalRN visible={addStampModalVisible} animationType='slide' transparent>
         <View style={styles.addStampModalContainer}>
           <View style={styles.addStampModalTitleContainer}>
@@ -795,39 +818,39 @@ const StampView = () => {
             </View>
           </View>
         </View>
-      </ModalRN>
-      <Modal 
-        isVisible={isLodingFinishModalVisible}
-        animationIn={"fadeIn"}
-        animationOut={"fadeOut"}
-        backdropColor='#CCCCCC' 
-        backdropOpacity={0.9}
-        style={{ alignItems:'center' }}
-        backdropTransitionInTiming={0} // Disable default backdrop animation
-        backdropTransitionOutTiming={0} // Disable default backdrop animation
-      >
-        <View style={styles.finishLodingModal}>
-          {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
-          <Image 
-            source={require('./assets/colorMooMini.png')}
-            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
-          <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
-            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>!~</Text>
-          </View>
-          <View style={{alignItems: 'center',}}>
-            <Text style={{ color: '#475467', fontSize: 14, }}>{userName}의 새로운 감정을 환영한다무~</Text>
-          </View>
-          <View style={{ flexDirection: 'row', marginTop: 20 }}>
-            <View style={{ flexDirection: 'row', flex: 1,}}>
-              <TouchableOpacity style={styles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false);}}>
-                <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
-              </TouchableOpacity>
-            </View>
-          </View>       
+    </ModalRN>
+    <Modal 
+      isVisible={isLodingFinishModalVisible}
+      animationIn={"fadeIn"}
+      animationOut={"fadeOut"}
+      backdropColor='#CCCCCC' 
+      backdropOpacity={0.9}
+      style={{ alignItems:'center' }}
+      backdropTransitionInTiming={0} // Disable default backdrop animation
+      backdropTransitionOutTiming={0} // Disable default backdrop animation
+    >
+      <View style={styles.finishLodingModal}>
+        {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+        <Image 
+          source={require('./assets/colorMooMini.png')}
+          style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+        <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+          <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
+          <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+          <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>!~</Text>
         </View>
-      </Modal>
+        <View style={{alignItems: 'center',}}>
+          <Text style={{ color: '#475467', fontSize: 14, }}>{userName}의 새로운 감정을 환영한다무~</Text>
+        </View>
+        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+          <View style={{ flexDirection: 'row', flex: 1,}}>
+            <TouchableOpacity style={styles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false);}}>
+              <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+            </TouchableOpacity>
+          </View>
+        </View>       
+      </View>
+    </Modal>
     </>
   );
 };

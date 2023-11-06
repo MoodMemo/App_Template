@@ -97,7 +97,7 @@ const Weekly = () => {
 
   useEffect(() => {
     // 컴포넌트가 마운트될 때 스크롤을 최하단으로 이동
-    if (stampORdiary) { scrollViewRef.current.scrollToEnd({ animated: true });}
+    // if (stampORdiary) { scrollViewRef.current.scrollToEnd({ animated: true });}
   }, []);
 
   // 1. 오늘 날짜 & 2. 스탬프리스트
