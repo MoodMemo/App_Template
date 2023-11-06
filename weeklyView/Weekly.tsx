@@ -93,6 +93,13 @@ const Dropdown: React.FC<DropdownProps> = ({
 };
 
 const Weekly = () => {
+  const scrollViewRef = useRef(null);
+
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 스크롤을 최하단으로 이동
+    scrollViewRef.current.scrollToEnd({ animated: true });
+  }, []);
+
   // 1. 오늘 날짜 & 2. 스탬프리스트
   const [today, setToday] = useState<dayjs.Dayjs>(dayjs());
   const [tryToChangeToday, setTryToChangeToday] = useState<dayjs.Dayjs>(today);
@@ -106,7 +113,7 @@ const Weekly = () => {
       console.log("isEditMode: ", isEditMode);
       setToday(date); amplitude.changeToday(date.format('YYYY-MM-DD'));
       setAndCheckTodayReport(date);
-      setTimelineData(getStamp(date));
+      setTimelineData(getStamp(date)); // getStamp 함수 안에서 정렬을 진행함.
     }
   };
 
@@ -148,11 +155,13 @@ const Weekly = () => {
   const [isCanceled, setIsCanceled] = useState(false);
 
   const [isFirstDiaryToday, setIsFirstDiaryToday] = useState(false);
+  const [isMooRead, setIsMooRead] = useState(false); // true 가 읽은거
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
 
     console.log('isFirstDiaryToday : ',isFirstDiaryToday);
 
+    setIsMooRead(true);
     setIsLodingModalVisible(true);
 
     const todayStampList = [];
@@ -217,6 +226,8 @@ const Weekly = () => {
           }).catch((error)=>{
             console.error('Failed to GET Server Time');
           })
+          setIsEventModalVisible(true);
+          setIsLodingModalVisible(false);
           setIsLodingFinishModalVisible(true);
         }
       })
@@ -325,6 +336,10 @@ const Weekly = () => {
   };
 
   const [stampORdiary, setStampORdiary] = useState(true); // true = stamp, false = diary
+  const handleStampORDiaryFromPFM = () => {
+    setStampORdiary(!stampORdiary);
+    setTimelineData(getStamp(today));
+  }
   const ReadyToGenerateDiary = () => {
     return (
       <View style={{flex: 1, alignItems: 'center', }}>
@@ -342,7 +357,7 @@ const Weekly = () => {
             style={{ width: 104, height: (110 * 104) / 104 , marginTop: 20, marginBottom: 40}} // 비율을 유지하며 height 자동 조절
           />
           <TouchableOpacity style={[bubbleStyles.reply, {width: 184, height: 46, marginBottom: 10}]} 
-            onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}} >
+            onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}}>
             <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>무가 만들어줘!</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[bubbleStyles.reply, {width: 184, height: 46, marginBottom: 10, borderColor: '#FFCC4D'}]} 
@@ -420,8 +435,9 @@ const Weekly = () => {
   const [timelineData, setTimelineData] = useState(getStamp(today));
   const dateFormat = {
     // ko-KR
+    // en-US
     // hour: '2-digit', minute: '2-digit', hour12: true,
-    hour: "numeric", minute: "numeric" ,
+    hour: "numeric", minute: "numeric" , 
   };
   const [dropdownButtonVisible, setDropdownButtonVisible] = useState(false);
   const [stampClickModalVisible, setStampClickModalVisible] = useState(false);
@@ -523,7 +539,7 @@ const Weekly = () => {
   // console.log(repository.getAllCustomStamps()[0].pushedCnt);
   return (
     
-    <View style={{backgroundColor: '#FAFAFA', flex:1}} ref={firstRef}>
+    <View style={{backgroundColor: '#FFFFF9', flex:1}} ref={firstRef}>
       <StatusBar
         backgroundColor="#FFFFFF"
         barStyle='dark-content'
@@ -642,17 +658,18 @@ const Weekly = () => {
 
       </View>
 
-      {/* 3 & 4 & 5 */}
+      {/* status bar */}
       {stampORdiary ? (
         <View style={typeChangeBtnStyles.twotypebtn}>
           <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.clickStampSwitchInStampView()}}>
             <Text style={typeChangeBtnStyles.activeFont}>오늘의 스탬프</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {setStampORdiary(false); amplitude.clickDiarySwitchInStampView();}} style={typeChangeBtnStyles.deactiveType}>
-            {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
+            {/* {todayReport == null && getEmoji(getStamp(today)).length >= 2 ? (
               <View style={typeChangeBtnStyles.canGenerateDiaryDot}></View>
-            ) : (<View></View>)}
-            <Text style={typeChangeBtnStyles.deactiveFont}>Moo의 편지함</Text>
+            ) : (<View></View>)} */}
+            <MCIcon name='lock' color="#B7B7B7" style={{ fontWeight: 'bold', fontSize: 18}} />
+            <Text style={typeChangeBtnStyles.deactiveFont}> Moo의 편지함</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -669,236 +686,245 @@ const Weekly = () => {
         </View>
       )}
 
-      {stampORdiary ? ( // 오늘의 스탬프
-        getEmoji(getStamp(today)).length !== 0 ? ( // 스탬프 exists
-          <View style={{ alignItems: 'center', flex: 1,}}>
-            <View style={{ flexDirection: 'row', marginTop: 16, marginHorizontal: 16, }}>
-              <ScrollView>
-                <View style={Timelinestyles.container}>
-                  {timelineData.map((item, index) => (
-                    <View key={index} style={Timelinestyles.timelineItem}>
-                      
-                      {/* 이모지 */}       
-                      <View style={Timelinestyles.emojiContainer}>
-                        <Text style={{fontSize: 24, color: 'black',}}>{item.emoji}</Text>
-                        {index < timelineData.length - 1 && <View style={Timelinestyles.line2} />}
-                      </View>
-
-                      {/* 텍스트 */}
-                      <View style={Timelinestyles.block}>
-
-                        <View style={Timelinestyles.title}>
-                          <Text style={{fontSize: 14, color: '#212429'}}>{item.stampName}</Text>
-                          <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
-                            <Text style={{ fontSize: 14, color: '#495057'}} >{item.dateTime.toLocaleTimeString('en-US', dateFormat)}    </Text> 
-                            {/* 수정 & 삭제 */}
-                            <View>
-                              <TouchableOpacity
-                                onPress={() => {setDropdownButtonVisible(!dropdownButtonVisible), getBoxMessure(index); setTmpChosenStamp(item); amplitude.clickStampDotButton();}}
-                                ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
-                              >
-                                <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 12}} />
-                              </TouchableOpacity>
-                            </View>
-                            {/* 2. 스탬프 삭제 경고 모달 */}
-                            <Modal isVisible={isDeletingStampModalVisible}
-                              animationIn={"fadeIn"} animationOut={"fadeOut"}
-                              backdropColor='#CCCCCC' backdropOpacity={0.9}
-                              style={{ alignItems:'center' }}
-                              backdropTransitionInTiming={0} // Disable default backdrop animation
-                              backdropTransitionOutTiming={0} // Disable default backdrop animation
-                            >
-                              <View style={TimelineDiaryStyles.finishLodingModal}>
-                                {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
-                                <Image 
-                                  source={require('../assets/colorMooMini.png')}
-                                  style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
-                                <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-                                  <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>정말로 기록한 스탬프를 삭제하겠냐</Text>
-                                  <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
-                                  <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
-                                </View>
-                                <View style={{alignItems: 'center',}}>
-                                  <Text style={{ color: '#475467', fontSize: 15, }}>되돌릴 수 없다무..!</Text>
-                                </View>
-                                <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                                  <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
-                                    <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStampModalVisible(false); amplitude.cancelToDeleteStamp();}}>
-                                      <Text style={{ color: '#344054', fontSize: 18, fontWeight: '600',}}>취소</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStampModalVisible(false);}}>
-                                      <Text style={{ color: '#ffffff', fontSize: 18, fontWeight: '600',}}>확인</Text>
-                                    </TouchableOpacity>
-                                  </View>
-                                </View>
-                                          
-                              </View>
-                            </Modal>
-                            {/* 3. 스탬프 수정 팝업 온 */}
-                            <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal} stamp={tmpChosenStamp} firstRef={firstRef} />
+      {/* [오늘의 스탬프] */}
+      {stampORdiary ? (
+        // 1. 스탬프가 있을 때
+        getEmoji(getStamp(today)).length !== 0 ? (
+        <ScrollView contentContainerStyle={{flexGrow: 1, }} ref={scrollViewRef}>
+          {/* 내가 누른 스탬프 영역 */}
+          <View style={Timelinestyles.container}>{timelineData.map((item, index) => ( <View key={index} style={{alignItems: 'flex-end'}}>
+            {/* 스탬프 입력 시간 */}
+            <Text style={{ fontSize: 14, color: '#495057'}} >{item.dateTime.toLocaleTimeString('ko-KR', dateFormat)}</Text> 
+            {/* 스탬프 블럭 */}
+            <View style={{flexDirection: 'row', }}>
+              {/* 이모지 & 1(안읽음 표시)*/}
+              <View style={Timelinestyles.emojiContainer}>
+                <Text style={{fontSize: 24, color: 'black',}}>{item.emoji}</Text>
+                { (!isMooRead && !todayReport) ? (<Text style={{color: '#FF7168',}}>1</Text>) :(<Text/>)}
+                {/* <Text style={{color: '#FF7168',}}>1</Text> */}
+              </View>
+              {/* 스탬프 영역 */}
+              <View style={Timelinestyles.block}>
+                <View style={Timelinestyles.title}>
+                  <Text style={{fontSize: 14, color: '#212429'}}>{item.stampName}</Text>
+                  <View style={{flexDirection: 'row', alignItems: 'baseline' }}>
+                    {/* 수정 & 삭제 */}
+                    <View>
+                      <TouchableOpacity
+                        onPress={() => {setDropdownButtonVisible(!dropdownButtonVisible), getBoxMessure(index); setTmpChosenStamp(item); amplitude.clickStampDotButton();}}
+                        ref={(ref) => (buttonRefs.current[index] = ref)} // ref 배열에 추가
+                      >
+                        <EntypoIcon name='dots-three-horizontal' color="#212429" style={{ fontWeight: 'bold', fontSize: 12}} />
+                      </TouchableOpacity>
+                    </View>
+                    {/* 2. 스탬프 삭제 경고 모달 */}
+                    <Modal isVisible={isDeletingStampModalVisible}
+                      animationIn={"fadeIn"} animationOut={"fadeOut"}
+                      backdropColor='#CCCCCC' backdropOpacity={0.9}
+                      style={{ alignItems:'center' }}
+                      backdropTransitionInTiming={0} // Disable default backdrop animation
+                      backdropTransitionOutTiming={0} // Disable default backdrop animation
+                    >
+                      <View style={TimelineDiaryStyles.finishLodingModal}>
+                        {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+                        <Image 
+                          source={require('../assets/colorMooMini.png')}
+                          style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+                        <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+                          <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>정말로 기록한 스탬프를 삭제하겠냐</Text>
+                          <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+                          <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>?</Text>
+                        </View>
+                        <View style={{alignItems: 'center',}}>
+                          <Text style={{ color: '#475467', fontSize: 15, }}>되돌릴 수 없다무..!</Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                          <View style={{ flexDirection: 'row', flex: 1, gap: 12}}>
+                            <TouchableOpacity style={TimelineDiaryStyles.cancelOut2EditBtn} onPress={() => {setIsDeletingStampModalVisible(false); amplitude.cancelToDeleteStamp();}}>
+                              <Text style={{ color: '#344054', fontSize: 18, fontWeight: '600',}}>취소</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={TimelineDiaryStyles.confirmBtn} onPress={() => {handleDeleteConfirm(tmpChosenStamp); setIsDeletingStampModalVisible(false);}}>
+                              <Text style={{ color: '#ffffff', fontSize: 18, fontWeight: '600',}}>확인</Text>
+                            </TouchableOpacity>
                           </View>
                         </View>
-
-                        <View style={Timelinestyles.line}></View>
-                        <Text style={Timelinestyles.title}>{item.memo}</Text>
-                        {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
-                        {item.imageUrl && 
-                          <Image 
-                            source={{ uri: item.imageUrl }} 
-                            style={{ width: 54, height: 54, borderRadius: 4, marginHorizontal: 10, marginBottom: 10 }}  // adjust width and height as needed
-                            onLoadEnd={() => console.log(item.imageUrl)}
-                          />
-                        }
-                        {/* // 이미지 여러개일 경우 */}
-                        {/* {item.imageUrl && item.imageUrl.map((url) => (
-                          <Image 
-                            source={{ uri: url }} 
-                            style={{ width: 54, height: 54, borderRadius: 4, marginHorizontal: 10, marginBottom: 10 }}  // adjust width and height as needed
-                          />
-                        ))} */}
-  
+                                  
                       </View>
+                    </Modal>
+                    {/* 3. 스탬프 수정 팝업 온 */}
+                    <StampClick visible={stampClickModalVisible} onClose={closeStampClickModal} stamp={tmpChosenStamp} firstRef={firstRef} />
+                  </View>
+                </View>
+                <View style={Timelinestyles.line}></View>
+                <Text style={Timelinestyles.title}>{item.memo}</Text>
+                {item.imageUrl && <Image source={{ uri: item.imageUrl }} 
+                    style={{ width: 54, height: 54, borderRadius: 4, marginHorizontal: 10, marginBottom: 10 }}  // adjust width and height as needed
+                    onLoadEnd={() => console.log(item.imageUrl)}
+                />}
+                {/* // 이미지 여러개일 경우 */}
+                {/* {item.imageUrl && item.imageUrl.map((url) => (
+                  <Image 
+                    source={{ uri: url }} 
+                    style={{ width: 54, height: 54, borderRadius: 4, marginHorizontal: 10, marginBottom: 10 }}  // adjust width and height as needed
+                  />
+                ))} */}
+              </View>
+            </View>
+          </View>
+            
+          ))}
+          </View>
+          {/* Moo의 답장 영역 */}
+          {getEmoji(getStamp(today)).length === 1 && today.isSame(dayjs(), 'day') ? ( // 1-1. 스탬프 1개
+            <View style={{ flex: 1 }}><nodata.Present_One_MiniView/></View>
+          ) : ( !isLodingModalVisible && !todayReport ? ( // 1-2. 스탬프 2개, 아직 일기 안 씀
+            <View style={{ flex: 1, justifyContent: 'flex-end'}}>
+              {/* 무 이미지 */}
+              <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity style={{}} onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}}>
+                  <Image source={require('../assets/moo_two.png')} style={{ width: 160, height: (156.84 * 160) / 160, margin: 17,}}/>
+                </TouchableOpacity>
+                <View style={{flex: 1}}/>  
+              </View>
+              {/* 무 상태 */}
+              <View style={[bubbleStyles.moo_status_bar, {backgroundColor: '#72D193', alignItems: 'center'}]}>
+                <MCIcon name='lock-open' color="#fff" style={{ fontWeight: 'bold', fontSize: 25}} />
+                <Text style={{fontSize: 13, color: '#fff', }}> Moo를 톡 건드려서 깨워보세요! 편지를 보내드립니다.</Text>
+              </View>
+            </View>
+          ) : ( !todayReport ? ( // 1-3. 스탬프 2개, 일기 쓰는 중
+            <View style={{ flex: 1 }}><nodata.Present_WakeUp_MiniView/></View>
+          ) : ( // 1-4. 일기 다 씀
+            <View style={{ flex: 1 }}><nodata.Present_FinishWriting_MiniView handleStampORDiaryFromPFM={handleStampORDiaryFromPFM}/></View>
+          )))}
+        </ScrollView>
+        ) : ( // 2. 스탬프가 없을 때, 날짜에 따라 다름
+        <StampList_NoStamp/>
+        )
+      ) : ( // [Moo의 편지함]
+      todayReport!==null ? ( // 일기 있음
+        <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }}>
+          <View>
+            <View style={[styles.title, {marginTop: 20,}]}>
+            <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429', }}>다이어리</Text>
+              {!isEditMode ? (
+                <View style={{flexDirection: 'row', gap: 10}}>
+                <TouchableOpacity onPress={ () => {handleEditButton(); amplitude.editAIDiary(today.format('YYYY-MM-DD'));}}>
+                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                    <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
+                    <Text style={{fontSize: 12, color: '#495057'}}> 수정</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={ () => {handleDeleteDiaryButton();}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                  <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
+                  <Text style={{fontSize: 12, color: '#495057'}}> 삭제</Text>
+                </View>
+              </TouchableOpacity>
+              </View>
+              ) : (
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                  <TouchableOpacity onPress={() => {setIsWarningModalVisible(true); amplitude.cancelToEditDiary();}}>
+                    <Text style={{ fontSize: 14, color: '#495057' }}>취소</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary(today.format('YYYY-MM-DD'));}}>
+                    <Text style={{ fontSize: 14, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+
+            <View style={diaryStyles.diaryContainer}>
+              
+              {/* date */}
+              {isEditMode ? (
+                <Text style={{fontSize: 14, color: '#dbdbdb', marginBottom: 12}}>
+                  {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
+                </Text>
+              ) : (
+                <Text style={{fontSize: 14, color: '#212429', marginBottom: 12}}>
+                {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
+              </Text>
+              )}
+              
+              {/* title */}
+              <View style={{ flexDirection: 'row'}}>
+                {isEditMode ? (
+                  <TextInput
+                    style={diaryStyles.editDiary}
+                    value={editedTitle}
+                    onChangeText={handleEditedTitleChange}
+                    onFocus={() => {amplitude.editTitle();}}
+                  />
+                ) : (
+                  <Text style={{ fontSize: 18, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
+                )}
+              </View>
+              
+              {/* line */}
+              <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 75 }]} />
+              
+              {/* bodytext */}
+              <View style={{ flexDirection: 'row'}}>
+                {isEditMode ? (
+                  <TextInput
+                    style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
+                    value={editedBodytext}
+                    onChangeText={handleEditedBodyTextChange}
+                    onFocus={() => {amplitude.editBodyText();}}
+                    multiline
+                  />
+                ) : (
+                  <Text style={{ fontSize: 14, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
+                )}
+              </View>
+
+              {/* keyword */}
+              {isEditMode ? (
+                <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+                  {todayReport.keyword.map((keyword) => (
+                    <TouchableOpacity key={keyword} style={diaryStyles.keyword} onPress={() => {amplitude.clickKeyword();}} disabled={true}>
+                      <Text style={{color:'#DBDBDB',fontSize:16}}>{keyword}</Text>
+                    </TouchableOpacity>
+                    // <Text key={keyword} style={[diaryStyles.keyword, {color:'#DBDBDB'}]}>{keyword}</Text>
+                  ))}
+                </View>
+              ) : (
+                <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+                  {todayReport.keyword.map((keyword) => (
+                    <View style={diaryStyles.keyword}>
+                      <Text key={keyword} style={{fontSize:16}}>{keyword}</Text>
                     </View>
                   ))}
                 </View>
-                {getEmoji(getStamp(today)).length === 1 && today.isSame(dayjs(), 'day')? (
-                  <View style={{ alignItems: 'center', height: 280, marginTop: 15, }}>
-                    <nodata.PleaseOneMoreStampMini/>
-                  </View>
-                  ) : (<View></View>)}
-                  
+              )}
+              {/* 해당 날짜에 timelineData에 기록된 모든 사진들 가로로 */}
+              <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ marginTop: 10, }}>
+              {timelineData.map((item, index) => (
+                <View key={index}
+                  style={{ marginLeft: index === 0 ? 0 : 12, }}
+                >
+                  {item.imageUrl && 
+                    <Image 
+                      source={{ uri: item.imageUrl }} 
+                      style={{ width: 80, height: 80, borderRadius: 6, marginBottom: 10 }}  // adjust width and height as needed
+                    />
+                  }
+                </View>
+              ))}
               </ScrollView>
-              
             </View>
-            
           </View>
-        ) : ( // 스탬프가 없을 때, 날짜에 따라 다름
-          <StampList_NoStamp/>
-        ))
-      : ( // ai 일기
-        todayReport!==null ? ( // 일기 있음
-          <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }}>
-            <View>
-              <View style={[styles.title, {marginTop: 20,}]}>
-              <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429', }}>다이어리</Text>
-                {!isEditMode ? (
-                  <View style={{flexDirection: 'row', gap: 10}}>
-                  <TouchableOpacity onPress={ () => {handleEditButton(); amplitude.editAIDiary(today.format('YYYY-MM-DD'));}}>
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                      <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
-                      <Text style={{fontSize: 12, color: '#495057'}}> 수정</Text>
-                    </View>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={ () => {handleDeleteDiaryButton();}}>
-                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                    <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
-                    <Text style={{fontSize: 12, color: '#495057'}}> 삭제</Text>
-                  </View>
-                </TouchableOpacity>
-                </View>
-                ) : (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                    <TouchableOpacity onPress={() => {setIsWarningModalVisible(true); amplitude.cancelToEditDiary();}}>
-                      <Text style={{ fontSize: 14, color: '#495057' }}>취소</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary(today.format('YYYY-MM-DD'));}}>
-                      <Text style={{ fontSize: 14, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
-
-              <View style={diaryStyles.diaryContainer}>
-                
-                {/* date */}
-                {isEditMode ? (
-                  <Text style={{fontSize: 14, color: '#dbdbdb', marginBottom: 12}}>
-                    {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
-                  </Text>
-                ) : (
-                  <Text style={{fontSize: 14, color: '#212429', marginBottom: 12}}>
-                  {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
-                </Text>
-                )}
-                
-                {/* title */}
-                <View style={{ flexDirection: 'row'}}>
-                  {isEditMode ? (
-                    <TextInput
-                      style={diaryStyles.editDiary}
-                      value={editedTitle}
-                      onChangeText={handleEditedTitleChange}
-                      onFocus={() => {amplitude.editTitle();}}
-                    />
-                  ) : (
-                    <Text style={{ fontSize: 18, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
-                  )}
-                </View>
-                
-                {/* line */}
-                <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 75 }]} />
-                
-                {/* bodytext */}
-                <View style={{ flexDirection: 'row'}}>
-                  {isEditMode ? (
-                    <TextInput
-                      style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
-                      value={editedBodytext}
-                      onChangeText={handleEditedBodyTextChange}
-                      onFocus={() => {amplitude.editBodyText();}}
-                      multiline
-                    />
-                  ) : (
-                    <Text style={{ fontSize: 14, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
-                  )}
-                </View>
-
-                {/* keyword */}
-                {isEditMode ? (
-                  <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-                    {todayReport.keyword.map((keyword) => (
-                      <TouchableOpacity key={keyword} style={diaryStyles.keyword} onPress={() => {amplitude.clickKeyword();}} disabled={true}>
-                        <Text style={{color:'#DBDBDB',fontSize:16}}>{keyword}</Text>
-                      </TouchableOpacity>
-                      // <Text key={keyword} style={[diaryStyles.keyword, {color:'#DBDBDB'}]}>{keyword}</Text>
-                    ))}
-                  </View>
-                ) : (
-                  <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-                    {todayReport.keyword.map((keyword) => (
-                      <View style={diaryStyles.keyword}>
-                        <Text key={keyword} style={{fontSize:16}}>{keyword}</Text>
-                      </View>
-                    ))}
-                  </View>
-                )}
-                {/* 해당 날짜에 timelineData에 기록된 모든 사진들 가로로 */}
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ marginTop: 10, }}>
-                {timelineData.map((item, index) => (
-                  <View key={index}
-                    style={{ marginLeft: index === 0 ? 0 : 12, }}
-                  >
-                    {item.imageUrl && 
-                      <Image 
-                        source={{ uri: item.imageUrl }} 
-                        style={{ width: 80, height: 80, borderRadius: 6, marginBottom: 10 }}  // adjust width and height as needed
-                      />
-                    }
-                  </View>
-                ))}
-                </ScrollView>
-              </View>
-            </View>
-          </ScrollView>
-          ) : ( // 일기가 없을 때, 날짜 & 스탬프 개수에 따라 다름
-          <AIDiary_NoDiary/> // 일어나면 보세요 여기 해야함 !! 여기에 맞는 컨스탄트 뷰를 세팅해야합니다요
-        )
+        </ScrollView>
+        ) : ( // 일기가 없을 때, 날짜 & 스탬프 개수에 따라 다름
+        <AIDiary_NoDiary/> // 일어나면 보세요 여기 해야함 !! 여기에 맞는 컨스탄트 뷰를 세팅해야합니다요
+      )
       )}
 
 
       {/* 4-1. 일기 생성 로딩 모달 */}
       <Modal 
-            isVisible={isLodingModalVisible}
+            isVisible={false}
             animationIn={"fadeIn"}
             animationOut={"fadeOut"}
             backdropColor='#CCCCCC' 
@@ -972,7 +998,6 @@ const Weekly = () => {
       onBackdropPress={() => {
         amplitude.cancelGetLeavesModal();//일기 - 은행잎 획득 모달 끔
         setIsEventModalVisible(!isEventModalVisible);
-        
       }}
       onModalHide={()=>{
         setIsFirstDiaryToday(false);
@@ -1203,6 +1228,9 @@ const bubbleStyles = StyleSheet.create({
     borderWidth: 1,
     overflow: 'hidden', // 클리핑 적용
   },
+  moo_status_bar: {
+    backgroundColor: '#FCD49B', width: '100%', zIndex: 10, paddingVertical: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end'
+  },
 });
 
 const dropDownStyles = StyleSheet.create({
@@ -1386,7 +1414,7 @@ const typeChangeBtnStyles = StyleSheet.create({
     backgroundColor: '#F3F3F3',
     alignItems: 'center',
     borderRadius: 8,
-    flexDirection: 'column',
+    flexDirection: 'row',
     justifyContent: 'center',
   },
   deactiveFont: {fontSize: 16, color: '#B7B7B7', fontWeight:'400'},
@@ -1547,23 +1575,20 @@ interface TimelineProps {
 }
 const Timelinestyles = StyleSheet.create({
   container: {
-    flex: 1, // 양쪽 확장
     alignItems: 'center',
-    // backgroundColor: 'pink', 
-    alignSelf: 'flex-start', // 상단 정렬
-  },
-  timelineItem: {
-    flexDirection: 'row',
-    paddingVertical: 10,
+    alignSelf: 'flex-end', // 상단 정렬
+    marginTop: 16, marginHorizontal: 16, 
+    gap: 16
   },
   block: {
-    flex: 1,
+    // flex: 1,
     color: '#212429',
-    marginBottom: 10,
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-    borderColor: '#F0F0F0',
-    borderWidth: 1
+    borderRadius: 10,
+    borderTopRightRadius: 0,
+    backgroundColor: '#E1EFE6',
+    minWidth: 230,
+    // borderColor: '#72D193',
+    // borderWidth: 1
   },
   title: {
     flexDirection: 'row',
@@ -1577,7 +1602,7 @@ const Timelinestyles = StyleSheet.create({
     left: 0,
     right: 0,
     borderTopWidth: 1, /* 선분 스타일 설정 (여기서는 1px 두께의 선으로 설정) */
-    borderTopColor: '#F0F0F0', /* 선분 색상 설정 */
+    borderTopColor: '#FFFFF9', /* 선분 색상 설정 */
   },
   line2: {
     position: 'absolute',
@@ -1589,8 +1614,9 @@ const Timelinestyles = StyleSheet.create({
   },
   emojiContainer: {
     flexDirection: 'column',
-    // alignItems: 'center',
-    marginRight: 10,
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginRight: 6,
   },
 });
 const TimelineDropDownStyles = StyleSheet.create({
