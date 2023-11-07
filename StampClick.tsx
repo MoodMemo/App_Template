@@ -7,6 +7,8 @@ import * as amplitude from './AmplitudeAPI';
 import realm from './src/localDB/document';
 // import Modal from 'react-native-modal';
 import * as ImagePicker from 'react-native-image-picker';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const includeExtra = true;
 // 화면의 가로 크기
@@ -158,6 +160,19 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     });
   };
   const styles = StyleSheet.create({
+    mooBtn: {
+      backgroundColor: '#72D193',
+      marginHorizontal: 16, borderRadius: 8, padding: 10, marginBottom: 16,
+      alignItems: 'center', flexDirection: 'row', justifyContent: 'center'
+    },
+    btnText: {
+      fontFamily: 'Pretendard',
+      fontSize: 20,
+      fontStyle: 'normal',
+      fontWeight: '600',
+      color: '#FFFFFF',
+      // lineHeight: 24,
+    },
     container: {
       flex: 1,
       marginTop: 19,
@@ -202,14 +217,17 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
       fontFamily: 'Pretendard',
     },
     modalContainer: {
-      flex: 1,
+      // flex: 1,
       justifyContent: 'flex-start',
       // alignItems: 'center',
       backgroundColor: '#FFFFFF',
+      // backgroundColor: 'black',
       width: '100%',
-      height: '100%',
+      height: '92%',
+      position: 'absolute',
+      bottom: 0,
       flexShrink: 0,
-      borderRadius: 16,
+      borderTopRightRadius: 16, borderTopLeftRadius: 16,
       marginTop: firstButtonY,
     },
     modalTitleContainer: {
@@ -223,14 +241,14 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     modalTitle: {
       color: '#212429',
       textAlign: 'center',
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: 'Pretendard',
       fontWeight: '400',
       fontStyle: 'normal',
     },
     modalText: {
       fontFamily: 'Pretendard',
-      fontSize: 12,
+      fontSize: 14,
       fontStyle: 'normal',
       fontWeight: '400',
     },
@@ -251,18 +269,18 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     stampContent: {
       flexDirection: 'row',
       display: 'flex',
-      paddingTop: 8,
-      paddingBottom: 8,
-      justifyContent: 'flex-start',
+      paddingVertical: 12,
+      justifyContent: 'center',
       alignItems: 'center',
       gap: 8,
     },
     stampText: {
       fontFamily: 'Pretendard',
-      fontSize: 14,
+      fontSize: 20,
       fontStyle: 'normal',
       fontWeight: '400',
-      lineHeight: 20,
+      lineHeight: 24,
+      color: '#212429',
     },
     timeContainer: {
       flexDirection: 'row',
@@ -305,6 +323,7 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
       borderWidth: 1,
       borderColor: '#F0F0F0',
       borderRadius: 6,
+      marginTop: 8,
     },
     memoText: {
       alignSelf: 'stretch',
@@ -345,6 +364,7 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
       // flexWrap: 'wrap',
       width: '100%',
       gap: 12,
+      marginTop: 16
     },
     imgButton: {
       flexDirection: 'column',
@@ -428,92 +448,93 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
   return (
     <View>
     <Modal visible={visible} animationType="slide" transparent>
+      <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
         <View style={styles.modalContainer}>
-
           { !timeModalVisible ? (
             // 첫 번째 모달의 컨텐츠
             <>
+              {/* 1열: X & 시간 */}
               <View style={styles.modalTitleContainer}>
+                {/* X 버튼 */}
                 <TouchableOpacity onPress={() => {onClose(); amplitude.backToWeeklyFromStampEditModal();}}>
                   <Image source={require('./assets/close.png')} />
                 </TouchableOpacity>
-                <Text style={styles.modalTitle}>감정 수정</Text>
-                <TouchableOpacity onPress={() => {onClose();handleSaveButton(); amplitude.confirmToEditStamp();}}>
-                  <Image source={require('./assets/check.png')} />
+                {/* 시간 & 수정 연필 */}
+                <TouchableOpacity onPress={handleOpenTimeModal} style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                  <Text style={styles.modalTitle}>
+                    {date.getFullYear()}년 {date.getMonth() + 1}월 {date.getDate()}일 {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
+                  </Text>
+                  <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
                 </TouchableOpacity>
               </View>
-              <ScrollView horizontal={false}>
-                <View style={styles.stampContainer}>
-                  <Text style={styles.modalText}>찍은 스탬프</Text>
+              {/* 상세 내용 */}
+              <ScrollView horizontal={false} contentContainerStyle={{marginHorizontal: 16, marginTop: 2}}>
+                {/* 찍은 스탬프 */}
+                <View style={{borderBottomColor: '#7CD0B2', borderBottomWidth: 1, borderStyle: 'dashed', marginBottom: 18}}>
+                  <Text style={styles.modalText}>나의 감정은...</Text>
                   <View style={styles.stampContent}>
                     <Text style={styles.stampText}>{editingStamp.emoji}</Text>
                     <Text style={styles.stampText}>{editingStamp.stampName}</Text>
                   </View>
+                  {/* 구분선 */}
                 </View>
-                <View style={styles.timeContainer}>
-                  <Text style={styles.modalText}>기록 시간</Text>
-                  <TouchableOpacity onPress={handleOpenTimeModal}>
-                    <Text style={styles.timeText}>
-                      {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
-                    </Text>
+                {/* 메모 남기기 */}
+                <Text style={styles.modalText}>왜냐면...</Text>
+                <View style={styles.memoContent}>
+                  <TextInput
+                    style={styles.memoText}
+                    placeholder={editedMemo || "메모 작성하기 (추후 작성 가능)"}
+                    value={editedMemo}
+                    multiline={true}
+                    maxLength={500}
+                    onChangeText={handleMemoChange}
+                    // value={memo}
+                    numberOfLines={numberOfLines}
+                    onFocus={() => {amplitude.editMemo();}}
+                  />
+                  <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
+                </View>
+                {/* 사진 추가 */}
+                <View style={styles.imgContent}>
+                  <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
+                    selectionLimit: 1,
+                    mediaType: 'photo',
+                    includeBase64: false,
+                    includeExtra,
+                  })}>
+                    <Image source={require('./assets/add-circle.png')} />
+                    <Text style={styles.imgText}>사진 추가</Text>
                   </TouchableOpacity>
-                </View>
-                <View style={styles.horizontalLine} />
-                <View style={styles.memoContainer}>
-                  <Text style={styles.modalText}>메모 남기기</Text>
-                  <View style={styles.memoContent}>
-                    <TextInput
-                      style={styles.memoText}
-                      placeholder={editedMemo || "메모 작성하기 (추후 작성 가능)"}
-                      value={editedMemo}
-                      multiline={true}
-                      maxLength={500}
-                      onChangeText={handleMemoChange}
-                      // value={memo}
-                      numberOfLines={numberOfLines}
-                      onFocus={() => {amplitude.editMemo();}}
-                    />
-                    <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
-                  </View>
-                </View>
-                <View style={styles.imgContainer}>
-                  <Text style={styles.modalText}>사진 추가</Text>
-                  <View style={styles.imgContent}>
-                    <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
-                      selectionLimit: 1,
-                      mediaType: 'photo',
-                      includeBase64: false,
-                      includeExtra,
-                    })}>
-                      <Image source={require('./assets/add-circle.png')} />
-                      <Text style={styles.imgText}>사진 추가</Text>
-                    </TouchableOpacity>
-                    <ScrollView horizontal={true}>
-                    {response?.assets &&
-                      response?.assets.map(({uri}: {uri: string}) => (
-                        <View key={uri}>
-                          <Image
-                            resizeMode="cover"
-                            resizeMethod="scale"
-                            style={styles.image}
-                            source={{uri: uri}}
-                          />
-                        </View>
-                    ))}
-                    {(!response || !response?.assets) && selectedImageUri && (
-                      <View key={selectedImageUri}>
+                  <ScrollView horizontal={true}>
+                  {response?.assets &&
+                    response?.assets.map(({uri}: {uri: string}) => (
+                      <View key={uri}>
                         <Image
                           resizeMode="cover"
                           resizeMethod="scale"
                           style={styles.image}
-                          source={{uri: selectedImageUri}}
+                          source={{uri: uri}}
                         />
                       </View>
-                    )}
-                    </ScrollView>
-                  </View>
+                  ))}
+                  {(!response || !response?.assets) && selectedImageUri && (
+                    <View key={selectedImageUri}>
+                      <Image
+                        resizeMode="cover"
+                        resizeMethod="scale"
+                        style={styles.image}
+                        source={{uri: selectedImageUri}}
+                      />
+                    </View>
+                  )}
+                  </ScrollView>
                 </View>
               </ScrollView>
+              {/* Moo에게 보내기 버튼 */}
+              <TouchableOpacity onPress={() => {onClose();handleSaveButton(); amplitude.confirmToEditStamp();}} style={styles.mooBtn}>
+                <Text style={styles.btnText}>수정 완료</Text>
+                {/* <FontAwesomeIcon name='send-o' size={16} color="#fff"/> */}
+              </TouchableOpacity>
             </>
           ) : (
             // 두 번째 모달의 컨텐츠 (시간 변경 모달)
@@ -538,8 +559,8 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
               </TouchableWithoutFeedback>
             </>
           )}
-
         </View>
+      </View>
     </Modal>
     </View>
   );

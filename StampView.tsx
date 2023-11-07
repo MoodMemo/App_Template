@@ -668,9 +668,8 @@ const StampView = () => {
                     </View>
                     {/* 구분선 */}
                   </View>
-                  {/* 기록 시간 */}
-                  <Text style={styles.modalText}>왜냐면...</Text>
                   {/* 메모 남기기 */}
+                  <Text style={styles.modalText}>왜냐면...</Text>
                   <View style={styles.memoContent}>
                     <TextInput
                       style={styles.memoText}
