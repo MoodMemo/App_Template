@@ -403,14 +403,14 @@ const Weekly = () => {
     if (today.isSame(dayjs(), 'day')) return <nodata.Present_Zero_View/>; // today
     else if (today.isBefore(dayjs(), 'day')) {
       amplitude.clickPast_noStamp();
-      return <nodata.MooWasBoredView/>; // past 
+      return <nodata.Past_Zero_View/>; // past 
     }
     else {
       amplitude.clickFuture();
-      return <nodata.FromFutureView/>; // future
+      return <nodata.Future_View/>; // future
     }
   }
-  const AIDiary_NoDiary = () => {
+  const AIDiary_NoDiary = () => { // 안쓰는데 안지운겁니다요
     const stampCnt = getEmoji(getStamp(today)).length;
     if (today.isSame(dayjs(), 'day')) {
       if (stampCnt === 0) return <nodata.TellMeYourDayView/>; // 스탬프가 없을 때
@@ -421,12 +421,12 @@ const Weekly = () => {
       if (stampCnt >= 2) return <ReadyToGenerateDiary_forPast/>; // 스탬프가 2개일 때
       else {
         amplitude.clickPast_noDiary();
-        return <nodata.MooWasBoredView/>; // past
+        return <nodata.Past_Zero_View/>; // past
       }
     }
     else {
       amplitude.clickFuture_Diary();
-      return <nodata.FromFutureView/>; // future
+      return <nodata.Future_View/>; // future
     }
   }
   
@@ -787,7 +787,7 @@ const Weekly = () => {
           ))}
           </View>
           {/* Moo의 답장 영역 */}
-          {getEmoji(getStamp(today)).length === 1 && today.isSame(dayjs(), 'day') ? ( // 1-1. 스탬프 1개
+          {getEmoji(getStamp(today)).length === 1  ? ( // 1-1. 스탬프 1개 (&& today.isSame(dayjs(), 'day')) -> 이거 지움
             <View style={{ flex: 1 }}><nodata.Present_One_MiniView/></View>
           ) : ( !isLodingModalVisible && !todayReport ? ( // 1-2. 스탬프 2개, 아직 일기 안 씀
             <View style={{ flex: 1, justifyContent: 'flex-end'}}>

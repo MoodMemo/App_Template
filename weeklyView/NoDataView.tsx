@@ -404,6 +404,75 @@ export const Present_FinishWriting_MiniView = ({handleStampORDiaryFromPFM}) => {
 }
 
 
+export const Future_View = () => {
+  return (
+    <View style={{flex: 1, justifyContent: 'space-between'}}>
+      {/* 말풍선 영역 */}
+      <View style={{flex: 1, width: '100%', paddingHorizontal: 10,}}>
+        {/* 무 말풍선 섹션 */}
+        <View style={{marginTop: 15, flexDirection: 'row', gap: 10}}>
+          <Image 
+            source={require('../assets/profile.png')}
+            style={{ width: 34, height: 34 , zIndex: 100,}} // 비율을 유지하며 height 자동 조절
+          />
+          <View>
+            <View><Text style={{fontSize: 16, color: '#dbdbdb', fontWeight: 'bold'}}>Moo</Text></View>
+            <View style={[finalBubbleStyles.container, {zIndex: 100, backgroundColor: '#dbdbdb'}]}>
+              <Text style={{fontSize: 16, color: '#fff', }}>미래에서 왔냐무?</Text>
+            </View>
+            <View style={[finalBubbleStyles.container, {zIndex: 100, backgroundColor: '#dbdbdb'}]}>
+              <Text style={{fontSize: 16, color: '#fff', }}>타임머신은 없는데무!</Text>
+            </View>
+          </View> 
+        </View>
+      </View>
+      {/* 무 영역 */}
+      <View>
+        {/* 무 이미지 */}
+        {/* <Image source={require('../assets/boring_gray_0904.png')}
+          style={{ width: 130, height: (117.46 * 130) / 130 , margin: 17}}/> */}
+        {/* 무 상태 */}
+        <View style={[finalBubbleStyles.moo_status_bar, {backgroundColor: '#dbdbdb'}]}>
+          <MCIcon name='lock' color="#fff" style={{ fontWeight: 'bold', fontSize: 25}} />
+          <Text style={{fontSize: 18, color: '#fff', }}> Moo 깨우기 ...?</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+export const Past_Zero_View = () => {
+  return (
+    <View style={{flex: 1, justifyContent: 'space-between'}}>
+      {/* 말풍선 영역 */}
+      <View style={{flex: 1, width: '100%', paddingHorizontal: 10,}}>
+        {/* 무 말풍선 섹션 */}
+        <View style={{marginTop: 15, flexDirection: 'row', gap: 10}}>
+          <Image 
+            source={require('../assets/profile.png')}
+            style={{ width: 34, height: 34 , zIndex: 100,}} // 비율을 유지하며 height 자동 조절
+          />
+          <View>
+            <View><Text style={{fontSize: 16, color: '#dbdbdb', fontWeight: 'bold'}}>Moo</Text></View>
+            <View style={[finalBubbleStyles.container, {zIndex: 100, backgroundColor: '#dbdbdb'}]}>
+              <Text style={{fontSize: 16, color: '#fff', }}>심심했다무...</Text>
+            </View>
+          </View> 
+        </View>
+      </View>
+      {/* 무 영역 */}
+      <View>
+        {/* 무 이미지 */}
+        <Image source={require('../assets/boring_gray_0904.png')}
+          style={{ width: 130, height: (117.46 * 130) / 130 , margin: 17}}/>
+        {/* 무 상태 */}
+        <View style={[finalBubbleStyles.moo_status_bar, {backgroundColor: '#dbdbdb'}]}>
+          <MCIcon name='lock' color="#fff" style={{ fontWeight: 'bold', fontSize: 25}} />
+          <Text style={{fontSize: 18, color: '#fff', }}> Moo는 잘 잤다고 합니다</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
 
 
 
