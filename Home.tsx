@@ -30,6 +30,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 import * as nodata from './weeklyView/NoDataView';
 import { getStamp } from './weeklyView/DocumentFunc';
+import CustomStamp from './CustomStamp';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -303,26 +304,7 @@ const Home = ({name,first}:any) => {
       {/* 무의 메세지 영역 */}
       <nodata.Home_Moo_Message name={userName}/>
       {/* 나의 감정스탬프들 영역 */}
-      <View style={newStyles.customStamps}>
-        <Text style={{color: '#212429', fontSize: 18, alignSelf: 'center', marginTop: 15,}}>나의 감정스탬프들</Text>
-        {/* 옵션 & 삭제 영역 */}
-        <View style={styles.options}>
-          <Dropdown options={options} onSelectOption={handleOptionSelect} />
-          <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
-            {/* <Image source={require('./assets/edit.png')} /> */}
-            <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
-          </TouchableOpacity>
-          {/* // 된 거 */}
-          {/* <Button title="사진 테스트" onPress={checkPermission}/> */}
-          {/* <Button title="사진 불러오기" onPress={fetchPhotos}/> */}
-          {/* <Button title="사진 모달 띄우기" onPress={() => {
-            fetchPhotos();
-            setIsPhotoModalVisible(true);
-          }}/> */}
-        </View>
-        {/* 감정 스탬프 뷰 */}
-        <StampView/>
-      </View>
+      <CustomStamp handleFixButtonFromCSP={handleFixButton}/>
       {/* 스탬프 설정 모달 */}
       <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
     </View>

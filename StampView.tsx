@@ -614,9 +614,6 @@ const StampView = () => {
   });
   return (
     <>
-    {addStampModalVisible && (
-      <View style={styles.overlay} />
-    )}
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.stampView} horizontal={false}>
         {customStamps.map((stampButton) => (
@@ -634,9 +631,6 @@ const StampView = () => {
         {customStamps.length%4 === 1 || customStamps.length%4 === 2? (<View style={styles.blank}/>) : (<View/>)}
         {customStamps.length%4 === 1 ? (<View style={styles.blank}/>) : (<View/>)}
       </ScrollView>
-      {addStampModalVisible && (
-        <View style={styles.overlay} />
-      )}
       <ModalRN visible={modalVisible} animationType="slide" transparent>
         <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
           <View style={styles.modalContainer}>
@@ -768,6 +762,7 @@ const StampView = () => {
     </View>
     {/* 모달 영역 */}
     <ModalRN visible={addStampModalVisible} animationType='slide' transparent>
+      <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
         <View style={styles.addStampModalContainer}>
           <View style={styles.addStampModalTitleContainer}>
             <TouchableOpacity onPress={() => {
@@ -816,6 +811,7 @@ const StampView = () => {
             </View>
           </View>
         </View>
+      </View>
     </ModalRN>
     <Modal 
       isVisible={isLodingFinishModalVisible}
