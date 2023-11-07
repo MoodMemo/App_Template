@@ -29,7 +29,7 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 import * as nodata from './weeklyView/NoDataView';
-
+import { getStamp } from './weeklyView/DocumentFunc';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -227,6 +227,7 @@ const Home = ({name,first}:any) => {
     });
     console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
     console.log(isStampTemplateAdded,'isStampTemplateAdded',first);
+    setTodayStampCnt(getStamp(currentDate).length);
   }, []);
 
   const addStampTemplate = () => {
@@ -270,6 +271,8 @@ const Home = ({name,first}:any) => {
 
   const currentDate = dayjs();
   const formattedDate = currentDate.format('M월 D일');
+  const [todayStampCnt, setTodayStampCnt] = useState(0);
+  
 
 
   // console.log('aa',name);
@@ -283,9 +286,11 @@ const Home = ({name,first}:any) => {
     <View style={styles.view}>
       {/* 현재 상태 확인 */} 
       <View style={newStyles.moo_status}>
-        <View style={{flexDirection: 'row', gap: 7, }}>
-          <Image source={require('./assets/sun_vivid.png')} style={{ width: 32, height: (30 * 32) / 32 }} />
-          <Image source={require('./assets/sun_vivid.png')} style={{ width: 32, height: (30 * 32) / 32 }} />
+        <View style={{flexDirection: 'row', }}>
+          {todayStampCnt !== 0 ? (<Image source={require('./assets/sun_vivid.png')} style={{ width: 32, height: (30 * 32) / 32, marginRight: 7 }} />
+          ) : (<Image source={require('./assets/sun_hazy.png')} style={{ width: 32, height: (30 * 32) / 32, marginRight: 7 }} />)}
+          {todayStampCnt >= 2 ? (<Image source={require('./assets/sun_vivid.png')} style={{ width: 32, height: (30 * 32) / 32 }} />
+          ) : (<Image source={require('./assets/sun_hazy.png')} style={{ width: 32, height: (30 * 32) / 32 }} />)}
         </View>
         <Text style={{color: '#FEB954', fontSize: 16,}}>{formattedDate}, Moo는 광합성 중...</Text>
       </View>
