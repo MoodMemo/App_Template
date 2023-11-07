@@ -57,6 +57,9 @@ const Statistics = () => {
     const [countDiarys,setCountDiarys] = useState(0);
     const [countLoggedDates,setCountLoggedDates] = useState(0);
     const [countConsecutedLoggedDates,setConsecutedCountLoggedDates] = useState(0);
+    const [recentReportWeekNum, setRecentReportWeekNum] = useState(0);
+    const [reportWeekNum, setReportWeekNum] = useState(0);
+    const [reportWeekDate, setReportWeekDate] = useState('');
 
     useEffect(() => {
       // AsyncStorage에서 userName 값을 가져와서 설정
@@ -69,6 +72,23 @@ const Statistics = () => {
         .catch((error) => {
           console.error("Error fetching userName:", error);
         });
+      AsyncStorage.getItem('@UserInfo:RecentReportWeekNum')
+        .then((value) => {
+          if(value) {
+            setReportWeekNum(
+              //Number(value)
+              2
+            );
+            getMoodReport(
+              //Number(value)
+              2
+            );
+            setRecentReportWeekNum(
+              // Number(value)
+              2
+            );
+          }
+        })
       getStatistics(year,month);
     }, []);
 
@@ -144,7 +164,7 @@ const Statistics = () => {
             dateMap[listOfStamps[i].dateTime.getDate()]=true;
           }
         }
-        for(var i=0;i<listOfStamps.length;i++){
+        for(var i=0;i<dateMap.length;i++){
           if(!dateMap[i]){
             count=0
           }
@@ -188,40 +208,39 @@ const Statistics = () => {
       setCountDiarys(listOfDiarys.length);
     }
 
+    const incMoodReportNum = () => {
+      AsyncStorage.getItem('@UserInfo:RecentReportWeekNum').then((value) => {
+        if(reportWeekNum<value){
+          getMoodReport(reportWeekNum+1);
+          setReportWeekNum(reportWeekNum+1);
+        }
+      })
+    }
+
+    const decMoodReportNum = () => {
+      AsyncStorage.getItem('@UserInfo:RecentReportWeekNum').then((value) => {
+        if(reportWeekNum>1){
+          getMoodReport(reportWeekNum-1);
+          setReportWeekNum(reportWeekNum-1);
+        }
+      })
+    }
+
+
+    const getMoodReport = (weekNum) => {
+      if(weekNum===1) setReportWeekDate('2023-11-03 ~ 2023-11-09');
+      else if(weekNum===2) setReportWeekDate('2023-11-10 ~ 2023-11-16');
+      else setReportWeekDate('aa');
+      //렐름 업데이트하고 값 가져와서 렌더링 하면 됨
+    }
+
     return (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
         <StatusBar
-            backgroundColor='#FAFAFA'
+            backgroundColor='#FFFFFF'
             barStyle='dark-content'
         />
-        <View style={styles.titleContainer}>
         {/* 드롭다운 컴포넌트 */}
-          <Text style={styles.title}>{userName}의{'\n'}감정을 분석해봤다무!</Text>
-          <View style={{flexDirection: 'row',marginTop:-80, marginLeft:20}}>
-            <TouchableOpacity onPress={decDate}>
-                {
-                  Platform.OS === 'android' ? (
-                    <MaterialIcons name="arrow-left" size={30} style={{marginTop:0,color:'#212429'}}/>
-                  ) : (
-                    <MaterialIcons name="arrow-left" size={30} style={{marginTop:-2,color:'#212429'}}/>
-                  )
-                }
-            </TouchableOpacity>
-            <Text style={{fontSize:18,color:'#212429',marginTop:2}}> {year}년 {month>=10 ? '' : ' '}{month}월 </Text>
-            <TouchableOpacity onPress={incDate}>
-            {
-                  Platform.OS === 'android' ? (
-                    <MaterialIcons name="arrow-right" size={30} style={{marginTop:0,color:'#212429'}}/>
-                  ) : (
-                    <MaterialIcons name="arrow-right" size={30} style={{marginTop:-2,color:'#212429'}}/>
-                  )
-                }
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Image 
-                source={require('../assets/magnifyingMoo.png')}
-                style={{ width: 154*0.6, height: (154 * 192)*0.6 / 154 , position: 'relative', bottom: 145, left: windowWidth-130, overflow: 'hidden'}}/>
         {summaryOrDetail ? (
         <View style={typeChangeBtnStyles.twotypebtn}>
           <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.moveToSummary()}}>
@@ -242,8 +261,29 @@ const Statistics = () => {
         </View>
       )}
       {summaryOrDetail ? (
-        <ScrollView style={{marginTop:20}}>
-        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:10, marginBottom:25}}>
+        <ScrollView style={{marginTop:15}}>
+          <View style={{flexDirection: 'row',alignSelf:'center'}}>
+            <TouchableOpacity onPress={decDate}>
+                {
+                  Platform.OS === 'android' ? (
+                    <MaterialIcons name="arrow-left" size={30} style={{marginTop:0,color:'#212429'}}/>
+                  ) : (
+                    <MaterialIcons name="arrow-left" size={30} style={{marginTop:-2,color:'#212429'}}/>
+                  )
+                }
+            </TouchableOpacity>
+            <Text style={{fontSize:18,color:'#212429',marginTop:2}}> {year}년 {month>=10 ? '' : ' '}{month}월 </Text>
+            <TouchableOpacity onPress={incDate}>
+            {
+                  Platform.OS === 'android' ? (
+                    <MaterialIcons name="arrow-right" size={30} style={{marginTop:0,color:'#212429'}}/>
+                  ) : (
+                    <MaterialIcons name="arrow-right" size={30} style={{marginTop:-2,color:'#212429'}}/>
+                  )
+                }
+            </TouchableOpacity>
+          </View>
+        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:15, marginBottom:25}}>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
             <Text style={{fontSize:22,color:'#FFCC4D'}}>{countStamps}개</Text>
@@ -298,41 +338,79 @@ const Statistics = () => {
           ))}
         </ScrollView>) : 
         (
-          <ScrollView style={{marginTop:20}}>
-            <View style={{marginLeft:25,alignItems:'center',}}>
-              <PieChart data={stampsChart.map((stamp:any) => ({
-                value: stamp[1],
-                color: stamp[2][0],
-                text: `${Math.round(stamp[1]*100/countStamps)}%`,
-                textColor: stamp[2][1],
-                shiftTextX:-5,
-                shiftTextY:3,
-                textSize:15
-              }))}
-                donut={true}
-                showText={true}
-                innerRadius={40}
-                radius={100}
-              />
-            </View>
-            <View style={{flexDirection: 'row',
-                            justifyContent: 'space-between'}}>
-              <Text style={{marginLeft:20,fontSize:16,color:'#999999'}}>전체</Text>
-              <Text style={{marginRight:20,fontSize:16,color:'#999999'}}>{countStamps}개</Text>
-            </View>
-            <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:20,marginTop:10,marginBottom:5}}/>
-            {stamps.sort(sortStamps).map((stampButton:any) => (
-              <TouchableOpacity key={stampButton[0].id} style={{marginHorizontal:20,flexDirection:'row',justifyContent:'space-between',marginBottom:10}} disabled={true}>
-                <View style={{flexDirection: 'row'}}>
-                  <View style={{width:12,height:12,backgroundColor:stampButton[2][0],borderRadius:8,marginTop:9,marginRight:7}}/>
-                  <Text style={{marginRight:7,fontSize:20}}>{stampButton[0].emoji}</Text>
-                  <Text style={{marginRight:7,marginTop:(Platform.OS==='android' ? 3 : 5),fontSize:16,color:'#000000'}}>{stampButton[0].stampName}</Text>
-                  <Text style={{marginTop:(Platform.OS==='android' ? 3 : 5),fontSize:16,color:'#999999'}}>{`${Math.round(stampButton[1]*100/countStamps)}%`}</Text>
-                </View>
-                <Text style={{color: '#000000',fontSize:16}}>{stampButton[1]}개</Text>
+          <>
+            <View style={{flexDirection: 'row',alignSelf:'center',marginTop:15}}>
+              <TouchableOpacity
+              onPress={()=>{decMoodReportNum();getMoodReport(reportWeekNum);}}
+              disabled={reportWeekNum===1}>
+                  {
+                    Platform.OS === 'android' ? (
+                      <MaterialIcons name="arrow-left" size={30} style={{marginTop:0,color:reportWeekNum<=1 ? '#AAAAAA' : '#212429'}}/>
+                    ) : (
+                      <MaterialIcons name="arrow-left" size={30} style={{marginTop:-2,color:reportWeekNum<=1 ? '#AAAAAA' : '#212429'}}/>
+                    )
+                  }
               </TouchableOpacity>
-            ))}
-          </ScrollView>)}
+              <Text style={{fontSize:18,color:'#212429',marginTop:2}}> {reportWeekDate} </Text>
+              <TouchableOpacity
+              onPress={()=>{incMoodReportNum();getMoodReport(reportWeekNum);}}
+              disabled={reportWeekNum===recentReportWeekNum}>
+              {
+                Platform.OS === 'android' ? (
+                  <MaterialIcons name="arrow-right" size={30} style={{marginTop:0,color:reportWeekNum===recentReportWeekNum ? '#AAAAAA' : '#212429'}}/>
+                ) : (
+                  <MaterialIcons name="arrow-right" size={30} style={{marginTop:-2,color:reportWeekNum===recentReportWeekNum ? '#AAAAAA' : '#212429'}}/>
+                )
+              }
+              </TouchableOpacity>
+            </View>
+
+            {
+              //무드 리포트 작성 불가능
+            }
+
+            {/* <View style={{alignSelf:'center',marginTop:70}}>
+              <View style={[bubbleStyles.container,{width:300,height:140}]}>
+                <Text style={{fontSize: 17, color: '#fff', marginBottom: 5}}>아직 무드 리포트를 준비 중이라무~</Text>
+                <Text style={{fontSize: 17, color: '#fff', marginBottom: 5, }}>앞으로 n일 뒤에</Text>
+                <Text style={{fontSize: 17, color: '#fff', }}>무드 리포트를 보내주겠다무!</Text>
+              </View>
+              <View style={bubbleStyles.tail}></View>
+            </View>
+            <Image source={require('../assets/write_0904.png')}
+              style={{ width: 200, height: (1653 * 200) / 1437 , alignSelf:'center', right:10, marginTop:30}}/> */}
+
+            {
+              //무드 리포트 작성 가능
+            }
+            
+            {/* <View style={{alignSelf:'center',marginTop:70}}>
+              <View style={[bubbleStyles.container,{width:300,height:140}]}>
+                <Text style={{fontSize: 17, color: '#fff', marginBottom: 10}}>무드 리포트를 작성할 수 있다무!</Text>
+                <Text style={{fontSize: 17, color: '#fff', marginBottom: 0, }}>지금 바로 무드 리포트를 작성해보라무!</Text>
+              </View>
+              <View style={bubbleStyles.tail}></View>
+            </View>
+            <Image source={require('../assets/finish_0904.png')}
+              style={{ width: 200, height: (1323 * 200) / 1650 , alignSelf:'center', right:10, marginTop:30}}/>
+            <TouchableOpacity style={{backgroundColor: '#fff',
+            padding: 10,
+            width: 250,
+            alignSelf: 'center',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 10,
+            marginTop: 30,
+            // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
+            position: 'relative',
+            borderColor: '#72D193',
+            borderWidth: 1,
+            overflow: 'hidden',}} onPress={(async () => { 
+              
+            })}>
+                <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>그래 좋아!</Text>
+            </TouchableOpacity> */}
+          </>)}
       </View>
     );
 }
@@ -463,9 +541,9 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
       flexDirection: 'row',
       backgroundColor: '#F3F3F3',
-      marginTop: -90,
       padding: 2,
       borderRadius: 8,
+      marginTop:15
     },
     activeType: {
       flex: 1,
@@ -499,6 +577,50 @@ const styles = StyleSheet.create({
       borderRadius: 4, // 절반의 크기로 borderRadius를 설정하여 타원 모양으로 만듭니다
       position: 'absolute', // 원하는 위치에 배치하려면 position을 'absolute'로 설정합니다
     }
+  });
+
+  const bubbleStyles = StyleSheet.create({
+    container: {
+      backgroundColor: '#72D193',
+      padding: 10,
+      // maxWidth: 200,
+      width: 230,
+      alignSelf: 'flex-start', // 좌측 정렬로 변경
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 20,
+      // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
+      position: 'relative',
+      overflow: 'hidden', // 클리핑 적용
+      zIndex: 30
+    },
+    tail: {
+      position: 'absolute',
+      width: 20, // 꼬리의 길이
+      height: 20, // 꼬리의 높이
+      left: 40, // 꼬리 위치
+      bottom: -5, // 꼬리 위치
+      backgroundColor: '#72D193',
+      transform: [{ rotate: '45deg' }],
+      borderTopLeftRadius: 10, // 둥글게 만들기
+      // borderBottomLeftRadius: 10,
+      // borderTopRightRadius: 10
+    },
+    reply: {
+      backgroundColor: '#fff',
+      padding: 7,
+      // maxWidth: 200,
+      width: 200,
+      alignSelf: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: 10,
+      // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
+      position: 'relative',
+      borderColor: '#72D193',
+      borderWidth: 1,
+      overflow: 'hidden', // 클리핑 적용
+    },
   });
 
 export default Statistics;

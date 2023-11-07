@@ -229,6 +229,15 @@ const reloadNotification = async () => {
   })
 }
 
+const setRecentReportWeekNum = async () => {
+  await AsyncStorage.getItem('@UserInfo:RecentReportWeekNum').then((value) => {
+    if(value===null){
+      console.log('set RecentReportWeekNum');
+      AsyncStorage.setItem('@UserInfo:RecentReportWeekNum','1');
+    }
+  })
+}
+
 const autumnEventInitialize = async () => {
   await AsyncStorage.getItem('@UserInfo:AutumnEvent').then((value) => {
     if(value!=='true'){
@@ -308,7 +317,8 @@ const autumnEventInitialize = async () => {
   const codePushUpdateAvailable = await codePushVersionCheck();
   await new Promise(f => setTimeout(f, 600));
   await autumnEventInitialize();
-  // await reloadNotification();
+  await setRecentReportWeekNum();
+  await reloadNotification();
   SplashScreen.hide();
   // Do something after
   console.log('codepush check :',codePushUpdateAvailable);
