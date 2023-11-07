@@ -815,52 +815,20 @@ const Weekly = () => {
         )
       ) : ( // [Moo의 편지함]
       todayReport!==null ? ( // 일기 있음
-        <ScrollView contentContainerStyle={{backgroundColor: '#FAFAFA', }} ref={scrollViewRef}>
-          <View>
-            <View style={[styles.title, {marginTop: 20,}]}>
-            <Text style={{fontSize: 16, fontWeight: 'bold', color: '#212429', }}>다이어리</Text>
-              {!isEditMode ? (
-                <View style={{flexDirection: 'row', gap: 10}}>
-                <TouchableOpacity onPress={ () => {handleEditButton(); amplitude.editAIDiary(today.format('YYYY-MM-DD'));}}>
-                  <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                    <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
-                    <Text style={{fontSize: 12, color: '#495057'}}> 수정</Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={ () => {handleDeleteDiaryButton();}}>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
-                  <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
-                  <Text style={{fontSize: 12, color: '#495057'}}> 삭제</Text>
-                </View>
-              </TouchableOpacity>
-              </View>
-              ) : (
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                  <TouchableOpacity onPress={() => {setIsWarningModalVisible(true); amplitude.cancelToEditDiary();}}>
-                    <Text style={{ fontSize: 14, color: '#495057' }}>취소</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary(today.format('YYYY-MM-DD'));}}>
-                    <Text style={{ fontSize: 14, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-
+        <ScrollView contentContainerStyle={{backgroundColor: '#FFFFF8', }} ref={scrollViewRef}>
+          {/* moo 의 편지 영역 */}
+          <View style={{backgroundColor:'#F2F9F5', paddingVertical: 20, paddingHorizontal: 16, borderColor: '#F0F0F0', borderWidth: 1, margin: 16, borderRadius: 6}}>
+            {/* 날짜 영역 */}
+            <Text style={{fontSize: 14, color: '#495057', marginBottom: 10, textDecorationLine: 'underline'}}>{dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}</Text>
+            {/* 인삿말 */}
+            <Text style={{fontSize: 14, color: '#495057', textDecorationLine: 'underline'}}>안녕! Moo가 오늘의 네 하루에 대해 편지를 써봤다무.</Text>
+            <Text style={{fontSize: 14, color: '#495057', marginBottom: 15, textDecorationLine: 'underline'}}>읽어보고 다른 점이 있다면 고쳐보라무!</Text>
+            
+            {/* 편지 영역 */}
             <View style={diaryStyles.diaryContainer}>
               
-              {/* date */}
-              {isEditMode ? (
-                <Text style={{fontSize: 14, color: '#dbdbdb', marginBottom: 12}}>
-                  {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
-                </Text>
-              ) : (
-                <Text style={{fontSize: 14, color: '#212429', marginBottom: 12}}>
-                {dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}
-              </Text>
-              )}
-              
               {/* title */}
-              <View style={{ flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row', borderColor: '#F0F0F0', borderBottomWidth: 1, marginBottom: 10, width: '100%', }}>
                 {isEditMode ? (
                   <TextInput
                     style={diaryStyles.editDiary}
@@ -869,15 +837,12 @@ const Weekly = () => {
                     onFocus={() => {amplitude.editTitle();}}
                   />
                 ) : (
-                  <Text style={{ fontSize: 18, color: '#212429', marginBottom: 12,  }}>{todayReport.title}</Text>
+                  <Text style={{ fontSize: 14, color: '#495057', marginBottom: 10, }}>제목: {todayReport.title}</Text>
                 )}
               </View>
               
-              {/* line */}
-              <View style={[diaryStyles.line, { width: Dimensions.get('window').width - 75 }]} />
-              
               {/* bodytext */}
-              <View style={{ flexDirection: 'row'}}>
+              <View style={{ flexDirection: 'row', }}>
                 {isEditMode ? (
                   <TextInput
                     style={ [diaryStyles.editDiary, { fontSize: 12, color: '#495057', paddingVertical: 10}]}
@@ -887,29 +852,10 @@ const Weekly = () => {
                     multiline
                   />
                 ) : (
-                  <Text style={{ fontSize: 14, color: '#495057', marginBottom: 15 }}>{todayReport.bodytext}</Text>
+                  <Text style={{ fontSize: 14, color: '#495057', }}>{todayReport.bodytext}</Text>
                 )}
               </View>
-
-              {/* keyword */}
-              {isEditMode ? (
-                <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-                  {todayReport.keyword.map((keyword) => (
-                    <TouchableOpacity key={keyword} style={diaryStyles.keyword} onPress={() => {amplitude.clickKeyword();}} disabled={true}>
-                      <Text style={{color:'#DBDBDB',fontSize:16}}>{keyword}</Text>
-                    </TouchableOpacity>
-                    // <Text key={keyword} style={[diaryStyles.keyword, {color:'#DBDBDB'}]}>{keyword}</Text>
-                  ))}
-                </View>
-              ) : (
-                <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-                  {todayReport.keyword.map((keyword) => (
-                    <View style={diaryStyles.keyword}>
-                      <Text key={keyword} style={{fontSize:16}}>{keyword}</Text>
-                    </View>
-                  ))}
-                </View>
-              )}
+              
               {/* 해당 날짜에 timelineData에 기록된 모든 사진들 가로로 */}
               <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ marginTop: 10, }}>
               {timelineData.map((item, index) => (
@@ -925,11 +871,61 @@ const Weekly = () => {
                 </View>
               ))}
               </ScrollView>
+
             </View>
+
+            {/* 편지 바로 아래 */}
+            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              {/* 키워드 멘트 */}
+              <Text style={{fontSize: 14, color: '#495057', marginBottom: 5, }}>Moo가 뽑아본 키워드다무</Text>
+              {/* 수정 & 삭제 */}
+              {!isEditMode ? (
+                <View style={{flexDirection: 'row', gap: 10}}>
+                  <TouchableOpacity onPress={ () => {handleEditButton(); amplitude.editAIDiary(today.format('YYYY-MM-DD'));}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                      <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
+                      <Text style={{fontSize: 12, color: '#495057'}}> 수정</Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={ () => {handleDeleteDiaryButton();}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+                      <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 15}}/>
+                      <Text style={{fontSize: 12, color: '#495057'}}> 삭제</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                  <TouchableOpacity onPress={() => {setIsWarningModalVisible(true); amplitude.cancelToEditDiary();}}>
+                    <Text style={{ fontSize: 14, color: '#495057' }}>취소</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => {handleSaveButton(); amplitude.saveEditedDiary(today.format('YYYY-MM-DD'));}}>
+                    <Text style={{ fontSize: 14, color: '#495057', marginLeft: 10 }}>수정 완료</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+            {/* 키워드 3개 */}
+            <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+              {todayReport.keyword.map((keyword) => (
+                <Text key={keyword} style={{fontSize: 14, color: '#212429', marginBottom: 15, }}>{keyword},  </Text>
+              ))}
+            </View>
+            {/* PS 영역 */}
+            {/* <Text style={{fontSize: 14, color: '#495057', marginBottom: 10, textDecorationLine: 'underline'}}>PS. ~~~ 한 것 같으니,  ~~하길 바란다무!</Text> -> 이거는 준하가 개발한 뒤 추가*/}
+            <Text style={{fontSize: 14, color: '#495057', marginBottom: 15, textDecorationLine: 'underline'}}>PS. 읽어보고 다른 점이 있다면 고쳐보면서, 하루를 돌아보길 바란다무!</Text>
+
+            {/* Moo가 */}
+            <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+              <Text>Moo가  </Text>
+              <Image source={require('../assets/letterEndMoo.png')} style={{ width: 43, height: (44 * 43) / 43 , }}></Image>
+            </View>
+
           </View>
+          {/* 좋아요 영역 */}
         </ScrollView>
         ) : ( // 일기가 없을 때, 날짜 & 스탬프 개수에 따라 다름
-        <AIDiary_NoDiary/> // 일어나면 보세요 여기 해야함 !! 여기에 맞는 컨스탄트 뷰를 세팅해야합니다요
+        <AIDiary_NoDiary/> // 일어나면 보세요 여기 해야함 !! 여기에 맞는 컨스탄트 뷰를 세팅해야합니다요 // 이거 어차피 안열림
       )
       )}
 
@@ -1446,16 +1442,16 @@ const diaryStyles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
     alignItems: 'baseline', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
-    marginBottom: 20,
-    marginLeft: 20,
-    marginRight: 20,
+    marginBottom: 15,
     fontSize: 18,
     color: '#212429',
-    padding: 10,
+    paddingTop: 20,
+    paddingBottom: 10,
     paddingHorizontal: 15,
-    borderRadius: 7,
-    borderWidth: 2,
-    borderColor: '#f0f0f0',
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#72D193',
+    borderStyle: 'dashed',
     backgroundColor: '#ffffff',
   },
   keyword: {
@@ -1564,7 +1560,7 @@ const diaryStyles = StyleSheet.create({
     flex: 1,
   },
   editDiary: {
-    fontSize: 16, 
+    fontSize: 14, 
     color: '#212429', 
     margin: 0, 
     marginBottom:7, 
