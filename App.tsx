@@ -251,6 +251,11 @@ const autumnEventInitialize = async () => {
       AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken2','false');
     }
     else{
+      AsyncStorage.getItem('@UserInfo:AutumnEventAdditional').then((value)=>{
+        if(value===null){
+          AsyncStorage.setItem('@UserInfo:AutumnEventAdditional','false');
+        }
+      })
       const url = 'http://3.34.55.218:5000/time';
       axios.get(url).then((response)=>{
         console.log('서버 시간',response.data.month,'월 ',response.data.day,'일');
