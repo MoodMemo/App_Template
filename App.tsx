@@ -309,7 +309,7 @@ const autumnEventInitialize = async () => {
   const codePushUpdateAvailable = await codePushVersionCheck();
   await new Promise(f => setTimeout(f, 600));
   await autumnEventInitialize();
-  // await reloadNotification();
+  await reloadNotification();
   SplashScreen.hide();
   // Do something after
   console.log('codepush check :',codePushUpdateAvailable);
