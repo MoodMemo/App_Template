@@ -235,7 +235,7 @@ const reloadNotification = async () => {
   //await getToken();
   //setShowCodePushUpdate(true);
   const codePushUpdateAvailable = await codePushVersionCheck();
-  // await reloadNotification();
+  await reloadNotification();
   SplashScreen.hide();
   // Do something after
   console.log('codepush check :',codePushUpdateAvailable);
