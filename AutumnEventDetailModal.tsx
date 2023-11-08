@@ -37,10 +37,10 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
           bounces={false}
           overScrollMode="never"
           showsVerticalScrollIndicator={true}>
-          <View style={{alignItems:'center'}}>
+          <View style={{alignItems:'center',marginTop:10}}>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15}}>가을을 맞아 무드메모에서 특별한 이벤트를 준비했어요!</Text>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10}}>무에게 은행잎을 가져다주고, 다양한 선물을 가져가세요!</Text>
-            <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10,marginBottom:20}}>이벤트 기간 : 10/24(화) ~ 11/13(월)</Text>
+            <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:10,marginBottom:30}}>이벤트 기간 : 10/24(화) ~ 11/13(월)</Text>
           </View>
           <View style={styles.eventModalDetailBlockView}>
             <Text style={{fontWeight:'100',color:'#212429',fontSize:15,marginTop:20,marginBottom:20}}>은행잎 획득 조건</Text>
@@ -61,37 +61,22 @@ const AutumnEventDetailModal = ({isModalVisible,setIsModalVisible}:any) => {
               </View>
             </View> */}
             <View style={{flexDirection:'row', justifyContent:'space-between',width:'90%',marginBottom:15}}>
-              <Text style={{color:'#212429',fontSize:14}}>스타벅스 아이스 아메리카노 <Text>(총 30개)</Text></Text>
+              <Text style={{color:'#212429',fontSize:14}}>아몬드 빼빼로 <Text>(총 30개)</Text></Text>
+              <View style={{flexDirection:'row', justifyContent:'space-between',width:60}}>
+                <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
+                <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>10개</Text>
+              </View>
+            </View>
+            <View style={{flexDirection:'row', justifyContent:'space-between',width:'90%',marginBottom:15}}>
+              <Text style={{color:'#212429',fontSize:14}}>스타벅스 아이스 아메리카노 <Text>(총 15개)</Text></Text>
               <View style={{flexDirection:'row', justifyContent:'space-between',width:60}}>
                 <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
                 <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>15개</Text>
               </View>
             </View>
-            <View style={{flexDirection:'row', justifyContent:'space-between',width:'90%',marginBottom:15}}>
-              <Text style={{color:'#212429',fontSize:14}}>배스킨라빈스 파인트<Text>(선착순 10명)</Text></Text>
-              <View style={{flexDirection:'row', justifyContent:'space-between',width:60}}>
-                <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
-                <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>30개</Text>
-              </View>
-            </View>
-            <View style={{flexDirection:'row', justifyContent:'space-between',width:'90%',marginBottom:15}}>
-              <Text style={{color:'#212429',fontSize:14}}>굽네 고추바사삭 치킨<Text>(선착순 3명)</Text></Text>
-              <View style={{flexDirection:'row', justifyContent:'space-between',width:60}}>
-                <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
-                <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>60개</Text>
-              </View>
-            </View>
-            <View style={{flexDirection:'row', justifyContent:'space-between',width:'90%',marginBottom:15}}>
-              <Text style={{color:'#212429',fontSize:14}}>BHC 뿌링클 치킨<Text>(선착순 3명)</Text></Text>
-              <View style={{flexDirection:'row', justifyContent:'space-between',width:60}}>
-                <Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>
-                <Text style={{color:'#FFCC4D',fontSize:14,marginLeft:10}}>60개</Text>
-              </View>
-            </View>
           </View>
           <Text style={{fontWeight:'100',color:'#212429',fontSize:17, marginLeft:20, marginBottom:10}}>유의사항</Text>
           <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20,marginBottom:5}}>- 상품은 구매한 다음 주차 목요일에 일괄 발송됩니다.</Text>
-          <Text style={{fontWeight:'100',color:'#212429',fontSize:15, marginLeft:20}}>- 배라 파인트와 치킨은 인당 1회 구매 가능합니다.</Text>
         </ScrollView>
         </View>
       </View>
@@ -176,19 +161,19 @@ const styles = StyleSheet.create({
       borderColor:'#F9C649',
       borderRadius:10,
       borderWidth:1,
-      marginBottom:20
+      marginBottom:30
     },
     eventModalMarketBlockView:
     {
       backgroundColor:'#FFFFFF',
       width: 320,
-      height:210,
+      height:150,
       alignSelf:'center',
       alignItems:'center',
       borderColor:'#F9C649',
       borderRadius:10,
       borderWidth:1,
-      marginBottom:20
+      marginBottom:30
     },
     eventModalTextBox: {
       backgroundColor: '#FECB4C26',
