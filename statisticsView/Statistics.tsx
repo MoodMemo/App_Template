@@ -9,6 +9,7 @@ import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {PieChart} from 'react-native-gifted-charts';
+import WeeklyReport from './WeeklyReport';
 
 import * as amplitude from '../AmplitudeAPI';
 
@@ -60,6 +61,7 @@ const Statistics = () => {
     const [recentReportWeekNum, setRecentReportWeekNum] = useState(0);
     const [reportWeekNum, setReportWeekNum] = useState(0);
     const [reportWeekDate, setReportWeekDate] = useState('');
+    const [weeklyReportMode, setWeeklyReportMode] = useState(false);
 
     useEffect(() => {
       // AsyncStorage에서 userName 값을 가져와서 설정
@@ -228,13 +230,14 @@ const Statistics = () => {
 
 
     const getMoodReport = (weekNum) => {
-      if(weekNum===1) setReportWeekDate('2023-11-03 ~ 2023-11-09');
-      else if(weekNum===2) setReportWeekDate('2023-11-10 ~ 2023-11-16');
+      if(weekNum===1) setReportWeekDate('2023.11.03~2023.11.09');
+      else if(weekNum===2) setReportWeekDate('2023.11.10~2023.11.16');
       else setReportWeekDate('aa');
       //렐름 업데이트하고 값 가져와서 렌더링 하면 됨
     }
 
     return (
+      !weeklyReportMode ? (
       <View style={{backgroundColor:'#FFFFFF',flex:1}}>
         <StatusBar
             backgroundColor='#FFFFFF'
@@ -370,24 +373,24 @@ const Statistics = () => {
             }
 
             {/* <View style={{alignSelf:'center',marginTop:70}}>
-              <View style={[bubbleStyles.container,{width:300,height:140}]}>
+              <View style={[bubbleStyles.container,{backgroundColor:'#B7B7B7',width:300,height:140}]}>
                 <Text style={{fontSize: 17, color: '#fff', marginBottom: 5}}>아직 무드 리포트를 준비 중이라무~</Text>
                 <Text style={{fontSize: 17, color: '#fff', marginBottom: 5, }}>앞으로 n일 뒤에</Text>
                 <Text style={{fontSize: 17, color: '#fff', }}>무드 리포트를 보내주겠다무!</Text>
               </View>
-              <View style={bubbleStyles.tail}></View>
+              <View style={[bubbleStyles.tail,{backgroundColor:'#B7B7B7'}]}></View>
             </View>
-            <Image source={require('../assets/write_0904.png')}
-              style={{ width: 200, height: (1653 * 200) / 1437 , alignSelf:'center', right:10, marginTop:30}}/> */}
+            <Image source={require('../assets/write_disabled.png')}
+              style={{ width: 200, height: (422 * 200) / 368 , alignSelf:'center', right:10, marginTop:30}}/> */}
 
             {
               //무드 리포트 작성 가능
             }
             
-            {/* <View style={{alignSelf:'center',marginTop:70}}>
+            <View style={{alignSelf:'center',marginTop:70}}>
               <View style={[bubbleStyles.container,{width:300,height:140}]}>
                 <Text style={{fontSize: 17, color: '#fff', marginBottom: 10}}>무드 리포트를 작성할 수 있다무!</Text>
-                <Text style={{fontSize: 17, color: '#fff', marginBottom: 0, }}>지금 바로 무드 리포트를 작성해보라무!</Text>
+                <Text style={{fontSize: 17, color: '#fff', marginBottom: 0, }}>지금 바로 무드 리포트를 써보라무!</Text>
               </View>
               <View style={bubbleStyles.tail}></View>
             </View>
@@ -400,18 +403,20 @@ const Statistics = () => {
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 10,
-            marginTop: 30,
+            marginTop: 40,
             // borderBottomLeftRadius: 0, // 우측 하단을 둥글게
             position: 'relative',
             borderColor: '#72D193',
             borderWidth: 1,
             overflow: 'hidden',}} onPress={(async () => { 
-              
+              setWeeklyReportMode(true);
             })}>
-                <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>그래 좋아!</Text>
-            </TouchableOpacity> */}
+                <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>좋아, 지금 써볼게!</Text>
+            </TouchableOpacity>
           </>)}
-      </View>
+      </View>) : (
+        <WeeklyReport reportWeekDate={reportWeekDate}/>
+      )
     );
 }
 
