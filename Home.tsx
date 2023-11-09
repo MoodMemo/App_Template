@@ -396,8 +396,8 @@ const Home = ({name,first}:any) => {
                     position: 'relative',
                     marginRight: 50,
                     }}>
-                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>Moo가 독특한 스탬프를</Text>
-                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>만들어봤다무!</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>Moo에게 은행잎을</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>가져다줘서 고맙다무!</Text>
                     </TouchableOpacity>
                     <View style={{
                       width: 20, // 꼬리의 길이
@@ -420,7 +420,8 @@ const Home = ({name,first}:any) => {
                     position: 'relative',
                     marginLeft: 25,
                     }}>
-                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>한 번 추가해보지 않을래무?</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>경품을 더 준비했으니</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>은행잎을 더 가져다달라무!</Text>
                     </TouchableOpacity>
                     <View style={{
                       width: 20, // 꼬리의 길이
