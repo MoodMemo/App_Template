@@ -97,6 +97,12 @@ const WeeklyReport = ({reportWeekDate}) => {
       else return 0;
     }
 
+    const sortStampsByDate = (a:any,b:any) => {
+        if(a.dateTime < b.dateTime) return -1;
+        else if(a.dateTime > b.dateTime) return 1;
+        else return 0;
+      }
+
     const getStatistics = async (year:any,month:any) => {
         var date_L=reportWeekDate.split('~')
         var start = stringToDate(date_L[0]);
@@ -107,23 +113,21 @@ const WeeklyReport = ({reportWeekDate}) => {
       // console.log(listOfStamps);
       // console.log(listOfStamps.length);
       setCountStamps(listOfStamps.length);
-      var loggedDates=0;
       var count=0;
-      var ans=0;
       var stamps=[];
       var temporaryStampsChart=[];
       var color=0;
+      listOfStamps.sort(sortStampsByDate);
       if(listOfStamps.length>0)
       {
         var stamp_date = listOfStamps[0].dateTime;
         count+=1;
         for(var i=1;i<listOfStamps.length;i++){
-          if(stamp_date<=listOfStamps[i].dateTime && stamp_date.getDate()!=listOfStamps[i].dateTime.getDate()){
-            count+=1;
-            stamp_date=listOfStamps[i].dateTime;
+            if(stamp_date<=listOfStamps[i].dateTime && stamp_date.getDate()!=listOfStamps[i].dateTime.getDate()){
+                count+=1;
+                stamp_date=listOfStamps[i].dateTime;
           }
         }
-        console.log(count);
         for(var i=0;i<listOfStamps.length;i++){
           var notInStamps=true;
           for(var j=0;j<stamps.length;j++){
@@ -151,7 +155,7 @@ const WeeklyReport = ({reportWeekDate}) => {
       }
       setStamps(stamps);
       setStampsChart(temporaryStampsChart);
-      setCountLoggedDates(loggedDates);
+      setCountLoggedDates(count);
       var listOfDiarys=await getDailyReportsByFieldBetween('date', dateFormat(start), dateFormat(end));
       setCountDiarys(listOfDiarys.length);
     }
