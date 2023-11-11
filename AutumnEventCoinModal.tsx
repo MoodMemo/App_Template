@@ -107,7 +107,15 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                 <Text style={{color:'#212429',fontSize:18}}>은행잎 현황</Text>
                 <Text style={{color:'#FFCC4D',fontSize:18}}>{autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)}개</Text>
             </View>
-            {autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<15 ? <View style={{
+            {autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<10 ? <View style={{
+                alignSelf:'center',
+                alignItems:'center',
+                width:230,
+                marginTop:20,
+                marginBottom:20,
+            }}>
+                <Text style={{color:'#212429',fontSize:16}}>빼빼로까지 {Math.floor((10-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)))/4)}일!</Text>
+            </View> : <View style={{
                 alignSelf:'center',
                 alignItems:'center',
                 width:230,
@@ -115,27 +123,29 @@ const AutumnEventCoinModal = ({isModalVisible,setIsModalVisible,type}:any) => {
                 marginBottom:20,
             }}>
                 <Text style={{color:'#212429',fontSize:16}}>스타벅스 아아까지 {Math.floor((15-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)))/4)}일!</Text>
-            </View> : autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<30 ? <View style={{
-                alignSelf:'center',
-                alignItems:'center',
-                width:230,
-                marginTop:20,
-                marginBottom:20,
-            }}>
-                <Text style={{color:'#212429',fontSize:16}}>배라 파인트까지 {Math.floor((30-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)))/4)}일!</Text>
-            </View> : autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<60 ? <View style={{
-                alignSelf:'center',
-                alignItems:'center',
-                width:230,
-                marginTop:20,
-                marginBottom:20,
-            }}>
-                <Text style={{color:'#212429',fontSize:16}}>치킨까지 {Math.floor((60-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)))/4)}일!</Text>
-            </View> : <View style={{
-              marginTop:10,
-              marginBottom:10,
-            }}>
-            </View>}
+            </View>
+            // autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<30 ? <View style={{
+            //     alignSelf:'center',
+            //     alignItems:'center',
+            //     width:230,
+            //     marginTop:20,
+            //     marginBottom:20,
+            // }}>
+            //     <Text style={{color:'#212429',fontSize:16}}>배라 파인트까지 {Math.floor((30-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)))/4)}일!</Text>
+            // </View> : autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)<60 ? <View style={{
+            //     alignSelf:'center',
+            //     alignItems:'center',
+            //     width:230,
+            //     marginTop:20,
+            //     marginBottom:20,
+            // }}>
+            //     <Text style={{color:'#212429',fontSize:16}}>치킨까지 {Math.floor((60-(autumnEventCoin+(type==='stamp' ? randomAutumnEventCoin : 1)))/4)}일!</Text>
+            // </View> : <View style={{
+            //   marginTop:10,
+            //   marginBottom:10,
+            // }}>
+            // </View>}
+            }
             <TouchableOpacity onPress={async ()=>{
                 amplitude.cancelGetLeavesModal() //은행잎 획득 모달 끔
                 setIsModalVisible(!isModalVisible);

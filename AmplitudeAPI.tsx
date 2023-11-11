@@ -1009,3 +1009,11 @@ export function successBuyGift(gift: String) {
   amplitude.track('event: success buying gift',
   {action: 'click', gift});
 }
+
+export function clickAddPicture() {
+  amplitude.track('stamp: click, add picture',
+  {
+    view:'stamp',
+    action:'click'
+  })
+}
