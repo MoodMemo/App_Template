@@ -34,8 +34,8 @@ import StampClick from '../StampClick';
 import StampView from '../StampView';
 import {default as Text} from "../CustomText"
 import * as nodata from './NoDataView';
-import AutumnEventCoinModal from '../AutumnEventCoinModal';
-import AutumnEventDetailModal from '../AutumnEventDetailModal';
+// import AutumnEventCoinModal from '../AutumnEventCoinModal';
+// import AutumnEventDetailModal from '../AutumnEventDetailModal';
 
 import * as Sentry from '@sentry/react-native';
 
@@ -151,7 +151,7 @@ const Weekly = () => {
 
   const [isFirstDiaryToday, setIsFirstDiaryToday] = useState(false);
 
-  const [isEventDetailModalVisible,setIsEventDetailModalVisible] = useState(false);
+  // const [isEventDetailModalVisible,setIsEventDetailModalVisible] = useState(false);
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
 
@@ -196,31 +196,31 @@ const Weekly = () => {
             setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
           });
           // setIsLodingModalVisible(false);
-          const url = 'http://3.34.55.218:5000/time';
-          axios.get(url).then((response)=>{
-            var month=response.data.month;
-            var day=response.data.day;
-            AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
-              var date=value.split('/');
-              var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-              var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-              let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
-              console.log('date_now: ',date_now);
-              console.log('date_stamp: ',date_stamp);
-              console.log('totalDays:',totalDays);
-              if(totalDays>0){
-                console.log(value);
-                console.log(totalDays,'일');
-                console.log('date_now: ',date_now);
-                console.log('date_stamp: ',date_stamp);
-                setIsFirstDiaryToday(true);
-                AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
-                amplitude.confirmFirstAIDiaryInADay();//오늘 첫 일기 만듦 - AI 일기
-              }
-            })
-          }).catch((error)=>{
-            console.error('Failed to GET Server Time');
-          })
+          // const url = 'http://3.34.55.218:5000/time';
+          // axios.get(url).then((response)=>{
+          //   var month=response.data.month;
+          //   var day=response.data.day;
+          //   AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
+          //     var date=value.split('/');
+          //     var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+          //     var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+          //     let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+          //     console.log('date_now: ',date_now);
+          //     console.log('date_stamp: ',date_stamp);
+          //     console.log('totalDays:',totalDays);
+          //     if(totalDays>0){
+          //       console.log(value);
+          //       console.log(totalDays,'일');
+          //       console.log('date_now: ',date_now);
+          //       console.log('date_stamp: ',date_stamp);
+          //       setIsFirstDiaryToday(true);
+          //       AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
+          //       amplitude.confirmFirstAIDiaryInADay();//오늘 첫 일기 만듦 - AI 일기
+          //     }
+          //   })
+          // }).catch((error)=>{
+          //   console.error('Failed to GET Server Time');
+          // })
           setIsLodingFinishModalVisible(true);
         }
       })
@@ -234,29 +234,29 @@ const Weekly = () => {
       }});
   };
   const handleCreateDiaryMyself = () => {
-    const url = 'http://3.34.55.218:5000/time';
-    axios.get(url).then((response)=>{
-      var month=response.data.month;
-      var day=response.data.day;
-      AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
-        var date=value.split('/');
-        var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-        var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-        let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
-        if(totalDays>0){
-          console.log(value);
-          console.log(totalDays,'일');
-          console.log('date_now: ',date_now);
-          console.log('date_stamp: ',date_stamp);
-          setIsFirstDiaryToday(true);
-          setIsEventModalVisible(true);
-          AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
-          amplitude.confirmFirstSelfDiaryInADay();//오늘 첫 일기 만듦 - 직접 작성
-        }
-      })
-    }).catch((error)=>{
-      console.error('Failed to GET Server Time');
-    })
+    // const url = 'http://3.34.55.218:5000/time';
+    // axios.get(url).then((response)=>{
+    //   var month=response.data.month;
+    //   var day=response.data.day;
+    //   AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
+    //     var date=value.split('/');
+    //     var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+    //     var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+    //     let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+    //     if(totalDays>0){
+    //       console.log(value);
+    //       console.log(totalDays,'일');
+    //       console.log('date_now: ',date_now);
+    //       console.log('date_stamp: ',date_stamp);
+    //       setIsFirstDiaryToday(true);
+    //       setIsEventModalVisible(true);
+    //       AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
+    //       amplitude.confirmFirstSelfDiaryInADay();//오늘 첫 일기 만듦 - 직접 작성
+    //     }
+    //   })
+    // }).catch((error)=>{
+    //   console.error('Failed to GET Server Time');
+    // })
 
     realm.write(() => {
       repository.createDailyReport({
@@ -517,7 +517,7 @@ const Weekly = () => {
   };
 
 
-  const [isEventModalVisible, setIsEventModalVisible]=useState(false);
+  // const [isEventModalVisible, setIsEventModalVisible]=useState(false);
 
 
   // tmp_createDummyData(); 
@@ -646,14 +646,14 @@ const Weekly = () => {
 
       </View>
 
-      <TouchableOpacity onPress={() => {
+      {/* <TouchableOpacity onPress={() => {
         setIsEventDetailModalVisible(!isEventDetailModalVisible);
         amplitude.clickEventInfoModal();//이벤트 배너 켬
       }}>
         <Image source={require('../assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
-      <Modal isVisible={isEventDetailModalVisible}
+      {/* <Modal isVisible={isEventDetailModalVisible}
         animationIn={"fadeIn"}
         animationInTiming={200}
         animationOut={"fadeOut"}
@@ -666,7 +666,7 @@ const Weekly = () => {
       backdropOpacity={0.8}
       style={{ alignItems:'center', }}>
         <AutumnEventDetailModal isModalVisible={isEventDetailModalVisible} setIsModalVisible={setIsEventDetailModalVisible}/>
-      </Modal>
+      </Modal> */}
 
       {/* 3 & 4 & 5 */}
       {stampORdiary ? (
@@ -932,7 +932,7 @@ const Weekly = () => {
             style={{ alignItems:'center' }}
             backdropTransitionInTiming={0} // Disable default backdrop animation
             backdropTransitionOutTiming={0} // Disable default backdrop animation
-            onModalHide={()=>{setIsEventModalVisible(!isEventModalVisible)}}
+            // onModalHide={()=>{setIsEventModalVisible(!isEventModalVisible)}}
           >
             {!isLodingFinishModalVisible ? (
               <View style={diaryStyles.lodingModal}>
@@ -990,7 +990,7 @@ const Weekly = () => {
             )}
       </Modal>
       
-      <Modal isVisible={isEventModalVisible && isFirstDiaryToday}
+      {/* <Modal isVisible={isEventModalVisible && isFirstDiaryToday}
       animationIn={"fadeIn"}
       animationInTiming={200}
       animationOut={"fadeOut"}
@@ -1004,7 +1004,7 @@ const Weekly = () => {
         setIsFirstDiaryToday(false);
       }}>
         <AutumnEventCoinModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible} type="diary"/>
-      </Modal>
+      </Modal> */}
 
       {/* 4-2. 일기 생성 완료 모달 */}
       <Modal 
@@ -1300,7 +1300,7 @@ const styles = StyleSheet.create({
   },
   day_today: {
     borderBottomWidth: 2,
-    borderColor: '#FFCC4D',//#72D193
+    borderColor: '#72D193',//#FFCC4D
   },
   day_notYet_today: {
     borderBottomWidth: 2,
@@ -1325,7 +1325,7 @@ const styles = StyleSheet.create({
   dayText_today: {
     // flexDirection: 'column', 
     color: 'white',
-    backgroundColor: '#FFCC4D',//72D193
+    backgroundColor: '#72D193',//#FFCC4D
     borderRadius: 10,
     width: 22,
     height: 22,
@@ -1412,7 +1412,7 @@ const typeChangeBtnStyles = StyleSheet.create({
   },
   activeFont: {
     fontSize: 16,
-    color: '#FFCC4D',//72D193
+    color: '#72D193',//#FFCC4D
     fontWeight:'600'
   },
   deactiveType: {

@@ -5,7 +5,7 @@ import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
 import StampOnBoarding from './StampOnBoarding';
-import AutumnEventDetailModal from './AutumnEventDetailModal';
+// import AutumnEventDetailModal from './AutumnEventDetailModal';
 // import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
 import * as repository from './src/localDB/document';
@@ -32,14 +32,14 @@ const Home = ({name,first}:any) => {
   const [userName, setUserName] = useState('');
   const [isFirstStamp,setIsFirstStamp]=useState(false);
   const [isStampTemplateAdded,setIsStampTemplateAdded]=useState(true);
-  const [isEventModalVisible,setIsEventModalVisible] = useState(false);
+  // const [isEventModalVisible,setIsEventModalVisible] = useState(false);
   const [photos, setPhotos] = useState<PhotoIdentifier[]>([]);
   const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
 
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [isCameraPermission, setCameraPermission] = useState<boolean>(false);
 
-  const [isAutumnEventAdditionalVisible,setIsAutumnEventAdditionalVisible] = useState(false);
+  // const [isAutumnEventAdditionalVisible,setIsAutumnEventAdditionalVisible] = useState(false);
 
   const openSettingsAlert = useCallback(({title}: {title: string}) => {
     Alert.alert(title, '', [
@@ -189,11 +189,11 @@ const Home = ({name,first}:any) => {
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
-    AsyncStorage.getItem('@UserInfo:AutumnEventAdditional').then((value) => {
-      if(value!=='true'){
-        setIsAutumnEventAdditionalVisible(true);
-      }
-    })
+    // AsyncStorage.getItem('@UserInfo:AutumnEventAdditional').then((value) => {
+    //   if(value!=='true'){
+    //     setIsAutumnEventAdditionalVisible(true);
+    //   }
+    // })
     AsyncStorage.getItem('@UserInfo:addedStampTemplate')
       .then((value) => {
         if(value!=='true'){
@@ -277,12 +277,12 @@ const Home = ({name,first}:any) => {
       <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
     </View>
     <Image source={require('./assets/colorMooMedium.png')} style={styles.mooImage}/>
-    <TouchableOpacity onPress={() => {
+    {/* <TouchableOpacity onPress={() => {
       setIsEventModalVisible(!isEventModalVisible);
       amplitude.clickEventInfoModal();//이벤트 배너 켬
     }}>
       <Image source={require('./assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
-    </TouchableOpacity>
+    </TouchableOpacity> */}
     <View style={styles.options}>
       <Dropdown options={options} onSelectOption={handleOptionSelect} />
       <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
@@ -337,7 +337,7 @@ const Home = ({name,first}:any) => {
       </View>
     </View>
   </Modal> */}
-  <Modal isVisible={isEventModalVisible}
+  {/* <Modal isVisible={isEventModalVisible}
     animationIn={"fadeIn"}
     animationInTiming={200}
     animationOut={"fadeOut"}
@@ -350,8 +350,8 @@ const Home = ({name,first}:any) => {
   backdropOpacity={0.8}
   style={{ alignItems:'center', }}>
     <AutumnEventDetailModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible}/>
-  </Modal>
-  <Modal isVisible={isAutumnEventAdditionalVisible}
+  </Modal> */}
+  {/* <Modal isVisible={isAutumnEventAdditionalVisible}
       animationIn={"fadeIn"}
       animationInTiming={200}
       animationOut={"fadeOut"}
@@ -452,7 +452,7 @@ const Home = ({name,first}:any) => {
                   </TouchableOpacity>
               </View>
           </View>
-  </Modal>
+  </Modal> */}
   </>) : (
   <StampOnBoarding/>
   // <View style={{justifyContent: 'center',
