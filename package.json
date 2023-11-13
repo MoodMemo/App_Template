@@ -42,6 +42,7 @@
     "react-native": "0.72.3",
     "react-native-code-push": "^8.1.0",
     "react-native-config": "^1.5.1",
+    "react-native-dashed-line": "^1.1.0",
     "react-native-date-picker": "^4.2.13",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-dropdown-select-list": "^2.0.4",

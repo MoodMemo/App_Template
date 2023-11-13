@@ -9,6 +9,7 @@ import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {PieChart} from 'react-native-gifted-charts';
+import DashedLine from 'react-native-dashed-line';
 
 import * as amplitude from '../AmplitudeAPI';
 
@@ -62,6 +63,11 @@ const WeeklyReport = ({reportWeekDate}) => {
     const [recentReportWeekNum, setRecentReportWeekNum] = useState(0);
     const [reportWeekNum, setReportWeekNum] = useState(0);
     const [weeklyReportMode, setWeeklyReportMode] = useState(false);
+    const [statusBar,setStatusBar] = useState('#FAFAFA');
+    const [isCheckListSucceeded,setIsCheckListSucceeded] = useState(false);
+    const [checkListBody,setCheckListBody] = useState('');
+    const [checkListCount,setCheckListCount] = useState(0);
+    const [checkListGoal, setCheckListGoal] = useState(0);
 
     useEffect(() => {
       // AsyncStorage에서 userName 값을 가져와서 설정
@@ -160,16 +166,52 @@ const WeeklyReport = ({reportWeekDate}) => {
       setCountDiarys(listOfDiarys.length);
     }
 
+    const handleNext = () => {
+      if(reportMode==='stat'){
+        setReportMode('aboutLastWeek');
+        setStatusBar('#FFFFFF');
+      }
+    }
+
     return (
     <View style={{backgroundColor:'#FFFFFF',flex:1}}>
     <StatusBar
-      backgroundColor='#FFFFFF'
+      backgroundColor={statusBar}
       barStyle='dark-content'
     />
-    <View style={{flexDirection: 'row',alignSelf:'center',marginTop:15}}>
+    {reportMode==='stat' ? (
+    <>
+    <View style={styles.titleContainer}>
+          <Text style={styles.title}>{userName}의{'\n'}감정을 분석해봤다무!</Text>
+    </View>
+    <Image 
+    source={require('../assets/magnifyingMoo.png')}
+    style={{ width: 154*0.55, height: (154 * 192)*0.55 / 154 , position: 'relative', bottom: 95, left: windowWidth-120, overflow: 'hidden'}}/>
+    </>
+    ) : (<></>)}
+    <View style={{flexDirection: 'row',alignSelf:'center',marginTop:reportMode==='stat' ? -80 : 2}}>
       <Text style={{fontSize:18,color:'#212429',marginTop:2}}> {reportWeekDate} </Text>
     </View>
-    {reportMode==='stat' ? (<ScrollView style={{marginTop:15}}>
+    {reportMode==='stat' ? (<>
+    <ScrollView style={{marginTop:15}}>
+      {/* <View style={{width:340,alignSelf:'center',overflow:'hidden'}}>
+        <Text style={{fontSize:14,color:'#212429',marginBottom:10}}>{userName}의 체크리스트</Text>
+        <View style={{flexDirection:'row',justifyContent:'space-between', marginBottom:15}}>
+          <View style={{flexDirection:'row'}}>
+            {isCheckListSucceeded ? (<Image 
+            source={require('../assets/check-circle-outline.png')}
+            style={{ width: 30, height: 49*30/48 , position: 'relative', overflow: 'hidden'}}/>) :
+            (<Image 
+            source={require('../assets/cancel_circle.png')}
+            style={{ width: 30, height: 49*30/48 , position: 'relative', overflow: 'hidden'}}/>)}
+            <Text style={{fontSize:20,color:'#212429',marginTop:2,marginLeft:10}}>스탬프 5개 남기기</Text>
+          </View>
+          <View style={{height:35,borderRadius:7,borderColor:'#DBDBDB',borderWidth:1.5,marginRight:5}}>
+            <Text style={{fontSize:18,color:'#212429',marginHorizontal:3,marginTop:2}}>  {checkListCount} / {checkListGoal}  </Text>
+          </View>
+        </View>
+        <DashedLine dashLength={10} dashThickness={2} dashGap={10} dashColor={isCheckListSucceeded ? '#7CD0B2' : '#FF7168'}/>
+      </View> */}
         <View style={{flexDirection: 'row', alignSelf:'center', marginTop:15, marginBottom:25}}>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
@@ -199,7 +241,7 @@ const WeeklyReport = ({reportWeekDate}) => {
             donut={true}
             showText={true}
             innerRadius={40}
-            radius={100}
+            radius={80}
           />
         </View>
           <View style={{flexDirection: 'row',
@@ -219,8 +261,119 @@ const WeeklyReport = ({reportWeekDate}) => {
               <Text style={{color: '#000000',fontSize:16}}>{stampButton[1]}개</Text>
             </TouchableOpacity>
           ))}
-        </ScrollView>) : (<></>)}
+        </ScrollView>
+        <TouchableOpacity onPress={handleNext}>
+          <View style={{width:'100%',height:60,backgroundColor:'#72D193',alignItems:'center', justifyContent:'center',}}> 
+            <Text style={{fontSize:25,color:'#FFFFFF'}}>확인했어!</Text>
+          </View>
+        </TouchableOpacity>
+      </>) : (<></>)}
   </View>)
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  stampView: {
+    top: 0,
+    alignContent: 'center',
+    flexDirection: 'row', // 버튼들을 가로로 배열
+    flexWrap: 'wrap', // 가로로 공간이 부족하면 다음 줄로 넘어감
+    justifyContent: 'space-between', // 버튼들 사이의 간격을 동일하게 분배
+    height: 'auto',
+    marginLeft: 28,
+    marginRight: 28,
+    maxWidth: 500, // stampView의 최대 너비 설정
+    alignSelf: 'center', // 화면의 중앙에 위치하도록 설정
+    columnGap: 20,
+  },
+  stampButton: {
+    width: buttonWidth, 
+    height: 100 * scale, // 기본 높이에 비율을 곱함
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: '#7CD0B2',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12 * scale, // 기본 borderRadius에 비율을 곱함
+    marginBottom: 20 * scale, // 기본 marginBottom에 비율을 곱함
+    gap: 10,
+  },
+  buttonEmotion: {
+    fontSize: 24 * scale, // 기본 fontSize에 비율을 곱함
+  },
+  titleContainer: {
+      backgroundColor: '#FAFAFA',
+      height: 100,
+      borderBottomRightRadius: 43,
+      // alignItems: 'center', // 가로 정렬
+  },
+  view: {
+    position: 'relative',
+    backgroundColor: '#ffffff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex:1,
+  },
+  title: {
+    // fontFamily: 'Pretendard',
+    color: '#212429',
+    fontWeight: '400',
+    width: '100%',
+    height: '100%',
+    fontSize: 24,
+    marginTop: 20,
+    marginLeft: 28,
+    marginRight: 200,
+  },
+  input: {
+    width: '80%',
+    height: 40,
+    borderWidth: 1,
+    borderColor: 'gray',
+    padding: 10,
+    marginBottom: 20,
+  },
+  button: {
+    position: 'absolute',
+    bottom: 20,
+    width: '90%',
+    alignItems: 'center',
+    backgroundColor: '#EFEFEF',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: '#000000',
+    fontSize: 17,
+  },
+  confirmBtn: {
+      alignSelf: 'center',
+      alignItems: 'center', 
+      justifyContent: 'center',
+      padding: 8,
+      backgroundColor: '#72D193', 
+      borderRadius: 8,
+      flex: 1,
+      
+  },
+  memoContent: { 
+      justifyContent: 'center',
+      padding: 10,
+      borderRadius: 8,
+      flex: 1,
+      flexDirection: 'column',
+      display: 'flex',
+      // width: 320,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      // gap: 6,
+      borderWidth: 1,
+      borderColor: '#F0F0F0',
+      // borderRadius: 6,
+    },
+});
 
 export default WeeklyReport;
