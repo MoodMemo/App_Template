@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Modal, Image, ScrollView, TextInput, TouchableWithoutFeedback, Dimensions } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Modal, Image, ScrollView, TextInput, TouchableWithoutFeedback, Dimensions, Platform } from 'react-native';
 import {default as Text} from "./CustomText"
 import DatePicker from 'react-native-date-picker';
 import * as repository from './src/localDB/document';
 import * as amplitude from './AmplitudeAPI';
 import realm from './src/localDB/document';
 // import Modal from 'react-native-modal';
+import * as ImagePicker from 'react-native-image-picker';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+const includeExtra = true;
 // 화면의 가로 크기
 const screenWidth = Dimensions.get('window').width;
 // screenWidth가 500보다 크면 500으로, 작으면 screenWidth로 설정
@@ -33,10 +37,14 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
   const editingStamp = stamp;
   const startDate = stamp?.dateTime;
   const startMemo = stamp?.memo;
+  const startImage = stamp?.imageUrl;
   const [modalVisible, setModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [date, setDate] = useState(startDate);
   const [tempDate, setTempDate] = useState(startDate);
+
+  const [selectedImageUri, setSelectedImageUri] = useState(startImage);
+
   const [numberOfLines, setNumberOfLines] = useState(1);
   const [images, setImages] = useState([]);
   const [editedMemo, setEditedMemo] = useState(startMemo);
@@ -44,6 +52,7 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     setEditedMemo(stamp?.memo);
     setDate(stamp?.dateTime || new Date());
     setTempDate(stamp?.dateTime || new Date());
+    setSelectedImageUri(stamp?.imageUrl);
     getBoxMessure();
   }, [stamp, firstRef.current]);  
   // const [notDevelopedModalVisible, setNotDevelopedModalVisible] = useState(false);
@@ -58,11 +67,15 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     if (firstRef) {
       firstRef.current.measureInWindow((x, y, width, height) => {
       // buttonRefs.current[index].measure((x, y, width, height, pageX, pageY)=> {
-        console.log("getFirstBoxMessure ==")
-        console.log("x : ", x); setFirstButtonX(x);
-        console.log("y : ", y); setFirstButtonY(y);
-        console.log("width : ", width); setFirstWidth(width);
-        console.log("height : ", height); setFirstHeight(height);
+        // console.log("getFirstBoxMessure ==")
+        // console.log("x : ", x); 
+        setFirstButtonX(x);
+        // console.log("y : ", y); 
+        setFirstButtonY(y);
+        // console.log("width : ", width); 
+        setFirstWidth(width);
+        // console.log("height : ", height); 
+        setFirstHeight(height);
         // console.log("pageX : ", pageX);
         // console.log("pageY : ", pageY);
       });
@@ -74,6 +87,38 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
 
   // 4개의 버튼과 각 버튼 사이의 간격을 위한 값
   const iOSButtonWidth = (iOSwidth - 56 - (3 * 20)) / 4; // 56은 양쪽의 마진 합, 3*20은 3개의 간격
+
+  const [response, setResponse] = React.useState<any>(null);
+
+  const onButtonPress = React.useCallback((type, options) => {
+    if (type === 'capture') {
+      ImagePicker.launchCamera(options, (response) => {
+        setResponse(response);
+        if (response?.assets && response?.assets[0]?.uri) {
+          setSelectedImageUri(response?.assets[0]?.uri);
+        }
+      });
+    } else {
+      ImagePicker.launchImageLibrary(options, (response) => {
+        setResponse(response);
+        if (response?.assets && response?.assets[0]?.uri) {
+          // if(Platform.OS === 'ios') {
+          //   setSelectedImageUri('~' + response?.assets[0]?.uri.substring(response?.assets[0]?.uri.indexOf('/tmp/')));
+          // }
+          // Plaform.OS가 iOS이고 response?.assets[0]?.uri가 /tmp/가 포함되어 있으면
+          if(Platform.OS === 'ios' && response?.assets[0]?.uri.includes('/tmp/')) {
+            setSelectedImageUri('~' + response?.assets[0]?.uri.substring(response?.assets[0]?.uri.indexOf('/tmp/')));
+          }
+          else if(Platform.OS === 'ios' && response?.assets[0]?.uri.includes('/Documents/')) {
+            setSelectedImageUri('~' + response?.assets[0]?.uri.substring(response?.assets[0]?.uri.indexOf('/Documents/')));
+          }
+          else {
+            setSelectedImageUri(response?.assets[0]?.uri);
+          }
+        }
+      });
+    }
+  }, []);
 
   const handleMemoChange = (text) => {
     setEditedMemo(text);
@@ -110,10 +155,24 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
         stampToUpdate.dateTime = date;
         stampToUpdate.memo = editedMemo;
         stampToUpdate.updatedAt = new Date();
+        stampToUpdate.imageUrl = selectedImageUri;
       }
     });
   };
   const styles = StyleSheet.create({
+    mooBtn: {
+      backgroundColor: '#72D193',
+      marginHorizontal: 16, borderRadius: 8, padding: 10, marginBottom: 16,
+      alignItems: 'center', flexDirection: 'row', justifyContent: 'center'
+    },
+    btnText: {
+      fontFamily: 'Pretendard',
+      fontSize: 20,
+      fontStyle: 'normal',
+      fontWeight: '600',
+      color: '#FFFFFF',
+      // lineHeight: 24,
+    },
     container: {
       flex: 1,
       marginTop: 19,
@@ -158,14 +217,17 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
       fontFamily: 'Pretendard',
     },
     modalContainer: {
-      flex: 1,
+      // flex: 1,
       justifyContent: 'flex-start',
       // alignItems: 'center',
       backgroundColor: '#FFFFFF',
+      // backgroundColor: 'black',
       width: '100%',
-      height: '100%',
+      height: '92%',
+      position: 'absolute',
+      bottom: 0,
       flexShrink: 0,
-      borderRadius: 16,
+      borderTopRightRadius: 16, borderTopLeftRadius: 16,
       marginTop: firstButtonY,
     },
     modalTitleContainer: {
@@ -179,14 +241,14 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     modalTitle: {
       color: '#212429',
       textAlign: 'center',
-      fontSize: 16,
+      fontSize: 18,
       fontFamily: 'Pretendard',
       fontWeight: '400',
       fontStyle: 'normal',
     },
     modalText: {
       fontFamily: 'Pretendard',
-      fontSize: 12,
+      fontSize: 14,
       fontStyle: 'normal',
       fontWeight: '400',
     },
@@ -207,18 +269,18 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     stampContent: {
       flexDirection: 'row',
       display: 'flex',
-      paddingTop: 8,
-      paddingBottom: 8,
-      justifyContent: 'flex-start',
+      paddingVertical: 12,
+      justifyContent: 'center',
       alignItems: 'center',
       gap: 8,
     },
     stampText: {
       fontFamily: 'Pretendard',
-      fontSize: 14,
+      fontSize: 20,
       fontStyle: 'normal',
       fontWeight: '400',
-      lineHeight: 20,
+      lineHeight: 24,
+      color: '#212429',
     },
     timeContainer: {
       flexDirection: 'row',
@@ -261,6 +323,7 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
       borderWidth: 1,
       borderColor: '#F0F0F0',
       borderRadius: 6,
+      marginTop: 8,
     },
     memoText: {
       alignSelf: 'stretch',
@@ -287,6 +350,21 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
       padding: 16,
       justifyContent: 'flex-start',
       gap: 10,
+      // backgroundColor: 'gray'
+    },
+    image: {
+      width: 100,
+      height: 100,
+      borderRadius: 6,
+      backgroundColor: 'gray',
+      marginRight: 12,
+    },
+    imgContent: {
+      flexDirection: 'row',
+      // flexWrap: 'wrap',
+      width: '100%',
+      gap: 12,
+      marginTop: 16
     },
     imgButton: {
       flexDirection: 'column',
@@ -304,7 +382,7 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
       borderWidth: 1,
       borderColor: '#D7D7D7',
       borderStyle: 'dashed',
-      backgroundColor: '#F2F2F2',
+      backgroundColor: '#FAFAFA',
     },
     imgText: {
       color: '#D7D7D7',
@@ -370,55 +448,93 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
   return (
     <View>
     <Modal visible={visible} animationType="slide" transparent>
+      <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
         <View style={styles.modalContainer}>
-
           { !timeModalVisible ? (
             // 첫 번째 모달의 컨텐츠
             <>
+              {/* 1열: X & 시간 */}
               <View style={styles.modalTitleContainer}>
+                {/* X 버튼 */}
                 <TouchableOpacity onPress={() => {onClose(); amplitude.backToWeeklyFromStampEditModal();}}>
                   <Image source={require('./assets/close.png')} />
                 </TouchableOpacity>
-                <Text style={styles.modalTitle}>감정 수정</Text>
-                <TouchableOpacity onPress={() => {onClose();handleSaveButton(); amplitude.confirmToEditStamp();}}>
-                  <Image source={require('./assets/check.png')} />
+                {/* 시간 & 수정 연필 */}
+                <TouchableOpacity onPress={handleOpenTimeModal} style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                  <Text style={styles.modalTitle}>
+                    {date.getFullYear()}년 {date.getMonth() + 1}월 {date.getDate()}일 {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
+                  </Text>
+                  <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
                 </TouchableOpacity>
               </View>
-              <ScrollView horizontal={false}>
-                <View style={styles.stampContainer}>
-                  <Text style={styles.modalText}>찍은 스탬프</Text>
+              {/* 상세 내용 */}
+              <ScrollView horizontal={false} contentContainerStyle={{marginHorizontal: 16, marginTop: 2}}>
+                {/* 찍은 스탬프 */}
+                <View style={{borderBottomColor: '#7CD0B2', borderBottomWidth: 1, borderStyle: 'dashed', marginBottom: 18}}>
+                  <Text style={styles.modalText}>나의 감정은...</Text>
                   <View style={styles.stampContent}>
                     <Text style={styles.stampText}>{editingStamp.emoji}</Text>
                     <Text style={styles.stampText}>{editingStamp.stampName}</Text>
                   </View>
+                  {/* 구분선 */}
                 </View>
-                <View style={styles.timeContainer}>
-                  <Text style={styles.modalText}>기록 시간</Text>
-                  <TouchableOpacity onPress={handleOpenTimeModal}>
-                    <Text style={styles.timeText}>
-                      {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
-                    </Text>
+                {/* 메모 남기기 */}
+                <Text style={styles.modalText}>왜냐면...</Text>
+                <View style={styles.memoContent}>
+                  <TextInput
+                    style={styles.memoText}
+                    placeholder={editedMemo || "메모 작성하기 (추후 작성 가능)"}
+                    value={editedMemo}
+                    multiline={true}
+                    maxLength={500}
+                    onChangeText={handleMemoChange}
+                    // value={memo}
+                    numberOfLines={numberOfLines}
+                    onFocus={() => {amplitude.editMemo();}}
+                  />
+                  <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
+                </View>
+                {/* 사진 추가 */}
+                <View style={styles.imgContent}>
+                  <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
+                    selectionLimit: 1,
+                    mediaType: 'photo',
+                    includeBase64: false,
+                    includeExtra,
+                  })}>
+                    <Image source={require('./assets/add-circle.png')} />
+                    <Text style={styles.imgText}>사진 추가</Text>
                   </TouchableOpacity>
-                </View>
-                <View style={styles.horizontalLine} />
-                <View style={styles.memoContainer}>
-                  <Text style={styles.modalText}>메모 남기기</Text>
-                  <View style={styles.memoContent}>
-                    <TextInput
-                      style={styles.memoText}
-                      placeholder={editedMemo || "메모 작성하기 (추후 작성 가능)"}
-                      value={editedMemo}
-                      multiline={true}
-                      maxLength={500}
-                      onChangeText={handleMemoChange}
-                      // value={memo}
-                      numberOfLines={numberOfLines}
-                      onFocus={() => {amplitude.editMemo();}}
-                    />
-                    <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
-                  </View>
+                  <ScrollView horizontal={true}>
+                  {response?.assets &&
+                    response?.assets.map(({uri}: {uri: string}) => (
+                      <View key={uri}>
+                        <Image
+                          resizeMode="cover"
+                          resizeMethod="scale"
+                          style={styles.image}
+                          source={{uri: uri}}
+                        />
+                      </View>
+                  ))}
+                  {(!response || !response?.assets) && selectedImageUri && (
+                    <View key={selectedImageUri}>
+                      <Image
+                        resizeMode="cover"
+                        resizeMethod="scale"
+                        style={styles.image}
+                        source={{uri: selectedImageUri}}
+                      />
+                    </View>
+                  )}
+                  </ScrollView>
                 </View>
               </ScrollView>
+              {/* Moo에게 보내기 버튼 */}
+              <TouchableOpacity onPress={() => {onClose();handleSaveButton(); amplitude.confirmToEditStamp();}} style={styles.mooBtn}>
+                <Text style={styles.btnText}>수정 완료</Text>
+                {/* <FontAwesomeIcon name='send-o' size={16} color="#fff"/> */}
+              </TouchableOpacity>
             </>
           ) : (
             // 두 번째 모달의 컨텐츠 (시간 변경 모달)
@@ -443,13 +559,82 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
               </TouchableWithoutFeedback>
             </>
           )}
-
         </View>
+      </View>
     </Modal>
     </View>
   );
 }
 
+interface Action {
+  title: string;
+  type: 'capture' | 'library';
+  options: ImagePicker.CameraOptions | ImagePicker.ImageLibraryOptions;
+}
 
+const actions: Action[] = [
+  {
+    title: 'Take Image',
+    type: 'capture',
+    options: {
+      saveToPhotos: true,
+      mediaType: 'photo',
+      includeBase64: false,
+      includeExtra,
+    },
+  },
+  {
+    title: 'Select Image',
+    type: 'library',
+    options: {
+      selectionLimit: 0,
+      mediaType: 'photo',
+      includeBase64: false,
+      includeExtra,
+    },
+  },
+  {
+    title: 'Take Video',
+    type: 'capture',
+    options: {
+      saveToPhotos: true,
+      formatAsMp4: true,
+      mediaType: 'video',
+      includeExtra,
+    },
+  },
+  {
+    title: 'Select Video',
+    type: 'library',
+    options: {
+      selectionLimit: 0,
+      mediaType: 'video',
+      formatAsMp4: true,
+      includeExtra,
+    },
+  },
+  {
+    title: 'Select Image or Video\n(mixed)',
+    type: 'library',
+    options: {
+      selectionLimit: 0,
+      mediaType: 'mixed',
+      includeExtra,
+    },
+  },
+];
+
+if (Platform.OS === 'ios') {
+  actions.push({
+    title: 'Take Image or Video\n(mixed)',
+    type: 'capture',
+    options: {
+      saveToPhotos: true,
+      mediaType: 'mixed',
+      includeExtra,
+      presentationStyle: 'fullScreen',
+    },
+  });
+}
 
 export default StampClick;

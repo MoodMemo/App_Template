@@ -122,10 +122,6 @@ function App(): JSX.Element {
     VersionCheck.needUpdate({
       currentVersion: CurrentVersion,
       latestVersion: LatestVersion,
-      rollbackRetryOptions: {
-        delayInHours: 0,
-        maxRetryAttempts: 1000
-      }
     }).then((res: any) => {
       if (res.isNeeded) {
         setIsUpdateNeeded(true);
