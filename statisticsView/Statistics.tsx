@@ -415,7 +415,7 @@ const Statistics = () => {
             </TouchableOpacity>
           </>)}
       </View>) : (
-        <WeeklyReport reportWeekDate={reportWeekDate}/>
+        <WeeklyReport reportWeekDate={reportWeekDate} setWeeklyReportMode={setWeeklyReportMode} weeklyReportMode={weeklyReportMode}/>
       )
     );
 }
