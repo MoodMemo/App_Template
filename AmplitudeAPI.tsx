@@ -1068,6 +1068,7 @@ export function endMoodReport() {
 export function endMoodReportAndGotoStamp() {
   amplitude.track('MoodReport: click end Mood Report and goto stamp',
   {view: 'MoodReport', action: 'click'});
+}
 
 export function clickAddPicture() {
   amplitude.track('stamp: click, add picture',
