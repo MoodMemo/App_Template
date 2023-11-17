@@ -365,6 +365,7 @@ const StampList = ({visible, closeModal}) => {
       {addStampModalVisible && (
         <View style={styles.overlay} />
       )}
+      {/* 이 아래에 있는 모달은 23.11.07 이전 버전인데, 그 이후로 수정이 안됐어용 - 안쓰는것같아서! (스탬프 리스트 안에서 추가하는 모달이었던 것 같음) */}
       <ModalRN visible={addStampModalVisible} animationType='slide' transparent>
         <View style={styles.addStampModalContainer}>
           <View style={styles.addStampModalTitleContainer}>

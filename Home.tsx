@@ -21,6 +21,16 @@ import { CameraRoll, useCameraRoll, PhotoIdentifier } from '@react-native-camera
 import {Alert, Linking} from 'react-native';
 import Permissions, {PERMISSIONS} from 'react-native-permissions';
 
+import dayjs from 'dayjs';
+import "dayjs/locale/ko"; //한국어
+dayjs.locale("ko");
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
+import * as nodata from './weeklyView/NoDataView';
+import { getStamp } from './weeklyView/DocumentFunc';
+import CustomStamp from './CustomStamp';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -225,6 +235,7 @@ const Home = ({name,first}:any) => {
     });
     console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
     console.log(isStampTemplateAdded,'isStampTemplateAdded',first);
+    setTodayStampCnt(getStamp(currentDate).length);
   }, []);
 
   const addStampTemplate = () => {
@@ -264,45 +275,46 @@ const Home = ({name,first}:any) => {
     amplitude.exitCustomStampList();
     setFixModalVisible(false);
   };
+
+
+  const currentDate = dayjs();
+  const formattedDate = currentDate.format('M월 D일');
+  const [todayStampCnt, setTodayStampCnt] = useState(0);
+  
+
+
   // console.log('aa',name);
   return (
     <>
     <StatusBar
-        backgroundColor="#FFFAEE"
+        backgroundColor="#FFFFF9"
         barStyle='dark-content'
       />
-    {isFirstStamp===false ? (<><View style={styles.view}>
-    <View style={styles.titleContainer}>
-      {/* 드롭다운 컴포넌트 */}
-      <Text style={styles.title}>지금 어떤 기분이냐무~?{'\n'}{`${name===undefined ? userName : name}`}의{'\n'}감정을 알려줘라무!</Text>
-    </View>
-    <Image source={require('./assets/colorMooMedium.png')} style={styles.mooImage}/>
-    {/* <TouchableOpacity onPress={() => {
-      setIsEventModalVisible(!isEventModalVisible);
-      amplitude.clickEventInfoModal();//이벤트 배너 켬
-    }}>
-      <Image source={require('./assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
-    </TouchableOpacity> */}
-    <View style={styles.options}>
-      <Dropdown options={options} onSelectOption={handleOptionSelect} />
-      <TouchableOpacity style={styles.fixButton} onPress={handleFixButton}>
-        {/* <Image source={require('./assets/edit.png')} /> */}
-        <MCIcon name='trash-can' color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
+    {isFirstStamp===false ? (<>
+    <View style={styles.view}>
+      {/* 현재 상태 확인 */} 
+      <View style={newStyles.moo_status}>
+        <View style={{flexDirection: 'row', }}>
+          {todayStampCnt !== 0 ? (<Image source={require('./assets/sun_vivid.png')} style={{ width: 32, height: (30 * 32) / 32, marginRight: 7 }} />
+          ) : (<Image source={require('./assets/sun_hazy.png')} style={{ width: 32, height: (30 * 32) / 32, marginRight: 7 }} />)}
+          {todayStampCnt >= 2 ? (<Image source={require('./assets/sun_vivid.png')} style={{ width: 32, height: (30 * 32) / 32 }} />
+          ) : (<Image source={require('./assets/sun_hazy.png')} style={{ width: 32, height: (30 * 32) / 32 }} />)}
+        </View>
+        <Text style={{color: '#FEB954', fontSize: 16,}}>{formattedDate}, Moo는 광합성 중...</Text>
+      </View>
+      {/* 이벤트 배너 영역 */}
+      <TouchableOpacity style={{marginTop: 14}} onPress={() => {
+        setIsEventModalVisible(!isEventModalVisible);
+        amplitude.clickEventInfoModal();//이벤트 배너 켬
+      }}><Image source={require('./assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
       </TouchableOpacity>
-
-      {/* // 된 거 */}
-      {/* <Button title="사진 테스트" onPress={checkPermission}/> */}
-      {/* <Button title="사진 불러오기" onPress={fetchPhotos}/> */}
-      {/* <Button title="사진 모달 띄우기" onPress={() => {
-        fetchPhotos();
-        setIsPhotoModalVisible(true);
-      }}/> */}
+      {/* 무의 메세지 영역 */}
+      <nodata.Home_Moo_Message name={userName}/>
+      {/* 나의 감정스탬프들 영역 */}
+      <CustomStamp handleFixButtonFromCSP={handleFixButton}/>
+      {/* 스탬프 설정 모달 */}
+      <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
     </View>
-    {/* 감정 스탬프 뷰 */}
-    <StampView/>
-    {/* 스탬프 설정 모달 */}
-    <StampList visible={fixModalVisible} closeModal={handleFixModalClose}/>
-  </View>
   {/* <Modal isVisible={isPhotoModalVisible}
     animationIn={"fadeIn"}
     animationInTiming={200}
@@ -453,8 +465,8 @@ const Home = ({name,first}:any) => {
               </View>
           </View>
   </Modal> */}
-  </>) : (
-  <StampOnBoarding/>
+</>
+  ) : ( <StampOnBoarding/> // 첫 스탬프 입력일 경우 온보딩으로
   // <View style={{justifyContent: 'center',
   //       flex:1,
   //       backgroundColor:'#FFFAF4'}}>
@@ -486,6 +498,7 @@ const Home = ({name,first}:any) => {
   //         </TouchableOpacity>
   //       </View>
   )}
+
   <Modal isVisible={!first&&!isStampTemplateAdded}
       animationIn={"fadeIn"}
       animationInTiming={200}
@@ -597,7 +610,7 @@ const Home = ({name,first}:any) => {
 const styles = StyleSheet.create({
     view: {
       flex: 1,
-      backgroundColor: '#FFFFFF',
+      backgroundColor: '#FFFFF9',
     },
     titleContainer: {
       backgroundColor: '#FFFAEE',
@@ -634,9 +647,8 @@ const styles = StyleSheet.create({
       flexDirection: 'row', // 옵션들을 가로로 배치
       justifyContent: 'space-between', // 옵션들 사이 간격을 동일하게 배치
       alignItems: 'center', // 옵션들을 세로로 가운데 정렬
-      marginTop: 32,
+      marginTop: 23,
       marginHorizontal: 28,
-      marginBottom:12
     },
     fixButton: {
       width: 20,
@@ -691,8 +703,18 @@ const styles = StyleSheet.create({
       height:(windowWidth-30)*240/1440,
       borderRadius:10,
       alignSelf:'center',
-      top:18
     }
   });
-
+const newStyles = StyleSheet.create({
+  moo_status: {
+    marginTop: 28, marginHorizontal: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
+  },
+  customStamps: {
+    backgroundColor: '#fff', width: '100%', flex:1, alignSelf: 'center',marginTop: 44,
+    elevation: 4, 
+    shadowOffset: {width: 0, height: -4},
+    shadowOpacity: 0.5,
+    borderTopLeftRadius: 20, borderTopRightRadius: 20
+  },
+});
 export default Home;

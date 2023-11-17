@@ -10,6 +10,8 @@ import Modal from "react-native-modal";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets, useSafeAreaFrame, initialWindowMetrics } from 'react-native-safe-area-context';
 import * as ImagePicker from 'react-native-image-picker';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const includeExtra = true;
 // 화면의 가로 크기
@@ -214,7 +216,7 @@ const StampView = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 19,
+      marginTop: 13,
       backgroundColor: '#FFFFFF',
       alignItems: 'center',
       justifyContent: 'center',
@@ -250,6 +252,26 @@ const StampView = () => {
       borderStyle: 'dashed',
       borderColor: '#7CD0B2',
       backgroundColor: '#FFFFFF',
+      gap: 10,
+    },
+    blank: {
+      ...Platform.select({
+        ios : {
+          width: iOSButtonWidth,
+        },
+        android : {
+          width: buttonWidth, 
+        },
+      }),
+      height: 84 * scale, // 기본 높이에 비율을 곱함
+      borderRadius: 12 * scale, // 기본 borderRadius에 비율을 곱함
+      marginBottom: 20 * scale, // 기본 marginBottom에 비율을 곱함
+      justifyContent: 'center',
+      alignItems: 'center',
+      // borderWidth: 1,
+      // borderStyle: 'dashed',
+      // borderColor: '#7CD0B2',
+      // backgroundColor: '#FFFFFF',
       gap: 10,
     },
     buttonEmotion: {
@@ -360,14 +382,17 @@ const StampView = () => {
       flex: 1,
     },
     modalContainer: {
-      flex: 1,
+      // flex: 1,
       justifyContent: 'flex-start',
       // alignItems: 'center',
       backgroundColor: '#FFFFFF',
+      // backgroundColor: 'black',
       width: '100%',
-      height: '100%',
+      height: '92%',
+      position: 'absolute',
+      bottom: 0,
       flexShrink: 0,
-      borderRadius: 16,
+      borderTopRightRadius: 16, borderTopLeftRadius: 16,
       marginTop: (Platform.OS==='ios' ? top : 0),
     },
     modalTitleContainer: {
@@ -409,18 +434,18 @@ const StampView = () => {
     stampContent: {
       flexDirection: 'row',
       display: 'flex',
-      paddingTop: 8,
-      paddingBottom: 8,
-      justifyContent: 'flex-start',
+      paddingVertical: 12,
+      justifyContent: 'center',
       alignItems: 'center',
       gap: 8,
     },
     stampText: {
       fontFamily: 'Pretendard',
-      fontSize: 16,
+      fontSize: 20,
       fontStyle: 'normal',
       fontWeight: '400',
       lineHeight: 24,
+      color: '#212429',
     },
     timeContainer: {
       flexDirection: 'row',
@@ -431,21 +456,13 @@ const StampView = () => {
       alignItems: 'center',
       gap: 30,
     },
-    timeText: {
+    btnText: {
       fontFamily: 'Pretendard',
-      fontSize: 16,
+      fontSize: 20,
       fontStyle: 'normal',
-      fontWeight: '400',
-      lineHeight: 24,
-    },
-    horizontalLine: {
-      // width: '100%',
-      height: 0.7,
-      backgroundColor: '#F0F0F0',
-      marginLeft: 16,
-      marginRight: 19,
-      marginTop: 27,
-      marginBottom: 27,
+      fontWeight: '600',
+      color: '#FFFFFF',
+      // lineHeight: 24,
     },
     memoContainer: {
       width: '100%',
@@ -463,6 +480,7 @@ const StampView = () => {
       borderWidth: 1,
       borderColor: '#F0F0F0',
       borderRadius: 6,
+      marginTop: 8,
     },
     memoText: {
       alignSelf: 'stretch',
@@ -483,19 +501,17 @@ const StampView = () => {
       fontStyle: 'normal',
       lineHeight: 24,
     },
-    imgContainer: {
-      flexDirection: 'column',
-      width: '100%',
-      padding: 16,
-      justifyContent: 'flex-start',
-      gap: 10,
-      // backgroundColor: 'gray'
+    mooBtn: {
+      backgroundColor: '#72D193',
+      marginHorizontal: 16, borderRadius: 8, padding: 10, marginBottom: 16,
+      alignItems: 'center', flexDirection: 'row', justifyContent: 'center'
     },
     imgContent: {
       flexDirection: 'row',
       // flexWrap: 'wrap',
       width: '100%',
       gap: 12,
+      marginTop: 16
     },
     imgButton: {
       flexDirection: 'column',
@@ -598,9 +614,6 @@ const StampView = () => {
   });
   return (
     <>
-    {addStampModalVisible && (
-      <View style={styles.overlay} />
-    )}
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.stampView} horizontal={false}>
         {customStamps.map((stampButton) => (
@@ -615,44 +628,42 @@ const StampView = () => {
         }}>
           <Image source={require('./assets/add.png')} />
         </TouchableOpacity>
+        {customStamps.length%4 === 1 || customStamps.length%4 === 2? (<View style={styles.blank}/>) : (<View/>)}
+        {customStamps.length%4 === 1 ? (<View style={styles.blank}/>) : (<View/>)}
       </ScrollView>
-      {addStampModalVisible && (
-        <View style={styles.overlay} />
-      )}
       <ModalRN visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-
-          { !timeModalVisible ? (
-            // 첫 번째 모달의 컨텐츠
-            <>
-              <View style={styles.modalTitleContainer}>
-                <TouchableOpacity onPress={() => {onClose(); amplitude.cancelStamp();}}>
-                  <Image source={require('./assets/close.png')} />
-                </TouchableOpacity>
-                <Text style={styles.modalTitle}>감정 기록</Text>
-                <TouchableOpacity onPress={handleCreatePushedStamp}>
-                  <Image source={require('./assets/check.png')} />
-                </TouchableOpacity>
-              </View>
-              <ScrollView horizontal={false}>
-                <View style={styles.stampContainer}>
-                  <Text style={styles.modalText}>찍은 스탬프</Text>
-                  <View style={styles.stampContent}>
-                    <Text style={styles.stampText}>{selectedEmotion}</Text>
-                    <Text style={styles.stampText}>{selectedEmotionLabel}</Text>
-                  </View>
-                </View>
-                <View style={styles.timeContainer}>
-                  <Text style={styles.modalText}>기록 시간</Text>
-                  <TouchableOpacity onPress={handleOpenTimeModal}>
-                    <Text style={styles.timeText}>
-                      {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
+        <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
+          <View style={styles.modalContainer}>
+            { !timeModalVisible ? (
+              // 첫 번째 모달의 컨텐츠
+              <>
+                {/* 1열: X & 시간 */}
+                <View style={styles.modalTitleContainer}>
+                  {/* X 버튼 */}
+                  <TouchableOpacity onPress={() => {onClose(); amplitude.cancelStamp();}}>
+                    <Image source={require('./assets/close.png')} />
+                  </TouchableOpacity>
+                  {/* 시간 & 수정 연필 */}
+                  <TouchableOpacity onPress={handleOpenTimeModal} style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                    <Text style={styles.modalTitle}>
+                      {date.getFullYear()}년 {date.getMonth() + 1}월 {date.getDate()}일 {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
                     </Text>
+                    <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
                   </TouchableOpacity>
                 </View>
-                <View style={styles.horizontalLine} />
-                <View style={styles.memoContainer}>
-                  <Text style={styles.modalText}>메모 남기기</Text>
+                {/* 상세 내용 */}
+                <ScrollView horizontal={false} contentContainerStyle={{marginHorizontal: 16, marginTop: 2}}>
+                  {/* 찍은 스탬프 */}
+                  <View style={{borderBottomColor: '#7CD0B2', borderBottomWidth: 1, borderStyle: 'dashed', marginBottom: 18}}>
+                    <Text style={styles.modalText}>나의 감정은...</Text>
+                    <View style={styles.stampContent}>
+                      <Text style={styles.stampText}>{selectedEmotion}</Text>
+                      <Text style={styles.stampText}>{selectedEmotionLabel}</Text>
+                    </View>
+                    {/* 구분선 */}
+                  </View>
+                  {/* 메모 남기기 */}
+                  <Text style={styles.modalText}>왜냐면...</Text>
                   <View style={styles.memoContent}>
                     <TextInput
                       style={styles.memoText}
@@ -668,9 +679,7 @@ const StampView = () => {
                     />
                     <Text style={styles.maxLength}>{memo.length}/500</Text>
                   </View>
-                </View>
-                <View style={styles.imgContainer}>
-                  <Text style={styles.modalText}>사진 추가</Text>
+                  {/* 사진 추가 */}
                   <View style={styles.imgContent}>
                     <TouchableOpacity style={styles.imgButton} onPress={() => {
                       amplitude.clickAddPicture();
@@ -697,33 +706,38 @@ const StampView = () => {
                     ))}
                     </ScrollView>
                   </View>
-                </View>
-              </ScrollView>
-            </>
-          ) : (
-            // 두 번째 모달의 컨텐츠 (시간 변경 모달)
-            <>
-              <TouchableWithoutFeedback onPressOut={handleCloseTimeModal}>
-                <View style={styles.timeModalWrapper}>
-                  <TouchableWithoutFeedback onPressIn={(e) => e.stopPropagation()}>
-                    <View style={styles.timeModalContainer}>
-                      <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
-                      <DatePicker date={tempDate} onDateChange={setTempDate} mode="datetime" theme="light"/>
-                      <View style={styles.timeButtons}>
-                        <TouchableOpacity onPress={handleCancleTimeModal}>
-                          <Text style={{fontSize:16}}>취소</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 10, right: 20}} onPress={handleSubmitTimeModal}>
-                          <Text style={{fontSize:16}}>확인</Text>
-                        </TouchableOpacity>
+                </ScrollView>
+                {/* Moo에게 보내기 버튼 */}
+                <TouchableOpacity onPress={handleCreatePushedStamp} style={styles.mooBtn}>
+                  <Text style={styles.btnText}>Moo에게 보내기 </Text>
+                  <FontAwesomeIcon name='send-o' size={16} color="#fff"/>
+                </TouchableOpacity>
+              </>
+            ) : (
+              // 두 번째 모달의 컨텐츠 (시간 변경 모달)
+              <>
+                <TouchableWithoutFeedback onPressOut={handleCloseTimeModal}>
+                  <View style={styles.timeModalWrapper}>
+                    <TouchableWithoutFeedback onPressIn={(e) => e.stopPropagation()}>
+                      <View style={styles.timeModalContainer}>
+                        <Text style={styles.timeModalText}>기록 시간 변경하기</Text>
+                        <DatePicker date={tempDate} onDateChange={setTempDate} mode="datetime" theme="light"/>
+                        <View style={styles.timeButtons}>
+                          <TouchableOpacity onPress={handleCancleTimeModal}>
+                            <Text style={{fontSize:16}}>취소</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 10, right: 20}} onPress={handleSubmitTimeModal}>
+                            <Text style={{fontSize:16}}>확인</Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
-                    </View>
-                  </TouchableWithoutFeedback>
-                </View>
-              </TouchableWithoutFeedback>
-            </>
-          )}
+                    </TouchableWithoutFeedback>
+                  </View>
+                </TouchableWithoutFeedback>
+              </>
+            )}
 
+          </View>
         </View>
       </ModalRN>
 
@@ -748,7 +762,9 @@ const StampView = () => {
         </TouchableWithoutFeedback>
       </Modal> */}
     </View>
+    {/* 모달 영역 */}
     <ModalRN visible={addStampModalVisible} animationType='slide' transparent>
+      <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
         <View style={styles.addStampModalContainer}>
           <View style={styles.addStampModalTitleContainer}>
             <TouchableOpacity onPress={() => {
@@ -797,39 +813,40 @@ const StampView = () => {
             </View>
           </View>
         </View>
-      </ModalRN>
-      <Modal 
-        isVisible={isLodingFinishModalVisible}
-        animationIn={"fadeIn"}
-        animationOut={"fadeOut"}
-        backdropColor='#CCCCCC' 
-        backdropOpacity={0.9}
-        style={{ alignItems:'center' }}
-        backdropTransitionInTiming={0} // Disable default backdrop animation
-        backdropTransitionOutTiming={0} // Disable default backdrop animation
-      >
-        <View style={styles.finishLodingModal}>
-          {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
-          <Image 
-            source={require('./assets/colorMooMini.png')}
-            style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
-          <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
-            <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
-            <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>!~</Text>
-          </View>
-          <View style={{alignItems: 'center',}}>
-            <Text style={{ color: '#475467', fontSize: 14, }}>{userName}의 새로운 감정을 환영한다무~</Text>
-          </View>
-          <View style={{ flexDirection: 'row', marginTop: 20 }}>
-            <View style={{ flexDirection: 'row', flex: 1,}}>
-              <TouchableOpacity style={styles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false);}}>
-                <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
-              </TouchableOpacity>
-            </View>
-          </View>       
+      </View>
+    </ModalRN>
+    <Modal 
+      isVisible={isLodingFinishModalVisible}
+      animationIn={"fadeIn"}
+      animationOut={"fadeOut"}
+      backdropColor='#CCCCCC' 
+      backdropOpacity={0.9}
+      style={{ alignItems:'center' }}
+      backdropTransitionInTiming={0} // Disable default backdrop animation
+      backdropTransitionOutTiming={0} // Disable default backdrop animation
+    >
+      <View style={styles.finishLodingModal}>
+        {/* <ActivityIndicator size="large" color="#00E3AD"/> */}
+        <Image 
+          source={require('./assets/colorMooMini.png')}
+          style={{ width: 68, height: (71 * 68) / 68 , marginTop: 60,}}></Image>
+        <View style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10, }}>
+          <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>스탬프가 등록됐다</Text>
+          <Text style={{ color: '#FFCC4D', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>무</Text>
+          <Text style={{ color: '#101828', marginVertical: 0, fontSize: 18, fontWeight: 'bold' }}>!~</Text>
         </View>
-      </Modal>
+        <View style={{alignItems: 'center',}}>
+          <Text style={{ color: '#475467', fontSize: 14, }}>{userName}의 새로운 감정을 환영한다무~</Text>
+        </View>
+        <View style={{ flexDirection: 'row', marginTop: 20 }}>
+          <View style={{ flexDirection: 'row', flex: 1,}}>
+            <TouchableOpacity style={styles.confirmBtn} onPress={() => {setIsLodingFinishModalVisible(false);}}>
+              <Text style={{ color: '#ffffff', fontSize: 16, fontWeight: '600',}}>확인</Text>
+            </TouchableOpacity>
+          </View>
+        </View>       
+      </View>
+    </Modal>
     </>
   );
 };
