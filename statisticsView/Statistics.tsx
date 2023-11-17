@@ -33,7 +33,7 @@ const windowHeight = Dimensions.get('window').height;
 
 const chartColor=[['#9BE300','#FFFFFF'],['#FF7DB8','#FFFFFF'],['#5BC4FF','#FFFFFF'],['#DFAAFF','#FFFFFF'],['#FFA887','#FFFFFF'],['#AAAAAA','#FFFFFF']]
 
-const Statistics = () => {
+const Statistics = ({gotoMoodReport}) => {
 
     // const handleOpenLink = async () => {
     //     const url = 'http://pf.kakao.com/_xhGnxgxj'; // 원하는 웹 링크
@@ -62,6 +62,10 @@ const Statistics = () => {
     const [reportWeekNum, setReportWeekNum] = useState(0);
     const [reportWeekDate, setReportWeekDate] = useState('');
     const [weeklyReportMode, setWeeklyReportMode] = useState(false);
+    const [weeklyReportExist, setWeeklyReportExist] = useState('weekNow_UnAvailable');
+    const [weeklyReportDaysLeft, setWeeklyReportDaysLeft] = useState(0);
+    const [weeklyReport, setWeeklyReport] = useState({});
+
 
     useEffect(() => {
       // AsyncStorage에서 userName 값을 가져와서 설정
@@ -78,20 +82,21 @@ const Statistics = () => {
         .then((value) => {
           if(value) {
             setReportWeekNum(
-              //Number(value)
-              2
+              Number(value)
             );
             getMoodReport(
-              //Number(value)
-              2
+              Number(value)
             );
             setRecentReportWeekNum(
-              // Number(value)
-              2
+              Number(value)
             );
           }
         })
       getStatistics(year,month);
+      if(gotoMoodReport===true){
+        console.log(gotoMoodReport);
+        setSummaryOrDetail(false);
+      }
     }, []);
 
     const incDate = () => {
@@ -217,6 +222,7 @@ const Statistics = () => {
           setReportWeekNum(reportWeekNum+1);
         }
       })
+      amplitude.increaseMoodReportDate();
     }
 
     const decMoodReportNum = () => {
@@ -226,14 +232,65 @@ const Statistics = () => {
           setReportWeekNum(reportWeekNum-1);
         }
       })
+      amplitude.decreaseMoodReportDate();
     }
 
 
     const getMoodReport = (weekNum) => {
-      if(weekNum===1) setReportWeekDate('2023.11.03~2023.11.09');
-      else if(weekNum===2) setReportWeekDate('2023.11.10~2023.11.16');
-      else setReportWeekDate('aa');
+      const weeklyReport=repository.getWeeklyReportsByField('weekNum',weekNum);
+      setReportWeekDate(weeklyReport.weekDate);
+      const weekdate = weeklyReport.weekDate.split('~');
+      const nowDate = new Date();
+      const nowDateString = date2String(nowDate);
+      
+      if(weekdate[0]<=nowDateString && nowDateString<weekdate[1]){
+        setWeeklyReportExist('weekNow_UnAvailable');
+        const date1 = new Date(nowDate.getFullYear(),nowDate.getMonth(),nowDate.getDate());
+        var date_L=weekdate[1].split('.');
+        const date2 = new Date(Number(date_L[0]),Number(date_L[1])-1,Number(date_L[2]));
+        setWeeklyReportDaysLeft(Math.ceil(Math.abs(date2-date1)/(1000*60*60*24)));
+        setWeeklyReport(weeklyReport);
+      }
+      else if(weekdate[1]<=nowDateString){
+        if(weeklyReport.questionType===''){
+          setWeeklyReportExist('Available');
+          setWeeklyReport(weeklyReport);
+        }
+        else{
+          setWeeklyReportExist('Exists');
+          setWeeklyReport(weeklyReport);
+        }
+      }
+      
+
       //렐름 업데이트하고 값 가져와서 렌더링 하면 됨
+    }
+
+    const date2String = (stampDate:Date):String => {
+      
+      let month = stampDate.getMonth() + 1;
+      let day = stampDate.getDate();
+    
+      month = month >= 10 ? month : '0' + month;
+      day = day >= 10 ? day : '0' + day;
+      var dateTime:String = (stampDate.getFullYear()).toString()+'.'+month+'.'+day;
+      return dateTime
+    }
+
+    const stampDateString3 = (stampDate:Date):String => {
+      
+      
+      let month = stampDate.getMonth() + 1;
+      let day = stampDate.getDate();
+      let hour = stampDate.getHours();
+      let minute = stampDate.getMinutes();
+
+      month = month >= 10 ? month : '0' + month;
+      day = day >= 10 ? day : '0' + day;
+      hour = hour >= 10 ? hour : '0' + hour;
+      minute = minute >= 10 ? minute : '0' + minute;
+      var dateTime:String = (stampDate.getFullYear()).toString()+'.'+month+'.'+day+' '+hour+':'+minute;
+      return dateTime
     }
 
     return (
@@ -249,7 +306,7 @@ const Statistics = () => {
           <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.moveToSummary()}}>
             <Text style={typeChangeBtnStyles.activeFont}>요약</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {setSummaryOrDetail(false); amplitude.moveToDetail();}} style={typeChangeBtnStyles.deactiveType}>
+          <TouchableOpacity onPress={() => {setSummaryOrDetail(false); amplitude.moveToMoodReport();}} style={typeChangeBtnStyles.deactiveType}>
             <Text style={typeChangeBtnStyles.deactiveFont}>무드 리포트</Text>
           </TouchableOpacity>
         </View>
@@ -258,7 +315,7 @@ const Statistics = () => {
           <TouchableOpacity onPress={() => {setSummaryOrDetail(true); amplitude.moveToSummary();}} style={typeChangeBtnStyles.deactiveType}>
             <Text style={typeChangeBtnStyles.deactiveFont}>요약</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.moveToDetail()}}>
+          <TouchableOpacity style={typeChangeBtnStyles.activeType} onPress={() => {amplitude.moveToMoodReport()}}>
             <Text style={typeChangeBtnStyles.activeFont}>무드 리포트</Text>
           </TouchableOpacity>
         </View>
@@ -371,23 +428,19 @@ const Statistics = () => {
             {
               //무드 리포트 작성 불가능
             }
-
-            {/* <View style={{alignSelf:'center',marginTop:70}}>
-              <View style={[bubbleStyles.container,{backgroundColor:'#B7B7B7',width:300,height:140}]}>
-                <Text style={{fontSize: 17, color: '#fff', marginBottom: 5}}>아직 무드 리포트를 준비 중이라무~</Text>
-                <Text style={{fontSize: 17, color: '#fff', marginBottom: 5, }}>앞으로 n일 뒤에</Text>
-                <Text style={{fontSize: 17, color: '#fff', }}>무드 리포트를 보내주겠다무!</Text>
-              </View>
-              <View style={[bubbleStyles.tail,{backgroundColor:'#B7B7B7'}]}></View>
+            {weeklyReportExist==='weekNow_UnAvailable' ? (<>
+            <View style={{alignSelf:'center',marginTop:70}}>
+            <View style={[bubbleStyles.container,{backgroundColor:'#B7B7B7',width:300,height:140}]}>
+              <Text style={{fontSize: 17, color: '#fff', marginBottom: 5}}>아직 무드 리포트를 준비 중이라무~</Text>
+              <Text style={{fontSize: 17, color: '#fff', marginBottom: 5, }}>앞으로 {weeklyReportDaysLeft}일 뒤에</Text>
+              <Text style={{fontSize: 17, color: '#fff', }}>무드 리포트를 보내주겠다무!</Text>
+            </View>
+            <View style={[bubbleStyles.tail,{backgroundColor:'#B7B7B7'}]}></View>
             </View>
             <Image source={require('../assets/write_disabled.png')}
-              style={{ width: 200, height: (422 * 200) / 368 , alignSelf:'center', right:10, marginTop:30}}/> */}
-
-            {
-              //무드 리포트 작성 가능
-            }
-            
-            <View style={{alignSelf:'center',marginTop:70}}>
+              style={{ width: 200, height: (422 * 200) / 368 , alignSelf:'center', right:10, marginTop:30}}/>
+            </>) : (weeklyReportExist==='Available' ? <>
+              <View style={{alignSelf:'center',marginTop:70}}>
               <View style={[bubbleStyles.container,{width:300,height:140}]}>
                 <Text style={{fontSize: 17, color: '#fff', marginBottom: 10}}>무드 리포트를 작성할 수 있다무!</Text>
                 <Text style={{fontSize: 17, color: '#fff', marginBottom: 0, }}>지금 바로 무드 리포트를 써보라무!</Text>
@@ -413,9 +466,219 @@ const Statistics = () => {
             })}>
                 <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>좋아, 지금 써볼게!</Text>
             </TouchableOpacity>
+            </> : <>
+            <ScrollView style={{marginTop:15}}>
+            <View style={{flexDirection:'row',marginLeft:20,marginTop:20}}>
+              <Image source={require('../assets/profile.png')}
+              style={{ width: 34, height: 34 , zIndex: 100,marginRight:10}} // 비율을 유지하며 height 자동 조절
+              />
+              <View>
+                <Text style={{fontSize: 18, color: '#212429', fontWeight: 'bold',}}>Moo</Text>
+                <View style={finalBubbleStyles.container}>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>지난 주 중 가장 안 좋았던 기억이다무...</Text>
+                  <View style={Timelinestyles.timelineItem}>
+                    <View
+                    style={{
+                        flex: 1,
+                        marginBottom: 10,
+                        borderRadius: 8,
+                        backgroundColor: '#FFFFFF',
+                        borderColor: '#F0F0F0',
+                        borderWidth: 1
+                      }}>
+                      <View style={Timelinestyles.title}>
+                        <Text style={{fontSize: 14, color: '#212429'}}>{weeklyReport.stampEmoji}  {weeklyReport.stampName}</Text>
+                        <Text style={{ fontSize: 14, color: '#495057', right:-15}} >{stampDateString3(weeklyReport.stampDateTime)}    </Text> 
+                      </View>
+                      <View style={Timelinestyles.line}></View>
+                      <Text style={Timelinestyles.title}>{weeklyReport.memo}</Text>
+                      {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+            {weeklyReport.questionType==='생각' ? <>
+            <View style={{flexDirection:'row',marginLeft:20,marginBottom:10}}>
+                <View style={[finalBubbleStyles.container,{marginLeft:44}]}>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>스탬프를 남길 때 했던</Text>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>부정적인 생각에 대해 적어보라무!</Text>
+                </View>
+            </View>
+            <View style={{
+                borderRadius: 10,
+                borderTopRightRadius: 0,
+                backgroundColor: '#E1EFE6',
+                width: 230,
+                alignSelf:'flex-end',
+                right:10,
+                marginBottom:30
+              }}>
+              <Text style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+                marginHorizontal: 10,
+                marginVertical: 9,
+                fontSize: 14,
+                color: '#212429',
+              }}>{weeklyReport.answer[0]}</Text>
+            </View>
+            <View style={{flexDirection:'row',marginLeft:20,marginBottom:10}}>
+                <View style={[finalBubbleStyles.container,{marginLeft:44}]}>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>그 중에서도 긍정적으로</Text>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>생각할 수 있는 부분을 적어보라무!</Text>
+                </View>
+            </View>
+            <View style={{
+                borderRadius: 10,
+                borderTopRightRadius: 0,
+                backgroundColor: '#E1EFE6',
+                width: 230,
+                alignSelf:'flex-end',
+                right:10,
+                marginBottom:30
+              }}>
+              <Text style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+                marginHorizontal: 10,
+                marginVertical: 9,
+                fontSize: 14,
+                color: '#212429',
+              }}>{weeklyReport.answer[1]}</Text>
+            </View>
+            <View style={{flexDirection:'row',marginLeft:20,marginBottom:10}}>
+                <View style={[finalBubbleStyles.container,{marginLeft:44}]}>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>위의 긍정적인 부분을 생각하면</Text>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>어떤 좋은 점이 있을 것 같냐무?</Text>
+                </View>
+            </View>
+            <View style={{
+                borderRadius: 10,
+                borderTopRightRadius: 0,
+                backgroundColor: '#E1EFE6',
+                width: 230,
+                alignSelf:'flex-end',
+                right:10,
+                marginBottom:30
+              }}>
+              <Text style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+                marginHorizontal: 10,
+                marginVertical: 9,
+                fontSize: 14,
+                color: '#212429',
+              }}>{weeklyReport.answer[2]}</Text>
+            </View></> : <>
+            <View style={{flexDirection:'row',marginLeft:20,marginBottom:10}}>
+                <View style={[finalBubbleStyles.container,{marginLeft:44}]}>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>내가 느낀 부정적인 감정을</Text>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>다시 한 번 정리해보자무!</Text>
+                </View>
+            </View>
+            <View style={{
+                borderRadius: 10,
+                borderTopRightRadius: 0,
+                backgroundColor: '#E1EFE6',
+                width: 230,
+                alignSelf:'flex-end',
+                right:10,
+                marginBottom:30
+              }}>
+              <Text style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+                marginHorizontal: 10,
+                marginVertical: 9,
+                fontSize: 14,
+                color: '#212429',
+              }}>{weeklyReport.answer[0]}</Text>
+            </View>
+            <View style={{flexDirection:'row',marginLeft:20,marginBottom:10}}>
+                <View style={[finalBubbleStyles.container,{marginLeft:44}]}>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>일어난 일에 대해 다시 한 번</Text>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>객관적으로 생각해보자무!</Text>
+                </View>
+            </View>
+            <View style={{
+                borderRadius: 10,
+                borderTopRightRadius: 0,
+                backgroundColor: '#E1EFE6',
+                width: 230,
+                alignSelf:'flex-end',
+                right:10,
+                marginBottom:30
+              }}>
+              <Text style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+                marginHorizontal: 10,
+                marginVertical: 9,
+                fontSize: 14,
+                color: '#212429',
+              }}>{weeklyReport.answer[1]}</Text>
+            </View>
+            <View style={{flexDirection:'row',marginLeft:20,marginBottom:10}}>
+                <View style={[finalBubbleStyles.container,{marginLeft:44}]}>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>일어난 일을 부정적으로 받아들인</Text>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>이유에 대해 생각해보자무!</Text>
+                </View>
+            </View>
+            <View style={{
+                borderRadius: 10,
+                borderTopRightRadius: 0,
+                backgroundColor: '#E1EFE6',
+                width: 230,
+                alignSelf:'flex-end',
+                right:10,
+                marginBottom:30
+              }}>
+              <Text style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+                marginHorizontal: 10,
+                marginVertical: 9,
+                fontSize: 14,
+                color: '#212429',
+              }}>{weeklyReport.answer[2]}</Text>
+            </View>
+            <View style={{flexDirection:'row',marginLeft:20,marginBottom:10}}>
+                <View style={[finalBubbleStyles.container,{marginLeft:44}]}>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>긍정적인 사람은 그 일에 대해</Text>
+                  <Text style={{ fontSize: 16, color: '#fff' }}>어떻게 생각할지 적어보라무!</Text>
+                </View>
+            </View>
+            <View style={{
+                borderRadius: 10,
+                borderTopRightRadius: 0,
+                backgroundColor: '#E1EFE6',
+                width: 230,
+                alignSelf:'flex-end',
+                right:10,
+                marginBottom:30
+              }}>
+              <Text style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+                marginHorizontal: 10,
+                marginVertical: 9,
+                fontSize: 14,
+                color: '#212429',
+              }}>{weeklyReport.answer[2]}</Text>
+            </View></>}
+            </ScrollView>
+            </>)}
+            
+
+            {
+              //무드 리포트 작성 가능
+            }
+            
+
           </>)}
       </View>) : (
-        <WeeklyReport reportWeekDate={reportWeekDate} setWeeklyReportMode={setWeeklyReportMode} weeklyReportMode={weeklyReportMode}/>
+        <WeeklyReport reportWeekDate={reportWeekDate} setWeeklyReportMode={setWeeklyReportMode} setNowWeeklyReport={setWeeklyReport} weeklyReportMode={weeklyReportMode} setWeeklyReportExist={setWeeklyReportExist} weeklyReportID={weeklyReport.id}/>
       )
     );
 }
@@ -625,6 +888,131 @@ const styles = StyleSheet.create({
       borderColor: '#72D193',
       borderWidth: 1,
       overflow: 'hidden', // 클리핑 적용
+    },
+  });
+
+  const finalBubbleStyles = StyleSheet.create({
+    container: {
+      backgroundColor: '#72D193',
+      paddingVertical: 7,
+      paddingHorizontal: 10,
+      alignSelf: 'flex-start', // 좌측 정렬로 변경
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderTopRightRadius: 10,
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 10,
+      position: 'relative',
+      overflow: 'hidden', // 클리핑 적용
+      marginBottom: 8,
+      zIndex: 100,
+    },
+    tail: {
+      position: 'absolute',
+      width: 15, // 꼬리의 길이
+      height: 15, // 꼬리의 높이
+      left: -4, // 꼬리 위치
+      top: 20, // 꼬리 위치
+      backgroundColor: '#72D193',
+      transform: [{ rotate: '45deg' }],
+      borderTopLeftRadius: 100, // 둥글게 만들기
+    },
+    rightTail: {
+      position: 'absolute',
+      width: 15, // 꼬리의 길이
+      height: 15, // 꼬리의 높이
+      right: -4, // 꼬리 위치
+      top: 6, // 꼬리 위치
+      backgroundColor: '#FFCF55',
+      // borderColor: '#72D193',
+      // borderWidth: 2,
+      transform: [{ rotate: '45deg' }],
+      borderTopLeftRadius: 100, // 둥글게 만들기
+    },
+    gotoStamp_container: {
+      backgroundColor: '#fff',
+      paddingVertical: 7,
+      paddingHorizontal: 12,
+      alignSelf: 'flex-start', // 좌측 정렬로 변경
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderTopRightRadius: 0,
+      borderBottomLeftRadius: 10,
+      borderTopLeftRadius: 10,
+      borderBottomRightRadius: 10,
+      borderColor: '#DDECE3',
+      borderWidth: 2,
+      position: 'relative',
+      overflow: 'hidden', // 클리핑 적용
+      zIndex: 100, flexDirection: 'row', 
+    },
+    gotoLetter_container: {
+      backgroundColor: '#fff',
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      alignSelf: 'flex-start', // 좌측 정렬로 변경
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderTopRightRadius: 10,
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 10,
+      position: 'relative',
+      overflow: 'hidden', // 클리핑 적용
+      zIndex: 100, marginBottom: 8, flexDirection: 'row', gap: 6,
+      borderColor: '#72D193',
+      borderWidth: 2,
+    },
+    moo_status_bar: {
+      backgroundColor: '#FCD49B', width: '100%', zIndex: 10, paddingVertical: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end'
+    },
+  });
+
+  const Timelinestyles = StyleSheet.create({
+    container: {
+      flex: 1, // 양쪽 확장
+      alignItems: 'center',
+      // backgroundColor: 'pink', 
+      alignSelf: 'flex-start', // 상단 정렬
+    },
+    timelineItem: {
+      flexDirection: 'row',
+      paddingVertical: 10,
+    },
+    block: {
+      flex: 1,
+      color: '#212429',
+      marginBottom: 10,
+      borderRadius: 8,
+      backgroundColor: '#FFFFFF',
+      borderColor: '#F0F0F0',
+      borderWidth: 1
+    },
+    title: {
+      flexDirection: 'row',
+      justifyContent: 'space-between', // text 요소들을 양 끝으로 떨어뜨리기 위해 추가
+      marginHorizontal: 10,
+      marginVertical: 9,
+      fontSize: 14,
+      color: '#212429',
+    },
+    line: {
+      left: 0,
+      right: 0,
+      borderTopWidth: 1, /* 선분 스타일 설정 (여기서는 1px 두께의 선으로 설정) */
+      borderTopColor: '#F0F0F0', /* 선분 색상 설정 */
+    },
+    line2: {
+      position: 'absolute',
+      top: 40,
+      bottom: -10,
+      left: 15,
+      width: 1.5,
+      backgroundColor: '#F0F0F0',
+    },
+    emojiContainer: {
+      flexDirection: 'column',
+      // alignItems: 'center',
+      marginRight: 10,
     },
   });
 

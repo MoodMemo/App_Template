@@ -185,10 +185,12 @@ export function editStampMemo() {
     action: 'click',
     secondView: 'push stamp',});
 }
-export function submitStamp() { // 나중에는 여기도 스탬프 이름 받기
+export function submitStamp(emotion,memo) { // 나중에는 여기도 스탬프 이름 받기
   amplitude.track('stamp: confirm, stamp',
   {
     view: 'stamp',
+    emotion: emotion,
+    memo: memo,
     action: 'confirm',});
 }
 export function cancelStamp() {
@@ -552,7 +554,12 @@ export function try_createDiaryMyself() {
     action: 'click',
     });
 }
-
+export function click_gotoMoodReport() {
+  amplitude.track('weekly: click, Goto Mood Report',
+  {
+    view: 'weekly',
+    action: 'click',});
+}
 
 /* setting view */
 export function intoProfile() {
@@ -808,11 +815,21 @@ export function moveToSummary() {
     view: 'statistics',
     action: 'click',});
 }
-export function moveToDetail() {
-  amplitude.track('statistics: click, detail',
+export function moveToMoodReport() {
+  amplitude.track('statistics: click, Mood Report',
   {
     view: 'statistics',
     action: 'click',});
+}
+
+export function increaseMoodReportDate() {
+  amplitude.track('statistics: click increase Mood Report Date',
+  {view: 'statistics', action: 'click'});
+}
+
+export function decreaseMoodReportDate() {
+  amplitude.track('statistics: click decrease Mood Report Date',
+  {view: 'statistics', action: 'click'});
 }
 
 /** onboarding*/
@@ -1008,4 +1025,49 @@ export function clickGoToReview(name: String) {
 export function successBuyGift(gift: String) {
   amplitude.track('event: success buying gift',
   {action: 'click', gift});
+}
+
+
+
+/**Mood Report */
+
+
+export function clickLastWeekStatisticsChecked() {
+  amplitude.track('MoodReport: click last week statistics checked',
+  {view: 'MoodReport', action: 'click'});
+}
+
+export function pickMoodReportStamp() {
+  amplitude.track('MoodReport: click and picked mood report stamp',
+  {view: 'MoodReport', action: 'click'});
+}
+
+export function selectMoodReportStamp() {
+  amplitude.track('MoodReport: click and select mood report stamp',
+  {view: 'MoodReport', action: 'click'});
+}
+
+export function thinkAgain() {
+  amplitude.track('MoodReport: click think again',
+  {view: 'MoodReport', action: 'click'});
+}
+
+export function confirmMoodReportStamp() {
+  amplitude.track('MoodReport: click confirm Mood Report Stamp',
+  {view: 'MoodReport', action: 'click'});
+}
+
+export function finishWritingMoodReport() {
+  amplitude.track('MoodReport: click finish writing Mood Report',
+  {view: 'MoodReport', action: 'click'});
+}
+
+export function endMoodReport() {
+  amplitude.track('MoodReport: click end Mood Report',
+  {view: 'MoodReport', action: 'click'});
+}
+
+export function endMoodReportAndGotoStamp() {
+  amplitude.track('MoodReport: click end Mood Report and goto stamp',
+  {view: 'MoodReport', action: 'click'});
 }

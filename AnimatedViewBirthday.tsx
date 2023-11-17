@@ -18,6 +18,26 @@ import {default as Text} from "./CustomText"
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
+const date2String = (stampDate:Date):String => {
+      
+  let month = stampDate.getMonth() + 1;
+  let day = stampDate.getDate();
+
+  month = month >= 10 ? month : '0' + month;
+  day = day >= 10 ? day : '0' + day;
+  var dateTime:String = (stampDate.getFullYear()).toString()+'.'+month+'.'+day;
+  return dateTime
+}
+
+const weeklyReportDate = () => {
+  var date = new Date();
+  var date_start = date2String(date);
+  date.setDate(date.getDate()+6);
+  var date_end = date2String(date);
+
+  return date_start+'~'+date_end
+}
+
 async function saveUserInfo_toAsyncStorage(userName:any, birthday:any, job:any) {
   const createUser = async (userName:any, birthday:any, job:any) => {
     try {
@@ -27,6 +47,19 @@ async function saveUserInfo_toAsyncStorage(userName:any, birthday:any, job:any) 
       await AsyncStorage.setItem('@UserInfo:birthShow', birthday);
       await AsyncStorage.setItem('@UserInfo:job', job);
       await AsyncStorage.setItem('@UserInfo:addedStampTemplate','true');
+      realm.write(()=>{
+        console.log('createWeeklyReport')
+        repository.createWeeklyReport({
+          weekNum:1,
+          weekDate:weeklyReportDate(),
+          stampDateTime:new Date(),
+          stampEmoji: '',
+          stampMemo: '',
+          stampName: '',
+          questionType: '',
+          answer: [],})
+      })
+      await AsyncStorage.setItem('@UserInfo:RecentReportWeekNum','1');
       //await AsyncStorage.setItem('@UserInfo:notificationAllow', 'true');
       await AsyncStorage.setItem('@UserInfo:registerDate', new Date().toString());
       // await AsyncStorage.setItem('@UserInfo:progressedDate', progressedDate); -> 얘는 나중에 스탬프 찍으면 업데이트

@@ -3,14 +3,17 @@ import { Dimensions, Image, View, TextInput, TouchableOpacity, PermissionsAndroi
 import { Divider } from 'react-native-paper';
 import Modal from "react-native-modal";
 import SwitchToggle from 'react-native-switch-toggle';
-import realm, { IPushedStamp, IDailyReport, getPushedStampsAllByField, getPushedStampsByFieldBetween, getDailyReportsByFieldBetween } from '../src/localDB/document';
+import realm, { IPushedStamp, ICustomStamp, IDailyReport, getPushedStampsAllByField, getPushedStampsByFieldBetween, getDailyReportsByFieldBetween } from '../src/localDB/document';
 import * as repository from '../src/localDB/document';
 import PushNotification from "react-native-push-notification";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {PieChart} from 'react-native-gifted-charts';
 import DashedLine from 'react-native-dashed-line';
+import axios, { CancelToken } from 'axios';
 import getDatesBetween, { getEmoji, getStamp, tmp_createDummyData } from '../weeklyView/DocumentFunc';
+import sendStamp from './DetermineStampType';
+import { useNavigation } from '@react-navigation/native';
 
 
 import * as amplitude from '../AmplitudeAPI';
@@ -46,7 +49,7 @@ const stringToDate = (dateString) => {
     }
 }
 
-const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => {
+const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,weeklyReportMode,setWeeklyReportExist,weeklyReportID}) => {
 
     
 
@@ -72,7 +75,22 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
     const [selectedStamp,setSelectedStamp] = useState({});
     const [answer1, setAnswer1] = useState('');
     const [answer2, setAnswer2] = useState('');
+    const [answer3, setAnswer3] = useState('');
+    const [answer4, setAnswer4] = useState('');
+    const [posStamps,setPosStamps] = useState([]);
+    const [negStamps,setNegStamps] = useState([]);
+    const [questionType,setQuestionType] = useState('');
 
+    let cancelTokenSource = axios.CancelToken.source();
+
+    const handleGenerateStampType = () => {
+      const request = {stamp:selectedStamp.memo}
+      console.log('start generating stamp type')
+      sendStamp(request,cancelTokenSource.token).then((response)=>{
+        setQuestionType(response.result);
+        setReportMode('template');
+      })
+    }
 
     useEffect(() => {
       // AsyncStorage에서 userName 값을 가져와서 설정
@@ -86,7 +104,10 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
           console.error("Error fetching userName:", error);
         });
       getStatistics(year,month);
+      getWeeklyStamps();
     }, []);
+
+    const navigation = useNavigation();
 
     const dateFormat = (date:any) => {
       let month = date.getMonth() + 1;
@@ -115,6 +136,8 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
       }
 
     const getStatistics = async (year:any,month:any) => {
+      const listOfPosStamps=[];
+      const listOfNegStamps=[];
       var date_L=reportWeekDate.split('~')
       var start = stringToDate(date_L[0]);
       var end = stringToDate(date_L[1]);
@@ -145,11 +168,33 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
             if(stamps[j][0].stampName===listOfStamps[i].stampName){
               stamps[j][1]+=1;
               notInStamps=false;
+              var customStamp=repository.getCustomStampsByField('stampName',listOfStamps[i].stampName)
+              var stampType=customStamp.type
+              if(stampType==='pos'){
+                for(var k=0;k<listOfPosStamps.length;k++){
+                  if(listOfPosStamps[k][0].stampName===listOfStamps[i].stampName){
+                    listOfPosStamps[k][1]+=1;
+                    break;
+                  }
+                }
+              }
+              else if(stampType==='neg'){
+                for(var k=0;k<listOfNegStamps.length;k++){
+                  if(listOfNegStamps[k][0].stampName===listOfStamps[i].stampName){
+                    listOfNegStamps[k][1]+=1;
+                    break;
+                  }
+                }
+              }
               break;
             }
           }
           if(notInStamps){
+              var customStamp=repository.getCustomStampsByField('stampName',listOfStamps[i].stampName)
+              var stampType=customStamp.type
               stamps.push([listOfStamps[i],1,"aa"]);
+              if(stampType==='pos') listOfPosStamps.push([customStamp,1]);
+              else if(stampType==='neg') listOfNegStamps.push([customStamp,1]);
           }
         }
         stamps.sort(sortStamps);
@@ -165,6 +210,8 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
         }
       }
       setStamps(stamps);
+      setNegStamps(listOfNegStamps);
+      setPosStamps(listOfPosStamps);
       setStampsChart(temporaryStampsChart);
       setCountLoggedDates(count);
       var listOfDiarys=await getDailyReportsByFieldBetween('date', dateFormat(start), dateFormat(end));
@@ -183,13 +230,19 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
 
     const getWeeklyStamps = () => {
       const listOfStamps:IPushedStamp[]=[];
+      const listOfPosStamps:ICustomStamp[]=[];
+      const listOfNegStamps:ICustomStamp[]=[];
       var date_L=reportWeekDate.split('~')
       var start = stringToDate(date_L[0]);
       var end = stringToDate(date_L[1]);
       end.setDate(end.getDate()+1);
       getPushedStampsByFieldBetween('dateTime', start, end).forEach((pushedStamp) => {
-        listOfStamps.push(pushedStamp);
-    });
+        var customStamp=repository.getCustomStampsByField('stampName',pushedStamp.stampName)
+        var stampType=customStamp.type
+        if(stampType!=='pos'){
+          listOfStamps.push(pushedStamp);
+        }
+      });
       listOfStamps.sort((a,b) => a.dateTime.getTime() - b.dateTime.getTime());
       return listOfStamps;
     }
@@ -229,7 +282,17 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
     };
 
     const saveWeeklyReport = () => {
-
+      console.log(repository.getWeeklyReportsByField('id',weeklyReportID));
+      repository.updateWeeklyReport(repository.getWeeklyReportsByField('id',weeklyReportID),{
+        stampDateTime:selectedStamp.dateTime,
+        stampEmoji:selectedStamp.emoji,
+        stampMemo:selectedStamp.memo,
+        stampName:selectedStamp.stampName,
+        questionType:questionType,
+        answer:questionType==='생각' ? [answer1,answer2,answer3] : [answer1,answer2,answer3,answer4]
+      });
+      setNowWeeklyReport(repository.getWeeklyReportsByField('id',weeklyReportID))
+      setWeeklyReportExist('Exists');
     }
 
     return (
@@ -241,7 +304,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
     {reportMode==='stat' ? (
     <>
     <View style={styles.titleContainer}>
-          <Text style={styles.title}>{userName}의{'\n'}감정을 분석해봤다무!</Text>
+          <Text style={styles.title}>{userName}의{'\n'}지난 한 주를 분석해봤다무!</Text>
     </View>
     <Image 
     source={require('../assets/magnifyingMoo.png')}
@@ -271,7 +334,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
         </View>
         <DashedLine dashLength={10} dashThickness={2} dashGap={10} dashColor={isCheckListSucceeded ? '#7CD0B2' : '#FF7168'}/>
       </View> */}
-        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:15, marginBottom:25}}>
+        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:15, marginBottom:25, marginLeft:15}}>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
             <Text style={{fontSize:22,color:'#FFCC4D'}}>{countStamps}개</Text>
@@ -281,13 +344,53 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
             <Text style={{fontSize:22,color:'#FFCC4D'}}>{countDiarys}개</Text>
           </View>
           <View style={{alignItems:'center',marginRight:18}}>
-            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록 일자</Text>
+            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>일기 발행 일자</Text>
             <Text style={{fontSize:22,color:'#212429'}}>{countLoggedDates}일</Text>
           </View>
         </View>
         <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
         <Divider style={{backgroundColor:"#EAEAEA",width:'90%',marginHorizontal:'5%'}}/>
-        <View style={{marginLeft:25,alignItems:'center',marginTop:30}}>
+        <View style={{flexDirection:'row',marginLeft:20,marginTop:20}}>
+          <Image source={require('../assets/profile.png')}
+          style={{ width: 34, height: 34 , zIndex: 100,marginRight:10}} // 비율을 유지하며 height 자동 조절
+          />
+          <View>
+            <Text style={{fontSize: 18, color: '#212429', fontWeight: 'bold',}}>Moo</Text>
+            <View style={finalBubbleStyles.container}>
+              <Text style={{ fontSize: 16, color: '#fff' }}>지난 주에 남긴 긍정적인 감정이었다무!</Text>
+            </View>
+          </View>
+        </View>
+        <View style={{flexDirection:'row',flexWrap: 'wrap',justifyContent:'space-between',width:'90%',marginHorizontal:20,marginTop:20}}>
+        {posStamps.sort(sortStamps).map((stampButton:any) => (
+          <TouchableOpacity key={stampButton[0].id} style={styles.stampButton} disabled={true}>
+            <Text style={styles.buttonEmotion}>{stampButton[0].emoji}</Text>
+            <Text style={styles.buttonText}>{stampButton[0].stampName}</Text>
+            <Text style={{color: '#000000', fontSize: 14,bottom:3}}>{stampButton[1]}</Text>
+          </TouchableOpacity>
+        ))}
+        </View>
+        <View style={{flexDirection:'row',marginLeft:20,marginTop:20}}>
+          <Image source={require('../assets/profile.png')}
+          style={{ width: 34, height: 34 , zIndex: 100,marginRight:10}} // 비율을 유지하며 height 자동 조절
+          />
+          <View>
+            <Text style={{fontSize: 18, color: '#212429', fontWeight: 'bold',}}>Moo</Text>
+            <View style={finalBubbleStyles.container}>
+              <Text style={{ fontSize: 16, color: '#fff' }}>지난 주에 남긴 부정적인 감정이었다무...</Text>
+            </View>
+          </View>
+        </View>
+        <View style={{flexDirection:'row',flexWrap: 'wrap',justifyContent:'space-between',width:'90%',marginHorizontal:20,marginTop:20}}>
+        {negStamps.sort(sortStamps).map((stampButton:any) => (
+          <TouchableOpacity key={stampButton[0].id} style={styles.stampButton} disabled={true}>
+            <Text style={styles.buttonEmotion}>{stampButton[0].emoji}</Text>
+            <Text style={styles.buttonText}>{stampButton[0].stampName}</Text>
+            <Text style={{color: '#000000', fontSize: 14,bottom:3}}>{stampButton[1]}</Text>
+          </TouchableOpacity>
+        ))}
+        </View>
+        {/* <View style={{marginLeft:25,alignItems:'center',marginTop:30}}>
           <PieChart data={stampsChart.map((stamp:any) => ({
             value: stamp[1],
             color: stamp[2][0],
@@ -319,9 +422,12 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
               </View>
               <Text style={{color: '#000000',fontSize:16}}>{stampButton[1]}개</Text>
             </TouchableOpacity>
-          ))}
+          ))} */}
         </ScrollView>
-        <TouchableOpacity onPress={handleNext}>
+        <TouchableOpacity onPress={()=>{
+          handleNext();
+          amplitude.clickLastWeekStatisticsChecked();
+          }}>
           <View style={{width:'90%',height:60,backgroundColor:'#FFFFFF',alignItems:'center', justifyContent:'center',alignSelf:'center',borderRadius:10,borderColor:'#72D193',borderWidth:1}}> 
             <Text style={{fontSize:25,color:'#72D193'}}>확인했어!</Text>
           </View>
@@ -338,7 +444,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
                 <View style={bubbleStyles.tail}></View>
                 <View style={[bubbleStyles.container,{width:240,height:85,marginLeft:25}]}>
                   <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>{userName}의 지난 한 주 중</Text>
-                  <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>가장 부정적인 스탬프를 골라보라무!</Text>
+                  <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>가장 안 좋았던 기억을 골라보라무!</Text>
                 </View>
               </View>
               <ScrollView>
@@ -375,6 +481,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
                       <TouchableOpacity onPress={()=>{
                         setSelectedStampIndex(index);
                         setSelectedStamp(item);
+                        amplitude.pickMoodReportStamp();
                       }}
                       style={{
                           flex: 1,
@@ -396,7 +503,10 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
                     </>))}
                 </View>
               </ScrollView>
-              <TouchableOpacity onPress={() => {if(selectedStampIndex!==-1) handleNext(); }}>
+              <TouchableOpacity onPress={() => {
+                if(selectedStampIndex!==-1) handleNext();
+                amplitude.selectMoodReportStamp();
+              }}>
               <View style={{width:'90%',height:60,backgroundColor:'#FFFFFF',alignItems:'center', justifyContent:'center',alignSelf:'center',borderRadius:10,borderColor:'#72D193',borderWidth:1}}> 
                 <Text style={{fontSize:25,color:'#72D193'}}>골랐어!</Text>
               </View>
@@ -432,12 +542,15 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
                 {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
               </View>
             </View>
+            <Text style={{fontSize: 17, color: '#fff', marginBottom: 10}}>무가 스탬프에 맞는 질문을 할테니,</Text>
+            <Text style={{fontSize: 17, color: '#fff', marginBottom: 10}}>지금부터 이 스탬프로</Text>
+            <Text style={{fontSize: 17, color: '#fff', marginBottom: 10}}>무의 질문에 대답해보자무!</Text>
           </View>
           <View style={bubbleStyles.tail_2}></View>
         </View>
         <Image source={require('../assets/finish_0904.png')}
         style={{ width: 200, height: (1323 * 200) / 1650 , alignSelf:'center', right:10, marginTop:30}}/>
-        <View style={{flexDirection:'row', justifyContent:'space-between', width:screenWidth, marginTop:50}}>
+        <View style={{flexDirection:'row', justifyContent:'space-between', width:screenWidth, marginTop:10}}>
           <TouchableOpacity style={{backgroundColor: '#fff',
           padding: 10,
           width: screenWidth/2-20,
@@ -454,6 +567,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
           height:60,
           overflow: 'hidden',}} onPress={(() => {
             setReportMode('aboutLastWeek');
+            amplitude.thinkAgain();
           })}>
             <Text style={{fontSize: 20, color: '#AAAAAA', fontWeight: '600'}}>다시 생각해볼게...</Text>
           </TouchableOpacity>
@@ -472,12 +586,14 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
             marginRight:15,
             height:60,
             overflow: 'hidden',}} onPress={(() => {
-              setReportMode('template');
+              handleGenerateStampType();
+              amplitude.confirmMoodReportStamp();
             })}>
-                <Text style={{fontSize: 20, color: '#72D193', fontWeight: '600'}}>맞아!</Text>
+                <Text style={{fontSize: 20, color: '#72D193', fontWeight: '600'}}>그래!</Text>
           </TouchableOpacity>
         </View>
-      </>) : (reportMode==='template' ? <View style={{flex:1}}>
+      </>) : (reportMode==='template' ? 
+      <View style={{flex:1}}>
         <View style={Timelinestyles.timelineItem}>
           <View
           style={{
@@ -499,14 +615,14 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
           </View>
         </View>
       <ScrollView>
-        <View style={{flexDirection:'row',marginTop:15}}>
+        {questionType==='생각' ? <><View style={{flexDirection:'row',marginTop:15}}>
           <Image 
           source={require('../assets/write_0904.png')}
           style={{ width: 80, height: 1653*80 / 1437 , position: 'relative', marginLeft:10, overflow: 'hidden'}}/>
           <View style={bubbleStyles.tail}></View>
           <View style={[bubbleStyles.container,{width:240,height:85,marginLeft:25}]}>
-            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>{userName}의 지난 한 주 중</Text>
-            <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>가장 부정적인 스탬프를 골라보라무!</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>스탬프를 남길 때 했던</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>부정적인 생각에 대해 적어보라무!</Text>
           </View>
         </View>
         <View style={{width:200,height:200}}>
@@ -536,8 +652,9 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
           style={{ width: 80, height: 1653*80 / 1437 , position: 'relative', marginLeft:10, overflow: 'hidden'}}/>
           <View style={bubbleStyles.tail}></View>
           <View style={[bubbleStyles.container,{width:240,height:85,marginLeft:25}]}>
-            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>{userName}의 지난 한 주 중</Text>
-            <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>가장 부정적인 스탬프를 골라보라무!</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>그 중에서도 긍정적으로</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5}}>생각할 수 있는 부분을 적어보라무!</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>꼭 적는 것이 중요하다무!</Text>
           </View>
         </View>
         <View style={{width:200,height:200}}>
@@ -561,18 +678,176 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
           multiline={true}>
           </TextInput>
         </View>
+        <View style={{flexDirection:'row',marginTop:20}}>
+          <Image 
+          source={require('../assets/write_0904.png')}
+          style={{ width: 80, height: 1653*80 / 1437 , position: 'relative', marginLeft:10, overflow: 'hidden'}}/>
+          <View style={bubbleStyles.tail}></View>
+          <View style={[bubbleStyles.container,{width:240,height:85,marginLeft:25}]}>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>위의 긍정적인 부분을 생각하면</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>어떤 좋은 점이 있을 것 같냐무?</Text>
+          </View>
+        </View>
+        <View style={{width:200,height:200}}>
+          <TextInput style={{
+          fontSize:16,
+          color: '#000000',
+          width: windowWidth-20,
+          left:10,
+          marginTop:20,
+          height:150,
+          // padding: 7,
+          borderWidth:1,
+          borderRadius: 10,
+          borderColor:'#DDDDDD',
+          fontFamily: 'Pretendard',
+          fontWeight: '400',
+          fontStyle: 'normal',
+          lineHeight: 24,
+          }}
+          onChangeText={(text) => setAnswer3(text)}
+          multiline={true}>
+          </TextInput>
+        </View></> :
+        <><View style={{flexDirection:'row',marginTop:15}}>
+          <Image 
+          source={require('../assets/write_0904.png')}
+          style={{ width: 80, height: 1653*80 / 1437 , position: 'relative', marginLeft:10, overflow: 'hidden'}}/>
+          <View style={bubbleStyles.tail}></View>
+          <View style={[bubbleStyles.container,{width:240,height:85,marginLeft:25}]}>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>내가 느낀 부정적인 감정을</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>다시 한 번 정리해보자무!</Text>
+          </View>
+        </View>
+        <View style={{width:200,height:200}}>
+          <TextInput style={{
+          fontSize:16,
+          color: '#000000',
+          width: windowWidth-20,
+          left:10,
+          marginTop:20,
+          height:150,
+          // padding: 7,
+          borderWidth:1,
+          borderRadius: 10,
+          borderColor:'#DDDDDD',
+          fontFamily: 'Pretendard',
+          fontWeight: '400',
+          fontStyle: 'normal',
+          lineHeight: 24,
+          }}
+          onChangeText={(text) => setAnswer1(text)}
+          multiline={true}>
+          </TextInput>
+        </View>
+        <View style={{flexDirection:'row',marginTop:20}}>
+          <Image 
+          source={require('../assets/write_0904.png')}
+          style={{ width: 80, height: 1653*80 / 1437 , position: 'relative', marginLeft:10, overflow: 'hidden'}}/>
+          <View style={bubbleStyles.tail}></View>
+          <View style={[bubbleStyles.container,{width:240,height:85,marginLeft:25}]}>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>일어난 일에 대해 다시 한 번</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>객관적으로 생각해보자무!</Text>
+          </View>
+        </View>
+        <View style={{width:200,height:200}}>
+          <TextInput style={{
+          fontSize:16,
+          color: '#000000',
+          width: windowWidth-20,
+          left:10,
+          marginTop:20,
+          height:150,
+          // padding: 7,
+          borderWidth:1,
+          borderRadius: 10,
+          borderColor:'#DDDDDD',
+          fontFamily: 'Pretendard',
+          fontWeight: '400',
+          fontStyle: 'normal',
+          lineHeight: 24,
+          }}
+          onChangeText={(text) => setAnswer2(text)}
+          multiline={true}>
+          </TextInput>
+        </View>
+        <View style={{flexDirection:'row',marginTop:20}}>
+          <Image 
+          source={require('../assets/write_0904.png')}
+          style={{ width: 80, height: 1653*80 / 1437 , position: 'relative', marginLeft:10, overflow: 'hidden'}}/>
+          <View style={bubbleStyles.tail}></View>
+          <View style={[bubbleStyles.container,{width:240,height:85,marginLeft:25}]}>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>일어난 일을 부정적으로 받아들인</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>이유에 대해 생각해보자무!</Text>
+          </View>
+        </View>
+        <View style={{width:200,height:200}}>
+          <TextInput style={{
+          fontSize:16,
+          color: '#000000',
+          width: windowWidth-20,
+          left:10,
+          marginTop:20,
+          height:150,
+          // padding: 7,
+          borderWidth:1,
+          borderRadius: 10,
+          borderColor:'#DDDDDD',
+          fontFamily: 'Pretendard',
+          fontWeight: '400',
+          fontStyle: 'normal',
+          lineHeight: 24,
+          }}
+          onChangeText={(text) => setAnswer3(text)}
+          multiline={true}>
+          </TextInput>
+        </View>
+        <View style={{flexDirection:'row',marginTop:20}}>
+          <Image 
+          source={require('../assets/write_0904.png')}
+          style={{ width: 80, height: 1653*80 / 1437 , position: 'relative', marginLeft:10, overflow: 'hidden'}}/>
+          <View style={bubbleStyles.tail}></View>
+          <View style={[bubbleStyles.container,{width:240,height:85,marginLeft:25}]}>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 5, marginTop:10}}>긍정적인 사람은 그 일에 대해</Text>
+            <Text style={{fontSize: 15, color: '#fff', marginBottom: 10}}>어떻게 생각할지 적어보라무!</Text>
+          </View>
+        </View>
+        <View style={{width:200,height:200}}>
+          <TextInput style={{
+          fontSize:16,
+          color: '#000000',
+          width: windowWidth-20,
+          left:10,
+          marginTop:20,
+          height:150,
+          // padding: 7,
+          borderWidth:1,
+          borderRadius: 10,
+          borderColor:'#DDDDDD',
+          fontFamily: 'Pretendard',
+          fontWeight: '400',
+          fontStyle: 'normal',
+          lineHeight: 24,
+          }}
+          onChangeText={(text) => setAnswer4(text)}
+          multiline={true}>
+          </TextInput>
+        </View></>}
         </ScrollView>
-        <TouchableOpacity onPress={() => {setReportMode('end')}}>
+        <TouchableOpacity onPress={() => {
+          setReportMode('end');
+          amplitude.finishWritingMoodReport();
+        }}>
         <View style={{width:'90%',height:60,backgroundColor:'#FFFFFF',alignItems:'center', justifyContent:'center',alignSelf:'center',borderRadius:10,borderColor:'#72D193',borderWidth:1}}> 
           <Text style={{fontSize:25,color:'#72D193'}}>다 적었어!</Text>
         </View>
         </TouchableOpacity>
-        </View> : <>
+        </View> : reportMode==='stamp' ? <></> : <>
         <View style={{alignSelf:'center',marginTop:70}}>
           <View style={[bubbleStyles.container,{width:300,height:140}]}>
             <Text style={{fontSize: 17, color: '#fff', marginBottom: 10}}>무드 리포트 쓰느라 고생했다무!</Text>
             <Text style={{fontSize: 17, color: '#fff', marginBottom: 10, }}>안 좋았던 마음이 풀렸으면 좋겠다무...</Text>
-            <Text style={{fontSize: 17, color: '#fff', marginBottom: 0, }}>다음 한 주도 파이팅이다무!</Text>
+            <Text style={{fontSize: 17, color: '#fff', marginBottom: 0, }}>지금 느낌을 스탬프로도 남겨보라무!</Text>
           </View>
           <View style={bubbleStyles.tail_2}></View>
         </View>
@@ -581,9 +856,20 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,weeklyReportMode}) => 
         <TouchableOpacity onPress={() => {
           setWeeklyReportMode(!weeklyReportMode);
           saveWeeklyReport();
+          amplitude.endMoodReport();
+          navigation.navigate('Home');
         }}>
         <View style={{marginTop:70,width:'90%',height:60,backgroundColor:'#FFFFFF',alignItems:'center', justifyContent:'center',alignSelf:'center',borderRadius:10,borderColor:'#72D193',borderWidth:1}}> 
-          <Text style={{fontSize:25,color:'#72D193'}}>고마워 무야!</Text>
+          <Text style={{fontSize:25,color:'#72D193'}}>그래 좋아!</Text>
+        </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+          setWeeklyReportMode(!weeklyReportMode);
+          saveWeeklyReport();
+          amplitude.endMoodReportAndGotoStamp();
+        }}>
+        <View style={{marginTop:30,width:'90%',height:60,backgroundColor:'#FFFFFF',alignItems:'center', justifyContent:'center',alignSelf:'center',borderRadius:10,borderColor:'#AAAAAA',borderWidth:1}}> 
+          <Text style={{fontSize:25,color:'#AAAAAA'}}>아냐 괜찮아.. 고마워 무야!</Text>
         </View>
         </TouchableOpacity>
         </>)))}
@@ -642,7 +928,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     width: '100%',
     height: '100%',
-    fontSize: 24,
+    fontSize: 22,
     marginTop: 20,
     marginLeft: 28,
     marginRight: 200,
@@ -801,5 +1087,80 @@ const bubbleStyles = StyleSheet.create({
   },
 });
 
+const finalBubbleStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#72D193',
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    alignSelf: 'flex-start', // 좌측 정렬로 변경
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    position: 'relative',
+    overflow: 'hidden', // 클리핑 적용
+    marginBottom: 8,
+    zIndex: 100,
+  },
+  tail: {
+    position: 'absolute',
+    width: 15, // 꼬리의 길이
+    height: 15, // 꼬리의 높이
+    left: -4, // 꼬리 위치
+    top: 20, // 꼬리 위치
+    backgroundColor: '#72D193',
+    transform: [{ rotate: '45deg' }],
+    borderTopLeftRadius: 100, // 둥글게 만들기
+  },
+  rightTail: {
+    position: 'absolute',
+    width: 15, // 꼬리의 길이
+    height: 15, // 꼬리의 높이
+    right: -4, // 꼬리 위치
+    top: 6, // 꼬리 위치
+    backgroundColor: '#FFCF55',
+    // borderColor: '#72D193',
+    // borderWidth: 2,
+    transform: [{ rotate: '45deg' }],
+    borderTopLeftRadius: 100, // 둥글게 만들기
+  },
+  gotoStamp_container: {
+    backgroundColor: '#fff',
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    alignSelf: 'flex-start', // 좌측 정렬로 변경
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    borderColor: '#DDECE3',
+    borderWidth: 2,
+    position: 'relative',
+    overflow: 'hidden', // 클리핑 적용
+    zIndex: 100, flexDirection: 'row', 
+  },
+  gotoLetter_container: {
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignSelf: 'flex-start', // 좌측 정렬로 변경
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    position: 'relative',
+    overflow: 'hidden', // 클리핑 적용
+    zIndex: 100, marginBottom: 8, flexDirection: 'row', gap: 6,
+    borderColor: '#72D193',
+    borderWidth: 2,
+  },
+  moo_status_bar: {
+    backgroundColor: '#FCD49B', width: '100%', zIndex: 10, paddingVertical: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end'
+  },
+});
 
 export default WeeklyReport;

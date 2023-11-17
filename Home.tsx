@@ -229,6 +229,7 @@ const Home = ({name,first}:any) => {
     console.log('aaaaaaaaaaaaaaaaaaaaaaaaa');
     console.log(isStampTemplateAdded,'isStampTemplateAdded',first);
     setTodayStampCnt(getStamp(currentDate).length);
+    console.log(repository.getAllWeeklyReports());
   }, []);
 
   const addStampTemplate = () => {

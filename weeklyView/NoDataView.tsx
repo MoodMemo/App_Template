@@ -31,6 +31,7 @@ import {default as Text} from "../CustomText"
 import * as Sentry from '@sentry/react-native';
 import { styles } from 'react-native-gifted-charts/src/LineChart/styles';
 
+import {AnimatedCircularProgress} from 'react-native-circular-progress';
 
 /** no navigate */
 export const FromFutureView = () => {
@@ -180,8 +181,9 @@ export const PleaseOneMoreStampMini = () => {
 
 
 
-function Bubble({ text, imageSource, delay, toneDown, letter, last }) {
+function Bubble({ text, imageSource, delay, toneDown, letter, last, loading, setLoadingEnded }) {
   const [fadeAnim] = useState(new Animated.Value(0));
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     Animated.sequence([
@@ -195,6 +197,21 @@ function Bubble({ text, imageSource, delay, toneDown, letter, last }) {
     ]).start();
   }, [fadeAnim, delay]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (progress < 100) {
+        setProgress(progress+7>100 ? 100 : progress+7);
+      } else {
+        setLoadingEnded(true);
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [progress]);
+
   return (
     <Animated.View style={{ opacity: fadeAnim }}>
       {imageSource ? (
@@ -202,7 +219,18 @@ function Bubble({ text, imageSource, delay, toneDown, letter, last }) {
           style={{ width: 80, height: (92 * 80) / 80 , zIndex: 100, marginBottom: 8}} // 비율을 유지하며 height 자동 조절
           />
       ) : (
-      toneDown ? (
+      toneDown ? (loading ? 
+        <View style={{flexDirection:'row'}}>
+          <View style={[finalBubbleStyles.container, {backgroundColor: '#DDECE3'}]}>
+            <Text style={{ fontSize: 16, color: '#fff' }}>{text}</Text>
+          </View>
+          <AnimatedCircularProgress size={35} width={3} fill={progress} tintColor={'#72D193'} backgroundColor={'#DDDDDD'} style={{left:8}}>
+            {
+              (fill)=>(<Text style={{fontSize:11,color:'#72D193'}}>{progress}%</Text>)
+            }
+          </AnimatedCircularProgress>
+        </View>
+         : 
         <View style={[finalBubbleStyles.container, {backgroundColor: '#DDECE3'}]}>
           <Text style={{ fontSize: 16, color: '#fff' }}>{text}</Text>
         </View>
@@ -343,7 +371,7 @@ export const Present_One_MiniView = () => {
       </View>
     );
 }
-export const Present_WakeUp_MiniView = () => {
+export const Present_WakeUp_MiniView = ({setLoadingEnded}) => {
     return (
       <View style={{flex: 1, alignItems: 'center', }}>
         {/* 말풍선 영역 */}
@@ -360,7 +388,7 @@ export const Present_WakeUp_MiniView = () => {
               <Bubble text="Moo 일어났다무..." delay={0} />
               <Bubble text="앗! 이런 일이 있었구나무" delay={800} />
               <Bubble imageSource={require('../assets/write_0904.png')} delay={1600} />
-              <Bubble text="편지쓰는중 ... 기다려보라무" delay={2400} toneDown={true}/>
+              <Bubble text="편지쓰는중 ... 기다려보라무" delay={2400} toneDown={true} loading={true} setLoadingEnded={setLoadingEnded}/>
             </View> 
           </View>
         </View>

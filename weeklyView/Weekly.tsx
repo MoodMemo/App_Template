@@ -33,10 +33,12 @@ import { Card } from 'react-native-paper';
 import StampClick from '../StampClick';
 import StampView from '../StampView';
 import {default as Text} from "../CustomText"
+import { useNavigation } from '@react-navigation/native';
 import * as nodata from './NoDataView';
 import AutumnEventCoinModal from '../AutumnEventCoinModal';
 
 import * as Sentry from '@sentry/react-native';
+
 
 
 interface DropdownProps {
@@ -92,10 +94,41 @@ const Dropdown: React.FC<DropdownProps> = ({
   );
 };
 
+
+
 const Weekly = () => {
   const scrollViewRef = useRef(null);
+  const [isWeeklyReportAvailable,setIsWeeklyReportAvailable] = useState(false);
+  const [isLoadingEnded,setIsLoadingEnded] = useState(false);
+  const date2String = (stampDate:Date):String => {
+      
+    let month = stampDate.getMonth() + 1;
+    let day = stampDate.getDate();
+  
+    month = month >= 10 ? month : '0' + month;
+    day = day >= 10 ? day : '0' + day;
+    var dateTime:String = (stampDate.getFullYear()).toString()+'.'+month+'.'+day;
+    return dateTime
+  }
+
+  const checkWeeklyReport = () => {
+    var weeklyReports = repository.getAllWeeklyReports().sort((a,b)=>{
+      if(a.weekNum<b.weekNum) return 1
+      else return -1
+    });
+    var recentWeekNum = weeklyReports[0].weekNum;
+    var weekdate = weeklyReports[0].weekDate.split('~')[1];
+    var todayDate = date2String(new Date());
+    if(weekdate===todayDate){
+      setIsWeeklyReportAvailable(true);
+    }
+    else{
+      setIsWeeklyReportAvailable(false);
+    }
+  }
 
   useEffect(() => {
+    checkWeeklyReport();
     // 컴포넌트가 마운트될 때 스크롤을 최하단으로 이동
     // if (stampORdiary) { scrollViewRef.current.scrollToEnd({ animated: true });}
   }, []);
@@ -115,6 +148,8 @@ const Weekly = () => {
       setAndCheckTodayReport(date);
       setTimelineData(getStamp(date)); // getStamp 함수 안에서 정렬을 진행함.
     }
+    checkWeeklyReport();
+    setIsLoadingEnded(false);
   };
 
   const [selectedYear, setSelectedYear] = useState<number>(today.year());
@@ -531,6 +566,7 @@ const Weekly = () => {
 
   const [isEventModalVisible, setIsEventModalVisible]=useState(false);
 
+  const navigation = useNavigation();
 
   // tmp_createDummyData(); 
 
@@ -805,10 +841,10 @@ const Weekly = () => {
               </View>
             </View>
           ) : ( !todayReport ? ( // 1-3. 스탬프 2개, 일기 쓰는 중
-            <View style={{ flex: 1 }}><nodata.Present_WakeUp_MiniView/></View>
-          ) : ( // 1-4. 일기 다 씀
+            <View style={{ flex: 1 }}><nodata.Present_WakeUp_MiniView setLoadingEnded={setIsLoadingEnded}/></View>
+          ) : isLoadingEnded ? ( // 1-4. 일기 다 씀
             <View style={{ flex: 1 }}><nodata.Present_FinishWriting_MiniView handleStampORDiaryFromPFM={handleStampORDiaryFromPFM}/></View>
-          )))}
+          ) : <View style={{ flex: 1 }}><nodata.Present_FinishWriting_MiniView handleStampORDiaryFromPFM={handleStampORDiaryFromPFM}/></View>))}
         </ScrollView>
         ) : ( // 2. 스탬프가 없을 때, 날짜에 따라 다름
         <StampList_NoStamp/>
@@ -821,8 +857,7 @@ const Weekly = () => {
             {/* 날짜 영역 */}
             <Text style={{fontSize: 14, color: '#495057', marginBottom: 10, textDecorationLine: 'underline'}}>{dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}</Text>
             {/* 인삿말 */}
-            <Text style={{fontSize: 14, color: '#495057', textDecorationLine: 'underline'}}>안녕! Moo가 오늘의 네 하루에 대해 편지를 써봤다무.</Text>
-            <Text style={{fontSize: 14, color: '#495057', marginBottom: 15, textDecorationLine: 'underline'}}>읽어보고 다른 점이 있다면 고쳐보라무!</Text>
+            <Text style={{fontSize: 14, color: '#495057', textDecorationLine: 'underline', marginBottom:15}}>안녕! Moo가 오늘의 네 하루에 대해 편지를 써봤다무.</Text>
             
             {/* 편지 영역 */}
             <View style={diaryStyles.diaryContainer}>
@@ -913,7 +948,16 @@ const Weekly = () => {
             </View>
             {/* PS 영역 */}
             {/* <Text style={{fontSize: 14, color: '#495057', marginBottom: 10, textDecorationLine: 'underline'}}>PS. ~~~ 한 것 같으니,  ~~하길 바란다무!</Text> -> 이거는 준하가 개발한 뒤 추가*/}
-            <Text style={{fontSize: 14, color: '#495057', marginBottom: 15, textDecorationLine: 'underline'}}>PS. 읽어보고 다른 점이 있다면 고쳐보면서, 하루를 돌아보길 바란다무!</Text>
+            <Text style={{fontSize: 14, color: '#495057', marginBottom: 0, textDecorationLine: 'underline'}}>PS. 읽어보고 다른 점이 있다면 고쳐보면서, 하루를 돌아보길 바란다무!</Text>
+            {isWeeklyReportAvailable ? <><Text style={{fontSize: 14, color: '#495057', marginBottom: 15, textDecorationLine: 'underline'}}>오늘은 무드 리포트를 쓸 수 있으니 한 번 써보라무!</Text>
+            <TouchableOpacity onPress={()=>{
+              navigation.navigate('Statistics',{gotoMoodReport:true});
+              amplitude.click_gotoMoodReport();
+            }}>
+              <View style={{width:180,height:40,backgroundColor:'#FFFFFF',alignItems:'center', justifyContent:'center',alignSelf:'center',borderRadius:10,borderColor:'#72D193',borderWidth:1}}> 
+                <Text style={{fontSize:16,color:'#72D193'}}>무드 리포트 쓰러 가기</Text>
+              </View>
+            </TouchableOpacity></> : <></>}
 
             {/* Moo가 */}
             <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end'}}>
