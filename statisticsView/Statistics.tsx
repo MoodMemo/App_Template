@@ -346,7 +346,7 @@ const Statistics = ({gotoMoodReport}) => {
         <View style={{flexDirection: 'row', alignSelf:'center', marginTop:15, marginBottom:25}}>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
-            <Text style={{fontSize:22,color:'#FFCC4D'}}>{countStamps}개</Text>
+            <Text style={{fontSize:22,color:'#72D193'}}>{countStamps}개</Text>
           </View>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>무에게 받은 편지</Text>
@@ -824,7 +824,7 @@ const styles = StyleSheet.create({
     },
     activeFont: {
       fontSize: 16,
-      color: '#FFCC4D',//000000
+      color: '#72D193',//000000
       fontWeight:'600'
     },
     deactiveType: {

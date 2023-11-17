@@ -681,12 +681,14 @@ const StampView = () => {
                   </View>
                   {/* 사진 추가 */}
                   <View style={styles.imgContent}>
-                    <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
+                    <TouchableOpacity style={styles.imgButton} onPress={() => {
+                      amplitude.clickAddPicture();
+                      onButtonPress('library', {
                       selectionLimit: 1,
                       mediaType: 'photo',
                       includeBase64: false,
                       includeExtra,
-                    })}>
+                    })}}>
                       <Image source={require('./assets/add-circle.png')} />
                       <Text style={styles.imgText}>사진 추가</Text>
                     </TouchableOpacity>
