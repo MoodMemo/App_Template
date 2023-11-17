@@ -16,8 +16,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="launch_screen.png" translatesAutoresizingMaskIntoConstraints="NO" id="Qkd-qa-aT4">
-                                <rect key="frame" x="-554" y="-116" width="1500" height="1047"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch_screen.png" id="jn3-5j-E9s">
+                                <rect key="frame" x="-317" y="-162" width="1027" height="1040"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
@@ -27,7 +27,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="203.81679389312976" y="231.69014084507043"/>
+            <point key="canvasLocation" x="52.671755725190835" y="374.64788732394368"/>
         </scene>
     </scenes>
     <resources>
