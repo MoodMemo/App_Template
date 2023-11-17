@@ -229,15 +229,17 @@ const reloadNotification = async () => {
   })
 }
 
-const date2String = (stampDate:Date):String => {
-      
-      
+const date2String = (stampDate:Date):string => {
+
+
   let month = stampDate.getMonth() + 1;
   let day = stampDate.getDate();
 
+  
+
   month = month >= 10 ? month : '0' + month;
   day = day >= 10 ? day : '0' + day;
-  var dateTime:String = (stampDate.getFullYear()).toString()+'.'+month+'.'+day;
+  var dateTime:string = (stampDate.getFullYear()).toString()+'.'+month+'.'+day;
   return dateTime
 }
 
@@ -252,7 +254,8 @@ const weeklyReportDate = (date:Date) => {
 
 const weeklyReportSetting= async () => {
   await AsyncStorage.getItem('@UserInfo:RecentReportWeekNum').then((value) => {
-    if(value===null && isRegistered){
+    console.log('RecentReportWeekNum',value);
+    if(value===null){
       var date = new Date();
       console.log('weeklyReport',date2String(date));
       realm.write(()=>{
@@ -268,18 +271,15 @@ const weeklyReportSetting= async () => {
       })
       AsyncStorage.setItem('@UserInfo:RecentReportWeekNum','1');
     }
-    else if(value!=null){
-      console.log('-------------------------')
+    else if(value!==null){
       var weeklyReports = repository.getAllWeeklyReports().sort((a,b)=>{
         if(a.weekNum<b.weekNum) return 1
         else return -1
       });
+      console.log(weeklyReports[0]);
       var recentWeekNum = weeklyReports[0].weekNum;
       var weekdate = weeklyReports[0].weekDate.split('~')[1];
       var date_2 = date2String(new Date());
-      console.log(weekdate, date_2);
-      console.log(weekdate > date_2);
-      console.log(weekdate > '2023.12.01');
       while(weekdate < date_2){
         var date_L = weekdate.split('.');
         var weekdate_year = Number(date_L[0]);
@@ -300,8 +300,7 @@ const weeklyReportSetting= async () => {
         })
         AsyncStorage.setItem('@UserInfo:RecentReportWeekNum',(recentWeekNum+1).toString());
         recentWeekNum+=1;
-        weekdate = weeklyReportDate(new_weekdate).split('~')[1];
-        console.log(weekdate);
+        weekdate=date2String(new_weekdate);
       }
     }
   })
@@ -337,23 +336,13 @@ const autumnEventInitialize = async () => {
           var date=value.split('/');
           var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
           var date_last=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-          console.log('date_now',date_now);
-          console.log('date_stamp',date_last);
           let totalDays=Math.floor((date_now.getTime()-date_last.getTime())/(1000*3600*24));
           if(totalDays>1){
-            console.log(value);
-            console.log(totalDays,'일');
-            console.log('date_now: ',date_now);
-            console.log('date_last: ',date_last);
             AsyncStorage.getItem('@UserInfo:AutumnEventLastRunDate').then((value)=>{
               var date=value.split('/');
               var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
               var date_last=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-              console.log('date_now',date_now);
-              console.log('date_stamp',date_last);
               let totalDays2=Math.floor((date_now.getTime()-date_last.getTime())/(1000*3600*24));
-              console.log('totalDays2',totalDays2);
-              console.log('totalDays',totalDays);
               if(totalDays2===totalDays){
                 AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value)=>{
                   AsyncStorage.setItem('@UserInfo:AutumnEventLevel', Math.max(Number(value)-totalDays+1,1).toString());

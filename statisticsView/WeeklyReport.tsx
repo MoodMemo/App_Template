@@ -334,17 +334,17 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,wee
         </View>
         <DashedLine dashLength={10} dashThickness={2} dashGap={10} dashColor={isCheckListSucceeded ? '#7CD0B2' : '#FF7168'}/>
       </View> */}
-        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:15, marginBottom:25, marginLeft:15}}>
+        <View style={{flexDirection: 'row', alignSelf:'center', marginTop:15, marginBottom:25, marginLeft:5}}>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록한 스탬프</Text>
             <Text style={{fontSize:22,color:'#FFCC4D'}}>{countStamps}개</Text>
           </View>
           <View style={{alignItems:'center',marginRight:18}}>
-            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>AI 일기 발행</Text>
+            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>무에게 받은 편지</Text>
             <Text style={{fontSize:22,color:'#FFCC4D'}}>{countDiarys}개</Text>
           </View>
           <View style={{alignItems:'center',marginRight:18}}>
-            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>일기 발행 일자</Text>
+            <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록 일자</Text>
             <Text style={{fontSize:22,color:'#212429'}}>{countLoggedDates}일</Text>
           </View>
         </View>
@@ -366,7 +366,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,wee
           <TouchableOpacity key={stampButton[0].id} style={styles.stampButton} disabled={true}>
             <Text style={styles.buttonEmotion}>{stampButton[0].emoji}</Text>
             <Text style={styles.buttonText}>{stampButton[0].stampName}</Text>
-            <Text style={{color: '#000000', fontSize: 14,bottom:3}}>{stampButton[1]}</Text>
+            <Text style={{color: '#72D193', fontSize: 14,bottom:3}}>{stampButton[1]}</Text>
           </TouchableOpacity>
         ))}
         </View>
@@ -376,17 +376,17 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,wee
           />
           <View>
             <Text style={{fontSize: 18, color: '#212429', fontWeight: 'bold',}}>Moo</Text>
-            <View style={finalBubbleStyles.container}>
+            <View style={[finalBubbleStyles.container,{backgroundColor:'#CCC8A1'}]}>
               <Text style={{ fontSize: 16, color: '#fff' }}>지난 주에 남긴 부정적인 감정이었다무...</Text>
             </View>
           </View>
         </View>
         <View style={{flexDirection:'row',flexWrap: 'wrap',justifyContent:'space-between',width:'90%',marginHorizontal:20,marginTop:20}}>
         {negStamps.sort(sortStamps).map((stampButton:any) => (
-          <TouchableOpacity key={stampButton[0].id} style={styles.stampButton} disabled={true}>
+          <TouchableOpacity key={stampButton[0].id} style={[styles.stampButton,{borderColor:'#CCC8A1'}]} disabled={true}>
             <Text style={styles.buttonEmotion}>{stampButton[0].emoji}</Text>
             <Text style={styles.buttonText}>{stampButton[0].stampName}</Text>
-            <Text style={{color: '#000000', fontSize: 14,bottom:3}}>{stampButton[1]}</Text>
+            <Text style={{color: '#CCC8A1', fontSize: 14,bottom:3}}>{stampButton[1]}</Text>
           </TouchableOpacity>
         ))}
         </View>
@@ -451,7 +451,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,wee
                 <View style={Timelinestyles.container}>
                   {getWeeklyStamps().map((item, index) => (
                     <>
-                    {index===0 || getWeeklyStamps()[index-1].dateTime.getDate() !== item.dateTime.getDate() ? <View style={{flexDirection:'row',marginTop:30,marginBottom:10}}>
+                    {index===0 || getWeeklyStamps()[index-1].dateTime.getDate() !== item.dateTime.getDate() ? <View key={item.id} style={{flexDirection:'row',marginTop:30,marginBottom:10}}>
                       <View style={{
                       marginTop:10,
                       marginRight:13,
