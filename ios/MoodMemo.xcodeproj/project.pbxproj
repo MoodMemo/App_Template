@@ -35,8 +35,9 @@
 		FF0D3B7E2ABB7B3100B698DC /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF0D3B6B2ABB7B3100B698DC /* Foundation.ttf */; };
 		FF0D3B822ABB80C200B698DC /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF0D3B812ABB80C200B698DC /* Pretendard-Medium.ttf */; };
 		FF560B022AE65CC000BD2932 /* autumn_event_splash.png in Resources */ = {isa = PBXBuildFile; fileRef = FF560B012AE65CC000BD2932 /* autumn_event_splash.png */; };
-		FF560B062AE65F7200BD2932 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF560B052AE65F7200BD2932 /* LaunchScreen.storyboard */; };
 		FF748BF52AF4B23800858DA4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FF748BF42AF4B23800858DA4 /* Images.xcassets */; };
+		FF8E3A3F2AFB6576009AD954 /* launch_screen.png in Resources */ = {isa = PBXBuildFile; fileRef = FF8E3A3E2AFB6575009AD954 /* launch_screen.png */; };
+		FF8E3A412AFB658D009AD954 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF8E3A402AFB658D009AD954 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,8 +92,9 @@
 		FF0D3B6B2ABB7B3100B698DC /* Foundation.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Foundation.ttf; sourceTree = "<group>"; };
 		FF0D3B812ABB80C200B698DC /* Pretendard-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Pretendard-Medium.ttf"; sourceTree = "<group>"; };
 		FF560B012AE65CC000BD2932 /* autumn_event_splash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = autumn_event_splash.png; path = MoodMemo/autumn_event_splash.png; sourceTree = "<group>"; };
-		FF560B052AE65F7200BD2932 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FF748BF42AF4B23800858DA4 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		FF8E3A3E2AFB6575009AD954 /* launch_screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = launch_screen.png; path = MoodMemo/launch_screen.png; sourceTree = "<group>"; };
+		FF8E3A402AFB658D009AD954 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +137,7 @@
 		13B07FAE1A68108700A75B9A /* MoodMemo */ = {
 			isa = PBXGroup;
 			children = (
+				FF8E3A3E2AFB6575009AD954 /* launch_screen.png */,
 				FF0D3B562ABADAB300B698DC /* GoogleService-Info.plist */,
 				72ACAB862AB01DD5000542BE /* MoodMemo.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -142,8 +145,8 @@
 				FF560B012AE65CC000BD2932 /* autumn_event_splash.png */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				FF560B052AE65F7200BD2932 /* LaunchScreen.storyboard */,
 				FF748BF42AF4B23800858DA4 /* Images.xcassets */,
+				FF8E3A402AFB658D009AD954 /* LaunchScreen.storyboard */,
 			);
 			name = MoodMemo;
 			sourceTree = "<group>";
@@ -331,12 +334,12 @@
 				FF0D3B6E2ABB7B3100B698DC /* FontAwesome.ttf in Resources */,
 				FF748BF52AF4B23800858DA4 /* Images.xcassets in Resources */,
 				FF0D3B712ABB7B3100B698DC /* Fontisto.ttf in Resources */,
+				FF8E3A412AFB658D009AD954 /* LaunchScreen.storyboard in Resources */,
 				FF0D3B6D2ABB7B3100B698DC /* EvilIcons.ttf in Resources */,
 				FF0D3B742ABB7B3100B698DC /* Zocial.ttf in Resources */,
 				FF0D3B7C2ABB7B3100B698DC /* SimpleLineIcons.ttf in Resources */,
 				FF0D3B7E2ABB7B3100B698DC /* Foundation.ttf in Resources */,
 				FF0D3B762ABB7B3100B698DC /* Ionicons.ttf in Resources */,
-				FF560B062AE65F7200BD2932 /* LaunchScreen.storyboard in Resources */,
 				FF0D3B822ABB80C200B698DC /* Pretendard-Medium.ttf in Resources */,
 				FF0D3B7A2ABB7B3100B698DC /* FontAwesome5_Brands.ttf in Resources */,
 				FF0D3B6C2ABB7B3100B698DC /* FontAwesome6_Regular.ttf in Resources */,
@@ -349,6 +352,7 @@
 				FF0D3B702ABB7B3100B698DC /* FontAwesome5_Regular.ttf in Resources */,
 				FF0D3B6F2ABB7B3100B698DC /* Feather.ttf in Resources */,
 				FF0D3B722ABB7B3100B698DC /* FontAwesome6_Solid.ttf in Resources */,
+				FF8E3A3F2AFB6576009AD954 /* launch_screen.png in Resources */,
 				FF0D3B782ABB7B3100B698DC /* Entypo.ttf in Resources */,
 				FF0D3B792ABB7B3100B698DC /* MaterialCommunityIcons.ttf in Resources */,
 				FF0D3B7D2ABB7B3100B698DC /* FontAwesome6_Brands.ttf in Resources */,

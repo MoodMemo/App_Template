@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Allow app to access device photo library</string>
+	<string>MoodMemo 앱은 사진/동영상 권한을 필요로 합니다. 권한 허용 시 스탬프 입력 과정에서 사진을 추가할 수 있습니다. 허용 안 함 시 해당 기능이 동작하지 않을 수 있습니다.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Allow app to add photos to device photo library</string>
+	<string>MoodMemo 앱은 사진/동영상 추가 권한을 필요로 합니다. 권한 허용 시 스탬프 입력 과정에서 사진을 추가할 수 있습니다. 허용 안 함 시 해당 기능이 동작하지 않을 수 있습니다.</string>
 	<key>CodePushDeploymentKey</key>
 	<string>$(CODEPUSH_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -37,8 +37,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>CodePushDeploymentKey</key>
-	<string>$(CODEPUSH_KEY)</string>
 	<key>FacebookAppID</key>
 	<string>854860769368350</string>
 	<key>FacebookClientToken</key>
