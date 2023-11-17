@@ -494,21 +494,52 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
                   />
                   <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
                 </View>
-                {/* 사진 추가 */}
-                <View style={styles.imgContent}>
-                  <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
-                    selectionLimit: 1,
-                    mediaType: 'photo',
-                    includeBase64: false,
-                    includeExtra,
-                  })}>
-                    <Image source={require('./assets/add-circle.png')} />
-                    <Text style={styles.imgText}>사진 추가</Text>
-                  </TouchableOpacity>
-                  <ScrollView horizontal={true}>
-                  {response?.assets &&
-                    response?.assets.map(({uri}: {uri: string}) => (
-                      <View key={uri}>
+                <View style={styles.horizontalLine} />
+                <View style={styles.memoContainer}>
+                  <Text style={styles.modalText}>메모 남기기</Text>
+                  <View style={styles.memoContent}>
+                    <TextInput
+                      style={styles.memoText}
+                      placeholder={editedMemo || "메모 작성하기 (추후 작성 가능)"}
+                      value={editedMemo}
+                      multiline={true}
+                      maxLength={500}
+                      onChangeText={handleMemoChange}
+                      // value={memo}
+                      numberOfLines={numberOfLines}
+                      onFocus={() => {amplitude.editMemo();}}
+                    />
+                    <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
+                  </View>
+                </View>
+                <View style={styles.imgContainer}>
+                  <Text style={styles.modalText}>사진 추가</Text>
+                  <View style={styles.imgContent}>
+                    <TouchableOpacity style={styles.imgButton} onPress={() => {
+                      amplitude.clickAddPicture();
+                      onButtonPress('library', {
+                      selectionLimit: 1,
+                      mediaType: 'photo',
+                      includeBase64: false,
+                      includeExtra,
+                    })}}>
+                      <Image source={require('./assets/add-circle.png')} />
+                      <Text style={styles.imgText}>사진 추가</Text>
+                    </TouchableOpacity>
+                    <ScrollView horizontal={true}>
+                    {response?.assets &&
+                      response?.assets.map(({uri}: {uri: string}) => (
+                        <View key={uri}>
+                          <Image
+                            resizeMode="cover"
+                            resizeMethod="scale"
+                            style={styles.image}
+                            source={{uri: uri}}
+                          />
+                        </View>
+                    ))}
+                    {(!response || !response?.assets) && selectedImageUri && (
+                      <View key={selectedImageUri}>
                         <Image
                           resizeMode="cover"
                           resizeMethod="scale"

@@ -20,8 +20,8 @@ import axios, { AxiosResponse, CancelToken } from 'axios';
 import NotificationView from './NotificationView';
 import NotificationAdd from './NotificationAdd';
 import ChangeProfile from './ChangeProfile';
-import { tmpMooStamps, tmpGiftStamps, MooStampDivider, GiftStampDivider } from './SettingsEventComponent';
-import { getAmount, buyGift} from './AutumnEventGiftAPI';
+// import { tmpMooStamps, tmpGiftStamps, MooStampDivider, GiftStampDivider } from './SettingsEventComponent';
+// import { getAmount, buyGift} from './AutumnEventGiftAPI';
 
 import * as amplitude from './AmplitudeAPI';
 
@@ -193,25 +193,26 @@ const Settings = () => {
     const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
     const [isNotificationTimeChanged, setIsNotificationTimeChanged] = useState(false);
     const [isNotificationAdded, setIsNotificationAdded] = useState(false);
-    const [isEventLevelModalVisible, setIsEventLevelModalVisible] = useState(false);
-    const [autumnEventCoin,setAutumnEventCoin] = useState(0);
-    const [autumnEventLevel,setAutumnEventLevel] = useState(1);
-    const [autumnEventBoughtIce,setAutumnEventBoughtIce] = useState(false);
-    const [autumnEventBoughtChicken1,setAutumnEventBoughtChicken1] = useState(false);
-    const [autumnEventBoughtChicken2,setAutumnEventBoughtChicken2] = useState(false);
-    const [autumnEventCoffeeAmount,setAutumnEventCoffeeAmount] = useState(0);
-    const [autumnEventIceAmount,setAutumnEventIceAmount] = useState(0);
-    const [autumnEventChicken1Amount,setAutumnEventChicken1Amount] = useState(0);
-    const [autumnEventChicken2Amount,setAutumnEventChicken2Amount] = useState(0);
-    const [autumnEventPressedGift,setAutumnEventPressedGift] = useState('');
-    const [autumnEventGiftBuying,setAutumnEventGiftBuying] = useState(false);
-    const [autumnEventGiftInfoModal,setAutumnEventGiftInfoModal] = useState(false);
-    const [autumnEventPressedGiftInfo,setAutumnEventPressedGiftInfo] = useState({});
-    const [autumnEventGiftInfo,setAutumnEventGiftInfo] = useState('');
-    const [autumnEventGiftBuyingSucceed,setAutumnEventGiftBuyingSucceed] = useState(false);
-    const [autumnEventGiftBuyingSucceedModal,setAutumnEventGiftBuyingSucceedModal] = useState(false);
-    const [autumnEventGiftBuyingFailedModal,setAutumnEventGiftBuyingFailedModal] = useState(false);
-    const [autumnEventGiftBuyingCanceled,setAutumnEventGiftBuyingCanceled] = useState(false);
+    // const [isEventLevelModalVisible, setIsEventLevelModalVisible] = useState(false);
+    // const [autumnEventCoin,setAutumnEventCoin] = useState(0);
+    // const [autumnEventLevel,setAutumnEventLevel] = useState(1);
+    // const [autumnEventBoughtIce,setAutumnEventBoughtIce] = useState(false);
+    // const [autumnEventBoughtChicken1,setAutumnEventBoughtChicken1] = useState(false);
+    // const [autumnEventBoughtChicken2,setAutumnEventBoughtChicken2] = useState(false);
+    // const [autumnEventCoffeeAmount,setAutumnEventCoffeeAmount] = useState(0);
+    // const [autumnEventIceAmount,setAutumnEventIceAmount] = useState(0);
+    // const [autumnEventChicken1Amount,setAutumnEventChicken1Amount] = useState(0);
+    // const [autumnEventChicken2Amount,setAutumnEventChicken2Amount] = useState(0);
+    // const [autumnEventPressedGift,setAutumnEventPressedGift] = useState('');
+    // const [autumnEventGiftBuying,setAutumnEventGiftBuying] = useState(false);
+    // const [autumnEventGiftInfoModal,setAutumnEventGiftInfoModal] = useState(false);
+    // const [autumnEventPressedGiftInfo,setAutumnEventPressedGiftInfo] = useState({});
+    // const [autumnEventGiftInfo,setAutumnEventGiftInfo] = useState('');
+    // const [autumnEventGiftBuyingSucceed,setAutumnEventGiftBuyingSucceed] = useState(false);
+    // const [autumnEventGiftBuyingSucceedModal,setAutumnEventGiftBuyingSucceedModal] = useState(false);
+    // const [autumnEventGiftBuyingFailedModal,setAutumnEventGiftBuyingFailedModal] = useState(false);
+    // const [autumnEventGiftBuyingCanceled,setAutumnEventGiftBuyingCanceled] = useState(false);
+    // const [autumnEventPeperoAmount,setAutumnEventPeperoAmount] = useState(0);
 
 
     const sortNotificationByTime = (a:any,b:any) => {
@@ -221,72 +222,67 @@ const Settings = () => {
     }
 
     const editStampList = (list) => {
+        console.log(list);
         let updatedList = [...list];
-        if (updatedList.length % 3 === 2) {
-            updatedList.push({ id: list.length + 1, image: '', });
-        }
+        // if (updatedList.length % 3 === 2) {
+        //     updatedList.push({ id: list.length + 1, image: '', });
+        // }
         return updatedList;
     }
-    const updatedMooStamps = editStampList(tmpMooStamps);
-    const updateGiftStamps = editStampList(tmpGiftStamps);
+    // const updatedMooStamps = editStampList(tmpMooStamps);
+    // const updateGiftStamps = editStampList(tmpGiftStamps);
 
-    const renderItem = ({ item }) => (
-        <View style={{}}>
-          <Image source={item.image} style={eventModalStyles.image} />
-        </View>
-      );
-    const renderBoughtItem = ( key ) => {
-        if (key === 'ice') {
-            if (autumnEventBoughtIce) return true;
-            else return false;
-        } else if (key === 'chicken_1') {
-            if (autumnEventBoughtChicken1) return true;
-            else return false;
-        } else if (key === 'chicken_2') {
-            if (autumnEventBoughtChicken2) return true;
-            else return false;
-        }
-    }
+    // const renderItem = ({ item }) => (
+    //     <View style={{}}>
+    //       <Image source={item.image} style={eventModalStyles.image} />
+    //     </View>
+    //   );
+    // const renderBoughtItem = ( key ) => {
+    //     if (key === 'ice') {
+    //         if (autumnEventBoughtIce) return true;
+    //         else return false;
+    //     } else if (key === 'chicken_1') {
+    //         if (autumnEventBoughtChicken1) return true;
+    //         else return false;
+    //     } else if (key === 'chicken_2') {
+    //         if (autumnEventBoughtChicken2) return true;
+    //         else return false;
+    //     }
+    // }
 
-    const autumnEventBoughtGift = ( key ) => {
-        if (key === 'ice') {
-            setAutumnEventBoughtIce(true);
-            AsyncStorage.setItem('@UserInfo:AutumnEventBoughtIce','true');
-        } else if (key === 'chicken_1') {
-            setAutumnEventBoughtChicken1(true);
-            AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken1','true');
-        } else if (key === 'chicken_2') {
-            setAutumnEventBoughtChicken2(true);
-            AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken2','true');
-        }
-    }
+    // const autumnEventBoughtGift = ( key ) => {
+    //     if (key === 'ice') {
+    //         setAutumnEventBoughtIce(true);
+    //         AsyncStorage.setItem('@UserInfo:AutumnEventBoughtIce','true');
+    //     } else if (key === 'chicken_1') {
+    //         setAutumnEventBoughtChicken1(true);
+    //         AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken1','true');
+    //     } else if (key === 'chicken_2') {
+    //         setAutumnEventBoughtChicken2(true);
+    //         AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken2','true');
+    //     }
+    // }
 
-    const getGiftAmount = () => {
-        getAmount('coffee').then((value)=>{
-            setAutumnEventCoffeeAmount(value);
-        });
-        getAmount('ice').then((value)=>{
-            setAutumnEventIceAmount(value);
-        });
-        getAmount('chicken_1').then((value)=>{
-            setAutumnEventChicken1Amount(value);
-        });
-        getAmount('chicken_2').then((value)=>{
-            setAutumnEventChicken2Amount(value);
-        });
-    }
+    // const getGiftAmount = () => {
+    //     getAmount('coffee_2').then((value)=>{
+    //         setAutumnEventCoffeeAmount(value);
+    //     });
+    //     getAmount('pepero').then((value)=>{
+    //         setAutumnEventPeperoAmount(value);
+    //     });
+    // }
 
-    const findDictionaryByKey = (key) => {
-        // 배열을 순회하면서 key와 일치하는 딕셔너리를 찾습니다.
-        for (const item of updateGiftStamps) {
-          if (item.key === key) {
-            return item;
-          }
-        }
+    // const findDictionaryByKey = (key) => {
+    //     // 배열을 순회하면서 key와 일치하는 딕셔너리를 찾습니다.
+    //     for (const item of updateGiftStamps) {
+    //       if (item.key === key) {
+    //         return item;
+    //       }
+    //     }
       
-        // 일치하는 key를 찾지 못한 경우 null을 반환합니다.
-        return null;
-      }
+    //     // 일치하는 key를 찾지 못한 경우 null을 반환합니다.
+    //     return null;
+    //   }
     
     useEffect(() => {
         AsyncStorage.getItem('@UserInfo:notificationAllow',(err,result)=>{
@@ -294,27 +290,27 @@ const Settings = () => {
             else setIsNotificationEnabled(false);
             console.log('notificationallowed',result);
         });
-        AsyncStorage.getItem('@UserInfo:AutumnEventCoin').then((value) => {
-            setAutumnEventCoin(value);
-        })
-        AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value) => {
-            setAutumnEventLevel(Number(value));
-        })
-        AsyncStorage.getItem('@UserInfo:AutumnEventBoughtIce').then((value) => {
-            if(value==='true'){
-                setAutumnEventBoughtIce(true);
-            }
-        })
-        AsyncStorage.getItem('@UserInfo:AutumnEventBoughtChicken1').then((value) => {
-            if(value==='true'){
-                setAutumnEventBoughtChicken1(true);
-            }
-        })
-        AsyncStorage.getItem('@UserInfo:AutumnEventBoughtChicken2').then((value) => {
-            if(value==='true'){
-                setAutumnEventBoughtChicken2(true);
-            }
-        })
+        // AsyncStorage.getItem('@UserInfo:AutumnEventCoin').then((value) => {
+        //     setAutumnEventCoin(value);
+        // })
+        // AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value) => {
+        //     setAutumnEventLevel(Number(value));
+        // })
+        // AsyncStorage.getItem('@UserInfo:AutumnEventBoughtIce').then((value) => {
+        //     if(value==='true'){
+        //         setAutumnEventBoughtIce(true);
+        //     }
+        // })
+        // AsyncStorage.getItem('@UserInfo:AutumnEventBoughtChicken1').then((value) => {
+        //     if(value==='true'){
+        //         setAutumnEventBoughtChicken1(true);
+        //     }
+        // })
+        // AsyncStorage.getItem('@UserInfo:AutumnEventBoughtChicken2').then((value) => {
+        //     if(value==='true'){
+        //         setAutumnEventBoughtChicken2(true);
+        //     }
+        // })
         AsyncStorage.getItem('@UserInfo:userName').then((value) => {
             setName(value);
         })
@@ -326,12 +322,12 @@ const Settings = () => {
         else setIsNotificationEnabled(false);
         console.log('notificationallowed',result);
     });
-    await AsyncStorage.getItem('@UserInfo:AutumnEventCoin').then((value) => {
-        setAutumnEventCoin(value);
-    })
-    AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value) => {
-        setAutumnEventLevel(Number(value));
-    })
+    // await AsyncStorage.getItem('@UserInfo:AutumnEventCoin').then((value) => {
+    //     setAutumnEventCoin(value);
+    // })
+    // AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value) => {
+    //     setAutumnEventLevel(Number(value));
+    // })
   })();
 
     return (
@@ -631,7 +627,7 @@ const Settings = () => {
                 <TitleDivider/>
 
                 {/* 이벤트 섹션 */}
-                <View style={tabStyles.title}>
+                {/* <View style={tabStyles.title}>
                   <Text style={tabStyles.titleText}>가을 이벤트</Text>
                 </View>
                     <View style={[tabStyles.content,{flexDirection:'row',justifyContent:'space-between'}]}>
@@ -645,8 +641,8 @@ const Settings = () => {
                             </TouchableOpacity>
                         </View>
                         <Text style={{color:'#FFCC4D',fontSize:19,marginLeft:10}}>Lv. {autumnEventLevel}</Text>
-                    </View>
-                    <Modal isVisible={isEventLevelModalVisible}
+                    </View> */}
+                    {/* <Modal isVisible={isEventLevelModalVisible}
                     animationIn={"fadeIn"}
                     animationInTiming={200}
                     animationOut={"fadeOut"}
@@ -746,8 +742,8 @@ const Settings = () => {
                             <MCIcons name='cart' color={'#FFFFFF'} size={27}/>
                             <Text style={{color:'#FFFFFF',fontSize:19, marginLeft:8}}>은행잎 상점</Text>
                         </View>
-                    </TouchableOpacity>
-                    <Modal isVisible={isShopModalVisible}
+                    </TouchableOpacity> */}
+                    {/* <Modal isVisible={isShopModalVisible}
                         animationIn={"fadeIn"}
                         animationInTiming={200}
                         animationOut={"fadeOut"}
@@ -802,40 +798,34 @@ const Settings = () => {
 
                                 <View style={eventModalStyles.threeByThreeContainer}>
                                 {updateGiftStamps.map((gift) => (
-                                        <TouchableOpacity key={gift.id} style={[eventModalStyles.btnContainer,{borderColor: (renderBoughtItem(gift.key) ? '#E7E7E7' : gift.cost<=autumnEventCoin ? '#FFCC4D' : '#E7E7E7'),backgroundColor: (autumnEventPressedGift===gift.key ? '#FFF9EB' : '#FFFFFF')}]} 
-                                        disabled={renderBoughtItem(gift.key) ? true : (gift.cost<=autumnEventCoin ? false : true)}
+                                        <TouchableOpacity key={gift.id} style={[eventModalStyles.btnContainer,{borderColor: (renderBoughtItem(gift.key) ? '#E7E7E7' : gift.cost<=autumnEventCoin ? ((gift.key==='coffee' && autumnEventCoffeeAmount===0) || (gift.key==='pepero' && autumnEventPeperoAmount===0) ? '#E7E7E7' : '#FFCC4D') : '#E7E7E7'),backgroundColor: (autumnEventPressedGift===gift.key ? '#FFF9EB' : '#FFFFFF')}]} 
+                                        disabled={renderBoughtItem(gift.key) ? true : (gift.cost<=autumnEventCoin ? ((gift.key==='coffee' && autumnEventCoffeeAmount===0) || (gift.key==='pepero' && autumnEventPeperoAmount===0) ? true : false) : true)}
                                         onPress={()=>{
                                             setAutumnEventPressedGift(gift.key);
                                             amplitude.clickGift(gift.key)//상품 눌러놓음, gift.key가 상품명
                                         }}
                                         >
-                                            {/* {renderItem({item: gift})} */}
-                                            {gift.key==='coffee' ? (<Feather name='coffee' color={(renderBoughtItem(gift.key) ? '#CBCBCB' : gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB')} size={27}/>)
-                                            : (gift.key==='ice' ? (<MaterialIcons name='icecream' color={renderBoughtItem(gift.key) ? '#CBCBCB' :(gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB')} size={27}/>)
-                                            : (gift.key==='chicken_1' ? (<MCIcons name='food-drumstick-outline' color={renderBoughtItem(gift.key) ? '#CBCBCB' : (gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB')} size={27}/>)
-                                            : (<MCIcons name='food-drumstick-outline' color={renderBoughtItem(gift.key) ? '#CBCBCB' : (gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB')} size={27}/>)))}
-                                            {/* <MCIcons name='cart' color={'black'} size={27}/> */}
+                                            {gift.key==='coffee' ? (<Feather name='coffee' color={(renderBoughtItem(gift.key) ? '#CBCBCB' : gift.cost<=autumnEventCoin ? ((gift.key==='coffee' && autumnEventCoffeeAmount===0) || (gift.key==='pepero' && autumnEventPeperoAmount===0) ? '#CBCBCB' : '#212429') : '#CBCBCB')} size={35}/>)
+                                            : autumnEventPeperoAmount===0 ? (<Image source={require('./assets/pepero_disabled.png')} style={{width:35*52/90,height:35}}/>) : gift.cost<=autumnEventCoin ? (<Image source={require('./assets/pepero.png')} style={{width:35*52/90,height:35}}/>) : (<Image source={require('./assets/pepero_disabled.png')} style={{width:35*52/90,height:35}}/>)}
                                             <Text style={{
                                                 textAlign: 'center',
-                                                color: (renderBoughtItem(gift.key) ? '#CBCBCB' : gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB'),
+                                                color: (renderBoughtItem(gift.key) ? '#CBCBCB' : gift.cost<=autumnEventCoin ? ((gift.key==='coffee' && autumnEventCoffeeAmount===0) || (gift.key==='pepero' && autumnEventPeperoAmount===0) ? '#CBCBCB' : '#212429') : '#CBCBCB'),
                                                 fontSize: 14,
                                             }}>{gift.name}</Text>
                                             {renderBoughtItem(gift.key) ? <Text style={{textAlign: 'center',
                                             color: '#CBCBCB',
-                                            fontSize: 14,}}>구매 완료!</Text> : (gift.key==='coffee' && autumnEventCoffeeAmount===0) || (gift.key==='ice' && autumnEventIceAmount===0) || (gift.key==='chicken_1' && autumnEventChicken1Amount===0) || (gift.key==='chicken_2' && autumnEventChicken2Amount===0) ? <Text style={{textAlign: 'center',
+                                            fontSize: 14,}}>구매 완료!</Text> : (gift.key==='coffee' && autumnEventCoffeeAmount===0) || (gift.key==='pepero' && autumnEventPeperoAmount===0) ? <Text style={{textAlign: 'center',
                                             color: '#CBCBCB',
                                             fontSize: 14,}}>품절</Text> :
                                             <Text style={{textAlign: 'center',
                                             color: (gift.cost<=autumnEventCoin ? '#212429' : '#CBCBCB'),
-                                            fontSize: 14,}}>{gift.key==='coffee' ? autumnEventCoffeeAmount : (gift.key==='ice' ? autumnEventIceAmount : (gift.key==='chicken_1' ? autumnEventChicken1Amount : autumnEventChicken2Amount))} / {gift.key==='coffee' ? 30 : (gift.key==='ice' ? 10 : (gift.key==='chicken_1' ? 3 : 3))}</Text>}
+                                            fontSize: 14,}}>{gift.key==='coffee' ? autumnEventCoffeeAmount : autumnEventPeperoAmount} / {gift.key==='coffee' ? 15 : 30}</Text>}
                                             <View style={{flexDirection: 'row', gap: 5}}>
-                                                {renderBoughtItem(gift.key) ? (<Image source={require('./assets/autumn_event_coin_disabled.png')} style={{width:20,height:20*100/100}}/>) : gift.cost<=autumnEventCoin ? (<Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>) : (<Image source={require('./assets/autumn_event_coin_disabled.png')} style={{width:20,height:20*100/100}}/>)}
+                                                {renderBoughtItem(gift.key) ? (<Image source={require('./assets/autumn_event_coin_disabled.png')} style={{width:20,height:20*100/100}}/>) : gift.cost<=autumnEventCoin ? ((gift.key==='coffee' && autumnEventCoffeeAmount===0) || (gift.key==='pepero' && autumnEventPeperoAmount===0) ? (<Image source={require('./assets/autumn_event_coin_disabled.png')} style={{width:20,height:20*100/100}}/>) : (<Image source={require('./assets/autumn_event_coin.png')} style={{width:20,height:20*98/102}}/>)) : (<Image source={require('./assets/autumn_event_coin_disabled.png')} style={{width:20,height:20*100/100}}/>)}
                                                 <Text style={{
-                                                    color: (renderBoughtItem(gift.key) ? '#CBCBCB' : (gift.cost<=autumnEventCoin ? '#FFCC4D' : '#CBCBCB')),
+                                                    color: (renderBoughtItem(gift.key) ? '#CBCBCB' : (gift.cost<=autumnEventCoin ? ((gift.key==='coffee' && autumnEventCoffeeAmount===0) || (gift.key==='pepero' && autumnEventPeperoAmount===0) ? '#CBCBCB' : '#FFCC4D') : '#CBCBCB')),
                                                     fontSize: 15,
-                                                    // renderBoughtItem(gift.key) && {color: '#CCCCCC',} // 구매한 아이템은 회색으로
                                                 }}>{gift.cost}개</Text>
-                                                {/* <Text style={{}}>{gift.key}개</Text>     */}
                                             </View>
                                         </TouchableOpacity>
                                     ))}
@@ -851,9 +841,9 @@ const Settings = () => {
                                     </View>
                                 </TouchableOpacity>
                         </View>
-                    </Modal>
+                    </Modal> */}
 
-                    <Modal isVisible={autumnEventGiftInfoModal}
+                    {/* <Modal isVisible={autumnEventGiftInfoModal}
                     animationIn={"fadeIn"}
                     animationInTiming={200}
                     animationOut={"fadeOut"}
@@ -903,12 +893,10 @@ const Settings = () => {
                                         disabled={true}
                                         onPress={()=>{setAutumnEventPressedGift(autumnEventPressedGiftInfo.key);}}
                                         >
-                                            {/* {renderItem({item: gift})} */}
                                             {autumnEventPressedGiftInfo.key==='coffee' ? (<Feather name='coffee' color={'#212429'} size={27}/>)
                                             : (autumnEventPressedGiftInfo.key==='ice' ? (<MaterialIcons name='icecream' color={'#212429'} size={27}/>)
                                             : (autumnEventPressedGiftInfo.key==='chicken_1' ? (<MCIcons name='food-drumstick-outline' color={'#212429'} size={27}/>)
                                             : (<MCIcons name='food-drumstick-outline' color={'#212429'} size={27}/>)))}
-                                            {/* <MCIcons name='cart' color={'black'} size={27}/> */}
                                             <Text style={{
                                                 textAlign: 'center',
                                                 color: '#212429',
@@ -919,9 +907,7 @@ const Settings = () => {
                                                 <Text style={{
                                                     color: '#FFCC4D',
                                                     fontSize: 15,
-                                                    // renderBoughtItem(gift.key) && {color: '#CCCCCC',} // 구매한 아이템은 회색으로
                                                 }}>{autumnEventPressedGiftInfo.cost}개</Text>
-                                                {/* <Text style={{}}>{gift.key}개</Text>     */}
                                             </View>
                                         </TouchableOpacity>
                                 </View>
@@ -969,9 +955,9 @@ const Settings = () => {
                                 </TouchableOpacity>
                             </ScrollView>
                         </View>
-                    </Modal>
+                    </Modal> */}
 
-                    <Modal isVisible={autumnEventGiftBuyingSucceedModal}
+                    {/* <Modal isVisible={autumnEventGiftBuyingSucceedModal}
                     animationIn={"fadeIn"}
                     animationInTiming={200}
                     animationOut={"fadeOut"}
@@ -1053,9 +1039,9 @@ const Settings = () => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </Modal>
+                    </Modal> */}
 
-                    <Modal isVisible={autumnEventGiftBuyingFailedModal}
+                    {/* <Modal isVisible={autumnEventGiftBuyingFailedModal}
                     animationIn={"fadeIn"}
                     animationInTiming={200}
                     animationOut={"fadeOut"}
@@ -1111,7 +1097,7 @@ const Settings = () => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </Modal>
+                    </Modal> */}
 
                 {/* 무드메모 섹션 */}
                 <View style={tabStyles.title}>
