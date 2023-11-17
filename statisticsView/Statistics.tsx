@@ -350,7 +350,7 @@ const Statistics = ({gotoMoodReport}) => {
           </View>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>무에게 받은 편지</Text>
-            <Text style={{fontSize:22,color:'#FFCC4D'}}>{countDiarys}개</Text>
+            <Text style={{fontSize:22,color:'#72D193'}}>{countDiarys}개</Text>
           </View>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록 일자</Text>
