@@ -118,7 +118,7 @@ const StampView = () => {
   }, []);  
 
   const handleCreatePushedStamp = async () => {
-    amplitude.submitStamp();
+    amplitude.submitStamp(selectedEmotionLabel,memo);
     console.log("체크 버튼 누름!");
     // 기록 시간 설정
     const dateTime = date.toISOString();

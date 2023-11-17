@@ -47,9 +47,15 @@ function WeeklyScreen({ route, navigation }) {
   );
 }
 
-function StatisticsScreen() {
+function StatisticsScreen({route, navigation}) {
   amplitude.moveToStatistics(); //통계 뷰로 이동
-  return <Statistics/>; //Home.tsx
+  useEffect(()=>{
+    if(route.params?.gotoMoodReport) navigation.setParams({gotoMoodReport:false});
+  },[route.params?.gotoMoodReport])
+  if(route.params?.gotoMoodReport===true){
+    return <Statistics gotoMoodReport={true}/>; //Home.tsx
+  }
+  return <Statistics gotoMoodReport={false}/>; //Home.tsx
 }
 
 function SettingsScreen() {
