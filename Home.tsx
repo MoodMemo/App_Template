@@ -303,11 +303,11 @@ const Home = ({name,first}:any) => {
         <Text style={{color: '#FEB954', fontSize: 16,}}>{formattedDate}, Moo는 광합성 중...</Text>
       </View>
       {/* 이벤트 배너 영역 */}
-      <TouchableOpacity style={{marginTop: 14}} onPress={() => {
+      {/* <TouchableOpacity style={{marginTop: 14}} onPress={() => {
         setIsEventModalVisible(!isEventModalVisible);
         amplitude.clickEventInfoModal();//이벤트 배너 켬
       }}><Image source={require('./assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {/* 무의 메세지 영역 */}
       <nodata.Home_Moo_Message name={userName}/>
       {/* 나의 감정스탬프들 영역 */}
