@@ -463,6 +463,7 @@ const Statistics = ({gotoMoodReport}) => {
             borderWidth: 1,
             overflow: 'hidden',}} onPress={(async () => { 
               setWeeklyReportMode(true);
+              amplitude.gotoMoodReportWriting();
             })}>
                 <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>좋아, 지금 써볼게!</Text>
             </TouchableOpacity>

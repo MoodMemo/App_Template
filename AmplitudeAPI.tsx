@@ -832,6 +832,11 @@ export function decreaseMoodReportDate() {
   {view: 'statistics', action: 'click'});
 }
 
+export function gotoMoodReportWriting() {
+  amplitude.track('statistics: click decrease Mood Report Date',
+  {view: 'statistics', action: 'click'});
+}
+
 /** onboarding*/
 export function clickFirstStamp_JOY() {
   amplitude.track('onboarding: click, first stamp, 기쁨',
@@ -1055,9 +1060,14 @@ export function confirmMoodReportStamp() {
   {view: 'MoodReport', action: 'click'});
 }
 
-export function finishWritingMoodReport() {
-  amplitude.track('MoodReport: click finish writing Mood Report',
-  {view: 'MoodReport', action: 'click'});
+export function finishWritingMoodReportType1(answer1,answer2,answer3) {
+  amplitude.track('MoodReport: click finish writing Mood Report Type1',
+  {view: 'MoodReport', action: 'click', a1 : answer1, a2 : answer2, a3 : answer3});
+}
+
+export function finishWritingMoodReportType2(answer1,answer2,answer3,answer4) {
+  amplitude.track('MoodReport: click finish writing Mood Report Type2',
+  {view: 'MoodReport', action: 'click', a1 : answer1, a2 : answer2, a3 : answer3, a4 : answer4});
 }
 
 export function endMoodReport() {
