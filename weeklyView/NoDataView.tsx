@@ -181,7 +181,7 @@ export const PleaseOneMoreStampMini = () => {
 
 
 
-function Bubble({ text, imageSource, delay, toneDown, letter, last, loading, setLoadingEnded }) {
+function Bubble({ text, imageSource, delay, toneDown, letter, last, loading, setIsLoadingFinished}) {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [progress, setProgress] = useState(0);
 
@@ -198,18 +198,19 @@ function Bubble({ text, imageSource, delay, toneDown, letter, last, loading, set
   }, [fadeAnim, delay]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (progress < 100) {
-        setProgress(progress+7>100 ? 100 : progress+7);
-      } else {
-        setLoadingEnded(true);
+    if(loading){
+      const interval = setInterval(() => {
+        if (progress < 100) {
+          setProgress(progress+7>100 ? 100 : progress+7);
+        } else {
+          setIsLoadingFinished(true);
+          clearInterval(interval);
+        }
+      }, 1000);
+      return () => {
         clearInterval(interval);
-      }
-    }, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
+      };
+    }
   }, [progress]);
 
   return (
@@ -372,6 +373,15 @@ export const Present_One_MiniView = () => {
     );
 }
 export const Present_WakeUp_MiniView = ({setLoadingEnded}) => {
+
+  const [isLoadingFinished, setIsLoadingFinished] = useState(false);
+
+  useEffect(()=>{
+    if(isLoadingFinished){
+      console.log('loading finished');
+      setLoadingEnded(true);
+    }
+  },[isLoadingFinished])
     return (
       <View style={{flex: 1, alignItems: 'center', }}>
         {/* 말풍선 영역 */}
@@ -388,7 +398,7 @@ export const Present_WakeUp_MiniView = ({setLoadingEnded}) => {
               <Bubble text="Moo 일어났다무..." delay={0} />
               <Bubble text="앗! 이런 일이 있었구나무" delay={800} />
               <Bubble imageSource={require('../assets/write_0904.png')} delay={1600} />
-              <Bubble text="편지쓰는중 ... 기다려보라무" delay={2400} toneDown={true} loading={true} setLoadingEnded={setLoadingEnded}/>
+              <Bubble text="편지쓰는중 ... 기다려보라무" delay={2400} toneDown={true} loading={true} setIsLoadingFinished={setIsLoadingFinished}/>
             </View> 
           </View>
         </View>

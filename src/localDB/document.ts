@@ -46,7 +46,7 @@ class User extends Realm.Object {
 }
  */
 
-var stampNamesNeutral = ['고민','공부','운동','식사','영화','투두','To do','게임','곰팡이','노래',
+export const stampNamesNeutral = ['고민','공부','운동','식사','영화','투두','To do','게임','곰팡이','노래',
 '대환장','덤덤','떨리는','배달','병원','블랙 리스트','생각','썰렁','와다다다다','웃픔','위시 리스트','책','한유진','비전',
 '빈둥','햄버거','자아성찰!','놀람','a','두근','.','A','그냥그래','그저그럼','기상','나른','다짐','단어','무념무상','반성','신기해',
 '싱숭생숭','읽고','읽기','하늘','B','s','격하게 아무것도 하기 싫다','깨달음','놀라움','더워','멍','목욕','무','미안','복잡','생일','샤워',
@@ -73,7 +73,7 @@ var stampNamesNeutral = ['고민','공부','운동','식사','영화','투두','
 '평상','퐈이어~~','풉','피','피식','할로윈','할말하않','해탈','햇빛+비','햇빛이 째려볼 땐 바다로 가','헤롱헤롱','화장','화장실','황당','황당, 어이X',
 '황당함','회오리바람','회피','훗','휴대폰사용','흐림','흠','흠...','흥미로운','히히','아이디어',]
 
-var stampNamesPositive = ['행복','설렘','기쁨','신남','뿌듯','감동','위로','설램','기뻐','미소','믿음',
+export const stampNamesPositive = ['행복','설렘','기쁨','신남','뿌듯','감동','위로','설램','기뻐','미소','믿음',
 '바램','자금심 고취','뭉클','즐거움','사랑','열정','배부름','기대','웃김','평온','감사','맛있어','재밌음','좋아','공부의욕 뿜뿜!','기분좋음','맛있음',
 '뿌듯해','설레임','애정','열정가득!!','좋음','축하','행복해요','화이팅','Good!','I love my body 윤기나는 내 머리','❤','가슴뭉클한','감격',
 '감동한','감사한','개운','개운한','개운해','갬동이야','건강해진 기분','고마운','고마움','굿나잇','기대되는','기대함','기분이 째져','기쁜','기운이 나는',
@@ -354,6 +354,7 @@ export interface IDailyReport {
   keyword: string[] | null;
   createdAt: Date;
   updatedAt: Date;
+  moodReportWeekNum: number;
 }
 class DailyReport extends Realm.Object {
   public static schema: Realm.ObjectSchema = {
@@ -367,6 +368,7 @@ class DailyReport extends Realm.Object {
       keyword: { type: "string[]", optional: true },
       createdAt: { type: "date", optional: false },
       updatedAt: { type: "date", optional: false },
+      moodReportWeekNum: {type:"int", optional: false}
     },
   };
 }
@@ -486,18 +488,16 @@ function performMigration(oldRealm: Realm, newRealm: Realm) {
   const oldCustomStamps = oldRealm.objects('CustomStamp');
   const oldPushedStamps = oldRealm.objects('PushedStamp');
   const newCustomStamps = newRealm.objects('CustomStamp');
+  const oldDailyReports = oldRealm.objects('DailyReport');
+  const newDailyReports = newRealm.objects('DailyReport');
   // 이전 버전의 CustomStamp 데이터를 새로운 버전으로 복사
-  for (const oldStamp in oldCustomStamps) {
-    newCustomStamps[oldStamp].type= stampNamesPositive.includes(oldCustomStamps[oldStamp].stampName) ? 'pos' : (stampNamesNeutral.includes(oldCustomStamps[oldStamp].stampName) ? 'neu' : 'neg');
-    // newRealm.create('CustomStamp', {
-    //   id: uuid.v4(),
-    //   stampName: oldCustomStamps[oldStamp].stampName,
-    //   emoji: oldCustomStamps[oldStamp].emoji,
-    //   createdAt: oldCustomStamps[oldStamp].createdAt,
-    //   updatedAt: oldCustomStamps[oldStamp].updatedAt,
-    //   pushedCnt: oldCustomStamps[oldStamp].pushedCnt,
-    //   type: oldCustomStamps[oldStamp].stampName in stampNamesPositive ? 'pos' : (oldCustomStamps[oldStamp].stampName in stampNamesNeutral ? 'neu' : 'neg')
-    // });
+  if(oldRealm.schemaVersion<6){
+    for (const oldStamp in oldCustomStamps) {
+      newCustomStamps[oldStamp].type = stampNamesPositive.includes(oldCustomStamps[oldStamp].stampName) ? 'pos' : (stampNamesNeutral.includes(oldCustomStamps[oldStamp].stampName) ? 'neu' : 'neg');
+    }
+  }
+  for (const oldDailyReport in oldDailyReports) {
+    newDailyReports[oldDailyReport].moodReportWeekNum = -1
   }
 }
 // let realm = new Realm({ schema: [Notification, oldCustomStampSchema, PushedStamp, DailyReport],
@@ -505,9 +505,9 @@ function performMigration(oldRealm: Realm, newRealm: Realm) {
 // });
 // 새로운 버전의 Realm 인스턴스 생성
 let realm = new Realm({ schema: [Notification, CustomStamp, PushedStamp, DailyReport, WeeklyReport],
-  schemaVersion: 6,
+  schemaVersion: 8,
   onMigration: (oldRealm, newRealm) => {
-    if (oldRealm.schemaVersion < 6) {
+    if (oldRealm.schemaVersion < 8) {
       performMigration(oldRealm, newRealm);
     }
   },

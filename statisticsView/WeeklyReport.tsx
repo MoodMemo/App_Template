@@ -451,7 +451,8 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,wee
                 <View style={Timelinestyles.container}>
                   {getWeeklyStamps().map((item, index) => (
                     <>
-                    {index===0 || getWeeklyStamps()[index-1].dateTime.getDate() !== item.dateTime.getDate() ? <View key={item.id} style={{flexDirection:'row',marginTop:30,marginBottom:10}}>
+                    {index===0 || getWeeklyStamps()[index-1].dateTime.getDate() !== item.dateTime.getDate() ? 
+                    <View style={{flexDirection:'row',marginTop:30,marginBottom:10}}>
                       <View style={{
                       marginTop:10,
                       marginRight:13,
@@ -836,7 +837,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,wee
         </ScrollView>
         <TouchableOpacity onPress={() => {
           setReportMode('end');
-          amplitude.finishWritingMoodReport();
+          questionType==='생각' ? amplitude.finishWritingMoodReportType1(answer1,answer2,answer3) : amplitude.finishWritingMoodReportType2(answer1,answer2,answer3,answer4);
         }}>
         <View style={{width:'90%',height:60,backgroundColor:'#FFFFFF',alignItems:'center', justifyContent:'center',alignSelf:'center',borderRadius:10,borderColor:'#72D193',borderWidth:1}}> 
           <Text style={{fontSize:25,color:'#72D193'}}>다 적었어!</Text>

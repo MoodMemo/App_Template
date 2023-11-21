@@ -33,7 +33,7 @@ const windowHeight = Dimensions.get('window').height;
 
 const chartColor=[['#9BE300','#FFFFFF'],['#FF7DB8','#FFFFFF'],['#5BC4FF','#FFFFFF'],['#DFAAFF','#FFFFFF'],['#FFA887','#FFFFFF'],['#AAAAAA','#FFFFFF']]
 
-const Statistics = ({gotoMoodReport}) => {
+const Statistics = ({gotoMoodReport,gotoMoodReportNum}) => {
 
     // const handleOpenLink = async () => {
     //     const url = 'http://pf.kakao.com/_xhGnxgxj'; // 원하는 웹 링크
@@ -78,7 +78,8 @@ const Statistics = ({gotoMoodReport}) => {
         .catch((error) => {
           console.error("Error fetching userName:", error);
         });
-      AsyncStorage.getItem('@UserInfo:RecentReportWeekNum')
+      if(gotoMoodReportNum===-1){
+        AsyncStorage.getItem('@UserInfo:RecentReportWeekNum')
         .then((value) => {
           if(value) {
             setReportWeekNum(
@@ -92,6 +93,19 @@ const Statistics = ({gotoMoodReport}) => {
             );
           }
         })
+      }
+      else{
+        console.log('gotoMoodReportNum',gotoMoodReportNum);
+        setReportWeekNum(
+          gotoMoodReportNum
+        );
+        getMoodReport(
+          gotoMoodReportNum
+        );
+        setRecentReportWeekNum(
+          gotoMoodReportNum
+        );
+      }
       getStatistics(year,month);
       if(gotoMoodReport===true){
         console.log(gotoMoodReport);
@@ -350,7 +364,7 @@ const Statistics = ({gotoMoodReport}) => {
           </View>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>무에게 받은 편지</Text>
-            <Text style={{fontSize:22,color:'#FFCC4D'}}>{countDiarys}개</Text>
+            <Text style={{fontSize:22,color:'#72D193'}}>{countDiarys}개</Text>
           </View>
           <View style={{alignItems:'center',marginRight:18}}>
             <Text style={{fontSize:14,color:'#212429',marginBottom:5}}>기록 일자</Text>
@@ -463,6 +477,7 @@ const Statistics = ({gotoMoodReport}) => {
             borderWidth: 1,
             overflow: 'hidden',}} onPress={(async () => { 
               setWeeklyReportMode(true);
+              amplitude.gotoMoodReportWriting();
             })}>
                 <Text style={{fontSize: 16, color: '#72D193', fontWeight: '600'}}>좋아, 지금 써볼게!</Text>
             </TouchableOpacity>
