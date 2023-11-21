@@ -784,7 +784,7 @@ const Weekly = () => {
               {/* 이모지 & 1(안읽음 표시)*/}
               <View style={Timelinestyles.emojiContainer}>
                 <Text style={{fontSize: 24, color: 'black',}}>{item.emoji}</Text>
-                { (!isMooRead && !todayReport) ? (<Text style={{color: '#FF7168',}}>1</Text>) :(<Text/>)}
+                { (!isMooRead && !todayReport && index!==0) ? (<Text style={{color: '#FF7168',}}>1</Text>) :(<Text/>)}
                 {/* <Text style={{color: '#FF7168',}}>1</Text> */}
               </View>
               {/* 스탬프 영역 */}

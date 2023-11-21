@@ -181,9 +181,15 @@ export const PleaseOneMoreStampMini = () => {
 
 
 
-function Bubble({ text, imageSource, delay, toneDown, letter, last, loading, setIsLoadingFinished}) {
-  const [fadeAnim] = useState(new Animated.Value(0));
+function Bubble({ text, imageSource, delay, toneDown, letter, last, button, loading, setIsLoadingFinished }) {
   const [progress, setProgress] = useState(0);
+  const [fadeAnim] = useState(new Animated.Value(0));
+  const navigation = useNavigation();
+    const handleRecordEmotion = () => {
+      // [감정 스탬프 기록하기] 버튼을 눌렀을 때 실행되는 함수
+      // Home 뷰로 이동하도록 설정
+      navigation.navigate('Home');
+    };
 
   useEffect(() => {
     Animated.sequence([
@@ -252,10 +258,19 @@ function Bubble({ text, imageSource, delay, toneDown, letter, last, loading, set
           <Text style={{fontSize: 16, color: '#fff', }}>생각해보지 않겠냐무?</Text>
         </View>
       ) : (
+      button ? (
+        <TouchableOpacity style={{marginTop: 0, alignSelf: 'flex-end', marginRight: 16, }}
+        onPress={() => {handleRecordEmotion(); amplitude.pushStampInPleaseOneMoreStampViewInStampSwitch();}}>
+          <View style={[finalBubbleStyles.gotoStamp_container]}>
+            <Ionicons name='add-circle' color="#495057" style={{ fontWeight: 'bold', fontSize: 28}} />
+            <Text style={{fontSize: 16, color: '#495057', }}> 스탬프 누르기!</Text>
+          </View>
+        </TouchableOpacity>
+      ) : (
         <View style={finalBubbleStyles.container}>
           <Text style={{ fontSize: 16, color: '#fff' }}>{text}</Text>
         </View>
-      ))))}
+      )))))}
     </Animated.View>
   );
 }
@@ -350,14 +365,23 @@ export const Present_One_MiniView = () => {
     };
     return (
       <View style={{flex: 1, justifyContent: 'space-between',}}>
+        
+        {/* 무 말풍선 섹션 */}
+        <View style={{marginTop: 15, flexDirection: 'row', gap: 10, marginLeft: 16}}>
+          <Image 
+            source={require('../assets/profile.png')}
+            style={{ width: 34, height: 34 , zIndex: 100,}} // 비율을 유지하며 height 자동 조절
+          />
+          <View>
+            <View ><Text style={{fontSize: 16, color: '#212429', fontWeight: 'bold'}}>Moo</Text></View>
+            <Bubble text="알았다무..! 저녁까지 광합성하려고 했는데" delay={0} />
+            <Bubble text="스탬프 하나 더 누르면.. 일어나보겠다무" delay={800} />
+          </View> 
+        </View>
+        
         {/* 스탬프 누르기 버튼 */}
-        <TouchableOpacity style={{marginTop: 15, alignSelf: 'flex-end', marginRight: 16, }}
-        onPress={() => {handleRecordEmotion(); amplitude.pushStampInPleaseOneMoreStampViewInStampSwitch();}}>
-          <View style={[finalBubbleStyles.gotoStamp_container]}>
-            <Ionicons name='add-circle' color="#495057" style={{ fontWeight: 'bold', fontSize: 28}} />
-            <Text style={{fontSize: 16, color: '#495057', }}> 스탬프 누르기!</Text>
-          </View>
-        </TouchableOpacity>
+        <Bubble button={true} delay={1600} />
+
         {/* 무 영역 */}
         <View>
           {/* 무 이미지 */}
