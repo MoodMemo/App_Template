@@ -47,9 +47,16 @@ function WeeklyScreen({ route, navigation }) {
   );
 }
 
-function StatisticsScreen() {
+function StatisticsScreen({route, navigation}) {
   amplitude.moveToStatistics(); //통계 뷰로 이동
-  return <Statistics/>; //Home.tsx
+  useEffect(()=>{
+    if(route.params?.gotoMoodReport) navigation.setParams({gotoMoodReport:false,gotoMoodReportNum:-1});
+  },[route.params?.gotoMoodReport])
+
+  if(route.params?.gotoMoodReport===true){
+    return <Statistics gotoMoodReport={true} gotoMoodReportNum={route.params?.gotoMoodReportNum}/>; //Home.tsx
+  }
+  return <Statistics gotoMoodReport={false} gotoMoodReportNum={-1}/>; //Home.tsx
 }
 
 function SettingsScreen() {
@@ -261,7 +268,7 @@ function Main({username,first}:any) {
         screenOptions={{
           tabBarShowLabel: false, //이게 true면 하단 바 아이콘 밑에 label도 같이 렌더링됩니다.
           headerShown: false, //이게 true면 각 탭의 상단에 해당 Tab의 label이 렌더링됩니다. 매우 보기 싫습니다.
-          tabBarActiveTintColor:"#FFCC4D",
+          tabBarActiveTintColor:"#72D193",
           tabBarInactiveTintColor:"#484C524D",
           tabBarStyle:{height:60,
             elevation: 0,}

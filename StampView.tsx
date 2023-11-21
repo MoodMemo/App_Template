@@ -118,7 +118,7 @@ const StampView = () => {
   }, []);  
 
   const handleCreatePushedStamp = async () => {
-    amplitude.submitStamp();
+    amplitude.submitStamp(selectedEmotionLabel,memo);
     console.log("체크 버튼 누름!");
     // 기록 시간 설정
     const dateTime = date.toISOString();
@@ -681,12 +681,14 @@ const StampView = () => {
                   </View>
                   {/* 사진 추가 */}
                   <View style={styles.imgContent}>
-                    <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
+                    <TouchableOpacity style={styles.imgButton} onPress={() => {
+                      amplitude.clickAddPicture();
+                      onButtonPress('library', {
                       selectionLimit: 1,
                       mediaType: 'photo',
                       includeBase64: false,
                       includeExtra,
-                    })}>
+                    })}}>
                       <Image source={require('./assets/add-circle.png')} />
                       <Text style={styles.imgText}>사진 추가</Text>
                     </TouchableOpacity>

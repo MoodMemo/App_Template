@@ -5,7 +5,7 @@ import Dropdown from './Dropdown';
 import StampView from './StampView';
 import StampList from './StampList';
 import StampOnBoarding from './StampOnBoarding';
-import AutumnEventDetailModal from './AutumnEventDetailModal';
+// import AutumnEventDetailModal from './AutumnEventDetailModal';
 // import PushNotification from "react-native-push-notification";
 import * as amplitude from './AmplitudeAPI';
 import * as repository from './src/localDB/document';
@@ -42,12 +42,14 @@ const Home = ({name,first}:any) => {
   const [userName, setUserName] = useState('');
   const [isFirstStamp,setIsFirstStamp]=useState(false);
   const [isStampTemplateAdded,setIsStampTemplateAdded]=useState(true);
-  const [isEventModalVisible,setIsEventModalVisible] = useState(false);
+  // const [isEventModalVisible,setIsEventModalVisible] = useState(false);
   const [photos, setPhotos] = useState<PhotoIdentifier[]>([]);
   const [isPhotoModalVisible, setIsPhotoModalVisible] = useState(false);
 
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [isCameraPermission, setCameraPermission] = useState<boolean>(false);
+
+  // const [isAutumnEventAdditionalVisible,setIsAutumnEventAdditionalVisible] = useState(false);
 
   const openSettingsAlert = useCallback(({title}: {title: string}) => {
     Alert.alert(title, '', [
@@ -197,6 +199,11 @@ const Home = ({name,first}:any) => {
 
   useEffect(() => {
     // AsyncStorage에서 userName 값을 가져와서 설정
+    // AsyncStorage.getItem('@UserInfo:AutumnEventAdditional').then((value) => {
+    //   if(value!=='true'){
+    //     setIsAutumnEventAdditionalVisible(true);
+    //   }
+    // })
     AsyncStorage.getItem('@UserInfo:addedStampTemplate')
       .then((value) => {
         if(value!=='true'){
@@ -296,11 +303,11 @@ const Home = ({name,first}:any) => {
         <Text style={{color: '#FEB954', fontSize: 16,}}>{formattedDate}, Moo는 광합성 중...</Text>
       </View>
       {/* 이벤트 배너 영역 */}
-      <TouchableOpacity style={{marginTop: 14}} onPress={() => {
+      {/* <TouchableOpacity style={{marginTop: 14}} onPress={() => {
         setIsEventModalVisible(!isEventModalVisible);
         amplitude.clickEventInfoModal();//이벤트 배너 켬
       }}><Image source={require('./assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {/* 무의 메세지 영역 */}
       <nodata.Home_Moo_Message name={userName}/>
       {/* 나의 감정스탬프들 영역 */}
@@ -342,7 +349,7 @@ const Home = ({name,first}:any) => {
       </View>
     </View>
   </Modal> */}
-  <Modal isVisible={isEventModalVisible}
+  {/* <Modal isVisible={isEventModalVisible}
     animationIn={"fadeIn"}
     animationInTiming={200}
     animationOut={"fadeOut"}
@@ -355,7 +362,110 @@ const Home = ({name,first}:any) => {
   backdropOpacity={0.8}
   style={{ alignItems:'center', }}>
     <AutumnEventDetailModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible}/>
-  </Modal></>
+  </Modal> */}
+  {/* <Modal isVisible={isAutumnEventAdditionalVisible}
+      animationIn={"fadeIn"}
+      animationInTiming={200}
+      animationOut={"fadeOut"}
+      animationOutTiming={200}
+      backdropColor='#CCCCCC'//'#FAFAFA'
+      backdropOpacity={0.8}
+      style={{
+          alignItems:'center'
+      }}
+      onBackdropPress={()=>{
+        setIsAutumnEventAdditionalVisible(!isAutumnEventAdditionalVisible);
+      }}
+      onModalHide={()=>{
+        amplitude.test1();//추가 이벤트 모달 끔
+        AsyncStorage.setItem('@UserInfo:AutumnEventAdditional','true');
+      }}>
+        <View style={{
+              backgroundColor:"#FFFAF4",
+              width:350,
+              height:530,
+              justifyContent:'center',
+              alignItems:'center',
+              borderRadius:20
+          }}>
+
+              <View style={{
+                  justifyContent:'center',
+                  alignItems:'center',
+                  }}>
+
+                  <View style={{marginBottom: 25}}>
+                    <Text style={{fontSize: 19, color:'#72D193',}}>이벤트 상품 추가 소식!</Text>
+                  </View>
+
+                    <TouchableOpacity disabled={true} style={{
+                    padding: 10,
+                    width: 200,
+                    justifyContent: 'center',
+                    // alignItems: 'center',
+                    backgroundColor: '#72D193',
+                    borderRadius: 10,
+                    position: 'relative',
+                    marginRight: 50,
+                    }}>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>Moo에게 은행잎을</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>가져다줘서 고맙다무!</Text>
+                    </TouchableOpacity>
+                    <View style={{
+                      width: 20, // 꼬리의 길이
+                      height: 20, // 꼬리의 높이
+                      left: -80, // 꼬리 위치
+                      bottom: 15, // 꼬리 위치
+                      backgroundColor: '#72D193',
+                      transform: [{ rotate: '45deg' }],
+                      borderTopLeftRadius: 10, // 둥글게 만들기
+                      marginBottom: 10,
+                    }}/>
+
+                    <TouchableOpacity disabled={true} style={{
+                    padding: 10,
+                    width: 225,
+                    justifyContent: 'center',
+                    // alignItems: 'center',
+                    backgroundColor: '#72D193',
+                    borderRadius: 10,
+                    position: 'relative',
+                    marginLeft: 25,
+                    }}>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>경품을 더 준비했으니</Text>
+                      <Text style={{fontSize: 19, color:"#FFFFFF", }}>은행잎을 더 가져다달라무!</Text>
+                    </TouchableOpacity>
+                    <View style={{
+                      width: 20, // 꼬리의 길이
+                      height: 20, // 꼬리의 높이
+                      left: 80, // 꼬리 위치
+                      bottom: 15, // 꼬리 위치
+                      backgroundColor: '#72D193',
+                      transform: [{ rotate: '45deg' }],
+                      borderTopLeftRadius: 10, // 둥글게 만들기
+                    }}/>
+                    <Image source={require('./assets/event_moo.png')} style={{
+                      width: 120,
+                      height: 1607*120/1323,
+                      marginBottom: 10}}/>
+              </View>
+
+              <View style={{
+                  paddingHorizontal: "5%",
+                  marginTop:20,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between'
+                  }}>
+                  <TouchableOpacity onPress={async ()=>{
+                      setIsAutumnEventAdditionalVisible(!isAutumnEventAdditionalVisible);
+                  }}
+                  style={styles.clearBtn}>
+                      <Text style={{fontSize: 19, color: '#72D193'}}>좋아!</Text>
+                  </TouchableOpacity>
+              </View>
+          </View>
+  </Modal> */}
+</>
   ) : ( <StampOnBoarding/> // 첫 스탬프 입력일 경우 온보딩으로
   // <View style={{justifyContent: 'center',
   //       flex:1,

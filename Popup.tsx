@@ -7,44 +7,52 @@ import axios, { AxiosResponse, CancelToken } from 'axios';
 
 import {default as Text} from "./CustomText"
 
-import AutumnEventCoinModal from './AutumnEventCoinModal';
+// import AutumnEventCoinModal from './AutumnEventCoinModal';
+// import AutumnEventDetailModal from './AutumnEventDetailModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Popup = ({ visible, onClose }) => {
   const [isEventModalVisible, setIsEventModalVisible]=useState(false);
   const [isFirstStampToday,setIsFirstStampToday]=useState(false);
   const [autumnEventStampDate,setAutumnEventStampDate] = useState('');
+  const [isEventDetailModalVisible,setIsEventDetailModalVisible] = useState(false);
+  const [isEventFirstStamp,setIsEventFirstStamp]=useState(false);
   
-  useEffect(()=>{
-    if(visible){
-      const url = 'http://3.34.55.218:5000/time';
-      axios.get(url).then((response)=>{
-        console.log('서버 시간',response.data.month,'월 ',response.data.day,'일');
-        var month=response.data.month;
-        var day=response.data.day;
-        AsyncStorage.getItem('@UserInfo:AutumnEventStampDate').then((value)=>{
-          var date=value.split('/');
-          var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-          var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-          console.log('date_now',date_now);
-          console.log('date_stamp',date_stamp);
-          let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
-          if(totalDays>0){
-            console.log(value);
-            console.log(totalDays,'일');
-            console.log('date_now: ',date_now);
-            console.log('date_stamp: ',date_stamp);
-            setIsFirstStampToday(true);
-            amplitude.confirmFirstStampInADay();//오늘의 첫 스탬프 찍음
-            AsyncStorage.setItem('@UserInfo:AutumnEventStampDate',month.toString()+'/'+day.toString());
-            AsyncStorage.setItem('@UserInfo:AutumnEventLastRunDate',month.toString()+'/'+day.toString());
-          }
-        })
-      }).catch((error)=>{
-        console.error('Failed to GET Server Time');
-      })
-    }
-  },[]);
+  // useEffect(()=>{
+  //   if(visible){
+  //     AsyncStorage.getItem('@UserInfo:AutumnEventFirstStamp').then((value) => {
+  //       if(value==='true'){
+  //         setIsEventFirstStamp(true);
+  //       }
+  //     })
+  //     const url = 'http://3.34.55.218:5000/time';
+  //     axios.get(url).then((response)=>{
+  //       console.log('서버 시간',response.data.month,'월 ',response.data.day,'일');
+  //       var month=response.data.month;
+  //       var day=response.data.day;
+  //       AsyncStorage.getItem('@UserInfo:AutumnEventStampDate').then((value)=>{
+  //         var date=value.split('/');
+  //         var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+  //         var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+  //         console.log('date_now',date_now);
+  //         console.log('date_stamp',date_stamp);
+  //         let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+  //         if(totalDays>0){
+  //           console.log(value);
+  //           console.log(totalDays,'일');
+  //           console.log('date_now: ',date_now);
+  //           console.log('date_stamp: ',date_stamp);
+  //           setIsFirstStampToday(true);
+  //           amplitude.confirmFirstStampInADay();//오늘의 첫 스탬프 찍음
+  //           AsyncStorage.setItem('@UserInfo:AutumnEventStampDate',month.toString()+'/'+day.toString());
+  //           AsyncStorage.setItem('@UserInfo:AutumnEventLastRunDate',month.toString()+'/'+day.toString());
+  //         }
+  //       })
+  //     }).catch((error)=>{
+  //       console.error('Failed to GET Server Time');
+  //     })
+  //   }
+  // },[]);
 
   return (
     <>
@@ -57,7 +65,8 @@ const Popup = ({ visible, onClose }) => {
       amplitude.confirmPushedStampFinModal();
       onClose();
     }}
-    onModalHide={()=>{setIsEventModalVisible(true);}}>
+    // onModalHide={()=>{setIsEventModalVisible(true);}}
+    >
         <View style={diaryStyles.lodingModal}>
           <Image 
             source={require('./assets/write_0904.png')}
@@ -78,7 +87,7 @@ const Popup = ({ visible, onClose }) => {
           </View>          
         </View>
     </Modal>
-    <Modal isVisible={isEventModalVisible&&isFirstStampToday}
+    {/* <Modal isVisible={isEventModalVisible&&isFirstStampToday}
     animationIn={"fadeIn"}
     animationInTiming={200}
     animationOut={"fadeOut"}
@@ -87,9 +96,21 @@ const Popup = ({ visible, onClose }) => {
       amplitude.cancelGetLeavesModal();//은행잎 획득 모달 끔
       setIsEventModalVisible(!isEventModalVisible);
     }}
-    onModalHide={()=>{setIsFirstStampToday(false);}}>
+    onModalHide={()=>{setIsFirstStampToday(false);setIsEventDetailModalVisible(true);}}>
       <AutumnEventCoinModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible} type="stamp"/>
     </Modal>
+    <Modal isVisible={isEventFirstStamp&&isEventDetailModalVisible}
+    animationIn={"fadeIn"}
+    animationInTiming={200}
+    animationOut={"fadeOut"}
+    animationOutTiming={200}
+    onBackdropPress={() => {
+      amplitude.cancelGetLeavesModal();//은행잎 획득 모달 끔
+      setIsEventDetailModalVisible(!isEventDetailModalVisible);
+    }}
+    onModalHide={()=>{AsyncStorage.setItem('@UserInfo:AutumnEventFirstStamp','false'); setIsEventFirstStamp(false);}}>
+      <AutumnEventDetailModal isModalVisible={isEventDetailModalVisible} setIsModalVisible={setIsEventDetailModalVisible}/>
+    </Modal> */}
     </>
   );
 }

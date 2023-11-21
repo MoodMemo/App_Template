@@ -445,96 +445,97 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
     },
   });
 
-  return (
+    return (
     <View>
     <Modal visible={visible} animationType="slide" transparent>
-      <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
         <View style={styles.modalContainer}>
+
           { !timeModalVisible ? (
             // 첫 번째 모달의 컨텐츠
             <>
-              {/* 1열: X & 시간 */}
               <View style={styles.modalTitleContainer}>
-                {/* X 버튼 */}
                 <TouchableOpacity onPress={() => {onClose(); amplitude.backToWeeklyFromStampEditModal();}}>
                   <Image source={require('./assets/close.png')} />
                 </TouchableOpacity>
-                {/* 시간 & 수정 연필 */}
-                <TouchableOpacity onPress={handleOpenTimeModal} style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
-                  <Text style={styles.modalTitle}>
-                    {date.getFullYear()}년 {date.getMonth() + 1}월 {date.getDate()}일 {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
-                  </Text>
-                  <MCIcon name='pencil' color="#495057" style={{ fontWeight: 'bold', fontSize: 20}}/>
+                <Text style={styles.modalTitle}>감정 수정</Text>
+                <TouchableOpacity onPress={() => {onClose();handleSaveButton(); amplitude.confirmToEditStamp();}}>
+                  <Image source={require('./assets/check.png')} />
                 </TouchableOpacity>
               </View>
-              {/* 상세 내용 */}
-              <ScrollView horizontal={false} contentContainerStyle={{marginHorizontal: 16, marginTop: 2}}>
-                {/* 찍은 스탬프 */}
-                <View style={{borderBottomColor: '#7CD0B2', borderBottomWidth: 1, borderStyle: 'dashed', marginBottom: 18}}>
-                  <Text style={styles.modalText}>나의 감정은...</Text>
+              <ScrollView horizontal={false}>
+                <View style={styles.stampContainer}>
+                  <Text style={styles.modalText}>찍은 스탬프</Text>
                   <View style={styles.stampContent}>
                     <Text style={styles.stampText}>{editingStamp.emoji}</Text>
                     <Text style={styles.stampText}>{editingStamp.stampName}</Text>
                   </View>
-                  {/* 구분선 */}
                 </View>
-                {/* 메모 남기기 */}
-                <Text style={styles.modalText}>왜냐면...</Text>
-                <View style={styles.memoContent}>
-                  <TextInput
-                    style={styles.memoText}
-                    placeholder={editedMemo || "메모 작성하기 (추후 작성 가능)"}
-                    value={editedMemo}
-                    multiline={true}
-                    maxLength={500}
-                    onChangeText={handleMemoChange}
-                    // value={memo}
-                    numberOfLines={numberOfLines}
-                    onFocus={() => {amplitude.editMemo();}}
-                  />
-                  <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
-                </View>
-                {/* 사진 추가 */}
-                <View style={styles.imgContent}>
-                  <TouchableOpacity style={styles.imgButton} onPress={() => onButtonPress('library', {
-                    selectionLimit: 1,
-                    mediaType: 'photo',
-                    includeBase64: false,
-                    includeExtra,
-                  })}>
-                    <Image source={require('./assets/add-circle.png')} />
-                    <Text style={styles.imgText}>사진 추가</Text>
+                <View style={styles.timeContainer}>
+                  <Text style={styles.modalText}>기록 시간</Text>
+                  <TouchableOpacity onPress={handleOpenTimeModal}>
+                    <Text style={styles.timeText}>
+                      {date.getFullYear()}.{date.getMonth() + 1}.{date.getDate()}. {date.getHours()}:{date.getMinutes().toString().padStart(2, '0')}
+                    </Text>
                   </TouchableOpacity>
-                  <ScrollView horizontal={true}>
-                  {response?.assets &&
-                    response?.assets.map(({uri}: {uri: string}) => (
-                      <View key={uri}>
+                </View>
+                <View style={styles.horizontalLine} />
+                <View style={styles.memoContainer}>
+                  <Text style={styles.modalText}>메모 남기기</Text>
+                  <View style={styles.memoContent}>
+                    <TextInput
+                      style={styles.memoText}
+                      placeholder={editedMemo || "메모 작성하기 (추후 작성 가능)"}
+                      value={editedMemo}
+                      multiline={true}
+                      maxLength={500}
+                      onChangeText={handleMemoChange}
+                      // value={memo}
+                      numberOfLines={numberOfLines}
+                      onFocus={() => {amplitude.editMemo();}}
+                    />
+                    <Text style={styles.maxLength}>{editedMemo?.length || 0}/500</Text>
+                  </View>
+                </View>
+                <View style={styles.imgContainer}>
+                  <Text style={styles.modalText}>사진 추가</Text>
+                  <View style={styles.imgContent}>
+                    <TouchableOpacity style={styles.imgButton} onPress={() => {
+                      amplitude.clickAddPicture();
+                      onButtonPress('library', {
+                      selectionLimit: 1,
+                      mediaType: 'photo',
+                      includeBase64: false,
+                      includeExtra,
+                    })}}>
+                      <Image source={require('./assets/add-circle.png')} />
+                      <Text style={styles.imgText}>사진 추가</Text>
+                    </TouchableOpacity>
+                    <ScrollView horizontal={true}>
+                    {response?.assets &&
+                      response?.assets.map(({uri}: {uri: string}) => (
+                        <View key={uri}>
+                          <Image
+                            resizeMode="cover"
+                            resizeMethod="scale"
+                            style={styles.image}
+                            source={{uri: uri}}
+                          />
+                        </View>
+                    ))}
+                    {(!response || !response?.assets) && selectedImageUri && (
+                      <View key={selectedImageUri}>
                         <Image
                           resizeMode="cover"
                           resizeMethod="scale"
                           style={styles.image}
-                          source={{uri: uri}}
+                          source={{uri: selectedImageUri}}
                         />
                       </View>
-                  ))}
-                  {(!response || !response?.assets) && selectedImageUri && (
-                    <View key={selectedImageUri}>
-                      <Image
-                        resizeMode="cover"
-                        resizeMethod="scale"
-                        style={styles.image}
-                        source={{uri: selectedImageUri}}
-                      />
-                    </View>
-                  )}
-                  </ScrollView>
+                    )}
+                    </ScrollView>
+                  </View>
                 </View>
               </ScrollView>
-              {/* Moo에게 보내기 버튼 */}
-              <TouchableOpacity onPress={() => {onClose();handleSaveButton(); amplitude.confirmToEditStamp();}} style={styles.mooBtn}>
-                <Text style={styles.btnText}>수정 완료</Text>
-                {/* <FontAwesomeIcon name='send-o' size={16} color="#fff"/> */}
-              </TouchableOpacity>
             </>
           ) : (
             // 두 번째 모달의 컨텐츠 (시간 변경 모달)
@@ -559,8 +560,8 @@ const StampClick: React.FC<StampClickProps> = ({visible, onClose, stamp, firstRe
               </TouchableWithoutFeedback>
             </>
           )}
+
         </View>
-      </View>
     </Modal>
     </View>
   );

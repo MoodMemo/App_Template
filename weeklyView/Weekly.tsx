@@ -26,17 +26,22 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 import sendDailyReport from './AIService';
-import { getUserAsync, DailyReportRequest } from './AIService';
+import { getUserAsync, DailyReportRequest, sendStampToMoodReport } from './AIService';
 // import Timeline from './Timeline';
 import axios, { CancelToken } from 'axios';
 import { Card } from 'react-native-paper';
 import StampClick from '../StampClick';
 import StampView from '../StampView';
 import {default as Text} from "../CustomText"
+import { useNavigation } from '@react-navigation/native';
 import * as nodata from './NoDataView';
-import AutumnEventCoinModal from '../AutumnEventCoinModal';
+// import AutumnEventCoinModal from '../AutumnEventCoinModal';
+// import AutumnEventDetailModal from '../AutumnEventDetailModal';
 
 import * as Sentry from '@sentry/react-native';
+import sendStamp from '../statisticsView/DetermineStampType';
+
+const windowWidth = Dimensions.get('window').width;
 
 
 interface DropdownProps {
@@ -92,10 +97,41 @@ const Dropdown: React.FC<DropdownProps> = ({
   );
 };
 
+
+
 const Weekly = () => {
   const scrollViewRef = useRef(null);
+  const [isWeeklyReportAvailable,setIsWeeklyReportAvailable] = useState(false);
+  const [isLoadingEnded,setIsLoadingEnded] = useState(false);
+  const date2String = (stampDate:Date):String => {
+      
+    let month = stampDate.getMonth() + 1;
+    let day = stampDate.getDate();
+  
+    month = month >= 10 ? month : '0' + month;
+    day = day >= 10 ? day : '0' + day;
+    var dateTime:String = (stampDate.getFullYear()).toString()+'.'+month+'.'+day;
+    return dateTime
+  }
+
+  const checkWeeklyReport = () => {
+    var weeklyReports = repository.getAllWeeklyReports().sort((a,b)=>{
+      if(a.weekNum<b.weekNum) return 1
+      else return -1
+    });
+    var recentWeekNum = weeklyReports[0].weekNum;
+    var weekdate = weeklyReports[0].weekDate.split('~')[1];
+    var todayDate = date2String(new Date());
+    if(weekdate===todayDate){
+      setIsWeeklyReportAvailable(true);
+    }
+    else{
+      setIsWeeklyReportAvailable(false);
+    }
+  }
 
   useEffect(() => {
+    checkWeeklyReport();
     // 컴포넌트가 마운트될 때 스크롤을 최하단으로 이동
     // if (stampORdiary) { scrollViewRef.current.scrollToEnd({ animated: true });}
   }, []);
@@ -115,6 +151,10 @@ const Weekly = () => {
       setAndCheckTodayReport(date);
       setTimelineData(getStamp(date)); // getStamp 함수 안에서 정렬을 진행함.
     }
+    checkWeeklyReport();
+    setIsLoadingEnded(false);
+    setIsLodingFinishModalVisible(false);
+    console.log(isLoadingEnded);
   };
 
   const [selectedYear, setSelectedYear] = useState<number>(today.year());
@@ -155,6 +195,7 @@ const Weekly = () => {
   const [isCanceled, setIsCanceled] = useState(false);
 
   const [isFirstDiaryToday, setIsFirstDiaryToday] = useState(false);
+  // const [isEventDetailModalVisible,setIsEventDetailModalVisible] = useState(false);
   const [isMooRead, setIsMooRead] = useState(false); // true 가 읽은거
   let cancelTokenSource = axios.CancelToken.source();
   const handleGenerateDiary = () => {
@@ -185,50 +226,58 @@ const Weekly = () => {
     sendDailyReport(request, cancelTokenSource.token)
       .then((response) => {
         if (!isCanceled) {
-          console.log('date: ', response.date);
-          realm.write(() => {
-            console.log('title: ', response.title);
-            repository.createDailyReport({
-              // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
-              date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
-              title: response.title,
-              bodytext: response.bodytext,
-              keyword: response.keyword,
+          var moodReportEmotions=[];
+          var moodReports=repository.getAllWeeklyReports();
+          console.log(moodReports);
+          for(const i in moodReports) {
+            moodReportEmotions.push([moodReports[i].stampName, moodReports[i].weekNum]);
+          }
+          sendStampToMoodReport({moodReportEmotions:moodReportEmotions,todayStampList:todayStampList}, cancelTokenSource.token).then((response2) => {
+            console.log('date: ', response.date);
+            realm.write(() => {
+              console.log('title: ', response.title);
+              repository.createDailyReport({
+                // date: dayjs(response.date).add(1, 'day').format('YYYY-MM-DD'),
+                date: response.date, // todo - ai 서버 로직 변경하면 이거로 수정해야함 
+                title: response.title,
+                bodytext: response.bodytext,
+                keyword: response.keyword,
+                moodReportWeekNum: response2.weekNum
+              });
+              console.log("create default daily report finished");
+              console.log("response.date: ", response.date);
+              console.log("today.format('YYYY-MM-DD'): ", today.format('YYYY-MM-DD'));
+              console.log("response2.weekNum: ", response2.weekNum);
+              setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
             });
-            console.log("create default daily report finished");
-            console.log("response.date: ", response.date);
-            console.log("today.format('YYYY-MM-DD'): ", today.format('YYYY-MM-DD'));
-            setTodayReport(repository.getDailyReportsByField("date", today.format('YYYY-MM-DD')))
-          });
-          // setIsLodingModalVisible(false);
-          const url = 'http://3.34.55.218:5000/time';
-          axios.get(url).then((response)=>{
-            var month=response.data.month;
-            var day=response.data.day;
-            AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
-              var date=value.split('/');
-              var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-              var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-              let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
-              console.log('date_now: ',date_now);
-              console.log('date_stamp: ',date_stamp);
-              console.log('totalDays:',totalDays);
-              if(totalDays>0){
-                console.log(value);
-                console.log(totalDays,'일');
-                console.log('date_now: ',date_now);
-                console.log('date_stamp: ',date_stamp);
-                setIsFirstDiaryToday(true);
-                AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
-                amplitude.confirmFirstAIDiaryInADay();//오늘 첫 일기 만듦 - AI 일기
-              }
-            })
-          }).catch((error)=>{
-            console.error('Failed to GET Server Time');
+            setIsLodingModalVisible(false);
+            // const url = 'http://3.34.55.218:5000/time';
+            // axios.get(url).then((response)=>{
+            //   var month=response.data.month;
+            //   var day=response.data.day;
+            //   AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
+            //     var date=value.split('/');
+            //     var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+            //     var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+            //     let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+            //     console.log('date_now: ',date_now);
+            //     console.log('date_stamp: ',date_stamp);
+            //     console.log('totalDays:',totalDays);
+            //     if(totalDays>0){
+            //       console.log(value);
+            //       console.log(totalDays,'일');
+            //       console.log('date_now: ',date_now);
+            //       console.log('date_stamp: ',date_stamp);
+            //       setIsFirstDiaryToday(true);
+            //       AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
+            //       amplitude.confirmFirstAIDiaryInADay();//오늘 첫 일기 만듦 - AI 일기
+            //     }
+            //   })
+            // }).catch((error)=>{
+            //   console.error('Failed to GET Server Time');
+            // })
+            setIsLodingFinishModalVisible(true);
           })
-          setIsEventModalVisible(true);
-          setIsLodingModalVisible(false);
-          setIsLodingFinishModalVisible(true);
         }
       })
       .catch((error) => {
@@ -241,29 +290,29 @@ const Weekly = () => {
       }});
   };
   const handleCreateDiaryMyself = () => {
-    const url = 'http://3.34.55.218:5000/time';
-    axios.get(url).then((response)=>{
-      var month=response.data.month;
-      var day=response.data.day;
-      AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
-        var date=value.split('/');
-        var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-        var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-        let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
-        if(totalDays>0){
-          console.log(value);
-          console.log(totalDays,'일');
-          console.log('date_now: ',date_now);
-          console.log('date_stamp: ',date_stamp);
-          setIsFirstDiaryToday(true);
-          setIsEventModalVisible(true);
-          AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
-          amplitude.confirmFirstSelfDiaryInADay();//오늘 첫 일기 만듦 - 직접 작성
-        }
-      })
-    }).catch((error)=>{
-      console.error('Failed to GET Server Time');
-    })
+    // const url = 'http://3.34.55.218:5000/time';
+    // axios.get(url).then((response)=>{
+    //   var month=response.data.month;
+    //   var day=response.data.day;
+    //   AsyncStorage.getItem('@UserInfo:AutumnEventDiaryDate').then((value)=>{
+    //     var date=value.split('/');
+    //     var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+    //     var date_stamp=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+    //     let totalDays=Math.floor((date_now.getTime()-date_stamp.getTime())/(1000*3600*24));
+    //     if(totalDays>0){
+    //       console.log(value);
+    //       console.log(totalDays,'일');
+    //       console.log('date_now: ',date_now);
+    //       console.log('date_stamp: ',date_stamp);
+    //       setIsFirstDiaryToday(true);
+    //       setIsEventModalVisible(true);
+    //       AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate',month.toString()+'/'+day.toString());
+    //       amplitude.confirmFirstSelfDiaryInADay();//오늘 첫 일기 만듦 - 직접 작성
+    //     }
+    //   })
+    // }).catch((error)=>{
+    //   console.error('Failed to GET Server Time');
+    // })
 
     realm.write(() => {
       repository.createDailyReport({
@@ -529,8 +578,9 @@ const Weekly = () => {
   };
 
 
-  const [isEventModalVisible, setIsEventModalVisible]=useState(false);
+  // const [isEventModalVisible, setIsEventModalVisible]=useState(false);
 
+  const navigation = useNavigation();
 
   // tmp_createDummyData(); 
 
@@ -657,6 +707,28 @@ const Weekly = () => {
         </View>
 
       </View>
+
+      {/* <TouchableOpacity onPress={() => {
+        setIsEventDetailModalVisible(!isEventDetailModalVisible);
+        amplitude.clickEventInfoModal();//이벤트 배너 켬
+      }}>
+        <Image source={require('../assets/autumn_event_banner_2.png')} style={styles.bannerImage}/>
+      </TouchableOpacity> */}
+
+      {/* <Modal isVisible={isEventDetailModalVisible}
+        animationIn={"fadeIn"}
+        animationInTiming={200}
+        animationOut={"fadeOut"}
+        animationOutTiming={200}
+        onBackdropPress={() => {
+          amplitude.cancelEventInfoModalByCancelBtn();//이벤트 배너 끔
+          setIsEventModalVisible(!isEventDetailModalVisible);
+      }}
+      backdropColor='#CCCCCC'//'#FAFAFA'
+      backdropOpacity={0.8}
+      style={{ alignItems:'center', }}>
+        <AutumnEventDetailModal isModalVisible={isEventDetailModalVisible} setIsModalVisible={setIsEventDetailModalVisible}/>
+      </Modal> */}
 
       {/* status bar */}
 
@@ -804,8 +876,8 @@ const Weekly = () => {
                 <Text style={{fontSize: 13, color: '#fff', }}> Moo를 톡 건드려서 깨워보세요! 편지를 보내드립니다.</Text>
               </View>
             </View>
-          ) : ( !todayReport ? ( // 1-3. 스탬프 2개, 일기 쓰는 중
-            <View style={{ flex: 1 }}><nodata.Present_WakeUp_MiniView/></View>
+          ) : ( !todayReport && (!isLodingFinishModalVisible || !isLoadingEnded) ? ( // 1-3. 스탬프 2개, 일기 쓰는 중
+            <View style={{ flex: 1 }}><nodata.Present_WakeUp_MiniView setLoadingEnded={setIsLoadingEnded}/></View>
           ) : ( // 1-4. 일기 다 씀
             <View style={{ flex: 1 }}><nodata.Present_FinishWriting_MiniView handleStampORDiaryFromPFM={handleStampORDiaryFromPFM}/></View>
           )))}
@@ -821,8 +893,7 @@ const Weekly = () => {
             {/* 날짜 영역 */}
             <Text style={{fontSize: 14, color: '#495057', marginBottom: 10, textDecorationLine: 'underline'}}>{dayjs(todayReport.date).format('YYYY년 M월 D일 ddd요일')}</Text>
             {/* 인삿말 */}
-            <Text style={{fontSize: 14, color: '#495057', textDecorationLine: 'underline'}}>안녕! Moo가 오늘의 네 하루에 대해 편지를 써봤다무.</Text>
-            <Text style={{fontSize: 14, color: '#495057', marginBottom: 15, textDecorationLine: 'underline'}}>읽어보고 다른 점이 있다면 고쳐보라무!</Text>
+            <Text style={{fontSize: 14, color: '#495057', textDecorationLine: 'underline', marginBottom:15}}>안녕! Moo가 오늘의 네 하루에 대해 편지를 써봤다무.</Text>
             
             {/* 편지 영역 */}
             <View style={diaryStyles.diaryContainer}>
@@ -913,7 +984,25 @@ const Weekly = () => {
             </View>
             {/* PS 영역 */}
             {/* <Text style={{fontSize: 14, color: '#495057', marginBottom: 10, textDecorationLine: 'underline'}}>PS. ~~~ 한 것 같으니,  ~~하길 바란다무!</Text> -> 이거는 준하가 개발한 뒤 추가*/}
-            <Text style={{fontSize: 14, color: '#495057', marginBottom: 15, textDecorationLine: 'underline'}}>PS. 읽어보고 다른 점이 있다면 고쳐보면서, 하루를 돌아보길 바란다무!</Text>
+            <Text style={{fontSize: 14, color: '#495057', marginBottom: 0, textDecorationLine: 'underline'}}>PS. 읽어보고 다른 점이 있다면 고쳐보면서, 하루를 돌아보길 바란다무!</Text>
+            {todayReport.moodReportWeekNum!==-1 ? <><Text style={{fontSize: 14, color: '#495057', marginBottom: 15, textDecorationLine: 'underline'}}>오늘 남긴 스탬프랑 비슷한 걸로 무드 리포트를 남긴 적이 있다무! 한 번 읽어보면서 감정을 정리해보라무!</Text>
+            <TouchableOpacity onPress={()=>{
+              navigation.navigate('Statistics',{gotoMoodReport:true,gotoMoodReportNum:todayReport.moodReportWeekNum});
+              amplitude.click_gotoMoodReport();
+            }}>
+              <View style={{width:190,height:40,backgroundColor:'#FFFFFF',alignItems:'center', justifyContent:'center',alignSelf:'center',borderRadius:10,borderColor:'#72D193',borderWidth:1}}> 
+                <Text style={{fontSize:16,color:'#72D193'}}>무드 리포트 읽어보러 가기</Text>
+              </View>
+            </TouchableOpacity></> : <></>}
+            {isWeeklyReportAvailable ? <><Text style={{fontSize: 14, color: '#495057', marginBottom: 15, textDecorationLine: 'underline'}}>오늘은 무드 리포트를 쓸 수 있으니 한 번 써보라무!</Text>
+            <TouchableOpacity onPress={()=>{
+              navigation.navigate('Statistics',{gotoMoodReport:true,gotoMoodReportNum:-1});
+              amplitude.click_gotoMoodReport();
+            }}>
+              <View style={{width:180,height:40,backgroundColor:'#FFFFFF',alignItems:'center', justifyContent:'center',alignSelf:'center',borderRadius:10,borderColor:'#72D193',borderWidth:1}}> 
+                <Text style={{fontSize:16,color:'#72D193'}}>무드 리포트 쓰러 가기</Text>
+              </View>
+            </TouchableOpacity></> : <></>}
 
             {/* Moo가 */}
             <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end'}}>
@@ -940,7 +1029,7 @@ const Weekly = () => {
             style={{ alignItems:'center' }}
             backdropTransitionInTiming={0} // Disable default backdrop animation
             backdropTransitionOutTiming={0} // Disable default backdrop animation
-            onModalHide={()=>{setIsEventModalVisible(!isEventModalVisible)}}
+            // onModalHide={()=>{setIsEventModalVisible(!isEventModalVisible)}}
           >
             {!isLodingFinishModalVisible ? (
               <View style={diaryStyles.lodingModal}>
@@ -998,7 +1087,7 @@ const Weekly = () => {
             )}
       </Modal>
       
-      <Modal isVisible={isEventModalVisible && isFirstDiaryToday}
+      {/* <Modal isVisible={isEventModalVisible && isFirstDiaryToday}
       animationIn={"fadeIn"}
       animationInTiming={200}
       animationOut={"fadeOut"}
@@ -1011,7 +1100,7 @@ const Weekly = () => {
         setIsFirstDiaryToday(false);
       }}>
         <AutumnEventCoinModal isModalVisible={isEventModalVisible} setIsModalVisible={setIsEventModalVisible} type="diary"/>
-      </Modal>
+      </Modal> */}
 
       {/* 4-2. 일기 생성 완료 모달 */}
       <Modal 
@@ -1281,6 +1370,14 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#FAFAFA',
   },
+  bannerImage: {
+    width:windowWidth-30,
+    height:(windowWidth-30)*240/1440,
+    borderRadius:10,
+    alignSelf:'center',
+    top:10,
+    marginBottom:15,
+  },
   text: {
     fontSize: 20,
     marginBottom: 10,
@@ -1302,7 +1399,7 @@ const styles = StyleSheet.create({
   },
   day_today: {
     borderBottomWidth: 2,
-    borderColor: '#FFCC4D',//#72D193
+    borderColor: '#72D193',//#FFCC4D
   },
   day_notYet_today: {
     borderBottomWidth: 2,
@@ -1327,7 +1424,7 @@ const styles = StyleSheet.create({
   dayText_today: {
     // flexDirection: 'column', 
     color: 'white',
-    backgroundColor: '#FFCC4D',//72D193
+    backgroundColor: '#72D193',//#FFCC4D
     borderRadius: 10,
     width: 22,
     height: 22,
@@ -1414,7 +1511,7 @@ const typeChangeBtnStyles = StyleSheet.create({
   },
   activeFont: {
     fontSize: 16,
-    color: '#FFCC4D',//72D193
+    color: '#72D193',//#FFCC4D
     fontWeight:'600'
   },
   deactiveType: {

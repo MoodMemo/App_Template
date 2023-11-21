@@ -229,75 +229,186 @@ const reloadNotification = async () => {
   })
 }
 
-const autumnEventInitialize = async () => {
-  await AsyncStorage.getItem('@UserInfo:AutumnEvent').then((value) => {
-    if(value!=='true'){
-      amplitude.initializeEvent();//은행잎 이벤트 초기화
-      AsyncStorage.setItem('@UserInfo:AutumnEvent','true');
-      AsyncStorage.setItem('@UserInfo:AutumnEventCoin','0');
-      AsyncStorage.setItem('@UserInfo:AutumnEventLevel','1');
-      AsyncStorage.setItem('@UserInfo:AutumnEventStampDate','10/22');
-      AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate','10/10');
-      const url = 'http://3.34.55.218:5000/time';
-      axios.get(url).then((response)=>{
-        console.log('서버 시간',response.data.month,'월 ',response.data.day,'일');
-        var month=response.data.month;
-        var day=response.data.day;
-        AsyncStorage.setItem('@UserInfo:AutumnEventLastRunDate',month.toString()+'/'+day.toString());
-      });
-      AsyncStorage.setItem('@UserInfo:AutumnEventBoughtIce','false');
-      AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken1','false');
-      AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken2','false');
-    }
-    else{
-      const url = 'http://3.34.55.218:5000/time';
-      axios.get(url).then((response)=>{
-        console.log('서버 시간',response.data.month,'월 ',response.data.day,'일');
-        var month=response.data.month;
-        var day=response.data.day;
-        AsyncStorage.getItem('@UserInfo:AutumnEventStampDate').then((value)=>{
-          var date=value.split('/');
-          var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-          var date_last=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-          console.log('date_now',date_now);
-          console.log('date_stamp',date_last);
-          let totalDays=Math.floor((date_now.getTime()-date_last.getTime())/(1000*3600*24));
-          if(totalDays>1){
-            console.log(value);
-            console.log(totalDays,'일');
-            console.log('date_now: ',date_now);
-            console.log('date_last: ',date_last);
-            AsyncStorage.getItem('@UserInfo:AutumnEventLastRunDate').then((value)=>{
-              var date=value.split('/');
-              var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
-              var date_last=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
-              console.log('date_now',date_now);
-              console.log('date_stamp',date_last);
-              let totalDays2=Math.floor((date_now.getTime()-date_last.getTime())/(1000*3600*24));
-              console.log('totalDays2',totalDays2);
-              console.log('totalDays',totalDays);
-              if(totalDays2===totalDays){
-                AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value)=>{
-                  AsyncStorage.setItem('@UserInfo:AutumnEventLevel', Math.max(Number(value)-totalDays+1,1).toString());
-                  amplitude.levelDownEvent(Math.max(Number(value)-totalDays+1,1));//이벤트 레벨 감소, 현재 레벨 : Math.max(Number(value)-totalDays+1,1)
-                })
-              }
-              else{
-                AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value)=>{
-                  AsyncStorage.setItem('@UserInfo:AutumnEventLevel', Math.max(Number(value)-totalDays2,1).toString());
-                  amplitude.levelDownEvent(Math.max(Number(value)-totalDays2,1));//이벤트 레벨 감소, 현재 레벨 : Math.max(Number(value)-totalDays2,1)
-                })
-              }
-              AsyncStorage.setItem('@UserInfo:AutumnEventLastRunDate',month+'/'+day);
-            })
-          }
+const date2String = (stampDate:Date):string => {
+
+
+  let month = stampDate.getMonth() + 1;
+  let day = stampDate.getDate();
+
+  
+
+  month = month >= 10 ? month : '0' + month;
+  day = day >= 10 ? day : '0' + day;
+  var dateTime:string = (stampDate.getFullYear()).toString()+'.'+month+'.'+day;
+  return dateTime
+}
+
+const weeklyReportDate = (date:Date) => {
+  var date_start = date2String(date);
+  date.setDate(date.getDate()+6);
+  var date_end = date2String(date);
+
+  return date_start+'~'+date_end
+}
+
+
+const weeklyReportSetting= async () => {
+  await AsyncStorage.getItem('@UserInfo:RecentReportWeekNum').then((value) => {
+    console.log('RecentReportWeekNum',value);
+    AsyncStorage.getItem('@UserInfo:isRegistered').then((isregi)=>{
+      if(value===null && isregi){
+        var date = new Date('2023-11-13');
+        console.log('weeklyReport',date2String(date));
+        realm.write(()=>{
+          repository.createWeeklyReport({
+            weekNum:1,
+            weekDate:weeklyReportDate(date),
+            stampDateTime:new Date(),
+            stampEmoji: '',
+            stampMemo: '',
+            stampName: '',
+            questionType: '',
+            answer: [],})
         })
-      }).catch((error)=>{
-        console.error('Failed to GET Server Time');
-      })
-    }
+        AsyncStorage.setItem('@UserInfo:RecentReportWeekNum','1');
+        var weeklyReports = repository.getAllWeeklyReports().sort((a,b)=>{
+          if(a.weekNum<b.weekNum) return 1
+          else return -1
+        });
+        console.log(weeklyReports[0]);
+        var recentWeekNum = weeklyReports[0].weekNum;
+        var weekdate = weeklyReports[0].weekDate.split('~')[1];
+        var date_2 = date2String(new Date());
+        while(weekdate < date_2){
+          var date_L = weekdate.split('.');
+          var weekdate_year = Number(date_L[0]);
+          var weekdate_month = Number(date_L[1])-1;
+          var weekdate_day = Number(date_L[2]);
+          var new_weekdate = new Date(weekdate_year,weekdate_month,weekdate_day);
+          new_weekdate.setDate(new_weekdate.getDate()+1);
+          realm.write(()=>{
+            repository.createWeeklyReport({
+              weekNum:recentWeekNum+1,
+              weekDate:weeklyReportDate(new_weekdate),
+              stampDateTime:new Date(),
+              stampEmoji: '',
+              stampMemo: '',
+              stampName: '',
+              questionType: '',
+              answer: [],})
+          })
+          AsyncStorage.setItem('@UserInfo:RecentReportWeekNum',(recentWeekNum+1).toString());
+          recentWeekNum+=1;
+          weekdate=date2String(new_weekdate);
+        }
+      }
+      else if(value!==null){
+        var weeklyReports = repository.getAllWeeklyReports().sort((a,b)=>{
+          if(a.weekNum<b.weekNum) return 1
+          else return -1
+        });
+        console.log(weeklyReports[0]);
+        var recentWeekNum = weeklyReports[0].weekNum;
+        var weekdate = weeklyReports[0].weekDate.split('~')[1];
+        var date_2 = date2String(new Date());
+        while(weekdate < date_2){
+          var date_L = weekdate.split('.');
+          var weekdate_year = Number(date_L[0]);
+          var weekdate_month = Number(date_L[1])-1;
+          var weekdate_day = Number(date_L[2]);
+          var new_weekdate = new Date(weekdate_year,weekdate_month,weekdate_day);
+          new_weekdate.setDate(new_weekdate.getDate()+1);
+          realm.write(()=>{
+            repository.createWeeklyReport({
+              weekNum:recentWeekNum+1,
+              weekDate:weeklyReportDate(new_weekdate),
+              stampDateTime:new Date(),
+              stampEmoji: '',
+              stampMemo: '',
+              stampName: '',
+              questionType: '',
+              answer: [],})
+          })
+          AsyncStorage.setItem('@UserInfo:RecentReportWeekNum',(recentWeekNum+1).toString());
+          recentWeekNum+=1;
+          weekdate=date2String(new_weekdate);
+        }
+      }
+    })
   })
-};
+}
+
+// const autumnEventInitialize = async () => {
+//   await AsyncStorage.getItem('@UserInfo:AutumnEvent').then((value) => {
+//     if(value!=='true'){
+//       amplitude.initializeEvent();//은행잎 이벤트 초기화
+//       AsyncStorage.setItem('@UserInfo:AutumnEvent','true');
+//       AsyncStorage.setItem('@UserInfo:AutumnEventCoin','0');
+//       AsyncStorage.setItem('@UserInfo:AutumnEventLevel','1');
+//       AsyncStorage.setItem('@UserInfo:AutumnEventStampDate','10/22');
+//       AsyncStorage.setItem('@UserInfo:AutumnEventDiaryDate','10/10');
+//       AsyncStorage.setItem('@UserInfo:AutumnEventFirstStamp','true');
+//       const url = 'http://3.34.55.218:5000/time';
+//       axios.get(url).then((response)=>{
+//         console.log('서버 시간',response.data.month,'월 ',response.data.day,'일');
+//         var month=response.data.month;
+//         var day=response.data.day;
+//         AsyncStorage.setItem('@UserInfo:AutumnEventLastRunDate',month.toString()+'/'+day.toString());
+//       });
+//       AsyncStorage.setItem('@UserInfo:AutumnEventBoughtIce','false');
+//       AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken1','false');
+//       AsyncStorage.setItem('@UserInfo:AutumnEventBoughtChicken2','false');
+//       AsyncStorage.setItem('@UserInfo:AutumnEventAdditional','true');
+//     }
+//     else{
+//       const url = 'http://3.34.55.218:5000/time';
+//       axios.get(url).then((response)=>{
+//         console.log('서버 시간',response.data.month,'월 ',response.data.day,'일');
+//         var month=response.data.month;
+//         var day=response.data.day;
+//         AsyncStorage.getItem('@UserInfo:AutumnEventStampDate').then((value)=>{
+//           var date=value.split('/');
+//           var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+//           var date_last=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+//           console.log('date_now',date_now);
+//           console.log('date_stamp',date_last);
+//           let totalDays=Math.floor((date_now.getTime()-date_last.getTime())/(1000*3600*24));
+//           if(totalDays>1){
+//             console.log(value);
+//             console.log(totalDays,'일');
+//             console.log('date_now: ',date_now);
+//             console.log('date_last: ',date_last);
+//             AsyncStorage.getItem('@UserInfo:AutumnEventLastRunDate').then((value)=>{
+//               var date=value.split('/');
+//               var date_now=new Date(new Date(2023,month-1,day).getTime() + (9*60*60*1000))
+//               var date_last=new Date(new Date(2023,Number(date[0])-1,Number(date[1])).getTime() + (9*60*60*1000));
+//               console.log('date_now',date_now);
+//               console.log('date_stamp',date_last);
+//               let totalDays2=Math.floor((date_now.getTime()-date_last.getTime())/(1000*3600*24));
+//               console.log('totalDays2',totalDays2);
+//               console.log('totalDays',totalDays);
+//               if(totalDays2===totalDays){
+//                 AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value)=>{
+//                   AsyncStorage.setItem('@UserInfo:AutumnEventLevel', Math.max(Number(value)-totalDays+1,1).toString());
+//                   amplitude.levelDownEvent(Math.max(Number(value)-totalDays+1,1));//이벤트 레벨 감소, 현재 레벨 : Math.max(Number(value)-totalDays+1,1)
+//                 })
+//               }
+//               else{
+//                 AsyncStorage.getItem('@UserInfo:AutumnEventLevel').then((value)=>{
+//                   AsyncStorage.setItem('@UserInfo:AutumnEventLevel', Math.max(Number(value)-totalDays2,1).toString());
+//                   amplitude.levelDownEvent(Math.max(Number(value)-totalDays2,1));//이벤트 레벨 감소, 현재 레벨 : Math.max(Number(value)-totalDays2,1)
+//                 })
+//               }
+//               AsyncStorage.setItem('@UserInfo:AutumnEventLastRunDate',month+'/'+day);
+//             })
+//           }
+//         })
+//       }).catch((error)=>{
+//         console.error('Failed to GET Server Time');
+//       })
+//     }
+//   })
+// };
 
 (async () => { 
   // Do something before delay
@@ -307,8 +418,9 @@ const autumnEventInitialize = async () => {
   //setShowCodePushUpdate(true);
   const codePushUpdateAvailable = await codePushVersionCheck();
   await new Promise(f => setTimeout(f, 600));
-  await autumnEventInitialize();
-  // await reloadNotification();
+  await weeklyReportSetting();
+  // await autumnEventInitialize();
+  await reloadNotification();
   SplashScreen.hide();
   // Do something after
   console.log('codepush check :',codePushUpdateAvailable);
