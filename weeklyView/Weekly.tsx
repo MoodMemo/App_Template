@@ -876,7 +876,7 @@ const Weekly = () => {
                 <Text style={{fontSize: 13, color: '#fff', }}> Moo를 톡 건드려서 깨워보세요! 편지를 보내드립니다.</Text>
               </View>
             </View>
-          ) : ( !todayReport && (!isLodingFinishModalVisible || !isLoadingEnded) ? ( // 1-3. 스탬프 2개, 일기 쓰는 중
+          ) : ( !todayReport || (!isLodingFinishModalVisible || !isLoadingEnded) ? ( // 1-3. 스탬프 2개, 일기 쓰는 중
             <View style={{ flex: 1 }}><nodata.Present_WakeUp_MiniView setLoadingEnded={setIsLoadingEnded}/></View>
           ) : ( // 1-4. 일기 다 씀
             <View style={{ flex: 1 }}><nodata.Present_FinishWriting_MiniView handleStampORDiaryFromPFM={handleStampORDiaryFromPFM}/></View>
