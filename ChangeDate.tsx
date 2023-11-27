@@ -24,7 +24,13 @@ const ChangeDate = () => {
     }
 
     AsyncStorage.getItem('@UserInfo:birthShow').then(data => {
-        setShowingBirthday(String(data));
+        if(data==='NNNN/NN/NN'){
+            setShowingBirthday('생일을 알려달라무!')
+        }
+        else{
+            setShowingBirthday(String(data));
+        }
+        
     })
 
     return (
@@ -35,7 +41,7 @@ const ChangeDate = () => {
                     setIsDatePickerVisible(!isDatePickerVisible);
                 }}
                 style={{paddingBottom:10}}>
-                    <Text style={{fontSize:20, paddingHorizontal:10, color: '#666666'}}>{showingBirthday}</Text>
+                    <Text style={{fontSize:20, paddingHorizontal:10, color: showingBirthday!=='생일을 알려달라무!' ? '#666666' : '#E2E2E2'}}>{showingBirthday}</Text>
                 </TouchableOpacity>
                 <Divider style={{backgroundColor:'#E2E2E2',width:'100%'}}/>
                 <Divider style={{backgroundColor:'#E2E2E2',width:'100%'}}/>

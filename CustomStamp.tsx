@@ -66,8 +66,8 @@ const newStyles = StyleSheet.create({
   customStamps: {
     backgroundColor: '#fff', width: '100%', flex:1, alignSelf: 'center',marginTop: 44,
     elevation: 4, 
-    shadowOffset: {width: 0, height: -4},
-    shadowOpacity: 0.5,
+    shadowOffset: {width: 0, height: Platform.OS==='android' ? -4 : 0},
+    shadowOpacity: Platform.OS==='android' ? 0.5 : 0.1,
     borderTopLeftRadius: 20, borderTopRightRadius: 20
   },
 });

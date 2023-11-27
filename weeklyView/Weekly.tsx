@@ -774,6 +774,7 @@ const Weekly = () => {
       {stampORdiary ? (
         // 1. 스탬프가 있을 때
         getEmoji(getStamp(today)).length !== 0 ? (
+        <>
         <ScrollView contentContainerStyle={{flexGrow: 1, }} ref={scrollViewRef}>
           {/* 내가 누른 스탬프 영역 */}
           <View style={Timelinestyles.container}>{timelineData.map((item, index) => ( <View key={index} style={{alignItems: 'flex-end'}}>
@@ -868,22 +869,33 @@ const Weekly = () => {
                 <TouchableOpacity style={{}} onPress={() => {handleGenerateDiary(); amplitude.tryGenerateAIDiary_can(today.format('YYYY-MM-DD'));}}>
                   <Image source={require('../assets/moo_two.png')} style={{ width: 160, height: (156.84 * 160) / 160, margin: 17,}}/>
                 </TouchableOpacity>
+                <Text style={{fontSize: 15, color: '#72D193', alignSelf: 'flex-end', paddingVertical: 10, top:-10, left:-5}}>← Tap!</Text>
                 <View style={{flex: 1}}/>  
               </View>
               {/* 무 상태 */}
-              <View style={[bubbleStyles.moo_status_bar, {backgroundColor: '#72D193', alignItems: 'center'}]}>
-                <MCIcon name='lock-open' color="#fff" style={{ fontWeight: 'bold', fontSize: 25}} />
-                <Text style={{fontSize: 13, color: '#fff', }}> Moo를 톡 건드려서 깨워보세요! 편지를 보내드립니다.</Text>
-              </View>
             </View>
-          ) : ( !todayReport || (!isLodingFinishModalVisible || !isLoadingEnded) ? ( // 1-3. 스탬프 2개, 일기 쓰는 중
-            <View style={{ flex: 1 }}><nodata.Present_WakeUp_MiniView setLoadingEnded={setIsLoadingEnded}/></View>
+          ) : ( todayReport ? <View style={{ flex: 1 }}><nodata.Present_FinishWriting_MiniView handleStampORDiaryFromPFM={handleStampORDiaryFromPFM}/></View> : 
+          !todayReport || (!isLodingFinishModalVisible || !isLoadingEnded) ? ( // 1-3. 스탬프 2개, 일기 쓰는 중
+            <View style={{ flex: 1 }}><nodata.Present_WakeUp_MiniView setLoadingEnded={setIsLoadingEnded} isReportEnded={isLodingFinishModalVisible}/></View>
           ) : ( // 1-4. 일기 다 씀
-            <View style={{ flex: 1 }}><nodata.Present_FinishWriting_MiniView handleStampORDiaryFromPFM={handleStampORDiaryFromPFM}/></View>
+            <></>
           )))}
         </ScrollView>
+          {/* 무 상태 */}
+          {getEmoji(getStamp(today)).length === 1 ? <View style={finalBubbleStyles.moo_status_bar}>
+            <MCIcon name='lock' color="#fff" style={{ fontWeight: 'bold', fontSize: 25}} />
+            <Text style={{fontSize: 18, color: '#fff', }}> Moo 깨우기 ... </Text>
+            <Text style={{fontSize: 20, color: '#7D705B', fontWeight: 'bold'}}>1/2</Text>
+          </View> : !todayReport ? <View style={[bubbleStyles.moo_status_bar, {backgroundColor: '#72D193', alignItems: 'center'}]}>
+            <MCIcon name='lock-open' color="#fff" style={{ fontWeight: 'bold', fontSize: 25}} />
+            <Text style={{fontSize: 13, color: '#fff', }}> Moo를 톡 건드려서 깨워보세요! 편지를 보내드립니다.</Text>
+          </View> : <></>}
+        </>
         ) : ( // 2. 스탬프가 없을 때, 날짜에 따라 다름
+        <>
         <StampList_NoStamp/>
+        </>
+        
         )
       ) : ( // [Moo의 편지함]
       todayReport!==null ? ( // 일기 있음
@@ -908,7 +920,7 @@ const Weekly = () => {
                     onFocus={() => {amplitude.editTitle();}}
                   />
                 ) : (
-                  <Text style={{ fontSize: 14, color: '#495057', marginBottom: 10, }}>제목: {todayReport.title}</Text>
+                  <Text style={{ fontSize: 16, color: '#495057', marginBottom: 10, }}>제목: {todayReport.title}</Text>
                 )}
               </View>
               
@@ -923,7 +935,7 @@ const Weekly = () => {
                     multiline
                   />
                 ) : (
-                  <Text style={{ fontSize: 14, color: '#495057', }}>{todayReport.bodytext}</Text>
+                  <Text style={{ fontSize: 16, color: '#495057', }}>{todayReport.bodytext}</Text>
                 )}
               </View>
               
@@ -948,7 +960,7 @@ const Weekly = () => {
             {/* 편지 바로 아래 */}
             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               {/* 키워드 멘트 */}
-              <Text style={{fontSize: 14, color: '#495057', marginBottom: 5, }}>Moo가 뽑아본 키워드다무</Text>
+              <Text style={{fontSize: 14, color: '#495057', marginBottom: 5, }}>Moo가 뽑아본 키워드다무!</Text>
               {/* 수정 & 삭제 */}
               {!isEditMode ? (
                 <View style={{flexDirection: 'row', gap: 10}}>
@@ -978,8 +990,8 @@ const Weekly = () => {
             </View>
             {/* 키워드 3개 */}
             <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-              {todayReport.keyword.map((keyword) => (
-                <Text key={keyword} style={{fontSize: 14, color: '#212429', marginBottom: 15, }}>{keyword},  </Text>
+              {todayReport.keyword.map((keyword,index) => (
+                <Text key={keyword} style={{fontSize: 14, color: '#212429', marginBottom: 15, }}>{keyword}{index===2 ? '' : ','}  </Text>
               ))}
             </View>
             {/* PS 영역 */}
@@ -1499,6 +1511,7 @@ const typeChangeBtnStyles = StyleSheet.create({
     marginTop: 10,
     padding: 2,
     borderRadius: 8,
+    marginBottom: 5
   },
   activeType: {
     flex: 1,
@@ -1890,4 +1903,80 @@ const TimelineDiaryStyles = StyleSheet.create({
     paddingHorizontal:10, 
     flex:1
   }
+});
+
+const finalBubbleStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#72D193',
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    alignSelf: 'flex-start', // 좌측 정렬로 변경
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    position: 'relative',
+    overflow: 'hidden', // 클리핑 적용
+    marginBottom: 8,
+    zIndex: 100,
+  },
+  tail: {
+    position: 'absolute',
+    width: 15, // 꼬리의 길이
+    height: 15, // 꼬리의 높이
+    left: -4, // 꼬리 위치
+    top: 20, // 꼬리 위치
+    backgroundColor: '#72D193',
+    transform: [{ rotate: '45deg' }],
+    borderTopLeftRadius: 100, // 둥글게 만들기
+  },
+  rightTail: {
+    position: 'absolute',
+    width: 15, // 꼬리의 길이
+    height: 15, // 꼬리의 높이
+    right: -4, // 꼬리 위치
+    top: 6, // 꼬리 위치
+    backgroundColor: '#FFCF55',
+    // borderColor: '#72D193',
+    // borderWidth: 2,
+    transform: [{ rotate: '45deg' }],
+    borderTopLeftRadius: 100, // 둥글게 만들기
+  },
+  gotoStamp_container: {
+    backgroundColor: '#fff',
+    paddingVertical: 7,
+    paddingHorizontal: 12,
+    alignSelf: 'flex-start', // 좌측 정렬로 변경
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopRightRadius: 0,
+    borderBottomLeftRadius: 10,
+    borderTopLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    borderColor: '#DDECE3',
+    borderWidth: 2,
+    position: 'relative',
+    overflow: 'hidden', // 클리핑 적용
+    zIndex: 100, flexDirection: 'row', 
+  },
+  gotoLetter_container: {
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignSelf: 'flex-start', // 좌측 정렬로 변경
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+    position: 'relative',
+    overflow: 'hidden', // 클리핑 적용
+    zIndex: 100, marginBottom: 8, flexDirection: 'row', gap: 6,
+    borderColor: '#72D193',
+    borderWidth: 2,
+  },
+  moo_status_bar: {
+    backgroundColor: '#FCD49B', width: '100%', zIndex: 10, paddingVertical: 6, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end'
+  },
 });

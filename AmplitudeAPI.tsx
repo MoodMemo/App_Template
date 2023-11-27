@@ -589,6 +589,20 @@ export function setProfileJob() {
     action: 'click',
     secondView: 'profile',});
 }
+export function setProfileGender() {
+  amplitude.track('setting: click, gender, profile',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'profile',});
+}
+export function setProfileMBTI() {
+  amplitude.track('setting: click, MBTI, profile',
+  {
+    view: 'setting',
+    action: 'click',
+    secondView: 'profile',});
+}
 export function saveNewProfile() {
   amplitude.track('setting: confirm, profile',
   {
@@ -761,6 +775,13 @@ export function confirmResetBtn() {
     view: 'setting',
     action: 'confirm',
     secondView: 'reset modal',});
+}
+
+export function privateData() { 
+  amplitude.track('setting: click, private data',
+  {
+    view: 'setting',
+    action: 'click',});
 }
 
 export function test1() { 

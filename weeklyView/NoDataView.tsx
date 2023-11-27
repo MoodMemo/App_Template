@@ -181,7 +181,7 @@ export const PleaseOneMoreStampMini = () => {
 
 
 
-function Bubble({ text, imageSource, delay, toneDown, letter, last, button, loading, setIsLoadingFinished }) {
+function Bubble({ text, imageSource, delay, toneDown, letter, last, button, loading, setIsLoadingFinished, isReportEnded }) {
   const [progress, setProgress] = useState(0);
   const [fadeAnim] = useState(new Animated.Value(0));
   const navigation = useNavigation();
@@ -206,10 +206,10 @@ function Bubble({ text, imageSource, delay, toneDown, letter, last, button, load
   useEffect(() => {
     if(loading){
       const interval = setInterval(() => {
-        if (progress < 100) {
-          setProgress(progress+7>100 ? 100 : progress+7);
+        if (progress < 99) {
+          setProgress(progress+7>99 ? 99 : progress+7);
         } else {
-          setIsLoadingFinished(true);
+          // setIsLoadingFinished(true);
           clearInterval(interval);
         }
       }, 1000);
@@ -218,6 +218,14 @@ function Bubble({ text, imageSource, delay, toneDown, letter, last, button, load
       };
     }
   }, [progress]);
+
+  useEffect(()=>{
+    if(isReportEnded){
+      console.log('isReportEnded',isReportEnded);
+      setProgress(100);
+      setIsLoadingFinished(true);
+    }
+  }, [isReportEnded])
 
   return (
     <Animated.View style={{ opacity: fadeAnim }}>
@@ -346,12 +354,6 @@ export const Present_Zero_View = () => {
       <View>
         {/* 무 이미지 */}
         <Image source={require('../assets/moo_zero.png')} style={{ width: 160, height: (147.5 * 160) / 160, margin: 17,}}/>
-        {/* 무 상태 */}
-        <View style={finalBubbleStyles.moo_status_bar}>
-          <MCIcon name='lock' color="#fff" style={{ fontWeight: 'bold', fontSize: 25}} />
-          <Text style={{fontSize: 18, color: '#fff', }}> Moo 깨우기 ... </Text>
-          <Text style={{fontSize: 20, color: '#7D705B', fontWeight: 'bold'}}>0/2</Text>
-        </View>
       </View>
     </View>
   );
@@ -386,19 +388,15 @@ export const Present_One_MiniView = () => {
         <View>
           {/* 무 이미지 */}
           <Image source={require('../assets/moo_one.png')} style={{ width: 160, height: (154.65 * 160) / 160, margin: 17,}}/>
-          {/* 무 상태 */}
-          <View style={finalBubbleStyles.moo_status_bar}>
-            <MCIcon name='lock' color="#fff" style={{ fontWeight: 'bold', fontSize: 25}} />
-            <Text style={{fontSize: 18, color: '#fff', }}> Moo 깨우기 ... </Text>
-            <Text style={{fontSize: 20, color: '#7D705B', fontWeight: 'bold'}}>1/2</Text>
-          </View>
         </View>
       </View>
     );
 }
-export const Present_WakeUp_MiniView = ({setLoadingEnded}) => {
+export const Present_WakeUp_MiniView = ({setLoadingEnded,isReportEnded}) => {
 
   const [isLoadingFinished, setIsLoadingFinished] = useState(false);
+
+  console.log('isReportEnded Loading Ended : ',isReportEnded);
 
   useEffect(()=>{
     if(isLoadingFinished){
@@ -421,8 +419,8 @@ export const Present_WakeUp_MiniView = ({setLoadingEnded}) => {
               {/* 여기부터 말풍선 */}
               <Bubble text="Moo 일어났다무..." delay={0} />
               <Bubble text="앗! 이런 일이 있었구나무" delay={800} />
+              <Bubble text="편지쓰는중 ... 기다려보라무" delay={1600} toneDown={true} loading={true} setIsLoadingFinished={setIsLoadingFinished} isReportEnded={isReportEnded}/>
               <Bubble imageSource={require('../assets/write_0904.png')} delay={1600} />
-              <Bubble text="편지쓰는중 ... 기다려보라무" delay={2400} toneDown={true} loading={true} setIsLoadingFinished={setIsLoadingFinished}/>
             </View> 
           </View>
         </View>

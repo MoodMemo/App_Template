@@ -113,6 +113,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                             }}>
                             <DatePicker date={date} onDateChange={(changedDate) => {
                             setDate(changedDate);
+                            console.log(date);
                             }} mode="time"
                             theme="light"/>
                         </View>
@@ -159,7 +160,7 @@ const NotificationView = ({id,time,timeChangedProp,checkTimeChanged}:any) => {
                                     }}>
                                     <Text style={{fontSize: 17}}>저장</Text>
                                 </TouchableOpacity> */}
-                                <NotificationViewSave id={id} time={time} timeChangedProp={timeChangedProp} checkTimeChanged={checkTimeChanged} setIsModalVisible={setIsModalVisible} isModalVisible={isModalVisible}/>
+                                <NotificationViewSave id={id} time={String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0')} date={date} timeChangedProp={timeChangedProp} checkTimeChanged={checkTimeChanged} setIsModalVisible={setIsModalVisible} isModalVisible={isModalVisible}/>
                                 <TouchableOpacity onPress={()=>{
                                     amplitude.deleteNoti();
                                     realm.write(() => {repository.deleteNotification(repository.getNotificationsByField("id",id));});

@@ -21,17 +21,42 @@ const ChangeProfile = () => {
     const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
     const [name, setName] = useState('');
     const [job, setJob] = useState('');
+    const [gender, setGender] = useState('');
+    const [MBTI, setMBTI] = useState('');
     const [jobDefault, setJobDefault] = useState('');
     const [nameDefault, setNameDefault] = useState('');
+    const [genderDefault, setGenderDefault] = useState('');
+    const [MBTIDefault, setMBTIDefault] = useState('');
     const [birthday, setBirthday] = useState(new Date());
     const [showingBirthday,setShowingBirthday] = useState('');
     const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
 
     AsyncStorage.getItem('@UserInfo:job').then(data => {
-        setJobDefault(String(data));
+        if(data===null){
+            setJobDefault('')
+        }
+        else{
+            setJobDefault(String(data));
+        }
     })
     AsyncStorage.getItem('@UserInfo:userName').then(data => {
         setNameDefault(String(data));
+    })
+    AsyncStorage.getItem('@UserInfo:gender').then(data => {
+        if(data===null){
+            setGenderDefault('')
+        }
+        else{
+            setGenderDefault(String(data));
+        }
+    })
+    AsyncStorage.getItem('@UserInfo:MBTI').then(data => {
+        if(data===null){
+            setMBTIDefault('')
+        }
+        else{
+            setMBTIDefault(String(data));
+        }
     })
     return (
     <TouchableOpacity onPress={() => {
@@ -110,9 +135,42 @@ const ChangeProfile = () => {
                             <TextInput
                             style={styles.input}
                             defaultValue={jobDefault}
+                            placeholder={'직업을 알려달라무!'}
                             placeholderTextColor='#E2E2E2'
                             onChangeText={(text) => setJob(text)}
                             onFocus={amplitude.setProfileJob}
+                            />
+                    </View>
+                    <View style={{paddingBottom: 10,
+                    paddingTop:5
+                        }}>
+                            <Text style={{fontSize: 19, color:'#666666'}}>성별</Text>
+                    </View>
+                    <View style={{paddingBottom: 20,
+                        }}>
+                            <TextInput
+                            style={styles.input}
+                            defaultValue={jobDefault}
+                            placeholder={'성별을 알려달라무!'}
+                            placeholderTextColor='#E2E2E2'
+                            onChangeText={(text) => setGender(text)}
+                            onFocus={amplitude.setProfileGender}
+                            />
+                    </View>
+                    <View style={{paddingBottom: 10,
+                    paddingTop:5
+                        }}>
+                            <Text style={{fontSize: 19, color:'#666666'}}>MBTI</Text>
+                    </View>
+                    <View style={{paddingBottom: 20,
+                        }}>
+                            <TextInput
+                            style={styles.input}
+                            defaultValue={jobDefault}
+                            placeholder={'MBTI를 알려달라무!'}
+                            placeholderTextColor='#E2E2E2'
+                            onChangeText={(text) => setMBTI(text)}
+                            onFocus={amplitude.setProfileMBTI}
                             />
                     </View>
                 </ScrollView>

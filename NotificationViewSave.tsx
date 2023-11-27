@@ -18,9 +18,8 @@ function getRandomInt(min:any, max:any) {
     return Math.floor(Math.random() * (max - min)) + min; //최댓값은 제외, 최솟값은 포함
 }
 
-const NotificationViewSave = ({id,time,timeChangedProp,checkTimeChanged,isModalVisible,setIsModalVisible}:any) => {
+const NotificationViewSave = ({id,time,date,timeChangedProp,checkTimeChanged,isModalVisible,setIsModalVisible}:any) => {
     const [isModalNoticeVisible, setIsModalNoticeVisible] = useState(false);
-    const [date, setDate] = useState(new Date());
     var [hour, minute] = time.split(':');
 
     const generateNotificationMessage = (notificationTime:Date) => {
@@ -55,14 +54,10 @@ const NotificationViewSave = ({id,time,timeChangedProp,checkTimeChanged,isModalV
             <TouchableOpacity onPress={()=>{
                 const notificationTime=String(date.getHours()).padStart(2,'0')+':'+String(date.getMinutes()).padStart(2,'0');
                 amplitude.saveRenewNoti(notificationTime);
-                if(notificationTime===time){
-                    setIsModalVisible(!isModalVisible);
-                }
-                else if(repository.getNotificationsByField("time",notificationTime)===undefined){
+                if(repository.getNotificationsByField("time",notificationTime)===undefined){
                     repository.updateNotificationById(id,{time:notificationTime});
                     PushNotification.cancelLocalNotification(hour+minute);
                     //console.log(changedDate);
-                    console.log(date);
                     if(date.getTime()<=(new Date(Date.now())).getTime()) date.setDate(date.getDate()+1);
                     PushNotification.localNotificationSchedule({
                         channelId: "MoodMemo_ID",

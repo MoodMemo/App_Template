@@ -189,6 +189,7 @@ const Settings = () => {
     const [isCoffeeModalVisible, setIsCoffeeModalVisible] = useState(false);
     const [isNotificationModalVisible, setIsNotificationModalVisible] = useState(false);
     const [isNotificationListModalVisible, setIsNotificationListModalVisible] = useState(false);
+    const [isPrivateDataModalVisible, setIsPrivateDataModalVisible] = useState(false);
     const [isClearDataModalVisible, setIsClearDataModalVisible] = useState(false);
     const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
     const [isNotificationTimeChanged, setIsNotificationTimeChanged] = useState(false);
@@ -1218,11 +1219,23 @@ const Settings = () => {
                 </>) : (<></>)}
 
                 <TouchableOpacity onPress={() => {
+                    amplitude.privateData(); //데이터 초기화하기 모달 켬
+                    Linking.openURL('https://sites.google.com/view/moodmemo-policy/%ED%99%88')
+                    }}>
+                    <View style={tabStyles.content}>
+                        <Text style={tabStyles.contentText}>개인정보처리방침 확인하기</Text>
+                    </View>
+                </TouchableOpacity>
+
+                <SubtitleDivider/>
+                <SubtitleDivider/>
+
+                <TouchableOpacity onPress={() => {
                     amplitude.clickReset(); //데이터 초기화하기 모달 켬
                     setIsClearDataModalVisible(!isClearDataModalVisible);
                     }}>
                     <View style={tabStyles.content}>
-                        <Text style={tabStyles.contentText}>모든 데이터 초기화하기</Text>
+                        <Text style={tabStyles.contentText}>데이터 초기화 및 탈퇴하기</Text>
                     </View>
                     <Modal isVisible={isClearDataModalVisible}
                     animationIn={"fadeIn"}

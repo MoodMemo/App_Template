@@ -239,7 +239,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,wee
       getPushedStampsByFieldBetween('dateTime', start, end).forEach((pushedStamp) => {
         var customStamp=repository.getCustomStampsByField('stampName',pushedStamp.stampName)
         var stampType=customStamp.type
-        if(stampType!=='pos'){
+        if(stampType==='neg'){
           listOfStamps.push(pushedStamp);
         }
       });
