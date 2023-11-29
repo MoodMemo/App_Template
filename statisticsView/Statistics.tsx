@@ -33,7 +33,7 @@ const windowHeight = Dimensions.get('window').height;
 
 const chartColor=[['#9BE300','#FFFFFF'],['#FF7DB8','#FFFFFF'],['#5BC4FF','#FFFFFF'],['#DFAAFF','#FFFFFF'],['#FFA887','#FFFFFF'],['#AAAAAA','#FFFFFF']]
 
-const Statistics = ({gotoMoodReport}) => {
+const Statistics = ({gotoMoodReport,gotoMoodReportNum}) => {
 
     // const handleOpenLink = async () => {
     //     const url = 'http://pf.kakao.com/_xhGnxgxj'; // 원하는 웹 링크
@@ -78,7 +78,8 @@ const Statistics = ({gotoMoodReport}) => {
         .catch((error) => {
           console.error("Error fetching userName:", error);
         });
-      AsyncStorage.getItem('@UserInfo:RecentReportWeekNum')
+      if(gotoMoodReportNum===-1){
+        AsyncStorage.getItem('@UserInfo:RecentReportWeekNum')
         .then((value) => {
           if(value) {
             setReportWeekNum(
@@ -92,6 +93,19 @@ const Statistics = ({gotoMoodReport}) => {
             );
           }
         })
+      }
+      else{
+        console.log('gotoMoodReportNum',gotoMoodReportNum);
+        setReportWeekNum(
+          gotoMoodReportNum
+        );
+        getMoodReport(
+          gotoMoodReportNum
+        );
+        setRecentReportWeekNum(
+          gotoMoodReportNum
+        );
+      }
       getStatistics(year,month);
       if(gotoMoodReport===true){
         console.log(gotoMoodReport);

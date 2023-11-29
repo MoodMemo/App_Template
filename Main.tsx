@@ -50,12 +50,13 @@ function WeeklyScreen({ route, navigation }) {
 function StatisticsScreen({route, navigation}) {
   amplitude.moveToStatistics(); //통계 뷰로 이동
   useEffect(()=>{
-    if(route.params?.gotoMoodReport) navigation.setParams({gotoMoodReport:false});
+    if(route.params?.gotoMoodReport) navigation.setParams({gotoMoodReport:false,gotoMoodReportNum:-1});
   },[route.params?.gotoMoodReport])
+
   if(route.params?.gotoMoodReport===true){
-    return <Statistics gotoMoodReport={true}/>; //Home.tsx
+    return <Statistics gotoMoodReport={true} gotoMoodReportNum={route.params?.gotoMoodReportNum}/>; //Home.tsx
   }
-  return <Statistics gotoMoodReport={false}/>; //Home.tsx
+  return <Statistics gotoMoodReport={false} gotoMoodReportNum={-1}/>; //Home.tsx
 }
 
 function SettingsScreen() {

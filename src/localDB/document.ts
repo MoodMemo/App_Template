@@ -354,6 +354,7 @@ export interface IDailyReport {
   keyword: string[] | null;
   createdAt: Date;
   updatedAt: Date;
+  moodReportWeekNum: number;
 }
 class DailyReport extends Realm.Object {
   public static schema: Realm.ObjectSchema = {
@@ -367,6 +368,7 @@ class DailyReport extends Realm.Object {
       keyword: { type: "string[]", optional: true },
       createdAt: { type: "date", optional: false },
       updatedAt: { type: "date", optional: false },
+      moodReportWeekNum: {type:"int", optional: false}
     },
   };
 }
@@ -486,18 +488,16 @@ function performMigration(oldRealm: Realm, newRealm: Realm) {
   const oldCustomStamps = oldRealm.objects('CustomStamp');
   const oldPushedStamps = oldRealm.objects('PushedStamp');
   const newCustomStamps = newRealm.objects('CustomStamp');
+  const oldDailyReports = oldRealm.objects('DailyReport');
+  const newDailyReports = newRealm.objects('DailyReport');
   // 이전 버전의 CustomStamp 데이터를 새로운 버전으로 복사
-  for (const oldStamp in oldCustomStamps) {
-    newCustomStamps[oldStamp].type= stampNamesPositive.includes(oldCustomStamps[oldStamp].stampName) ? 'pos' : (stampNamesNeutral.includes(oldCustomStamps[oldStamp].stampName) ? 'neu' : 'neg');
-    // newRealm.create('CustomStamp', {
-    //   id: uuid.v4(),
-    //   stampName: oldCustomStamps[oldStamp].stampName,
-    //   emoji: oldCustomStamps[oldStamp].emoji,
-    //   createdAt: oldCustomStamps[oldStamp].createdAt,
-    //   updatedAt: oldCustomStamps[oldStamp].updatedAt,
-    //   pushedCnt: oldCustomStamps[oldStamp].pushedCnt,
-    //   type: oldCustomStamps[oldStamp].stampName in stampNamesPositive ? 'pos' : (oldCustomStamps[oldStamp].stampName in stampNamesNeutral ? 'neu' : 'neg')
-    // });
+  if(oldRealm.schemaVersion<6){
+    for (const oldStamp in oldCustomStamps) {
+      newCustomStamps[oldStamp].type = stampNamesPositive.includes(oldCustomStamps[oldStamp].stampName) ? 'pos' : (stampNamesNeutral.includes(oldCustomStamps[oldStamp].stampName) ? 'neu' : 'neg');
+    }
+  }
+  for (const oldDailyReport in oldDailyReports) {
+    newDailyReports[oldDailyReport].moodReportWeekNum = -1
   }
 }
 // let realm = new Realm({ schema: [Notification, oldCustomStampSchema, PushedStamp, DailyReport],
@@ -505,9 +505,9 @@ function performMigration(oldRealm: Realm, newRealm: Realm) {
 // });
 // 새로운 버전의 Realm 인스턴스 생성
 let realm = new Realm({ schema: [Notification, CustomStamp, PushedStamp, DailyReport, WeeklyReport],
-  schemaVersion: 6,
+  schemaVersion: 8,
   onMigration: (oldRealm, newRealm) => {
-    if (oldRealm.schemaVersion < 6) {
+    if (oldRealm.schemaVersion < 8) {
       performMigration(oldRealm, newRealm);
     }
   },

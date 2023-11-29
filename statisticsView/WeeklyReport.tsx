@@ -450,7 +450,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,wee
               <ScrollView>
                 <View style={Timelinestyles.container}>
                   {getWeeklyStamps().map((item, index) => (
-                    <View key={item.id}>
+                    <>
                     {index===0 || getWeeklyStamps()[index-1].dateTime.getDate() !== item.dateTime.getDate() ? 
                     <View style={{flexDirection:'row',marginTop:30,marginBottom:10}}>
                       <View style={{
@@ -501,7 +501,7 @@ const WeeklyReport = ({reportWeekDate,setWeeklyReportMode,setNowWeeklyReport,wee
                         {/* <Text style={styles.title}>{item.imageUrl}</Text> */}
                       </TouchableOpacity>
                     </View>
-                    </View>))}
+                    </>))}
                 </View>
               </ScrollView>
               <TouchableOpacity onPress={() => {
