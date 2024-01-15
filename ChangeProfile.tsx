@@ -51,6 +51,7 @@ const ChangeProfile = () => {
         }
     })
     AsyncStorage.getItem('@UserInfo:MBTI').then(data => {
+        console.log('MBTI',data);
         if(data===null){
             setMBTIDefault('')
         }
@@ -150,7 +151,7 @@ const ChangeProfile = () => {
                         }}>
                             <TextInput
                             style={styles.input}
-                            defaultValue={jobDefault}
+                            defaultValue={genderDefault}
                             placeholder={'성별을 알려달라무!'}
                             placeholderTextColor='#E2E2E2'
                             onChangeText={(text) => setGender(text)}
@@ -166,7 +167,7 @@ const ChangeProfile = () => {
                         }}>
                             <TextInput
                             style={styles.input}
-                            defaultValue={jobDefault}
+                            defaultValue={MBTIDefault}
                             placeholder={'MBTI를 알려달라무!'}
                             placeholderTextColor='#E2E2E2'
                             onChangeText={(text) => setMBTI(text)}
@@ -194,6 +195,8 @@ const ChangeProfile = () => {
                 <TouchableOpacity onPress={async ()=>{
                     if(job!=='') await AsyncStorage.setItem('@UserInfo:job', job);
                     if(name!=='') await AsyncStorage.setItem('@UserInfo:userName', name);
+                    if(gender!=='') await AsyncStorage.setItem('@UserInfo:gender', gender);
+                    if(MBTI!=='') await AsyncStorage.setItem('@UserInfo:MBTI', MBTI);
                     await AsyncStorage.setItem('@UserInfo:birth', showingBirthday);
                     amplitude.saveNewProfile();
                     setIsProfileModalVisible(!isProfileModalVisible);
