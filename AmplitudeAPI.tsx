@@ -190,7 +190,7 @@ export function submitStamp(emotion,memo) { // 나중에는 여기도 스탬프 
   {
     view: 'stamp',
     emotion: emotion,
-    memo: memo,
+    memo: '',//memo
     action: 'confirm',});
 }
 export function cancelStamp() {
