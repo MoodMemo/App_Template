@@ -44,7 +44,7 @@ interface stampToMoodReportResponse {
 }
 
 async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToken): Promise<DailyReportResponse> {
-  const url = 'http://3.39.118.25:5000/dailyReport';
+  const url = 'http://3.34.108.135:5000/dailyReport';
 
   console.log('cancel : ', cancelToken);
   try {
@@ -65,7 +65,7 @@ async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToke
 }
 
 export async function sendStampToMoodReport(toAI, cancelToken: CancelToken): Promise<stampToMoodReportResponse> {
-  const url = 'http://3.39.118.25:5000/stamp_to_mood_report';
+  const url = 'http://3.34.108.135:5000/stamp_to_mood_report';
 
   console.log('cancel : ', cancelToken);
   try {
