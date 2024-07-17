@@ -80,8 +80,8 @@ android {
         applicationId "com.moodmemo"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 27
-        versionName "1.6.1"
+        versionCode 28
+        versionName "1.6.2"
         multiDexEnabled true
         resValue 'string', "CODE_PUSH_APK_BUILD_TIME", String.format("\"%d\"", System.currentTimeMillis())
     }
@@ -131,6 +131,9 @@ dependencies {
 
     // for amplitude
     implementation 'com.amplitude:analytics-android:1.8.2'
+
+    // for android sdk 34
+    implementation 'org.jetbrains:annotations:16.0.2'
 
     //for facebook-sdk
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'

@@ -14,6 +14,14 @@ import com.microsoft.codepush.react.CodePush;
 
 import com.reactnativecommunity.cameraroll.CameraRollPackage;
 
+//for android sdk 34
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.Context;
+import android.os.Build;
+import org.jetbrains.annotations.Nullable;
+
 //import com.reactnativerestart.RestartPackage;
 
 // for amplitude
@@ -65,6 +73,15 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public ReactNativeHost getReactNativeHost() {
     return mReactNativeHost;
+  }
+
+  @Override
+  public Intent registerReceiver(@Nullable BroadcastReceiver receiver, IntentFilter filter) {
+    if (Build.VERSION.SDK_INT >= 34 && getApplicationInfo().targetSdkVersion >= 34) {
+      return super.registerReceiver(receiver, filter, Context.RECEIVER_EXPORTED);
+    } else {
+      return super.registerReceiver(receiver, filter);
+    }
   }
 
   @Override
