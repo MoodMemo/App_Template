@@ -44,9 +44,10 @@ interface stampToMoodReportResponse {
 }
 
 async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToken): Promise<DailyReportResponse> {
-  const url = 'http://3.34.108.135:5000/dailyReport';
+  const url = 'http://13.125.35.4:5000/dailyReport';
 
   console.log('cancel : ', cancelToken);
+  console.log('a');
   try {
     // TODO - 여기까지 들어오기는 하는데 그 다음이 안됨
     const response: AxiosResponse<DailyReportResponse> = await axios.post(url, toAI, { cancelToken });
@@ -65,7 +66,7 @@ async function sendDailyReport(toAI: DailyReportRequest, cancelToken: CancelToke
 }
 
 export async function sendStampToMoodReport(toAI, cancelToken: CancelToken): Promise<stampToMoodReportResponse> {
-  const url = 'http://3.34.108.135:5000/stamp_to_mood_report';
+  const url = 'http://13.125.35.4:5000/stamp_to_mood_report';
 
   console.log('cancel : ', cancelToken);
   try {

@@ -13,7 +13,7 @@ interface StampResponse {
 }
 
 async function sendStamp(toAI: StampRequest, cancelToken: CancelToken): Promise<StampResponse> {
-  const url = 'http://3.34.108.135:5000/stamp';
+  const url = 'http://13.125.35.4:5000/stamp';
 
   console.log('cancel : ', cancelToken);
   try {
